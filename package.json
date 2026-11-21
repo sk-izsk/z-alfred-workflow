@@ -1,0 +1,27 @@
+{
+  "name": "alfred-bitwarden",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bitwarden for Alfred 6, built on Alfred UI",
+  "author": "izsk",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "bun build src/main.ts --target=node --format=esm --minify-syntax --outfile workflow/bin/bwa.mjs && bun scripts/build-workflow.ts",
+    "test": "bun test tests",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint src tests ui scripts",
+    "fmt": "oxfmt src tests ui scripts",
+    "check": "bun run typecheck && bun run lint && bun run fmt:check && bun run test",
+    "link": "scripts/link.sh",
+    "package": "bun run build && scripts/package.sh",
+    "fmt:check": "oxfmt --check src tests ui scripts"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.5",
+    "@types/node": "^26.6.6",
+    "oxfmt": "^0.79.0",
+    "oxlint": "^1.94.0",
+    "typescript": "^7.0.2"
+  }
+}

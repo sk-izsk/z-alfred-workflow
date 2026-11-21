@@ -1,0 +1,10 @@
+node_modules/
+dist/
+workflow/bin/bwa.mjs
+workflow/prefs.plist
+ref/
+.DS_Store
+.code-review-graph/
+.omc/
+# internal dev log (local only; has machine-specific notes)
+PLAN.md

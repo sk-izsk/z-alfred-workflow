@@ -1,0 +1,34 @@
+import { BUNDLE_ID, perAccount } from "./env.ts";
+import { run } from "./proc.ts";
+
+/**
+ * Secrets live in the login Keychain under service `com.izsk.bitwarden`.
+ * `security -i` reads its command from stdin, so the secret never shows up in `ps`.
+ */
+const quote = (value: string) => `"${value.replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"`;
+
+/** Entry names are per Bitwarden account: `session`, `master`, `session-<id>`… */
+export type KeychainAccount = "session" | "master";
+const entry = (account: KeychainAccount) => perAccount(account);
+
+export const keychainGet = async (account: KeychainAccount): Promise<string | undefined> => {
+  const { code, stdout } = await run("/usr/bin/security", [
+    "find-generic-password",
+    "-s",
+    BUNDLE_ID,
+    "-a",
+    entry(account),
+    "-w",
+  ]);
+  return code === 0 ? stdout.replace(/\n$/, "") : undefined;
+};
+
+export const keychainSet = async (account: KeychainAccount, secret: string): Promise<void> => {
+  const command = `add-generic-password -U -s ${quote(BUNDLE_ID)} -a ${quote(entry(account))} -w ${quote(secret)}\n`;
+  const { code, stderr } = await run("/usr/bin/security", ["-i"], { input: command });
+  if (code !== 0 || /error/i.test(stderr)) throw new Error(`Keychain write failed: ${stderr.trim()}`);
+};
+
+export const keychainDelete = async (account: KeychainAccount): Promise<void> => {
+  await run("/usr/bin/security", ["delete-generic-password", "-s", BUNDLE_ID, "-a", entry(account)]);
+};

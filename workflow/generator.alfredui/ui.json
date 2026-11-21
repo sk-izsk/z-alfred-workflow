@@ -1,0 +1,867 @@
+{
+  "bundleid": "com.izsk.bitwarden",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "generated": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "query": {
+      "src": "args[0]",
+      "default": ""
+    },
+    "gen_type": {
+      "persist": true,
+      "default": "password"
+    },
+    "gen_length": {
+      "persist": true,
+      "default": 16
+    },
+    "gen_upper": {
+      "persist": true,
+      "default": true
+    },
+    "gen_lower": {
+      "persist": true,
+      "default": true
+    },
+    "gen_number": {
+      "persist": true,
+      "default": true
+    },
+    "gen_special": {
+      "persist": true,
+      "default": false
+    },
+    "gen_words": {
+      "persist": true,
+      "default": 3
+    },
+    "gen_separator": {
+      "persist": true,
+      "default": "-"
+    },
+    "gen_capitalize": {
+      "persist": true,
+      "default": true
+    },
+    "gen_includeNumber": {
+      "persist": true,
+      "default": true
+    }
+  },
+  "window": {
+    "size": {
+      "height": 540
+    },
+    "minsize": {
+      "width": 620,
+      "height": 380
+    },
+    "title": "Bitwarden",
+    "root": {
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "gen",
+              "{var:gen_type}",
+              "{var:gen_length}",
+              "{var:gen_upper}",
+              "{var:gen_lower}",
+              "{var:gen_number}",
+              "{var:gen_special}",
+              "{var:gen_words}",
+              "{var:gen_separator}",
+              "{var:gen_capitalize}",
+              "{var:gen_includeNumber}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 780
+                }
+              }
+            }
+          }
+        }
+      ],
+      "components": [
+        {
+          "constraints": {
+            "region": "top"
+          },
+          "type": "view",
+          "layout": "border",
+          "padding": 20,
+          "components": [
+            {
+              "type": "label",
+              "text": "🔑 Password",
+              "colour": "secondaryLabelColor",
+              "constraints": {
+                "region": "left",
+                "size": {
+                  "width": 150
+                },
+                "insets": {
+                  "right": 12
+                }
+              }
+            },
+            {
+              "constraints": {
+                "region": "centre"
+              },
+              "id": "preview",
+              "type": "label",
+              "text": "",
+              "selectable": true,
+              "linebreak": "charwrap",
+              "font": {
+                "size": 18,
+                "monospaced": true
+              }
+            }
+          ]
+        },
+        {
+          "constraints": {
+            "region": "centre",
+            "position": "top",
+            "stretch": "horizontal"
+          },
+          "type": "view",
+          "layout": "inline",
+          "direction": "vertical",
+          "padding": 16,
+          "spacing": 10,
+          "components": [
+            {
+              "id": "genMain",
+              "type": "view",
+              "layout": "form",
+              "spacing": 8,
+              "components": [
+                {
+                  "type": "label",
+                  "text": "Type",
+                  "colour": "secondaryLabelColor",
+                  "constraints": {
+                    "position": "right",
+                    "size": {
+                      "width": 150
+                    }
+                  }
+                },
+                {
+                  "id": "genType",
+                  "type": "picker",
+                  "constraints": {
+                    "size": {
+                      "width": 260
+                    }
+                  },
+                  "focus": true,
+                  "items": [
+                    {
+                      "text": "Password",
+                      "value": "password"
+                    },
+                    {
+                      "text": "Passphrase",
+                      "value": "passphrase"
+                    }
+                  ],
+                  "selected": "{var:gen_type}",
+                  "events": [
+                    {
+                      "triggers": "changed",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/bwa",
+                        "args": [
+                          "gen",
+                          "{value:genType.selected.value}",
+                          "{value:genLength.text}",
+                          "{value:genUpper.checked}",
+                          "{value:genLower.checked}",
+                          "{value:genNumber.checked}",
+                          "{value:genSpecial.checked}",
+                          "{value:genWords.text}",
+                          "{value:genSeparator.text}",
+                          "{value:genCapitalize.checked}",
+                          "{value:genIncludeNumber.checked}"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ],
+              "constraints": {
+                "position": "centre"
+              }
+            },
+            {
+              "type": "view",
+              "layout": "stack",
+              "constraints": {
+                "position": "centre"
+              },
+              "components": [
+                {
+                  "id": "passwordOptions",
+                  "type": "view",
+                  "layout": "form",
+                  "spacing": 8,
+                  "components": [
+                    {
+                      "type": "label",
+                      "text": "Length",
+                      "colour": "secondaryLabelColor",
+                      "constraints": {
+                        "position": "right",
+                        "size": {
+                          "width": 150
+                        }
+                      }
+                    },
+                    {
+                      "id": "genLength",
+                      "type": "textfield",
+                      "text": "{var:gen_length}",
+                      "focusring": false,
+                      "textinsets": {
+                        "horizontal": 6,
+                        "vertical": 4
+                      },
+                      "constraints": {
+                        "size": {
+                          "width": 90
+                        }
+                      },
+                      "events": [
+                        {
+                          "triggers": "typingstopped",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/bwa",
+                            "args": [
+                              "gen",
+                              "{value:genType.selected.value}",
+                              "{value:genLength.text}",
+                              "{value:genUpper.checked}",
+                              "{value:genLower.checked}",
+                              "{value:genNumber.checked}",
+                              "{value:genSpecial.checked}",
+                              "{value:genWords.text}",
+                              "{value:genSeparator.text}",
+                              "{value:genCapitalize.checked}",
+                              "{value:genIncludeNumber.checked}"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "label",
+                      "text": "Uppercase characters",
+                      "colour": "secondaryLabelColor",
+                      "constraints": {
+                        "position": "right",
+                        "size": {
+                          "width": 150
+                        }
+                      }
+                    },
+                    {
+                      "id": "genUpper",
+                      "type": "checkbox",
+                      "constraints": {
+                        "size": {
+                          "width": 260
+                        }
+                      },
+                      "text": "A–Z",
+                      "checked": "{var:gen_upper}",
+                      "events": [
+                        {
+                          "triggers": "changed",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/bwa",
+                            "args": [
+                              "gen",
+                              "{value:genType.selected.value}",
+                              "{value:genLength.text}",
+                              "{value:genUpper.checked}",
+                              "{value:genLower.checked}",
+                              "{value:genNumber.checked}",
+                              "{value:genSpecial.checked}",
+                              "{value:genWords.text}",
+                              "{value:genSeparator.text}",
+                              "{value:genCapitalize.checked}",
+                              "{value:genIncludeNumber.checked}"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "label",
+                      "text": "Lowercase characters",
+                      "colour": "secondaryLabelColor",
+                      "constraints": {
+                        "position": "right",
+                        "size": {
+                          "width": 150
+                        }
+                      }
+                    },
+                    {
+                      "id": "genLower",
+                      "type": "checkbox",
+                      "constraints": {
+                        "size": {
+                          "width": 260
+                        }
+                      },
+                      "text": "a–z",
+                      "checked": "{var:gen_lower}",
+                      "events": [
+                        {
+                          "triggers": "changed",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/bwa",
+                            "args": [
+                              "gen",
+                              "{value:genType.selected.value}",
+                              "{value:genLength.text}",
+                              "{value:genUpper.checked}",
+                              "{value:genLower.checked}",
+                              "{value:genNumber.checked}",
+                              "{value:genSpecial.checked}",
+                              "{value:genWords.text}",
+                              "{value:genSeparator.text}",
+                              "{value:genCapitalize.checked}",
+                              "{value:genIncludeNumber.checked}"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "label",
+                      "text": "Numeric characters",
+                      "colour": "secondaryLabelColor",
+                      "constraints": {
+                        "position": "right",
+                        "size": {
+                          "width": 150
+                        }
+                      }
+                    },
+                    {
+                      "id": "genNumber",
+                      "type": "checkbox",
+                      "constraints": {
+                        "size": {
+                          "width": 260
+                        }
+                      },
+                      "text": "0–9",
+                      "checked": "{var:gen_number}",
+                      "events": [
+                        {
+                          "triggers": "changed",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/bwa",
+                            "args": [
+                              "gen",
+                              "{value:genType.selected.value}",
+                              "{value:genLength.text}",
+                              "{value:genUpper.checked}",
+                              "{value:genLower.checked}",
+                              "{value:genNumber.checked}",
+                              "{value:genSpecial.checked}",
+                              "{value:genWords.text}",
+                              "{value:genSeparator.text}",
+                              "{value:genCapitalize.checked}",
+                              "{value:genIncludeNumber.checked}"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "label",
+                      "text": "Special characters",
+                      "colour": "secondaryLabelColor",
+                      "constraints": {
+                        "position": "right",
+                        "size": {
+                          "width": 150
+                        }
+                      }
+                    },
+                    {
+                      "id": "genSpecial",
+                      "type": "checkbox",
+                      "constraints": {
+                        "size": {
+                          "width": 260
+                        }
+                      },
+                      "text": "!@#$%^&*",
+                      "checked": "{var:gen_special}",
+                      "events": [
+                        {
+                          "triggers": "changed",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/bwa",
+                            "args": [
+                              "gen",
+                              "{value:genType.selected.value}",
+                              "{value:genLength.text}",
+                              "{value:genUpper.checked}",
+                              "{value:genLower.checked}",
+                              "{value:genNumber.checked}",
+                              "{value:genSpecial.checked}",
+                              "{value:genWords.text}",
+                              "{value:genSeparator.text}",
+                              "{value:genCapitalize.checked}",
+                              "{value:genIncludeNumber.checked}"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "constraints": {
+                    "position": "top"
+                  }
+                },
+                {
+                  "id": "passphraseOptions",
+                  "type": "view",
+                  "layout": "form",
+                  "spacing": 8,
+                  "components": [
+                    {
+                      "type": "label",
+                      "text": "Number of words",
+                      "colour": "secondaryLabelColor",
+                      "constraints": {
+                        "position": "right",
+                        "size": {
+                          "width": 150
+                        }
+                      }
+                    },
+                    {
+                      "id": "genWords",
+                      "type": "textfield",
+                      "text": "{var:gen_words}",
+                      "focusring": false,
+                      "textinsets": {
+                        "horizontal": 6,
+                        "vertical": 4
+                      },
+                      "constraints": {
+                        "size": {
+                          "width": 90
+                        }
+                      },
+                      "events": [
+                        {
+                          "triggers": "typingstopped",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/bwa",
+                            "args": [
+                              "gen",
+                              "{value:genType.selected.value}",
+                              "{value:genLength.text}",
+                              "{value:genUpper.checked}",
+                              "{value:genLower.checked}",
+                              "{value:genNumber.checked}",
+                              "{value:genSpecial.checked}",
+                              "{value:genWords.text}",
+                              "{value:genSeparator.text}",
+                              "{value:genCapitalize.checked}",
+                              "{value:genIncludeNumber.checked}"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "label",
+                      "text": "Word separator",
+                      "colour": "secondaryLabelColor",
+                      "constraints": {
+                        "position": "right",
+                        "size": {
+                          "width": 150
+                        }
+                      }
+                    },
+                    {
+                      "id": "genSeparator",
+                      "type": "textfield",
+                      "text": "{var:gen_separator}",
+                      "focusring": false,
+                      "textinsets": {
+                        "horizontal": 6,
+                        "vertical": 4
+                      },
+                      "constraints": {
+                        "size": {
+                          "width": 50
+                        }
+                      },
+                      "events": [
+                        {
+                          "triggers": "typingstopped",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/bwa",
+                            "args": [
+                              "gen",
+                              "{value:genType.selected.value}",
+                              "{value:genLength.text}",
+                              "{value:genUpper.checked}",
+                              "{value:genLower.checked}",
+                              "{value:genNumber.checked}",
+                              "{value:genSpecial.checked}",
+                              "{value:genWords.text}",
+                              "{value:genSeparator.text}",
+                              "{value:genCapitalize.checked}",
+                              "{value:genIncludeNumber.checked}"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "label",
+                      "text": "Capitalise",
+                      "colour": "secondaryLabelColor",
+                      "constraints": {
+                        "position": "right",
+                        "size": {
+                          "width": 150
+                        }
+                      }
+                    },
+                    {
+                      "id": "genCapitalize",
+                      "type": "checkbox",
+                      "constraints": {
+                        "size": {
+                          "width": 260
+                        }
+                      },
+                      "text": "This-Is-A-Passphrase",
+                      "checked": "{var:gen_capitalize}",
+                      "events": [
+                        {
+                          "triggers": "changed",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/bwa",
+                            "args": [
+                              "gen",
+                              "{value:genType.selected.value}",
+                              "{value:genLength.text}",
+                              "{value:genUpper.checked}",
+                              "{value:genLower.checked}",
+                              "{value:genNumber.checked}",
+                              "{value:genSpecial.checked}",
+                              "{value:genWords.text}",
+                              "{value:genSeparator.text}",
+                              "{value:genCapitalize.checked}",
+                              "{value:genIncludeNumber.checked}"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "label",
+                      "text": "Include number",
+                      "colour": "secondaryLabelColor",
+                      "constraints": {
+                        "position": "right",
+                        "size": {
+                          "width": 150
+                        }
+                      }
+                    },
+                    {
+                      "id": "genIncludeNumber",
+                      "type": "checkbox",
+                      "constraints": {
+                        "size": {
+                          "width": 260
+                        }
+                      },
+                      "text": "This2-Is-A-Passphrase",
+                      "checked": "{var:gen_includeNumber}",
+                      "events": [
+                        {
+                          "triggers": "changed",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/bwa",
+                            "args": [
+                              "gen",
+                              "{value:genType.selected.value}",
+                              "{value:genLength.text}",
+                              "{value:genUpper.checked}",
+                              "{value:genLower.checked}",
+                              "{value:genNumber.checked}",
+                              "{value:genSpecial.checked}",
+                              "{value:genWords.text}",
+                              "{value:genSeparator.text}",
+                              "{value:genCapitalize.checked}",
+                              "{value:genIncludeNumber.checked}"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "constraints": {
+                    "position": "top"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "constraints": {
+            "region": "bottom"
+          },
+          "type": "view",
+          "layout": "border",
+          "padding": 12,
+          "background": {
+            "dark": "#00000033",
+            "light": "#0000000d"
+          },
+          "components": [
+            {
+              "constraints": {
+                "region": "left",
+                "insets": {
+                  "left": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 8,
+              "components": [
+                {
+                  "type": "imageview",
+                  "image": {
+                    "type": "file",
+                    "src": "../icon.png",
+                    "size": {
+                      "width": 18,
+                      "height": 18
+                    }
+                  }
+                },
+                {
+                  "id": "statusLabel",
+                  "type": "label",
+                  "text": "…",
+                  "colour": "secondaryLabelColor",
+                  "font": {
+                    "size": 13
+                  },
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 280
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "constraints": {
+                "region": "right",
+                "insets": {
+                  "right": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 10,
+              "components": [
+                {
+                  "id": "backButton",
+                  "type": "button",
+                  "text": "Back  {var:back_shortcut}",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "finish": {
+                            "variables": {
+                              "bw_out": "back"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "regenButton",
+                  "type": "button",
+                  "text": "Regenerate  ⌘R",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/bwa",
+                        "args": [
+                          "gen",
+                          "{value:genType.selected.value}",
+                          "{value:genLength.text}",
+                          "{value:genUpper.checked}",
+                          "{value:genLower.checked}",
+                          "{value:genNumber.checked}",
+                          "{value:genSpecial.checked}",
+                          "{value:genWords.text}",
+                          "{value:genSeparator.text}",
+                          "{value:genCapitalize.checked}",
+                          "{value:genIncludeNumber.checked}"
+                        ]
+                      }
+                    }
+                  ],
+                  "shortcut": "⌘R",
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "pasteButton",
+                  "type": "button",
+                  "text": "Paste  ⌘↩",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/bwa",
+                        "args": [
+                          "gen-copy",
+                          "paste"
+                        ]
+                      }
+                    }
+                  ],
+                  "shortcut": "⌘↩",
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "copyButton",
+                  "type": "button",
+                  "text": "Copy Password  ↩",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/bwa",
+                        "args": [
+                          "gen-copy"
+                        ]
+                      }
+                    }
+                  ],
+                  "shortcut": "↩",
+                  "constraints": {
+                    "position": "centre"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "{var:back_shortcut}",
+          "action": {
+            "type": "json",
+            "src": {
+              "finish": {
+                "variables": {
+                  "bw_out": "back"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

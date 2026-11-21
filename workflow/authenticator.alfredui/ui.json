@@ -1,0 +1,445 @@
+{
+  "bundleid": "com.izsk.bitwarden",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "query": {
+      "src": "args[0]",
+      "default": ""
+    },
+    "secret_input": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "secret_pin": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "auth_entries": {
+      "scriptenv": true,
+      "default": ""
+    }
+  },
+  "pulse": {
+    "interval": 0,
+    "intervalmode": "regular",
+    "src": "../bin/bwa",
+    "args": [
+      "auth-tick"
+    ]
+  },
+  "window": {
+    "size": {
+      "height": 540
+    },
+    "minsize": {
+      "width": 620,
+      "height": 380
+    },
+    "title": "Bitwarden",
+    "root": {
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "auth-init"
+            ]
+          }
+        },
+        {
+          "triggers": "launched",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "auth-load"
+            ],
+            "async": true
+          }
+        },
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 780
+                }
+              }
+            }
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "codes",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "codes",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "{var:back_shortcut}",
+          "action": {
+            "type": "json",
+            "src": {
+              "finish": {
+                "variables": {
+                  "bw_out": "back"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "components": [
+        {
+          "constraints": {
+            "region": "top"
+          },
+          "type": "view",
+          "layout": "stack",
+          "padding": 12,
+          "components": [
+            {
+              "id": "searchField",
+              "type": "textfield",
+              "text": "{var:query}",
+              "placeholder": "Search Authenticator",
+              "focus": true,
+              "bordered": false,
+              "focusring": false,
+              "font": {
+                "size": 28,
+                "weight": "light"
+              },
+              "textinsets": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "function",
+                    "src": "codes",
+                    "args": "filterdata"
+                  }
+                },
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/bwa",
+                    "args": [
+                      "auth-copy",
+                      "{value:codes.selected.uid}"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "constraints": {
+            "region": "centre"
+          },
+          "id": "codes",
+          "type": "dataview",
+          "padding": 6,
+          "spacing": 2,
+          "placeholder": "Loading…",
+          "data": {
+            "type": "basic",
+            "src": [],
+            "filter": {
+              "type": "basic",
+              "args": "match",
+              "match": "{value:searchField.text}",
+              "matchmode": "wordmatchanyorder"
+            }
+          },
+          "cell": {
+            "height": 52,
+            "init": {
+              "authCell.background": null,
+              "authName.colour": "labelColor",
+              "authUser.colour": "secondaryLabelColor",
+              "authTime.colour": "secondaryLabelColor"
+            },
+            "selected": {
+              "authCell.background": "alfredSelectedResultBackgroundColor",
+              "authName.colour": "alfredSelectedResultTextColor",
+              "authUser.colour": "alfredSelectedResultTextColor",
+              "authTime.colour": "alfredSelectedResultTextColor"
+            },
+            "root": {
+              "id": "authCell",
+              "type": "view",
+              "layout": "border",
+              "padding": 8,
+              "cornerradius": 8,
+              "events": [
+                {
+                  "triggers": "doubleclicked",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/bwa",
+                    "args": [
+                      "auth-copy",
+                      "{data:uid}"
+                    ]
+                  }
+                }
+              ],
+              "components": [
+                {
+                  "constraints": {
+                    "region": "centre"
+                  },
+                  "type": "view",
+                  "layout": "inline",
+                  "direction": "vertical",
+                  "spacing": 2,
+                  "components": [
+                    {
+                      "id": "authName",
+                      "type": "label",
+                      "text": "",
+                      "font": {
+                        "size": 15
+                      }
+                    },
+                    {
+                      "id": "authUser",
+                      "type": "label",
+                      "text": "",
+                      "font": {
+                        "size": "small"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "constraints": {
+                    "region": "right"
+                  },
+                  "type": "view",
+                  "layout": "inline",
+                  "spacing": 10,
+                  "components": [
+                    {
+                      "id": "authCode",
+                      "type": "label",
+                      "text": "",
+                      "font": {
+                        "size": 24,
+                        "weight": "light",
+                        "monospaced": "digits"
+                      }
+                    },
+                    {
+                      "id": "authProgress",
+                      "type": "progress",
+                      "style": "round",
+                      "thickness": 3,
+                      "constraints": {
+                        "size": 20,
+                        "position": "centre"
+                      }
+                    },
+                    {
+                      "id": "authTime",
+                      "type": "label",
+                      "text": "",
+                      "font": {
+                        "size": "small",
+                        "monospaced": "digits"
+                      },
+                      "constraints": {
+                        "size": {
+                          "width": 28
+                        },
+                        "position": "centre"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "constraints": {
+            "region": "bottom"
+          },
+          "type": "view",
+          "layout": "border",
+          "padding": 12,
+          "background": {
+            "dark": "#00000033",
+            "light": "#0000000d"
+          },
+          "components": [
+            {
+              "constraints": {
+                "region": "left",
+                "insets": {
+                  "left": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 8,
+              "components": [
+                {
+                  "type": "imageview",
+                  "image": {
+                    "type": "file",
+                    "src": "../icon.png",
+                    "size": {
+                      "width": 18,
+                      "height": 18
+                    }
+                  }
+                },
+                {
+                  "id": "statusLabel",
+                  "type": "label",
+                  "text": "…",
+                  "colour": "secondaryLabelColor",
+                  "font": {
+                    "size": 13
+                  },
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 280
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "constraints": {
+                "region": "right",
+                "insets": {
+                  "right": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 10,
+              "components": [
+                {
+                  "id": "backButton",
+                  "type": "button",
+                  "text": "Back  {var:back_shortcut}",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "finish": {
+                            "variables": {
+                              "bw_out": "back"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "pasteButton",
+                  "type": "button",
+                  "text": "Paste  ⌘↩",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/bwa",
+                        "args": [
+                          "auth-copy",
+                          "{value:codes.selected.uid}",
+                          "paste"
+                        ]
+                      }
+                    }
+                  ],
+                  "shortcut": "⌘↩",
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "copyButton",
+                  "type": "button",
+                  "text": "Copy Code  ↩",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/bwa",
+                        "args": [
+                          "auth-copy",
+                          "{value:codes.selected.uid}"
+                        ]
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

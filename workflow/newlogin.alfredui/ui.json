@@ -1,0 +1,558 @@
+{
+  "bundleid": "com.izsk.bitwarden",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "query": {
+      "src": "args[0]",
+      "default": ""
+    },
+    "secret_input": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "secret_pin": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "secret_totp": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "secret_notes": {
+      "scriptenv": true,
+      "default": ""
+    }
+  },
+  "window": {
+    "size": {
+      "height": 540
+    },
+    "minsize": {
+      "width": 620,
+      "height": 380
+    },
+    "title": "Bitwarden",
+    "root": {
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "new-init"
+            ]
+          }
+        },
+        {
+          "triggers": "launched",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "new-check"
+            ]
+          }
+        },
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 780
+                }
+              }
+            }
+          }
+        }
+      ],
+      "components": [
+        {
+          "constraints": {
+            "region": "centre"
+          },
+          "type": "view",
+          "layout": "inline",
+          "direction": "vertical",
+          "padding": 20,
+          "spacing": 10,
+          "components": [
+            {
+              "id": "newMain",
+              "type": "view",
+              "layout": "form",
+              "spacing": 8,
+              "components": [
+                {
+                  "type": "label",
+                  "text": "Type",
+                  "colour": "secondaryLabelColor",
+                  "constraints": {
+                    "position": "right",
+                    "size": {
+                      "width": 150
+                    }
+                  }
+                },
+                {
+                  "id": "newType",
+                  "type": "picker",
+                  "items": [
+                    {
+                      "text": "Login",
+                      "value": "login"
+                    },
+                    {
+                      "text": "Secure Note",
+                      "value": "note"
+                    }
+                  ],
+                  "events": [
+                    {
+                      "triggers": "changed",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/bwa",
+                        "args": [
+                          "new-type",
+                          "{value:self.selected.value}"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "label",
+                  "text": "Name",
+                  "colour": "secondaryLabelColor",
+                  "constraints": {
+                    "position": "right",
+                    "size": {
+                      "width": 150
+                    }
+                  }
+                },
+                {
+                  "id": "newName",
+                  "type": "textfield",
+                  "placeholder": "e.g. GitHub",
+                  "focusring": false,
+                  "textinsets": {
+                    "horizontal": 6,
+                    "vertical": 5
+                  },
+                  "constraints": {
+                    "size": {
+                      "width": 320
+                    }
+                  },
+                  "focus": true
+                }
+              ]
+            },
+            {
+              "id": "loginFields",
+              "type": "view",
+              "layout": "form",
+              "spacing": 8,
+              "components": [
+                {
+                  "type": "label",
+                  "text": "Username",
+                  "colour": "secondaryLabelColor",
+                  "constraints": {
+                    "position": "right",
+                    "size": {
+                      "width": 150
+                    }
+                  }
+                },
+                {
+                  "id": "newUsername",
+                  "type": "textfield",
+                  "placeholder": "Email or username",
+                  "focusring": false,
+                  "textinsets": {
+                    "horizontal": 6,
+                    "vertical": 5
+                  },
+                  "constraints": {
+                    "size": {
+                      "width": 320
+                    }
+                  }
+                },
+                {
+                  "type": "label",
+                  "text": "Password",
+                  "colour": "secondaryLabelColor",
+                  "constraints": {
+                    "position": "right",
+                    "size": {
+                      "width": 150
+                    }
+                  }
+                },
+                {
+                  "type": "view",
+                  "layout": "inline",
+                  "spacing": 6,
+                  "constraints": {
+                    "position": "left"
+                  },
+                  "components": [
+                    {
+                      "id": "newPassword",
+                      "type": "textfield",
+                      "placeholder": "Password",
+                      "focusring": false,
+                      "textinsets": {
+                        "horizontal": 6,
+                        "vertical": 5
+                      },
+                      "constraints": {
+                        "size": {
+                          "width": 280
+                        }
+                      },
+                      "font": {
+                        "monospaced": true
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "bordered": false,
+                      "image": {
+                        "type": "symbol",
+                        "src": "arrow.triangle.2.circlepath"
+                      },
+                      "tooltip": "Generate ⌘G",
+                      "shortcut": "⌘G",
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/bwa",
+                            "args": [
+                              "new-generate"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "label",
+                  "text": "Website",
+                  "colour": "secondaryLabelColor",
+                  "constraints": {
+                    "position": "right",
+                    "size": {
+                      "width": 150
+                    }
+                  }
+                },
+                {
+                  "id": "newUrl",
+                  "type": "textfield",
+                  "placeholder": "https://",
+                  "focusring": false,
+                  "textinsets": {
+                    "horizontal": 6,
+                    "vertical": 5
+                  },
+                  "constraints": {
+                    "size": {
+                      "width": 320
+                    }
+                  }
+                },
+                {
+                  "type": "label",
+                  "text": "Authenticator key",
+                  "colour": "secondaryLabelColor",
+                  "constraints": {
+                    "position": "right",
+                    "size": {
+                      "width": 150
+                    }
+                  }
+                },
+                {
+                  "id": "newTotp",
+                  "type": "textfield",
+                  "placeholder": "Optional TOTP setup key",
+                  "focusring": false,
+                  "textinsets": {
+                    "horizontal": 6,
+                    "vertical": 5
+                  },
+                  "constraints": {
+                    "size": {
+                      "width": 320
+                    }
+                  },
+                  "font": {
+                    "monospaced": true
+                  }
+                }
+              ]
+            },
+            {
+              "id": "newExtra",
+              "type": "view",
+              "layout": "form",
+              "spacing": 8,
+              "components": [
+                {
+                  "type": "label",
+                  "text": "Folder",
+                  "colour": "secondaryLabelColor",
+                  "constraints": {
+                    "position": "right",
+                    "size": {
+                      "width": 150
+                    }
+                  }
+                },
+                {
+                  "id": "newFolder",
+                  "type": "picker",
+                  "items": [
+                    {
+                      "text": "No Folder",
+                      "value": ""
+                    }
+                  ]
+                },
+                {
+                  "type": "label",
+                  "text": "Notes",
+                  "colour": "secondaryLabelColor",
+                  "constraints": {
+                    "position": "right",
+                    "size": {
+                      "width": 150
+                    }
+                  }
+                },
+                {
+                  "id": "newNotes",
+                  "type": "textarea",
+                  "text": "",
+                  "editable": true,
+                  "bordertype": "bezel",
+                  "textinsets": {
+                    "horizontal": 6,
+                    "vertical": 6
+                  },
+                  "constraints": {
+                    "size": {
+                      "width": 320,
+                      "height": 80
+                    }
+                  }
+                },
+                {},
+                {
+                  "id": "newFavorite",
+                  "type": "checkbox",
+                  "text": "Favorite"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "constraints": {
+            "region": "bottom"
+          },
+          "type": "view",
+          "layout": "border",
+          "padding": 12,
+          "background": {
+            "dark": "#00000033",
+            "light": "#0000000d"
+          },
+          "components": [
+            {
+              "constraints": {
+                "region": "left",
+                "insets": {
+                  "left": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 8,
+              "components": [
+                {
+                  "type": "imageview",
+                  "image": {
+                    "type": "file",
+                    "src": "../icon.png",
+                    "size": {
+                      "width": 18,
+                      "height": 18
+                    }
+                  }
+                },
+                {
+                  "id": "statusLabel",
+                  "type": "label",
+                  "text": "…",
+                  "colour": "secondaryLabelColor",
+                  "font": {
+                    "size": 13
+                  },
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 280
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "constraints": {
+                "region": "right",
+                "insets": {
+                  "right": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 10,
+              "components": [
+                {
+                  "id": "backButton",
+                  "type": "button",
+                  "text": "Back  {var:back_shortcut}",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "finish": {
+                            "variables": {
+                              "bw_out": "back"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "cancelButton",
+                  "type": "button",
+                  "text": "Cancel  ⎋",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "finish": {}
+                        }
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "saveButton",
+                  "type": "button",
+                  "text": "Save  ⌘S",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": [
+                        {
+                          "type": "json",
+                          "src": {},
+                          "variables": {
+                            "secret_input": "{value:newPassword.text}",
+                            "secret_totp": "{value:newTotp.text}",
+                            "secret_notes": "{value:newNotes.text}"
+                          }
+                        },
+                        {
+                          "type": "script",
+                          "src": "../bin/bwa",
+                          "args": [
+                            "new-save",
+                            "{value:newType.selected.value}",
+                            "{value:newName.text}",
+                            "{value:newUsername.text}",
+                            "{value:newUrl.text}",
+                            "{value:newFolder.selected.value}",
+                            "{value:newFavorite.checked}"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "shortcut": "⌘S",
+                  "constraints": {
+                    "position": "centre"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "{var:back_shortcut}",
+          "action": {
+            "type": "json",
+            "src": {
+              "finish": {
+                "variables": {
+                  "bw_out": "back"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
