@@ -355,13 +355,19 @@ const userconfigurationconfig = [
     "totp_display",
     "TOTP Codes",
     [
-      ["On each row (live)", "row"],
       ["In the footer, for the selected item", "footer"],
+      ["On each row (timer in the footer)", "row"],
       ["Hidden", "off"],
     ],
-    "row",
+    "footer",
   ),
   check("close_on_copy", "Copying", "Close the window after copying", true),
+  check(
+    "no_clipboard",
+    "",
+    "Never put passwords on the clipboard (autofill types them; Copy Password is off)",
+    false,
+  ),
   pick(
     "clipboard_clear",
     "Clear Clipboard",

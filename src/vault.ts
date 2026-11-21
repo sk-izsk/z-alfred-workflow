@@ -213,7 +213,6 @@ export const toRow = (meta: Meta & { suggested: boolean }, folders: Folder[]) =>
     "rowStar.hidden": !meta.favorite,
     "rowTotp.hidden": !meta.hasTotp,
     "rowCode.hidden": true,
-    "rowRingBox.hidden": true,
     "rowLock.hidden": meta.reprompt !== 1,
     "rowPasskey.hidden": !meta.hasPasskey,
     match: [meta.name, meta.username, ...meta.uris.map(hostOf), folder].join(" "),

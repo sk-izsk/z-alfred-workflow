@@ -97,6 +97,8 @@ test("encrypted vault cache: readable only with the same session", async () => {
   const { mkdtempSync } = await import("node:fs");
   const { tmpdir } = await import("node:os");
   const { join } = await import("node:path");
+  // Fully sandboxed: own data + cache folders, so the default account is used.
+  process.env.alfred_workflow_data = mkdtempSync(join(tmpdir(), "bwa-data-"));
   process.env.alfred_workflow_cache = mkdtempSync(join(tmpdir(), "bwa-"));
   const { secureCache, invalidateVault } = await import("../src/vault.ts");
   const vault = { items: [{ id: "1", name: "x", login: { password: "s3cret" } }] as never[], folders: [] };

@@ -2072,16 +2072,16 @@ Configure the Hotkey for faster access to the vault.</string>
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>row</string>
+				<string>footer</string>
 				<key>pairs</key>
 				<array>
 					<array>
-						<string>On each row (live)</string>
-						<string>row</string>
-					</array>
-					<array>
 						<string>In the footer, for the selected item</string>
 						<string>footer</string>
+					</array>
+					<array>
+						<string>On each row (timer in the footer)</string>
+						<string>row</string>
 					</array>
 					<array>
 						<string>Hidden</string>
@@ -2116,6 +2116,25 @@ Configure the Hotkey for faster access to the vault.</string>
 			<string>checkbox</string>
 			<key>variable</key>
 			<string>close_on_copy</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<false/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Never put passwords on the clipboard (autofill types them; Copy Password is off)</string>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string></string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>no_clipboard</string>
 		</dict>
 		<dict>
 			<key>config</key>

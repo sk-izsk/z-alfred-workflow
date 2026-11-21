@@ -1,6 +1,6 @@
-import { copySecret, scheduleClear } from "../clipboard.ts";
+import { clearIfUnchanged, copySecret, passwordsOffClipboard, scheduleClear } from "../clipboard.ts";
 import { bool, num, str } from "../env.ts";
-import { pressKey, pressPaste, sleep } from "../keys.ts";
+import { pressKey, pressPaste, sleep, typeText } from "../keys.ts";
 import { log, timed } from "../log.ts";
 import { run } from "../proc.ts";
 import { requireSession } from "../session.ts";
@@ -16,7 +16,29 @@ import { getItem } from "../vault.ts";
 const SETTLE_MS = 140;
 const clearSeconds = () => num("clipboard_clear", 60);
 
+/** Keystroke typing is only reliable for plain ASCII; other letters get mistyped by macOS. */
+const typable = (value: string) => /^[\x20-\x7E]*$/.test(value);
+
+/**
+ * Type instead of paste: the value never touches the clipboard. A value with non-ASCII letters
+ * is pasted instead, and the clipboard is wiped right after so it isn't left behind.
+ */
+const typeValue = async (value: string): Promise<number> => {
+  if (!typable(value)) {
+    const count = await copySecret(value);
+    await sleep(40);
+    await pressPaste();
+    await sleep(SETTLE_MS);
+    await clearIfUnchanged(count);
+    return 0;
+  }
+  await typeText(value);
+  await sleep(SETTLE_MS);
+  return 0;
+};
+
 const pasteValue = async (value: string): Promise<number> => {
+  if (passwordsOffClipboard()) return typeValue(value);
   const count = await copySecret(value);
   await sleep(40);
   await pressPaste();
@@ -75,7 +97,14 @@ const back = async (): Promise<string> => {
   return "";
 };
 
-const STEPS: Record<string, () => Promise<string>> = { fill, paste, back };
+/** ⌘↩ with "never put passwords on the clipboard": type the value handed over by the window. */
+const type = async (): Promise<string> => {
+  await sleep(SETTLE_MS);
+  await typeValue(process.env.type_value ?? "");
+  return "";
+};
+
+const STEPS: Record<string, () => Promise<string>> = { fill, paste, back, type };
 
 export const post = async (): Promise<void> => {
   const step = STEPS[str("bw_out")];

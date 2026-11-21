@@ -33,6 +33,10 @@
       "scriptenv": true,
       "default": ""
     },
+    "totp_period": {
+      "scriptenv": true,
+      "default": ""
+    },
     "selected_id": {
       "scriptenv": true,
       "default": ""
@@ -595,75 +599,29 @@
                     },
                     {
                       "type": "view",
-                      "layout": "stack",
+                      "layout": "inline",
+                      "spacing": 6,
                       "constraints": {
-                        "size": {
-                          "width": 104,
-                          "height": 24
-                        },
                         "position": "centre"
                       },
                       "components": [
                         {
-                          "type": "view",
-                          "layout": "inline",
-                          "spacing": 8,
+                          "id": "rowCode",
+                          "type": "label",
+                          "text": "000 000",
+                          "hidden": true,
+                          "textalign": "right",
                           "constraints": {
-                            "position": "centre"
-                          },
-                          "components": [
-                            {
-                              "id": "rowCode",
-                              "type": "label",
-                              "text": "000 000",
-                              "hidden": true,
-                              "textalign": "right",
-                              "constraints": {
-                                "position": "centre",
-                                "size": {
-                                  "width": 70
-                                }
-                              },
-                              "font": {
-                                "size": 15,
-                                "weight": "light",
-                                "monospaced": "digits"
-                              },
-                              "tooltip": "Current TOTP · ⌘T to copy"
-                            },
-                            {
-                              "id": "rowRingBox",
-                              "type": "view",
-                              "layout": "stack",
-                              "hidden": true,
-                              "constraints": {
-                                "size": 22,
-                                "position": "centre"
-                              },
-                              "components": [
-                                {
-                                  "id": "rowRing",
-                                  "type": "progress",
-                                  "style": "round",
-                                  "thickness": 2
-                                },
-                                {
-                                  "id": "rowSecs",
-                                  "type": "label",
-                                  "text": "30",
-                                  "textalign": "centre",
-                                  "font": {
-                                    "size": 8,
-                                    "weight": "medium",
-                                    "monospaced": "digits"
-                                  },
-                                  "constraints": {
-                                    "position": "centre"
-                                  }
-                                }
-                              ]
+                            "position": "centre",
+                            "size": {
+                              "width": 76
                             }
-                          ]
+                          },
+                          "font": {
+                            "size": 15,
+                            "weight": "light",
+                            "monospaced": "digits"
+                          }
                         },
                         {
                           "id": "rowTotp",
@@ -773,11 +731,31 @@
                   "constraints": {
                     "position": "centre",
                     "size": {
-                      "width": 280
+                      "width": 230
                     }
                   }
                 }
               ]
+            },
+            {
+              "id": "totpLabel",
+              "type": "label",
+              "text": "",
+              "textalign": "centre",
+              "font": {
+                "size": 15,
+                "weight": "medium",
+                "monospaced": "digits"
+              },
+              "colour": "labelColor",
+              "tooltip": "TOTP for the selected item · ⌘T to copy",
+              "constraints": {
+                "region": "centre",
+                "position": "centre",
+                "size": {
+                  "width": 170
+                }
+              }
             },
             {
               "constraints": {
@@ -814,20 +792,6 @@
                       }
                     }
                   ],
-                  "constraints": {
-                    "position": "centre"
-                  }
-                },
-                {
-                  "id": "totpLabel",
-                  "type": "label",
-                  "text": "",
-                  "hidden": true,
-                  "font": {
-                    "size": "small",
-                    "monospaced": "digits"
-                  },
-                  "tooltip": "Current TOTP · ⌘T to copy",
                   "constraints": {
                     "position": "centre"
                   }

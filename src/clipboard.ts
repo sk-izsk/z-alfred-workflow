@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { bool } from "./env.ts";
 import { JXA_STDIN, jxa } from "./proc.ts";
 
 /**
@@ -52,3 +53,6 @@ export const scheduleClear = (expected: number, seconds: number): void => {
   );
   child.unref();
 };
+
+/** Setting "Never put passwords on the clipboard": autofill/paste type them instead. */
+export const passwordsOffClipboard = (): boolean => bool("no_clipboard");

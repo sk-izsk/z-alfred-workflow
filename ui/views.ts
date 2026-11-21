@@ -22,6 +22,17 @@ const item = (action: string) => run(["item", action, sel("items")]);
 
 // ───────────────────────── Search Vault ─────────────────────────
 
+/** The selected item's TOTP, centred in the footer. Empty text (not hidden) when there's none. */
+const totpCentre: Json = {
+  id: "totpLabel",
+  type: "label",
+  text: "",
+  textalign: "centre",
+  font: { size: 15, weight: "medium", monospaced: "digits" },
+  colour: "labelColor",
+  tooltip: "TOTP for the selected item · ⌘T to copy",
+};
+
 const rowCell: Json = {
   id: "rowCell",
   type: "view",
@@ -84,43 +95,19 @@ const rowCell: Json = {
         symbol("rowPasskey", "person.badge.key", { tooltip: "Has a passkey" }),
         symbol("rowLock", "lock", { tooltip: "Master password re-prompt" }),
         {
-          // One fixed TOTP slot: the live code + ring, or (code hidden) a clock centred in it.
+          // TOTP: the clock icon, with the code beside it when TOTP Codes = "On each row".
           type: "view",
-          layout: "stack",
-          constraints: { size: { width: 104, height: 24 }, position: "centre" },
+          layout: "inline",
+          spacing: 6,
+          constraints: { position: "centre" },
           components: [
-            {
-              type: "view",
-              layout: "inline",
-              spacing: 8,
-              constraints: { position: "centre" },
-              components: [
-                inlineLabel("rowCode", {
-                  hidden: true,
-                  text: "000 000",
-                  textalign: "right",
-                  constraints: { size: { width: 70 } },
-                  font: { size: 15, weight: "light", monospaced: "digits" },
-                  tooltip: "Current TOTP · ⌘T to copy",
-                }),
-                {
-                  // Countdown ring with the seconds inside it.
-                  id: "rowRingBox",
-                  type: "view",
-                  layout: "stack",
-                  hidden: true,
-                  constraints: { size: 22, position: "centre" },
-                  components: [
-                    { id: "rowRing", type: "progress", style: "round", thickness: 2 },
-                    inlineLabel("rowSecs", {
-                      text: "30",
-                      textalign: "centre",
-                      font: { size: 8, weight: "medium", monospaced: "digits" },
-                    }),
-                  ],
-                },
-              ],
-            },
+            inlineLabel("rowCode", {
+              hidden: true,
+              text: "000 000",
+              textalign: "right",
+              constraints: { size: { width: 76 }, position: "centre" },
+              font: { size: 15, weight: "light", monospaced: "digits" },
+            }),
             symbol("rowTotp", "clock", { tooltip: "Has a TOTP key" }),
           ],
         },
@@ -213,22 +200,19 @@ export const search = window(
     components: [
       searchTop,
       searchList,
-      footer([
-        // Sized to its text: hidden in row mode, so it must not reserve space.
-        inlineLabel("totpLabel", {
-          hidden: true,
-          font: { size: "small", monospaced: "digits" },
-          tooltip: "Current TOTP · ⌘T to copy",
-        }),
-        footerButton("primaryButton", "Autofill  ↩", item("primary")),
-        footerButton("actionsButton", "Actions  {var:actions_shortcut}", item("menu")),
-        // ⌘↩ as a root shortcut swallows every ⌘ key in Alfred UI; a button key equivalent doesn't.
-        footerButton("pasteButton", "", item("paste-password"), {
-          shortcut: "⌘↩",
-          opacity: 0,
-          constraints: { size: { width: 0, height: 0 } },
-        }),
-      ]),
+      footer(
+        [
+          footerButton("primaryButton", "Autofill  ↩", item("primary")),
+          footerButton("actionsButton", "Actions  {var:actions_shortcut}", item("menu")),
+          // ⌘↩ as a root shortcut swallows every ⌘ key in Alfred UI; a button key equivalent doesn't.
+          footerButton("pasteButton", "", item("paste-password"), {
+            shortcut: "⌘↩",
+            opacity: 0,
+            constraints: { size: { width: 0, height: 0 } },
+          }),
+        ],
+        totpCentre,
+      ),
     ],
   },
   {
@@ -237,6 +221,7 @@ export const search = window(
       page_url: { scriptenv: true, default: "" },
       totp_seeds: { scriptenv: true, default: "" },
       fill_data: { scriptenv: true, default: "" },
+      totp_period: { scriptenv: true, default: "" },
       selected_id: { scriptenv: true, default: "" },
       folder_filter: { persist: true, scriptenv: true, default: "all" },
       actions_shortcut: { src: "variable", default: "⌘K" },

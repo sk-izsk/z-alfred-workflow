@@ -58,12 +58,10 @@ export const searchField = (id: string, placeholder: string, list: string, enter
 });
 
 /** Footer bar: status on the left, action hints on the right (like Raycast's, but Alfred-coloured). */
-export const footer = (items: Json[]): Json => {
-  const right = [backHint(), ...items];
-  return footerView(right);
-};
+/** Footer: status left, optional `centre` (e.g. the TOTP code), shortcuts right. */
+export const footer = (items: Json[], centre?: Json): Json => footerView([backHint(), ...items], centre);
 
-const footerView = (right: Json[]): Json => ({
+const footerView = (right: Json[], centre?: Json): Json => ({
   constraints: { region: "bottom" },
   type: "view",
   layout: "border",
@@ -81,10 +79,15 @@ const footerView = (right: Json[]): Json => ({
           colour: "secondaryLabelColor",
           font: { size: 13 },
           text: "…",
-          constraints: { size: { width: 280 } },
+          constraints: { size: { width: 230 } },
         }),
       ],
     },
+    // Fixed width: labels keep the size they had when the window opened (empty), so a later code
+    // would be cut to one character.
+    ...(centre
+      ? [{ ...centre, constraints: { region: "centre", position: "centre", size: { width: 170 } } }]
+      : []),
     {
       constraints: { region: "right", insets: { right: 6 } },
       type: "view",

@@ -166,8 +166,11 @@ const PRIMARY: Record<string, string> = {
   "copy-password": "Copy",
 };
 
-export type TotpDisplay = "row" | "footer" | "off";
-export const totpDisplay = (): TotpDisplay => str("totp_display", "row") as TotpDisplay;
+export type TotpDisplay = "footer" | "row" | "off";
+export const totpDisplay = (): TotpDisplay => {
+  const value = str("totp_display", "footer");
+  return value === "row" || value === "off" ? value : "footer";
+};
 
 const seedsFromEnv = (): Record<string, string> => {
   try {
@@ -191,59 +194,67 @@ const codeFor = (seed: string, now = Date.now()) => {
 /** Selection changed: footer shows the primary action (and the TOTP in footer mode). */
 export const selected = ([id = ""]: string[]): Action => {
   const meta = readCache()?.items.find((m) => m.id === id);
-  if (!meta) return update({ totpLabel: { hidden: true } }, true);
+  if (!meta) return update({ totpLabel: { text: "" } });
   const primary =
     meta.type === ItemType.Login ? (PRIMARY[str("enter_action", "fill")] ?? "Autofill") : "Details";
-  // Footer mode only; in row mode the codes live on the rows.
   const footerMode = totpDisplay() === "footer";
+  if (totpDisplay() === "row") return update({ primaryButton: { text: `${primary}  ↩` } });
   const code = footerMode ? codeFor(seedsFromEnv()[id] ?? "") : undefined;
   const isProtected = footerMode && meta.hasTotp && meta.reprompt === 1;
   const totp: Action = code
     ? {
-        hidden: false,
         text: `${code.code}  ${code.left}s`,
-        colour: code.urgent ? "systemRedColor" : "secondaryLabelColor",
+        colour: code.urgent ? "systemRedColor" : "labelColor",
       }
     : isProtected
-      ? { hidden: false, text: "••• •••  🔒", colour: "tertiaryLabelColor" }
-      : { hidden: true };
-  return update({ primaryButton: { text: `${primary}  ↩` }, totpLabel: totp }, true);
+      ? { text: "••• •••  🔒", colour: "tertiaryLabelColor" }
+      : { text: "" };
+  return update({ primaryButton: { text: `${primary}  ↩` }, totpLabel: totp });
 };
 
 /**
  * Every second: in row mode, replace just the TOTP rows in place (selection and filter stay,
  * same trick as the Authenticator); in footer mode, refresh the selected item's code.
  */
+const PERIOD_MS = 30_000;
+
+/** TOTP rows with their current code (row mode). Only called when the codes change. */
+const codeRows = (cache: Cache, seeds: Record<string, string>, now = Date.now()) =>
+  buildRows({ ...cache, items: cache.items.filter((m) => seeds[m.id]) }, "all", str("page_url")).map(
+    (row) => {
+      const code = codeFor(seeds[row.uid] ?? "", now);
+      return {
+        ...row,
+        "rowCode.text": code?.code ?? "",
+        "rowCode.hidden": !code,
+      };
+    },
+  );
+
+/**
+ * Every second. Footer mode: the selected item's code + seconds in the footer. Row mode: only
+ * the countdown in the footer; the rows are refreshed only when the codes change (every 30 s),
+ * because any row refresh makes Alfred scroll back to the selection.
+ */
 export const tick = ([id = process.env.selected_id ?? ""]: string[]): Action => {
   const display = totpDisplay();
+  if (display === "off") return {};
   if (display === "footer") return selected([id]);
-  if (display !== "row") return {};
+  const now = Date.now();
+  const left = 30 - (Math.floor(now / 1000) % 30);
+  const timer = update({
+    totpLabel: { text: `⏱ ${left}s`, colour: left <= 5 ? "systemRedColor" : "secondaryLabelColor" },
+  });
+  const period = String(Math.floor(now / PERIOD_MS));
   const seeds = seedsFromEnv();
   const cache = readCache();
-  if (!cache || !Object.keys(seeds).length) return {};
-  const now = Date.now();
-  const withTotp = { ...cache, items: cache.items.filter((m) => seeds[m.id]) };
-  const srcmap = Object.fromEntries(
-    buildRows(withTotp, "all", str("page_url")).map((row) => {
-      const code = codeFor(seeds[row.uid] ?? "", now);
-      return [
-        row.uid,
-        {
-          ...row,
-          "rowCode.text": code?.code ?? "",
-          "rowCode.hidden": !code,
-          "rowCode.colour": code?.urgent ? "systemRedColor" : "secondaryLabelColor",
-          "rowTotp.hidden": Boolean(code),
-          "rowRingBox.hidden": !code,
-          "rowRing.progress": code ? code.left / code.period : 0,
-          "rowRing.colour": code?.urgent ? "systemRedColor" : null,
-          "rowSecs.text": code ? String(code.left) : "",
-          "rowSecs.colour": code?.urgent ? "systemRedColor" : "secondaryLabelColor",
-        },
-      ];
-    }),
+  if (period === process.env.totp_period || !cache || !Object.keys(seeds).length) return timer;
+  const srcmap = Object.fromEntries(codeRows(cache, seeds, now).map((r) => [r.uid, r]));
+  return merge(
+    timer,
+    vars({ totp_period: period }),
+    update({ items: { data: { modify: { replace: { autoselect: false, srcmap } } } } }),
   );
-  return update({ items: { data: { modify: { replace: { autoselect: false, srcmap } } } } });
 };
 
 // --- accounts ---

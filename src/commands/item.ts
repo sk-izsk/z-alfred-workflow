@@ -1,5 +1,5 @@
 import { encode, bw } from "../bw.ts";
-import { copySecret, copyText, scheduleClear } from "../clipboard.ts";
+import { copySecret, copyText, passwordsOffClipboard, scheduleClear } from "../clipboard.ts";
 import { bool, num, str } from "../env.ts";
 import { readState, requireSession } from "../session.ts";
 import { parseTotp, totpCode } from "../totp.ts";
@@ -160,10 +160,17 @@ const HANDLERS: Record<string, Handler> = {
       ...(data && { fill_u: data.u, fill_p: data.p, fill_t: data.t, fill_ready: "1" }),
     });
   },
-  "paste-password": async (item) => pasteOut((await item()).login?.password ?? "", "password"),
+  "paste-password": async (item) => {
+    const password = (await item()).login?.password ?? "";
+    if (!passwordsOffClipboard() || !password) return pasteOut(password, "password");
+    return finish({ bw_out: "type", type_value: password }); // typed, never on the clipboard
+  },
   "paste-username": async (item) => pasteOut((await item()).login?.username ?? "", "username"),
   "paste-totp": async (item) => pasteOut(safeCode((await item()).login?.totp ?? ""), "TOTP"),
-  "copy-password": async (item) => copyOut((await item()).login?.password ?? "", "password"),
+  "copy-password": async (item) =>
+    passwordsOffClipboard()
+      ? status("Copying passwords is turned off (Workflow Configuration)", "systemOrangeColor")
+      : copyOut((await item()).login?.password ?? "", "password"),
   "copy-username": async (item) => {
     const value = (await item()).login?.username ?? "";
     if (!value) return status("No username on this item", "systemOrangeColor");
@@ -216,6 +223,9 @@ export const fieldCommand = ([id = "", index = "0"]: string[]): Promise<Action> 
   withSession("search", async (active) => {
     const field = detailFields(await getItem(active, id))[Number(index)];
     if (!field) return status("No field there", "systemOrangeColor");
+    if (field.name === "Password" && passwordsOffClipboard()) {
+      return status("Copying passwords is turned off (Workflow Configuration)", "systemOrangeColor");
+    }
     return field.secret
       ? copyOut(field.value, field.name.toLowerCase())
       : (await copyText(field.value),
@@ -237,7 +247,10 @@ export const menuFor = (id: string): Action => {
     "actionsButton",
     [
       login && entry("Autofill  ↩", "fill", id),
-      login && meta.hasPassword && entry("Copy Password  ⌘C", "copy-password", id),
+      login &&
+        meta.hasPassword &&
+        !passwordsOffClipboard() &&
+        entry("Copy Password  ⌘C", "copy-password", id),
       login && meta.hasPassword && entry("Paste Password  ⌘↩", "paste-password", id),
       login && meta.username && entry("Copy Username  ⌘U", "copy-username", id),
       login && meta.username && entry("Paste Username", "paste-username", id),
