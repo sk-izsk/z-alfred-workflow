@@ -212,13 +212,9 @@ export const selected = ([id = ""]: string[]): Action => {
   return update({ primaryButton: { text: `${primary}  ↩` }, totpLabel: totp });
 };
 
-/**
- * Every second: in row mode, replace just the TOTP rows in place (selection and filter stay,
- * same trick as the Authenticator); in footer mode, refresh the selected item's code.
- */
 const PERIOD_MS = 30_000;
 
-/** TOTP rows with their current code (row mode). Only called when the codes change. */
+/** TOTP rows with their current code and expiry colour (row mode). */
 const codeRows = (cache: Cache, seeds: Record<string, string>, now = Date.now()) =>
   buildRows({ ...cache, items: cache.items.filter((m) => seeds[m.id]) }, "all", str("page_url")).map(
     (row) => {
@@ -227,13 +223,14 @@ const codeRows = (cache: Cache, seeds: Record<string, string>, now = Date.now())
         ...row,
         "rowCode.text": code?.code ?? "",
         "rowCode.hidden": !code,
+        "rowCode.colour": code?.urgent ? "systemRedColor" : "labelColor",
       };
     },
   );
 
 /**
  * Every second. Footer mode: the selected item's code + seconds in the footer. Row mode: only
- * the countdown in the footer; the rows are refreshed only when the codes change (every 30 s),
+ * the countdown in the footer; rows refresh when codes change or enter their final 5 seconds,
  * because any row refresh makes Alfred scroll back to the selection.
  */
 export const tick = ([id = process.env.selected_id ?? ""]: string[]): Action => {
@@ -245,7 +242,7 @@ export const tick = ([id = process.env.selected_id ?? ""]: string[]): Action => 
   const timer = update({
     totpLabel: { text: `⏱ ${left}s`, colour: left <= 5 ? "systemRedColor" : "secondaryLabelColor" },
   });
-  const period = String(Math.floor(now / PERIOD_MS));
+  const period = `${Math.floor(now / PERIOD_MS)}:${left <= 5}`;
   const seeds = seedsFromEnv();
   const cache = readCache();
   if (period === process.env.totp_period || !cache || !Object.keys(seeds).length) return timer;
