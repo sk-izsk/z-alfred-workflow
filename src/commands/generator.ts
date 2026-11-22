@@ -3,9 +3,9 @@ import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { bw } from "../bw.ts";
-import { copySecret, scheduleClear } from "../clipboard.ts";
+import { copySecret, passwordsOffClipboard, scheduleClear } from "../clipboard.ts";
 import { BUNDLE_ID, bool, num, str } from "../env.ts";
-import { pressPaste, sleep } from "../keys.ts";
+import { pressPaste, sleep, typeText } from "../keys.ts";
 import { type Action, errorStatus, finish, merge, status, update, vars } from "../ui.ts";
 
 /** Generator options; the window persists them, the quick command reads the same values. */
@@ -156,6 +156,11 @@ export const genCommand = async (args: string[]): Promise<Action> => {
 export const genCopy = async ([mode = "copy"]: string[]): Promise<Action> => {
   const value = str("generated");
   if (!value) return status("Nothing generated yet", "systemOrangeColor");
+  if (passwordsOffClipboard()) {
+    return mode === "paste"
+      ? finish({ bw_out: "type", type_value: value })
+      : status("Copying passwords is turned off (Workflow Configuration)", "systemOrangeColor");
+  }
   const count = await copySecret(value);
   if (mode === "paste") return finish({ bw_out: "paste", bw_cc: String(count) });
   scheduleClear(count, num("clipboard_clear", 60));
@@ -165,6 +170,12 @@ export const genCopy = async ([mode = "copy"]: string[]): Promise<Action> => {
 /** Keyword "Generate Password (Quick)": no window, copy (and paste) with the saved options. */
 export const genQuick = async (): Promise<void> => {
   const value = await generate(savedOptions());
+  if (passwordsOffClipboard()) {
+    if (!bool("quick_paste", true)) throw new Error("Copying passwords is turned off (Workflow Configuration)");
+    await sleep(250);
+    await typeText(value);
+    return;
+  }
   const count = await copySecret(value);
   if (bool("quick_paste", true)) {
     await sleep(250);

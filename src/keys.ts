@@ -26,6 +26,8 @@ export const sleep = (ms: number): Promise<void> => new Promise((resolve) => set
  * Slower than pasting and keyboard-layout dependent, so it's only used when the user asks.
  */
 export const typeText = async (text: string): Promise<void> => {
+  if (!/^[\x20-\x7E]*$/.test(text))
+    throw new Error("Clipboard-free typing supports plain ASCII only. Nothing was copied.");
   try {
     await jxa(`${JXA_STDIN}\nApplication("System Events").keystroke(stdin());`, text);
   } catch (error) {

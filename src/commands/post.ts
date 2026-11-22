@@ -1,4 +1,4 @@
-import { clearIfUnchanged, copySecret, passwordsOffClipboard, scheduleClear } from "../clipboard.ts";
+import { copySecret, passwordsOffClipboard, scheduleClear } from "../clipboard.ts";
 import { bool, num, str } from "../env.ts";
 import { pressKey, pressPaste, sleep, typeText } from "../keys.ts";
 import { log, timed } from "../log.ts";
@@ -19,19 +19,12 @@ const clearSeconds = () => num("clipboard_clear", 60);
 /** Keystroke typing is only reliable for plain ASCII; other letters get mistyped by macOS. */
 const typable = (value: string) => /^[\x20-\x7E]*$/.test(value);
 
-/**
- * Type instead of paste: the value never touches the clipboard. A value with non-ASCII letters
- * is pasted instead, and the clipboard is wiped right after so it isn't left behind.
- */
+const typingError =
+  "Clipboard-free typing supports plain ASCII only. Nothing was copied. Use ordinary paste mode for this value.";
+
+/** Never silently put a value on the clipboard when clipboard-free mode is enabled. */
 const typeValue = async (value: string): Promise<number> => {
-  if (!typable(value)) {
-    const count = await copySecret(value);
-    await sleep(40);
-    await pressPaste();
-    await sleep(SETTLE_MS);
-    await clearIfUnchanged(count);
-    return 0;
-  }
+  if (!typable(value)) throw new Error(typingError);
   await typeText(value);
   await sleep(SETTLE_MS);
   return 0;
@@ -64,6 +57,8 @@ const fillValues = async () => {
 const fill = async (): Promise<string> => {
   log(`fill: values ${str("fill_ready") === "1" ? "from window memory" : "fetched from bw"}`);
   const { name, username, password, totp } = await timed("fill: get values", fillValues);
+  // Validate both fields before typing either, so a half-filled form or clipboard fallback can't happen.
+  if (passwordsOffClipboard() && (!typable(username) || !typable(password))) throw new Error(typingError);
   await sleep(120); // let focus return to the page
   if (username) {
     await timed("fill: paste username", () => pasteValue(username));
