@@ -171,7 +171,8 @@ export const genCopy = async ([mode = "copy"]: string[]): Promise<Action> => {
 export const genQuick = async (): Promise<void> => {
   const value = await generate(savedOptions());
   if (passwordsOffClipboard()) {
-    if (!bool("quick_paste", true)) throw new Error("Copying passwords is turned off (Workflow Configuration)");
+    if (!bool("quick_paste", true))
+      throw new Error("Copying passwords is turned off (Workflow Configuration)");
     await sleep(250);
     await typeText(value);
     return;

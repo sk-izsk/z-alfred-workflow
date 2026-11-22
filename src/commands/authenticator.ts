@@ -98,7 +98,8 @@ export const authTick = (): Action => {
 
 export const authCopy = async ([id = "", mode = "copy"]: string[]): Promise<Action> => {
   // Codes held by an open window must stop working once the vault has locked.
-  if (!(await getSession())) return status("Vault locked. Reopen Authenticator to unlock.", "systemOrangeColor");
+  if (!(await getSession()))
+    return status("Vault locked. Reopen Authenticator to unlock.", "systemOrangeColor");
   const entry = seeds().find((e) => e.id === id);
   if (!entry) return status("Select a code first", "systemOrangeColor");
   if (entry.protected) {

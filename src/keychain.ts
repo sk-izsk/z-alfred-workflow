@@ -30,7 +30,13 @@ export const keychainSet = async (account: KeychainAccount, secret: string): Pro
 };
 
 export const keychainDelete = async (account: KeychainAccount): Promise<void> => {
-  const { code } = await run("/usr/bin/security", ["delete-generic-password", "-s", BUNDLE_ID, "-a", entry(account)]);
+  const { code } = await run("/usr/bin/security", [
+    "delete-generic-password",
+    "-s",
+    BUNDLE_ID,
+    "-a",
+    entry(account),
+  ]);
   // security maps errSecItemNotFound (-25300) to exit status 44.
   if (code !== 0 && code !== 44) throw new Error("Could not remove the saved Keychain credential");
 };
