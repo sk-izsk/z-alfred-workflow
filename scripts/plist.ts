@@ -381,7 +381,7 @@ const userconfigurationconfig = [
     ],
     "60",
   ),
-  text("vault_timeout", "Lock After", "60", "Minutes of inactivity before the vault locks. 0 = never."),
+  text("vault_timeout", "Lock After", "15", "Minutes of inactivity before the vault locks. 0 = never."),
   pick(
     "quick_unlock",
     "Quick Unlock",
@@ -390,8 +390,8 @@ const userconfigurationconfig = [
       ["PIN", "pin"],
       ["Off (always master password)", "off"],
     ],
-    "touchid",
-    "Touch ID / PIN keeps your master password in the macOS Keychain to unlock again after the timeout.",
+    "off",
+    "Off keeps nothing saved. Touch ID / PIN are opt-in conveniences: they keep your master password in the macOS Keychain, behind a check in this workflow rather than a system-enforced lock.",
   ),
   pick(
     "reprompt_grace",

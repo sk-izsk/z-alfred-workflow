@@ -25,6 +25,8 @@ export type State = {
   pinHash?: string;
   pinFails?: number;
   repromptedAt?: number;
+  /** Random per unlock, so work started before a lock can tell it is stale. */
+  sessionId?: string;
   autoCancelledAt?: number;
 };
 
@@ -62,11 +64,11 @@ export const verifySecret = (secret: string, stored = ""): boolean => {
 
 /** Minutes of inactivity before the vault locks; 0 = never. */
 export const vaultTimeoutMs = (): number => {
-  const minutes = num("vault_timeout", 60);
-  return minutes > 0 ? minutes * 60_000 : 0; // 0 = never; non-numbers fall back to 60
+  const minutes = num("vault_timeout", 15);
+  return minutes > 0 ? minutes * 60_000 : 0; // 0 = never; non-numbers fall back to 15
 };
 export type QuickUnlock = "off" | "touchid" | "pin";
-export const quickUnlockMode = (): QuickUnlock => str("quick_unlock", "touchid") as QuickUnlock;
+export const quickUnlockMode = (): QuickUnlock => str("quick_unlock", "off") as QuickUnlock;
 
 // --- session ---
 
@@ -93,7 +95,7 @@ export const status = async (verify = false): Promise<Status> => {
     const session = await keychainGet("session");
     const real = await bwJson<{ status: Status; userEmail?: string }>(["status"], { session });
     writeState({ loggedIn: real.status !== "unauthenticated", email: real.userEmail ?? undefined });
-    if (real.status !== "unlocked") await keychainDelete("session");
+    if (real.status !== "unlocked") await keychainDelete("session").catch(() => undefined);
     return real.status === "unlocked" && !(await getSession()) ? "locked" : real.status;
   }
   if (!readState().loggedIn) return "unauthenticated";
@@ -125,8 +127,14 @@ export const unlock = async (password: string): Promise<string> => {
     env: { BW_PASSWORD: password },
   });
   await keychainSet("session", session);
-  writeState({ masterHash: hashSecret(password), lastUsed: Date.now(), pinFails: 0 });
+  writeState({
+    masterHash: hashSecret(password),
+    lastUsed: Date.now(),
+    pinFails: 0,
+    sessionId: randomBytes(8).toString("hex"),
+  });
   if (quickUnlockMode() !== "off") await keychainSet("master", password);
+  else await keychainDelete("master"); // Off must not leave an older saved master behind
   return session;
 };
 
@@ -141,6 +149,7 @@ const MAX_PIN_FAILS = 5;
 /** Touch ID / PIN: proves it's you, then unlocks with the master password kept in the Keychain. */
 export const quickUnlock = async (pin = ""): Promise<string> => {
   const mode = quickUnlockMode();
+  if (mode === "off") throw new Error("Quick unlock is turned off. Use your master password");
   if (mode === "touchid" && !(await authenticate())) throw new Error("Authentication cancelled");
   if (mode === "pin") {
     const state = readState();
@@ -175,9 +184,11 @@ export const verifyMaster = (password: string): boolean => verifySecret(password
  */
 export const lock = async (): Promise<void> => {
   const session = await keychainGet("session");
-  await keychainDelete("session");
+  // The re-prompt verifier and its grace period must not outlive the unlocked session.
+  writeState({ masterHash: undefined, repromptedAt: undefined, sessionId: undefined });
   (await import("./vault.ts")).invalidateVault();
   if (session) bwDetached(["lock"], session);
+  await keychainDelete("session"); // throws if the key could not be removed
 };
 
 export const logout = async (): Promise<void> => {

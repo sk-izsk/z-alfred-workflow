@@ -2,7 +2,7 @@ import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:
 import { existsSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { bw, bwJson } from "./bw.ts";
-import { cacheDir, perAccount } from "./env.ts";
+import { accountId, cacheDir, perAccount } from "./env.ts";
 import { cachedIcon, fetchIconsLater } from "./icons.ts";
 import { hostOf, matchesSite } from "./uri.ts";
 
@@ -131,11 +131,17 @@ export const invalidateVault = (): void => {
 };
 
 export const fetchVault = async (session: string, sync = false): Promise<Vault> => {
+  const { readState } = await import("./session.ts");
+  const account = accountId();
+  const generation = readState().sessionId;
   if (sync) await bw(["sync"], { session });
   const [items, folders] = await Promise.all([
     bwJson<Item[]>(["list", "items"], { session }),
     bwJson<Folder[]>(["list", "folders"], { session }),
   ]);
+  // A lock or account switch during the slow fetch must not write that vault back to the cache.
+  if (account !== accountId() || generation !== readState().sessionId)
+    throw new Error("Vault changed or locked during refresh");
   const metas = items.map(toMeta);
   writeCache({ syncedAt: Date.now(), folders, items: metas });
   writeSecure(session, { items, folders });

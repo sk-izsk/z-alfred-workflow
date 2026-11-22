@@ -15,7 +15,7 @@ Search, autofill and manage your [Bitwarden](https://bitwarden.com) vault from [
 - **Password / passphrase generator**, including a one-keystroke "generate and paste".
 - **Authenticator** view, **Bitwarden Send** (create, copy link, receive, delete), **new login / secure note**, **new folder**.
 - **Multiple accounts:** switch between them, each with its own unlock.
-- **Touch ID or PIN** to unlock again after the vault locks, and the **master-password re-prompt** for protected items.
+- **Optional Touch ID or PIN** (off by default) to unlock again after the vault locks, and the **master-password re-prompt** for protected items.
 - **Self-hosted and EU servers**, including self-signed certificates.
 
 ## Requirements
@@ -92,8 +92,8 @@ Alfred Preferences → Workflows → **Bitwarden** → **Configure Workflow**.
 | TOTP Codes | On each row | Or in the footer, or hidden |
 | Copying | Close after copy | Keep the window open instead |
 | Clear Clipboard | 1 minute | 15 s … 5 min, or never |
-| Lock After | 60 | Minutes idle before locking (0 = never) |
-| Quick Unlock | Touch ID | Touch ID (or Mac password / Apple Watch), PIN, or off |
+| Lock After | 15 | Minutes idle before locking (0 = never) |
+| Quick Unlock | Off | Off, or opt in to Touch ID (or Mac password / Apple Watch) or PIN |
 | Re-prompt Grace | 5 minutes | How long a confirmed master password counts for protected items |
 | Sync | On open, if older than 5 min | Pull changes when opening |
 | Icons | On | Website icons from Bitwarden's icon server |
@@ -110,7 +110,10 @@ Alfred Preferences → Workflows → **Bitwarden** → **Configure Workflow**.
   - A plain cache holds only names, usernames, URLs and flags.
   - The full vault is cached in `vault.enc`, **encrypted with AES-256-GCM** using a key derived from the unlock session. Locking deletes the session and the file, so nothing is readable while locked.
 - **In memory only:** an open vault window keeps login usernames and passwords in memory for instant autofill. Re-prompt items are excluded, and it's gone when the window closes.
-- **Quick unlock** (Touch ID / PIN) keeps your master password in the login Keychain and asks for Touch ID or the PIN before using it. Set *Quick Unlock* to *Off* to avoid this. Logging out deletes it.
+- **Quick unlock** is off by default. If you opt in (Touch ID / PIN), your master password is kept in the login Keychain and this workflow asks for Touch ID or the PIN before using it. That check is made by the workflow, not enforced by macOS, so treat it as a convenience, not protection: anything that can read your login Keychain can skip it. Turning it off or logging out deletes the saved password.
+- **While unlocked**, the session key is in the login Keychain and anything running as your user can use it to read your vault. Keep *Lock After* short; it counts idle time, so each use restarts it.
+- **Not covered:** the Bitwarden CLI may persist an API `clientSecret` in its own data, and cached item names, usernames and URLs are stored unencrypted. Clipboard hiding is advisory.
+- **Clipboard-free mode** types passwords instead of copying them, so it only works for plain ASCII; other passwords are refused rather than copied. Password-protected file Sends are refused because the CLI would expose the password in process arguments.
 - **Clipboard:** copied secrets are marked concealed and transient, and cleared after the configured time, but only if you haven't copied something else since.
 - **Re-prompt items** never show their TOTP code until you confirm your master password.
 
