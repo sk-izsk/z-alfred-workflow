@@ -3,7 +3,7 @@ import { existsSync, readdirSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { bwAppDataDir, str } from "./env.ts";
-import { run } from "./proc.ts";
+import { publicEnv, run } from "./proc.ts";
 
 const home = homedir();
 
@@ -62,7 +62,7 @@ export type BwOptions = {
 };
 
 const bwEnv = (opts: BwOptions): NodeJS.ProcessEnv => ({
-  ...process.env,
+  ...publicEnv(),
   PATH: [...searchDirs(), process.env.PATH ?? ""].join(":"),
   BITWARDENCLI_APPDATA_DIR: bwAppDataDir(),
   NODE_NO_WARNINGS: "1",

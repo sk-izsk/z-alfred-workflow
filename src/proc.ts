@@ -5,6 +5,16 @@ import { spawn } from "node:child_process";
 export type RunOptions = { input?: string; env?: NodeJS.ProcessEnv; timeoutMs?: number };
 export type RunResult = { code: number; stdout: string; stderr: string };
 
+/** UI-held vault data must not leak into unrelated subprocesses or detached workers. */
+export const publicEnv = (): NodeJS.ProcessEnv =>
+  Object.fromEntries(
+    Object.entries(process.env).filter(
+      ([key]) =>
+        !/^(secret_|fill_|BW_|DYLD_)/i.test(key) &&
+        !["auth_entries", "totp_seeds", "type_value", "generated", "send_text", "NODE_OPTIONS"].includes(key),
+    ),
+  );
+
 /** What a subprocess is, for the debug log, without any argument that could hold a secret. */
 const label = (cmd: string, args: string[]): string => {
   const name = basename(cmd);
@@ -19,7 +29,7 @@ export const run = (cmd: string, args: string[], opts: RunOptions = {}): Promise
 
 const spawnRun = (cmd: string, args: string[], opts: RunOptions): Promise<RunResult> =>
   new Promise((resolve, reject) => {
-    const child = spawn(cmd, args, { env: opts.env ?? process.env, timeout: opts.timeoutMs ?? 60_000 });
+    const child = spawn(cmd, args, { env: opts.env ?? publicEnv(), timeout: opts.timeoutMs ?? 60_000 });
     let stdout = "";
     let stderr = "";
     child.stdout.on("data", (chunk) => (stdout += chunk));

@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { bool } from "./env.ts";
-import { JXA_STDIN, jxa } from "./proc.ts";
+import { JXA_STDIN, jxa, publicEnv } from "./proc.ts";
 
 /**
  * Secrets are written with the nspasteboard.org markers, so Alfred's clipboard history,
@@ -25,7 +25,7 @@ export const copySecret = async (value: string): Promise<number> => Number(await
 /** Plain copy (non-secret things like a Send link). */
 export const copyText = async (value: string): Promise<void> => {
   await new Promise<void>((resolve) => {
-    const child = spawn("/usr/bin/pbcopy");
+    const child = spawn("/usr/bin/pbcopy", [], { env: publicEnv() });
     child.on("close", () => resolve());
     child.stdin.end(value);
   });
@@ -49,6 +49,7 @@ export const scheduleClear = (expected: number, seconds: number): void => {
     {
       detached: true,
       stdio: "ignore",
+      env: publicEnv(),
     },
   );
   child.unref();
