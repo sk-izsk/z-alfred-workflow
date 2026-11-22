@@ -158,7 +158,7 @@ export const genCopy = async ([mode = "copy"]: string[]): Promise<Action> => {
   if (!value) return status("Nothing generated yet", "systemOrangeColor");
   if (passwordsOffClipboard()) {
     return mode === "paste"
-      ? finish({ bw_out: "type", type_value: value })
+      ? finish({ bw_out: "type", type_generated: "1", type_value: value })
       : status("Copying passwords is turned off (Workflow Configuration)", "systemOrangeColor");
   }
   const count = await copySecret(value);

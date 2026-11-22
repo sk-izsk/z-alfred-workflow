@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { bool, cacheDir } from "./env.ts";
+import { publicEnv } from "./proc.ts";
 
 /**
  * Website icons from Bitwarden's own icon server (what the official apps use).
@@ -58,5 +59,6 @@ export const fetchIconsLater = (hosts: string[]): void => {
   spawn(process.execPath, [process.argv[1] ?? "", "fetch-icons", ...todo], {
     detached: true,
     stdio: "ignore",
+    env: publicEnv(),
   }).unref();
 };

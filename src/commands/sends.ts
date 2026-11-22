@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { bw, bwJson, encode } from "../bw.ts";
 import { copyText } from "../clipboard.ts";
 import { str } from "../env.ts";
-import { getSession } from "../session.ts";
+import { getSession, windowBinding, windowValid } from "../session.ts";
 import { type Action, closeSheet, finish, fn, merge, status, update, vars } from "../ui.ts";
 import { withSession } from "./account.ts";
 
@@ -51,7 +51,10 @@ export const loadSends = async (active: string): Promise<Action> => {
     (a, b) => Date.parse(a.deletionDate) - Date.parse(b.deletionDate),
   );
   return merge(
-    vars({ send_urls: JSON.stringify(Object.fromEntries(sends.map((s) => [s.id, s.accessUrl]))) }),
+    vars({
+      send_urls: JSON.stringify(Object.fromEntries(sends.map((s) => [s.id, s.accessUrl]))),
+      ...windowBinding(),
+    }),
     update({ sends: { data: { src: sends.map(toRow) } } }),
     fn({ sends: ["filterdata", "selectfirst"] }),
     status(
@@ -68,6 +71,7 @@ const urlFor = (id: string): string =>
   (JSON.parse(process.env.send_urls || "{}") as Record<string, string>)[id] ?? "";
 
 export const sendCopy = async ([id = ""]: string[]): Promise<Action> => {
+  if (!(await windowValid())) return status("Vault locked. Reopen Sends to unlock.", "systemOrangeColor");
   const url = urlFor(id);
   if (!url) return status("Select a Send first", "systemOrangeColor");
   await copyText(url);

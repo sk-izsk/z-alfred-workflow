@@ -12,7 +12,10 @@ const readPlist = (path: string): Record<string, unknown> => {
   if (!existsSync(path)) return {};
   try {
     return JSON.parse(
-      execFileSync("/usr/bin/plutil", ["-convert", "json", "-o", "-", path], { encoding: "utf8" }),
+      execFileSync("/usr/bin/plutil", ["-convert", "json", "-o", "-", path], {
+        encoding: "utf8",
+        env: { PATH: "/usr/bin:/bin" }, // plutil needs nothing from the workflow environment
+      }),
     );
   } catch {
     return {};

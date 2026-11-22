@@ -1,6 +1,6 @@
 import { copySecret, scheduleClear } from "../clipboard.ts";
 import { bool, num } from "../env.ts";
-import { getSession } from "../session.ts";
+import { getSession, windowBinding, windowValid } from "../session.ts";
 import { formatCode, totpCode, totpPeriod, totpRemaining } from "../totp.ts";
 import { type Action, finish, fn, merge, status, update, vars } from "../ui.ts";
 import { loadVaultData } from "../vault.ts";
@@ -70,7 +70,7 @@ export const loadCodes = async (active: string): Promise<Action> => {
     }))
     .toSorted((a, b) => a.name.localeCompare(b.name));
   return merge(
-    vars({ auth_entries: JSON.stringify(entries) }),
+    vars({ auth_entries: JSON.stringify(entries), ...windowBinding() }),
     update({ codes: { data: { src: entries.map((e) => row(e)) } } }),
     fn({ codes: ["filterdata", "selectfirst"] }),
     status(entries.length ? `${entries.length} authenticator codes` : "No logins with a TOTP key"),
@@ -80,8 +80,19 @@ export const loadCodes = async (active: string): Promise<Action> => {
 
 export const authLoad = (): Promise<Action> => withSession("auth", loadCodes);
 
+const staleWindow = (): Action =>
+  merge(
+    vars({ auth_entries: "", window_session: "" }),
+    update({ codes: { data: { src: [] } } }),
+    status("Vault locked. Reopen Authenticator to unlock.", "systemOrangeColor"),
+    { pulse: { interval: 0 } },
+  );
+
 /** Pulse, every second: refresh codes and countdowns in place (selection stays). */
-export const authTick = (): Action => {
+export const authTick = async (): Promise<Action> => {
+  if (!process.env.window_session) return {}; // nothing loaded yet
+  // Background ticks must neither keep showing codes after a lock nor extend the idle timer.
+  if (!(await windowValid())) return staleWindow();
   const entries = seeds().filter((e) => !e.protected);
   if (!entries.length) return {};
   const now = Date.now();
@@ -97,9 +108,9 @@ export const authTick = (): Action => {
 };
 
 export const authCopy = async ([id = "", mode = "copy"]: string[]): Promise<Action> => {
-  // Codes held by an open window must stop working once the vault has locked.
-  if (!(await getSession()))
-    return status("Vault locked. Reopen Authenticator to unlock.", "systemOrangeColor");
+  // Codes held by an open window must stop working once the vault locks or the account changes.
+  if (!(await windowValid())) return staleWindow();
+  await getSession(); // a real use: restart the idle timer
   const entry = seeds().find((e) => e.id === id);
   if (!entry) return status("Select a code first", "systemOrangeColor");
   if (entry.protected) {

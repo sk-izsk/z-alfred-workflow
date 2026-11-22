@@ -131,16 +131,17 @@ export const invalidateVault = (): void => {
 };
 
 export const fetchVault = async (session: string, sync = false): Promise<Vault> => {
-  const { readState } = await import("./session.ts");
+  const { getSession, readState } = await import("./session.ts");
   const account = accountId();
   const generation = readState().sessionId;
+  if (!generation) throw new Error("Vault is locked");
   if (sync) await bw(["sync"], { session });
   const [items, folders] = await Promise.all([
     bwJson<Item[]>(["list", "items"], { session }),
     bwJson<Folder[]>(["list", "folders"], { session }),
   ]);
   // A lock or account switch during the slow fetch must not write that vault back to the cache.
-  if (account !== accountId() || generation !== readState().sessionId)
+  if (account !== accountId() || generation !== readState().sessionId || !(await getSession(false)))
     throw new Error("Vault changed or locked during refresh");
   const metas = items.map(toMeta);
   writeCache({ syncedAt: Date.now(), folders, items: metas });

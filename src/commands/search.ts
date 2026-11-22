@@ -125,6 +125,7 @@ export const loadVault = async (active: string, force = false): Promise<Action> 
       totp_seeds: totpDisplay() === "off" ? "" : totpSeeds(vault.items),
       fill_data: fillData(vault.items),
       page_url: pageUrl,
+      ...session.windowBinding(),
     }),
     // A pulse only starts when a script turns it on (same as the Authenticator).
     totpDisplay() !== "off" && { pulse: { interval: 1 } },
@@ -233,9 +234,16 @@ const codeRows = (cache: Cache, seeds: Record<string, string>, now = Date.now())
  * the countdown in the footer; rows refresh when codes change or enter their final 5 seconds,
  * because any row refresh makes Alfred scroll back to the selection.
  */
-export const tick = ([id = process.env.selected_id ?? ""]: string[]): Action => {
+export const tick = async ([id = process.env.selected_id ?? ""]: string[]): Promise<Action> => {
   const display = totpDisplay();
-  if (display === "off") return {};
+  if (display === "off" || !process.env.window_session) return {};
+  // After a lock or account change the window must drop its secrets instead of showing codes.
+  if (!(await session.windowValid()))
+    return merge(
+      vars({ totp_seeds: "", fill_data: "", window_session: "" }),
+      status("Vault locked. Reopen to unlock.", "systemOrangeColor"),
+      { pulse: { interval: 0 } },
+    );
   if (display === "footer") return selected([id]);
   const now = Date.now();
   const left = 30 - (Math.floor(now / 1000) % 30);

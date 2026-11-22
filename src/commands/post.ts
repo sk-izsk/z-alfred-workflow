@@ -3,7 +3,7 @@ import { bool, num, str } from "../env.ts";
 import { pressKey, pressPaste, sleep, typeText } from "../keys.ts";
 import { log, timed } from "../log.ts";
 import { run } from "../proc.ts";
-import { requireSession } from "../session.ts";
+import { requireSession, windowValid } from "../session.ts";
 import { totpCode } from "../totp.ts";
 import { getItem } from "../vault.ts";
 
@@ -42,6 +42,8 @@ const pasteValue = async (value: string): Promise<number> => {
 /** Username/password/TOTP handed over by the window, or fetched if it hadn't loaded yet. */
 const fillValues = async () => {
   if (str("fill_ready") === "1") {
+    // Secrets held by the window only count while it belongs to the current unlock and account.
+    if (!(await windowValid())) throw new Error("Vault changed or locked. Reopen it to try again.");
     return {
       name: "",
       username: process.env.fill_u ?? "",
@@ -94,6 +96,8 @@ const back = async (): Promise<string> => {
 
 /** ⌘↩ with "never put passwords on the clipboard": type the value handed over by the window. */
 const type = async (): Promise<string> => {
+  if (process.env.type_generated !== "1" && !(await windowValid()))
+    throw new Error("Vault changed or locked. Reopen it to try again.");
   await sleep(SETTLE_MS);
   await typeValue(process.env.type_value ?? "");
   return "";

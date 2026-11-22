@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import { BwError } from "../bw.ts";
+import { publicEnv } from "../proc.ts";
 import { str } from "../env.ts";
 import * as session from "../session.ts";
 import { type Action, closeSheet, errorStatus, merge, status, update, vars } from "../ui.ts";
@@ -107,7 +108,7 @@ const reopenIfClosed = (view: View): void => {
       "-e",
       `if n is 0 then tell application id "com.runningwithcrayons.Alfred" to run trigger "${TRIGGERS[view]}" in workflow "com.izsk.bitwarden"`,
     ],
-    { detached: true, stdio: "ignore" },
+    { detached: true, stdio: "ignore", env: publicEnv() },
   ).unref();
 };
 

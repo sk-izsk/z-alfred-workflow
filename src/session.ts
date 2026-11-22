@@ -65,27 +65,46 @@ export const verifySecret = (secret: string, stored = ""): boolean => {
 /** Minutes of inactivity before the vault locks; 0 = never. */
 export const vaultTimeoutMs = (): number => {
   const minutes = num("vault_timeout", 15);
-  return minutes > 0 ? minutes * 60_000 : 0; // 0 = never; non-numbers fall back to 15
+  if (minutes === 0) return 0; // only an explicit 0 means never
+  return (minutes > 0 ? minutes : 15) * 60_000; // negatives and non-numbers fall back to 15
 };
 export type QuickUnlock = "off" | "touchid" | "pin";
-export const quickUnlockMode = (): QuickUnlock => str("quick_unlock", "off") as QuickUnlock;
+/** Anything unrecognised counts as Off, so an unknown value never skips an authentication check. */
+export const quickUnlockMode = (): QuickUnlock => {
+  const mode = str("quick_unlock", "off");
+  return mode === "touchid" || mode === "pin" ? mode : "off";
+};
 
 // --- session ---
 
 const touch = () => writeState({ lastUsed: Date.now() });
 
 /** The session key if the vault is unlocked and not timed out. No bw call, so it's instant. */
-export const getSession = async (): Promise<string | undefined> => {
+export const getSession = async (extend = true): Promise<string | undefined> => {
   const session = await keychainGet("session");
-  if (!session) return undefined;
+  // No generation means the vault was locked (or unlocked by an older version): treat as locked.
+  if (!session || !readState().sessionId) return undefined;
   const timeout = vaultTimeoutMs();
   if (timeout > 0 && Date.now() - (readState().lastUsed ?? 0) > timeout) {
     await lock();
     return undefined;
   }
-  touch();
+  if (extend) touch();
   return session;
 };
+
+/** Variables a window stores at load time, binding its secrets to this unlock and account. */
+export const windowBinding = (): Record<string, string> => ({
+  window_session: readState().sessionId ?? "",
+  window_account: accountId(),
+});
+
+/** True only while this window's secrets still belong to the current unlock, account and live session. */
+export const windowValid = async (): Promise<boolean> =>
+  Boolean(process.env.window_session) &&
+  process.env.window_session === readState().sessionId &&
+  process.env.window_account === accountId() &&
+  Boolean(await getSession(false));
 
 export type Status = "unauthenticated" | "locked" | "unlocked";
 
@@ -95,7 +114,7 @@ export const status = async (verify = false): Promise<Status> => {
     const session = await keychainGet("session");
     const real = await bwJson<{ status: Status; userEmail?: string }>(["status"], { session });
     writeState({ loggedIn: real.status !== "unauthenticated", email: real.userEmail ?? undefined });
-    if (real.status !== "unlocked") await keychainDelete("session").catch(() => undefined);
+    if (real.status !== "unlocked") await lock().catch(() => undefined); // clears the generation too
     return real.status === "unlocked" && !(await getSession()) ? "locked" : real.status;
   }
   if (!readState().loggedIn) return "unauthenticated";
@@ -126,6 +145,9 @@ export const unlock = async (password: string): Promise<string> => {
   const session = await bw(["unlock", "--passwordenv", "BW_PASSWORD", "--raw"], {
     env: { BW_PASSWORD: password },
   });
+  // Saved-master housekeeping first, so a failure here cannot leave a stored session behind.
+  if (quickUnlockMode() !== "off") await keychainSet("master", password);
+  else await keychainDelete("master");
   await keychainSet("session", session);
   writeState({
     masterHash: hashSecret(password),
@@ -133,14 +155,16 @@ export const unlock = async (password: string): Promise<string> => {
     pinFails: 0,
     sessionId: randomBytes(8).toString("hex"),
   });
-  if (quickUnlockMode() !== "off") await keychainSet("master", password);
-  else await keychainDelete("master"); // Off must not leave an older saved master behind
   return session;
 };
 
 export const canQuickUnlock = async (): Promise<boolean> => {
   const mode = quickUnlockMode();
-  if (mode === "off" || !(await keychainGet("master"))) return false;
+  if (mode === "off") {
+    await keychainDelete("master").catch(() => undefined); // Off leaves nothing saved
+    return false;
+  }
+  if (!(await keychainGet("master"))) return false;
   return mode === "touchid" || Boolean(readState().pinHash);
 };
 
@@ -153,6 +177,8 @@ export const quickUnlock = async (pin = ""): Promise<string> => {
   if (mode === "touchid" && !(await authenticate())) throw new Error("Authentication cancelled");
   if (mode === "pin") {
     const state = readState();
+    if ((state.pinFails ?? 0) >= MAX_PIN_FAILS)
+      throw new Error("Too many wrong PINs. Use your master password");
     if (!verifySecret(pin, state.pinHash)) {
       const fails = (state.pinFails ?? 0) + 1;
       writeState({ pinFails: fails });
@@ -171,8 +197,9 @@ export const setPin = (pin: string): void => {
 };
 
 export const forgetQuickUnlock = async (): Promise<void> => {
-  await keychainDelete("master");
+  // Invalidate the PIN first, so it stays unusable even if the Keychain deletion fails.
   writeState({ pinHash: undefined, pinFails: 0 });
+  await keychainDelete("master");
 };
 
 /** Master-password re-prompt check, done locally against the hash saved at unlock. */
@@ -186,9 +213,20 @@ export const lock = async (): Promise<void> => {
   const session = await keychainGet("session");
   // The re-prompt verifier and its grace period must not outlive the unlocked session.
   writeState({ masterHash: undefined, repromptedAt: undefined, sessionId: undefined });
-  (await import("./vault.ts")).invalidateVault();
-  if (session) bwDetached(["lock"], session);
-  await keychainDelete("session"); // throws if the key could not be removed
+  // The cleanup steps must not stop the Keychain deletion, which is what actually locks.
+  let failure: unknown;
+  try {
+    await keychainDelete("session");
+  } catch (error) {
+    failure = error;
+  }
+  try {
+    (await import("./vault.ts")).invalidateVault();
+    if (session) bwDetached(["lock"], session);
+  } catch {
+    // best effort; the generation was already cleared above
+  }
+  if (failure) throw failure;
 };
 
 export const logout = async (): Promise<void> => {
