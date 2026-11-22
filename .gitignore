@@ -8,3 +8,5 @@ ref/
 .omc/
 # internal dev log (local only; has machine-specific notes)
 PLAN.md
+docs/SECURITY_REVIEW.md
+workflow/bin/bwa-enclave
