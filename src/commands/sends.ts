@@ -99,17 +99,11 @@ export const sendCreate = ([
       let created: Send;
       if (type === "file") {
         if (!file) throw new Error("Choose a file");
-        // ponytail: file Sends go through bw's shortcut command, which only takes the password as an argument.
-        const args = [
-          "send",
-          "-n",
-          name,
-          "-d",
-          String(deletionDays),
-          "-f",
-          file,
-          ...(password ? ["--password", password] : []),
-        ];
+        if (password)
+          throw new Error(
+            "Create password-protected file Sends in Bitwarden. This CLI path exposes the password in process arguments.",
+          );
+        const args = ["send", "-n", name, "-d", String(deletionDays), "-f", file];
         created = JSON.parse(await bw(args, { session: active })) as Send;
       } else {
         const text = process.env.send_text ?? "";
