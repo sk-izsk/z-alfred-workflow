@@ -19,6 +19,9 @@ export const secretVars: Json = {
   query: { src: "args[0]", default: "" },
   secret_input: { scriptenv: true, default: "" },
   secret_pin: { scriptenv: true, default: "" },
+  // Binds a window's secrets to the unlock and account they were loaded under (see session.windowBinding).
+  window_session: { scriptenv: true, default: "" },
+  window_account: { scriptenv: true, default: "" },
 };
 
 export const label = (id: string, extra: Json = {}): Json => ({ id, type: "label", text: "", ...extra });

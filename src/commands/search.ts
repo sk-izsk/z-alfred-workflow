@@ -114,6 +114,8 @@ export const init = async (): Promise<Action> => {
 
 /** Fetch the vault (sync first when stale) and refresh the list. */
 export const loadVault = async (active: string, force = false): Promise<Action> => {
+  // Bind to the unlock this load started under, not whichever one exists when it finishes.
+  const binding = session.windowBinding();
   const stale = Date.now() - (readCache()?.syncedAt ?? 0) > SYNC_AFTER_MS;
   const vault = await loadVaultData(active, force || (bool("sync_on_open", true) && stale));
   const cache = readCache();
@@ -125,7 +127,7 @@ export const loadVault = async (active: string, force = false): Promise<Action> 
       totp_seeds: totpDisplay() === "off" ? "" : totpSeeds(vault.items),
       fill_data: fillData(vault.items),
       page_url: pageUrl,
-      ...session.windowBinding(),
+      ...binding,
     }),
     // A pulse only starts when a script turns it on (same as the Authenticator).
     totpDisplay() !== "off" && { pulse: { interval: 1 } },
@@ -193,14 +195,15 @@ const codeFor = (seed: string, now = Date.now()) => {
 };
 
 /** Selection changed: footer shows the primary action (and the TOTP in footer mode). */
-export const selected = ([id = ""]: string[]): Action => {
+export const selected = async ([id = ""]: string[]): Promise<Action> => {
   const meta = readCache()?.items.find((m) => m.id === id);
   if (!meta) return update({ totpLabel: { text: "" } });
   const primary =
     meta.type === ItemType.Login ? (PRIMARY[str("enter_action", "fill")] ?? "Autofill") : "Details";
   const footerMode = totpDisplay() === "footer";
   if (totpDisplay() === "row") return update({ primaryButton: { text: `${primary}  ↩` } });
-  const code = footerMode ? codeFor(seedsFromEnv()[id] ?? "") : undefined;
+  // Retained seeds only produce a code while this window still belongs to the current unlock.
+  const code = footerMode && (await session.windowValid()) ? codeFor(seedsFromEnv()[id] ?? "") : undefined;
   const isProtected = footerMode && meta.hasTotp && meta.reprompt === 1;
   const totp: Action = code
     ? {

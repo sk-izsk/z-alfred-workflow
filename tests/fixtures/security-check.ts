@@ -1,7 +1,7 @@
 // Isolated subprocess: every OS/CLI/authentication boundary is stubbed; only dummy values.
 import assert from "node:assert/strict";
 import { mock } from "bun:test";
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -15,11 +15,13 @@ let authCalls = 0;
 let failDelete = false;
 let duringFetch: (() => Promise<void>) | undefined;
 const effects: string[] = [];
+const failGetKinds = new Set<string>();
 const reads: string[] = [];
 const bwCalls: string[][] = [];
 
 mock.module("../../src/keychain.ts", () => ({
   keychainGet: async (kind: string) => {
+    if (failGetKinds.has(kind)) throw new Error("dummy read failure");
     reads.push(kind);
     return kind === "session" ? token : master;
   },
@@ -76,6 +78,21 @@ mock.module("../../src/keys.ts", () => ({
   sleep: async () => undefined,
 }));
 
+const captureOutput = async (fn: () => Promise<void>): Promise<string> => {
+  const out: string[] = [];
+  const write = process.stdout.write;
+  process.stdout.write = ((value: string | Uint8Array) => {
+    out.push(String(value));
+    return true;
+  }) as typeof write;
+  try {
+    await fn();
+  } finally {
+    process.stdout.write = write;
+  }
+  return out.join("");
+};
+
 try {
   const session = await import("../../src/session.ts");
   const { publicEnv } = await import("../../src/proc.ts");
@@ -85,21 +102,6 @@ try {
   const { authCopy, authTick } = await import("../../src/commands/authenticator.ts");
   const { fetchVault } = await import("../../src/vault.ts");
   const bind = () => Object.assign(process.env, session.windowBinding());
-  const captureOutput = async (fn: () => Promise<void>): Promise<string> => {
-    const out: string[] = [];
-    const write = process.stdout.write;
-    process.stdout.write = ((value: string | Uint8Array) => {
-      out.push(String(value));
-      return true;
-    }) as typeof write;
-    try {
-      await fn();
-    } finally {
-      process.stdout.write = write;
-    }
-    return out.join("");
-  };
-
   // Defaults, whitelist and timeout parsing.
   delete process.env.quick_unlock;
   delete process.env.vault_timeout;
@@ -157,6 +159,14 @@ try {
   assert.equal(await session.getSession(false), undefined);
   failDelete = false;
 
+  // A failing Keychain read must not stop the generation clear or the deletion attempt.
+  await session.unlock("dummy master");
+  failGetKinds.add("session");
+  await assert.rejects(session.lock(), /dummy read failure/);
+  failGetKinds.clear();
+  assert.equal(session.readState().sessionId, undefined);
+  assert.equal(token, undefined);
+
   // PIN: too many failures block even the correct PIN; forgetting invalidates the PIN first.
   process.env.quick_unlock = "pin";
   session.setPin("1234");
@@ -198,12 +208,51 @@ try {
   assert.equal(await session.windowValid(), false);
   bind();
 
+  // Footer TOTP codes come only from windows that still belong to the current unlock.
+  const { selected } = await import("../../src/commands/search.ts");
+  const { toMeta } = await import("../../src/vault.ts");
+  writeFileSync(
+    join(temp, "cache.json"),
+    JSON.stringify({
+      syncedAt: 0,
+      folders: [],
+      items: [
+        toMeta({
+          id: "login",
+          name: "Test",
+          type: 1,
+          folderId: null,
+          favorite: false,
+          reprompt: 0,
+          notes: null,
+        }),
+      ],
+    }),
+  );
+  process.env.totp_display = "footer";
+  process.env.totp_seeds = JSON.stringify({ login: "JBSWY3DPEHPK3PXP" });
+  assert.match(JSON.stringify(await selected(["login"])), /\d{3} \d{3}/);
+  await session.lock();
+  assert.doesNotMatch(JSON.stringify(await selected(["login"])), /\d{3} \d{3}/);
+  rmSync(join(temp, "cache.json"));
+  await session.unlock("dummy master");
+  bind();
+
   // A refresh that spans a lock or an account change is discarded, and writes no cache.
   duringFetch = () => session.lock();
   await assert.rejects(fetchVault("dummy session"), /changed or locked/);
   duringFetch = undefined;
   assert(!existsSync(join(temp, "cache.json")));
   await assert.rejects(fetchVault("dummy session"), /locked/); // nothing unlocked at all
+  const { loadVaultData, getItem } = await import("../../src/vault.ts");
+  await session.unlock("dummy master");
+  await fetchVault("dummy session"); // writes the encrypted cache while unlocked
+  const gen = session.readState().sessionId;
+  session.writeState({ sessionId: undefined }); // a lock that raced this read
+  await assert.rejects(loadVaultData("dummy session"), /locked/); // the cached copy must not be served
+  await assert.rejects(getItem("dummy session", "x"), /locked/);
+  session.writeState({ sessionId: gen });
+  await assert.rejects(fetchVault("some other session"), /changed or locked/); // not the live session
 
   // Clipboard-free mode never falls back to the clipboard; windows must be current.
   await session.unlock("dummy master");

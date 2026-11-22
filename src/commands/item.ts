@@ -1,7 +1,7 @@
 import { encode, bw } from "../bw.ts";
 import { copySecret, copyText, passwordsOffClipboard, scheduleClear } from "../clipboard.ts";
 import { bool, num, str } from "../env.ts";
-import { readState, requireSession } from "../session.ts";
+import { readState, requireSession, windowValid } from "../session.ts";
 import { parseTotp, totpCode } from "../totp.ts";
 import {
   type Action,
@@ -151,9 +151,10 @@ type Handler = (item: () => Promise<Item>, id: string) => Promise<Action>;
 const HANDLERS: Record<string, Handler> = {
   fill: async (_, id) => {
     // Instant path: the window already holds this login (see search.ts fillData).
-    const data = (
-      JSON.parse(process.env.fill_data || "{}") as Record<string, { u: string; p: string; t: string }>
-    )[id];
+    // Only trusted while the window still belongs to the current unlock; otherwise fetch fresh.
+    const data = (await windowValid())
+      ? (JSON.parse(process.env.fill_data || "{}") as Record<string, { u: string; p: string; t: string }>)[id]
+      : undefined;
     return finish({
       bw_out: "fill",
       item_id: id,

@@ -15,6 +15,7 @@ import {
   DEFAULT_ACCOUNT,
 } from "./env.ts";
 import { keychainDelete, keychainGet, keychainSet } from "./keychain.ts";
+import { logError } from "./log.ts";
 import { authenticate } from "./touchid.ts";
 
 export type State = {
@@ -161,7 +162,8 @@ export const unlock = async (password: string): Promise<string> => {
 export const canQuickUnlock = async (): Promise<boolean> => {
   const mode = quickUnlockMode();
   if (mode === "off") {
-    await keychainDelete("master").catch(() => undefined); // Off leaves nothing saved
+    // Off leaves nothing saved. A failure is logged, not shown: it must not block the unlock sheet.
+    await keychainDelete("master").catch((error) => logError("remove saved master", error));
     return false;
   }
   if (!(await keychainGet("master"))) return false;
@@ -210,15 +212,25 @@ export const verifyMaster = (password: string): boolean => verifySecret(password
  * so it runs detached and never delays a window (it cost ~0.7 s before the window could open).
  */
 export const lock = async (): Promise<void> => {
-  const session = await keychainGet("session");
-  // The re-prompt verifier and its grace period must not outlive the unlocked session.
-  writeState({ masterHash: undefined, repromptedAt: undefined, sessionId: undefined });
-  // The cleanup steps must not stop the Keychain deletion, which is what actually locks.
+  // No step may stop the later ones: the generation is cleared and the Keychain deletion is
+  // attempted whatever else fails, and the first failure is reported at the end.
   let failure: unknown;
+  let session: string | undefined;
+  try {
+    session = await keychainGet("session");
+  } catch (error) {
+    failure = error;
+  }
+  try {
+    // The re-prompt verifier and its grace period must not outlive the unlocked session.
+    writeState({ masterHash: undefined, repromptedAt: undefined, sessionId: undefined });
+  } catch (error) {
+    failure ??= error;
+  }
   try {
     await keychainDelete("session");
   } catch (error) {
-    failure = error;
+    failure ??= error;
   }
   try {
     (await import("./vault.ts")).invalidateVault();

@@ -21,6 +21,14 @@
       "scriptenv": true,
       "default": ""
     },
+    "window_session": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "window_account": {
+      "scriptenv": true,
+      "default": ""
+    },
     "auth_entries": {
       "scriptenv": true,
       "default": ""

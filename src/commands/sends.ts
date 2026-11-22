@@ -47,13 +47,14 @@ export const sendsInit = async (): Promise<Action> =>
   status((await getSession()) ? "Loading Sends…" : "Locked");
 
 export const loadSends = async (active: string): Promise<Action> => {
+  const binding = windowBinding(); // the unlock this load started under
   const sends = (await bwJson<Send[]>(["send", "list"], { session: active })).toSorted(
     (a, b) => Date.parse(a.deletionDate) - Date.parse(b.deletionDate),
   );
   return merge(
     vars({
       send_urls: JSON.stringify(Object.fromEntries(sends.map((s) => [s.id, s.accessUrl]))),
-      ...windowBinding(),
+      ...binding,
     }),
     update({ sends: { data: { src: sends.map(toRow) } } }),
     fn({ sends: ["filterdata", "selectfirst"] }),

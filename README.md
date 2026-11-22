@@ -105,13 +105,13 @@ Alfred Preferences → Workflows → **Bitwarden** → **Configure Workflow**.
 
 - **Only the official `bw` CLI** talks to Bitwarden. The workflow uses its own CLI data folder, so your terminal `bw` login is untouched.
 - **Secrets never appear on a command line.** They travel through stdin or environment variables, because other processes can read arguments with `ps`.
-- **Keychain:** your unlock session is in the login Keychain (service `com.izsk.bitwarden`) and is deleted on lock or timeout.
+- **Keychain:** your unlock session is in the login Keychain (service `com.izsk.bitwarden`) and is deleted when you lock. The idle timeout is checked whenever the workflow runs, not by a background timer, so an expired session is removed the next time you use it.
 - **Disk cache:**
   - A plain cache holds only names, usernames, URLs and flags.
-  - The full vault is cached in `vault.enc`, **encrypted with AES-256-GCM** using a key derived from the unlock session. Locking deletes the session and the file, so nothing is readable while locked.
+  - The full vault is cached in `vault.enc`, **encrypted with AES-256-GCM** using a key derived from the unlock session. Locking deletes the session and the file. The plain cache above stays on disk while locked.
 - **In memory only:** an open vault window keeps login usernames and passwords in memory for instant autofill. Re-prompt items are excluded, and it's gone when the window closes.
-- **Quick unlock** is off by default. If you opt in (Touch ID / PIN), your master password is kept in the login Keychain and this workflow asks for Touch ID or the PIN before using it. That check is made by the workflow, not enforced by macOS, so treat it as a convenience, not protection: anything that can read your login Keychain can skip it. Turning it off or logging out deletes the saved password.
-- **While unlocked**, the session key is in the login Keychain and anything running as your user can use it to read your vault. Keep *Lock After* short; it counts idle time, so each use restarts it.
+- **Quick unlock** is off by default. If you opt in (Touch ID / PIN), your master password is kept in the login Keychain and this workflow asks for Touch ID or the PIN before using it. That check is made by the workflow, not enforced by macOS, so treat it as a convenience, not protection: anything that can read your login Keychain can skip it. With it off, the workflow tries to delete any saved password when you open the unlock sheet or unlock, and logging out deletes it. If the Keychain refuses, the error goes to the debug log; entries for accounts you have not used since stay until you do.
+- **While unlocked**, the session key is in the login Keychain and software running as your user may be able to use it to read your vault (the Keychain item's access permissions have not been audited). Keep *Lock After* short; it counts idle time, so each use restarts it.
 - **Not covered:** the Bitwarden CLI may persist an API `clientSecret` in its own data, and cached item names, usernames and URLs are stored unencrypted. Clipboard hiding is advisory.
 - **Clipboard-free mode** types passwords instead of copying them, so it only works for plain ASCII; other passwords are refused rather than copied. Password-protected file Sends are refused because the CLI would expose the password in process arguments.
 - **Clipboard:** copied secrets are marked concealed and transient, and cleared after the configured time, but only if you haven't copied something else since.
@@ -144,7 +144,7 @@ osascript 191ms          ← browser tab lookup
 ```
 
 - **Errors are always logged**, even with Debug off.
-- The log never contains passwords, keys or notes.
+- Secrets are not logged on purpose, but error messages from the `bw` CLI are logged as received and could contain sensitive text. Check the log before sharing it.
 - File: `~/Library/Application Support/Alfred/Workflow Data/com.izsk.bitwarden/debug.log`. `bw` → **Clear Debug Log** empties it.
 
 ### Common problems

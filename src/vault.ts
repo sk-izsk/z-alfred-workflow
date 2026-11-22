@@ -141,7 +141,9 @@ export const fetchVault = async (session: string, sync = false): Promise<Vault> 
     bwJson<Folder[]>(["list", "folders"], { session }),
   ]);
   // A lock or account switch during the slow fetch must not write that vault back to the cache.
-  if (account !== accountId() || generation !== readState().sessionId || !(await getSession(false)))
+  // The live session must be the very one this fetch used, in the same account and unlock.
+  const live = await getSession(false);
+  if (live !== session || account !== accountId() || generation !== readState().sessionId)
     throw new Error("Vault changed or locked during refresh");
   const metas = items.map(toMeta);
   writeCache({ syncedAt: Date.now(), folders, items: metas });
@@ -151,12 +153,19 @@ export const fetchVault = async (session: string, sync = false): Promise<Vault> 
 };
 
 /** The vault from the encrypted cache when fresh (instant), otherwise from bw (slow). */
-export const loadVaultData = async (session: string, sync = false): Promise<Vault> =>
-  (!sync && readSecure(session, FRESH_MS)) || fetchVault(session, sync);
+export const loadVaultData = async (session: string, sync = false): Promise<Vault> => {
+  // The cached copy only counts while an unlock generation exists (a lock may have raced us).
+  if (!(await import("./session.ts")).readState().sessionId) throw new Error("Vault is locked");
+  return (!sync && readSecure(session, FRESH_MS)) || fetchVault(session, sync);
+};
 
 /** One item: from the encrypted cache when possible, otherwise `bw get item`. */
-export const getItem = async (session: string, id: string): Promise<Item> =>
-  readSecure(session)?.items.find((i) => i.id === id) ?? bwJson<Item>(["get", "item", id], { session });
+export const getItem = async (session: string, id: string): Promise<Item> => {
+  if (!(await import("./session.ts")).readState().sessionId) throw new Error("Vault is locked");
+  return (
+    readSecure(session)?.items.find((i) => i.id === id) ?? bwJson<Item>(["get", "item", id], { session })
+  );
+};
 
 export const lastSync = async (session: string): Promise<number> =>
   Date.parse(await bw(["sync", "--last"], { session })) || 0;

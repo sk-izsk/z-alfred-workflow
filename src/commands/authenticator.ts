@@ -58,6 +58,7 @@ export const authInit = async (): Promise<Action> =>
 
 /** Fetch logins with a TOTP key; keys stay in this window's memory (a UI variable). */
 export const loadCodes = async (active: string): Promise<Action> => {
+  const binding = windowBinding(); // the unlock this load started under
   const { items } = await loadVaultData(active);
   const entries: Entry[] = items
     .filter((i) => i.login?.totp)
@@ -70,7 +71,7 @@ export const loadCodes = async (active: string): Promise<Action> => {
     }))
     .toSorted((a, b) => a.name.localeCompare(b.name));
   return merge(
-    vars({ auth_entries: JSON.stringify(entries), ...windowBinding() }),
+    vars({ auth_entries: JSON.stringify(entries), ...binding }),
     update({ codes: { data: { src: entries.map((e) => row(e)) } } }),
     fn({ codes: ["filterdata", "selectfirst"] }),
     status(entries.length ? `${entries.length} authenticator codes` : "No logins with a TOTP key"),
@@ -110,7 +111,7 @@ export const authTick = async (): Promise<Action> => {
 export const authCopy = async ([id = "", mode = "copy"]: string[]): Promise<Action> => {
   // Codes held by an open window must stop working once the vault locks or the account changes.
   if (!(await windowValid())) return staleWindow();
-  await getSession(); // a real use: restart the idle timer
+  if (!(await getSession())) return staleWindow(); // a real use: restart the idle timer
   const entry = seeds().find((e) => e.id === id);
   if (!entry) return status("Select a code first", "systemOrangeColor");
   if (entry.protected) {
