@@ -382,6 +382,7 @@ const userconfigurationconfig = [
     "60",
   ),
   text("vault_timeout", "Lock After", "15", "Minutes of inactivity before the vault locks. 0 = never."),
+  check("lock_on_sleep", "", "Also lock when the Mac sleeps or restarts", true),
   pick(
     "quick_unlock",
     "Quick Unlock",

@@ -16,6 +16,7 @@ let failDelete = false;
 let duringFetch: (() => Promise<void>) | undefined;
 const effects: string[] = [];
 const failGetKinds = new Set<string>();
+let woke = false; // pretend the Mac slept since the last use
 const reads: string[] = [];
 const bwCalls: string[][] = [];
 
@@ -35,6 +36,7 @@ mock.module("../../src/keychain.ts", () => ({
     else master = undefined;
   },
 }));
+mock.module("../../src/sleep.ts", () => ({ wokeSince: () => woke }));
 mock.module("../../src/touchid.ts", () => ({
   authenticate: async () => {
     authCalls++;
@@ -142,6 +144,17 @@ try {
   session.writeState({ sessionId: undefined });
   assert.equal(await session.getSession(false), undefined);
   session.writeState({ sessionId: generation });
+
+  // A Mac that slept or restarted since the last use locks the vault, unless the setting is off.
+  woke = true;
+  process.env.lock_on_sleep = "0";
+  assert.equal(await session.getSession(false), "dummy session");
+  delete process.env.lock_on_sleep;
+  assert.equal(await session.getSession(false), undefined);
+  assert.equal(session.readState().sessionId, undefined);
+  assert.equal(token, undefined);
+  woke = false;
+  await session.unlock("dummy master");
 
   // Lock clears the verifier, grace period and generation.
   session.writeState({ repromptedAt: Date.now() });

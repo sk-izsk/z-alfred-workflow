@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { bw, bwDetached, bwJson } from "./bw.ts";
 import {
   type Account,
+  bool,
   cacheDir,
   dataDir,
   num,
@@ -16,6 +17,7 @@ import {
 } from "./env.ts";
 import { keychainDelete, keychainGet, keychainSet } from "./keychain.ts";
 import { logError } from "./log.ts";
+import { wokeSince } from "./sleep.ts";
 import { authenticate } from "./touchid.ts";
 
 export type State = {
@@ -87,6 +89,11 @@ export const getSession = async (extend = true): Promise<string | undefined> => 
   if (!session || !readState().sessionId) return undefined;
   const timeout = vaultTimeoutMs();
   if (timeout > 0 && Date.now() - (readState().lastUsed ?? 0) > timeout) {
+    await lock();
+    return undefined;
+  }
+  // A Mac that slept or restarted since you last used the vault must ask for the password again.
+  if (bool("lock_on_sleep", true) && wokeSince(readState().lastUsed ?? 0)) {
     await lock();
     return undefined;
   }
