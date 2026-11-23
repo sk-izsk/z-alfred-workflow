@@ -234,6 +234,11 @@ try {
   assert.match(JSON.stringify(await selected(["login"])), /\d{3} \d{3}/);
   await session.lock();
   assert.doesNotMatch(JSON.stringify(await selected(["login"])), /\d{3} \d{3}/);
+  // A stale window's tick must also empty the rows, so no code stays on screen.
+  const { tick: searchTick } = await import("../../src/commands/search.ts");
+  const staleTick = JSON.stringify(await searchTick([]));
+  assert.match(staleTick, /"src":\[\]/);
+  assert.match(staleTick, /"totp_seeds":""/);
   rmSync(join(temp, "cache.json"));
   await session.unlock("dummy master");
   bind();

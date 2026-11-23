@@ -244,6 +244,7 @@ export const tick = async ([id = process.env.selected_id ?? ""]: string[]): Prom
   if (!(await session.windowValid()))
     return merge(
       vars({ totp_seeds: "", fill_data: "", window_session: "" }),
+      update({ items: { data: { src: [] } } }), // also drop the rows, so no stale code stays on screen
       status("Vault locked. Reopen to unlock.", "systemOrangeColor"),
       { pulse: { interval: 0 } },
     );
