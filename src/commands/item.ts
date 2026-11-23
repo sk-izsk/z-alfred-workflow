@@ -148,6 +148,15 @@ const primaryFor = (type: ItemType): string =>
 
 type Handler = (item: () => Promise<Item>, id: string) => Promise<Action>;
 
+/**
+ * `post` runs as a separate Run Script after the window closes and only receives what `finish`
+ * hands over, not the window's own variables. Pass the binding along so it can recheck it.
+ */
+const handoffBinding = (): Record<string, string> => ({
+  window_session: process.env.window_session ?? "",
+  window_account: process.env.window_account ?? "",
+});
+
 const HANDLERS: Record<string, Handler> = {
   fill: async (_, id) => {
     // Instant path: the window already holds this login (see search.ts fillData).
@@ -158,13 +167,14 @@ const HANDLERS: Record<string, Handler> = {
     return finish({
       bw_out: "fill",
       item_id: id,
+      ...handoffBinding(),
       ...(data && { fill_u: data.u, fill_p: data.p, fill_t: data.t, fill_ready: "1" }),
     });
   },
   "paste-password": async (item) => {
     const password = (await item()).login?.password ?? "";
     if (!passwordsOffClipboard() || !password) return pasteOut(password, "password");
-    return finish({ bw_out: "type", type_value: password }); // typed, never on the clipboard
+    return finish({ bw_out: "type", type_value: password, ...handoffBinding() }); // typed, never on the clipboard
   },
   "paste-username": async (item) => pasteOut((await item()).login?.username ?? "", "username"),
   "paste-totp": async (item) => pasteOut(safeCode((await item()).login?.totp ?? ""), "TOTP"),

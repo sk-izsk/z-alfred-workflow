@@ -258,6 +258,43 @@ try {
   await session.unlock("dummy master");
   bind();
   process.env.no_clipboard = "1";
+
+  // `post` is a separate Run Script: it sees only the variables `finish` hands over, so the
+  // window binding must travel with the fill. Simulate that exactly.
+  const { itemCommand } = await import("../../src/commands/item.ts");
+  writeFileSync(
+    join(temp, "cache.json"),
+    JSON.stringify({
+      syncedAt: 0,
+      folders: [],
+      items: [
+        toMeta({
+          id: "login",
+          name: "Test",
+          type: 1,
+          folderId: null,
+          favorite: false,
+          reprompt: 0,
+          notes: null,
+        }),
+      ],
+    }),
+  );
+  process.env.fill_data = JSON.stringify({ login: { u: "dummy", p: "dummy-ascii", t: "" } });
+  const handoff = (await itemCommand(["fill", "login"])) as { finish: { variables: Record<string, string> } };
+  assert.equal(handoff.finish.variables.fill_ready, "1");
+  for (const key of ["window_session", "window_account", "fill_data", "fill_ready", "fill_u", "fill_p"])
+    delete process.env[key];
+  Object.assign(process.env, handoff.finish.variables);
+  effects.length = 0;
+  await captureOutput(post);
+  assert.deepEqual(effects, ["type", "key", "type"]); // typed: the handed-over binding was accepted
+  effects.length = 0;
+  delete process.env.window_session; // without the binding, post must refuse
+  assert.match(await captureOutput(post), /changed or locked/);
+  assert.deepEqual(effects, []);
+  rmSync(join(temp, "cache.json"));
+  bind();
   process.env.generated = "dummy-generated";
   await genCopy(["copy"]);
   assert.deepEqual(effects, []);
