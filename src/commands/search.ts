@@ -11,6 +11,7 @@ import {
   type Item,
   ItemType,
   readCache,
+  toMeta,
 } from "../vault.ts";
 import { baseDomain, hostOf, matchesSite } from "../uri.ts";
 import { authSheet } from "./account.ts";
@@ -118,7 +119,9 @@ export const loadVault = async (active: string, force = false): Promise<Action> 
   const binding = session.windowBinding();
   const stale = Date.now() - (readCache()?.syncedAt ?? 0) > SYNC_AFTER_MS;
   const vault = await loadVaultData(active, force || (bool("sync_on_open", true) && stale));
-  const cache = readCache();
+  // If the encrypted cache could not be written (no Keychain key), still show the vault we just
+  // fetched; the disk stays fail-closed.
+  const cache = readCache() ?? (vault.items.length ? inMemoryCache(vault) : undefined);
   if (!cache) return status("Vault is empty");
   // The site lookup runs in parallel (`site`); never wait for the browser here.
   const pageUrl = str("page_url");
@@ -127,6 +130,7 @@ export const loadVault = async (active: string, force = false): Promise<Action> 
       totp_seeds: totpDisplay() === "off" ? "" : totpSeeds(vault.items),
       fill_data: fillData(vault.items),
       page_url: pageUrl,
+      totp_period: "", // rebuilt rows hide their codes: the next tick must apply them again
       ...binding,
     }),
     // A pulse only starts when a script turns it on (same as the Authenticator).
@@ -159,7 +163,10 @@ export const sync = async (): Promise<Action> => {
 /** Folder picker changed. */
 export const folder = ([value = "all"]: string[]): Action => {
   const cache = readCache();
-  return merge(vars({ folder_filter: value }), cache && rowsUpdate(cache, value, str("page_url")));
+  return merge(
+    vars({ folder_filter: value, totp_period: "" }), // rebuilt rows hide their codes until the next tick
+    cache && rowsUpdate(cache, value, str("page_url")),
+  );
 };
 
 const PRIMARY: Record<string, string> = {
@@ -218,6 +225,40 @@ export const selected = async ([id = ""]: string[]): Promise<Action> => {
 
 const PERIOD_MS = 30_000;
 
+/**
+ * Rows refresh when a code changes or enters its final 5 seconds, and any row refresh scrolls the list
+ * back to the selection, so the token must change exactly then. Each seed has its own period (30 s by
+ * default), so every distinct period contributes. Also returns the seconds until the soonest expiry.
+ */
+export const refreshState = (seeds: Record<string, string>, now: number): { token: string; left: number } => {
+  const periods = new Set<number>();
+  for (const seed of Object.values(seeds)) {
+    try {
+      periods.add(totpPeriod(seed));
+    } catch {
+      // an unparseable key never produces a code, so it never needs a refresh
+    }
+  }
+  if (periods.size === 0) periods.add(PERIOD_MS / 1000);
+  const seconds = Math.floor(now / 1000);
+  let left = Number.POSITIVE_INFINITY;
+  const parts = [...periods]
+    .toSorted((a, b) => a - b)
+    .map((period) => {
+      const remaining = period - (seconds % period);
+      left = Math.min(left, remaining);
+      return `${Math.floor(now / (period * 1000))}:${remaining <= 5}`;
+    });
+  return { token: parts.join("|"), left };
+};
+
+/** Presentation data built from the vault just fetched, for when the on-disk cache is unavailable. */
+const inMemoryCache = (vault: { items: Item[]; folders: Cache["folders"] }): Cache => ({
+  syncedAt: Date.now(),
+  folders: vault.folders,
+  items: vault.items.map(toMeta),
+});
+
 /** TOTP rows with their current code and expiry colour (row mode). */
 const codeRows = (cache: Cache, seeds: Record<string, string>, now = Date.now()) =>
   buildRows({ ...cache, items: cache.items.filter((m) => seeds[m.id]) }, "all", str("page_url")).map(
@@ -252,12 +293,11 @@ export const tick = async ([id = process.env.selected_id ?? ""]: string[]): Prom
     );
   if (display === "footer") return selected([id]);
   const now = Date.now();
-  const left = 30 - (Math.floor(now / 1000) % 30);
+  const seeds = seedsFromEnv();
+  const { token: period, left } = refreshState(seeds, now);
   const timer = update({
     totpLabel: { text: `⏱ ${left}s`, colour: left <= 5 ? "systemRedColor" : "secondaryLabelColor" },
   });
-  const period = `${Math.floor(now / PERIOD_MS)}:${left <= 5}`;
-  const seeds = seedsFromEnv();
   const cache = readCache();
   if (period === process.env.totp_period || !cache || !Object.keys(seeds).length) return timer;
   const srcmap = Object.fromEntries(codeRows(cache, seeds, now).map((r) => [r.uid, r]));

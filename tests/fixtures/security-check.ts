@@ -14,6 +14,9 @@ let master: string | undefined;
 let authCalls = 0;
 let failDelete = false;
 let duringFetch: (() => Promise<void>) | undefined;
+let duringGet: (() => Promise<void>) | undefined; // runs once, inside the next session Keychain read
+let listItems: unknown[] = []; // what `bw list items` returns
+const forgotten: (string | undefined)[] = []; // accounts whose cache key was removed
 const effects: string[] = [];
 const failGetKinds = new Set<string>();
 let woke = false; // pretend the Mac slept since the last use
@@ -25,6 +28,11 @@ const bwCalls: string[][] = [];
 mock.module("../../src/keychain.ts", () => ({
   keychainGet: async (kind: string) => {
     if (failGetKinds.has(kind)) throw new Error("dummy read failure");
+    if (kind === "session" && duringGet) {
+      const hook = duringGet;
+      duringGet = undefined;
+      await hook();
+    }
     reads.push(kind);
     return kind === "session" ? token : master;
   },
@@ -41,7 +49,9 @@ mock.module("../../src/keychain.ts", () => ({
 let cacheKeyValue: Buffer | undefined = Buffer.alloc(32, 5); // undefined = Keychain unavailable
 mock.module("../../src/cachekey.ts", () => ({
   cacheKey: () => cacheKeyValue,
-  forgetCacheKey: () => undefined,
+  forgetCacheKey: (account?: string) => {
+    forgotten.push(account);
+  },
 }));
 mock.module("../../src/sleep.ts", () => ({ wokeSince: () => woke }));
 mock.module("../../src/touchid.ts", () => ({
@@ -55,8 +65,9 @@ mock.module("../../src/bw.ts", () => ({
     bwCalls.push(args);
     return "dummy session";
   },
-  bwJson: async () => {
+  bwJson: async (args?: string[]) => {
     await duringFetch?.();
+    if (args?.[1] === "items") return listItems;
     return [];
   },
   bwDetached: () => undefined,
@@ -292,6 +303,51 @@ try {
   assert(!existsSync(cachePath));
   cacheKeyValue = Buffer.alloc(32, 5);
 
+  // The window binding is compared after the Keychain wait, so a lock and re-unlock during it cannot slip through.
+  await session.unlock("dummy master");
+  bind();
+  duringGet = async () => {
+    await session.lock();
+    await session.unlock("dummy master");
+  };
+  assert.equal(await session.windowValid(), false);
+  assert.equal(await session.windowValid(), false); // and the old window stays invalid afterwards
+  bind();
+
+  // Rebuilt rows hide their codes, so a folder change must clear the refresh token for the next tick.
+  writeCache(cacheBody);
+  const { folder, loadVault } = await import("../../src/commands/search.ts");
+  assert.match(JSON.stringify(folder(["all"])), /"totp_period":""/);
+  rmSync(cachePath);
+
+  // A cache is written under the account it was fetched for, never whichever account is active later.
+  writeCache(cacheBody, "otheracc");
+  assert(existsSync(join(temp, "cache-otheracc.json")));
+  assert(!existsSync(cachePath));
+  assert.equal(readCache("otheracc")?.items[0]?.name, "Distinctive Site Name");
+  assert.equal(readCache(), undefined);
+  rmSync(join(temp, "cache-otheracc.json"));
+
+  // With no Keychain key the vault just fetched is still shown, and nothing is written to disk.
+  listItems = [
+    {
+      id: "fetched",
+      name: "Only From Fetch",
+      type: 1,
+      folderId: null,
+      favorite: false,
+      reprompt: 0,
+      notes: null,
+      login: { username: "u", password: "p", uris: [] },
+    },
+  ];
+  cacheKeyValue = undefined;
+  const shown = JSON.stringify(await loadVault("dummy session", true));
+  assert.match(shown, /Only From Fetch/);
+  assert(!existsSync(cachePath));
+  cacheKeyValue = Buffer.alloc(32, 5);
+  listItems = [];
+
   // A refresh that spans a lock or an account change is discarded, and writes no cache.
   duringFetch = () => session.lock();
   await assert.rejects(fetchVault("dummy session"), /changed or locked/);
@@ -431,6 +487,16 @@ try {
   ])
     assert.equal(env[key], undefined, key);
   assert(env.PATH);
+  // Logout finishes its cleanup even when the Keychain refuses to delete, and reports the failure.
+  await session.unlock("dummy master");
+  bwCalls.length = 0;
+  forgotten.length = 0;
+  failDelete = true;
+  await assert.rejects(session.logout(), /dummy delete failure/);
+  failDelete = false;
+  assert(bwCalls.some((args) => args[0] === "logout")); // bw logout still ran
+  assert.equal(forgotten.length, 1); // the cache key was still removed
+  assert.equal(session.readState().loggedIn, undefined); // the state file was still removed
   console.log("Passed isolated security regressions; no OS authentication or real credentials used");
 } finally {
   rmSync(temp, { recursive: true, force: true });

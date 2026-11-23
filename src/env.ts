@@ -105,8 +105,11 @@ export const writeAccounts = (accounts: Accounts): void =>
 export const accountId = (): string => readAccounts().active || DEFAULT_ACCOUNT;
 
 /** `name` for the default account, `name-<id>` for the others (files, Keychain entries). */
-export const perAccount = (name: string): string =>
-  accountId() === DEFAULT_ACCOUNT ? name : `${name}-${accountId()}`;
+export const perAccountId = (name: string, id: string): string =>
+  id === DEFAULT_ACCOUNT ? name : `${name}-${id}`;
+
+/** Same, for whichever account is active right now. Long operations capture the id up front instead. */
+export const perAccount = (name: string): string => perAccountId(name, accountId());
 
 /** A private bw config folder per account, so the workflow never touches your own `bw` login. */
 export const bwAppDataDir = (): string =>

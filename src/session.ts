@@ -131,6 +131,9 @@ export const quickUnlockMode = (): QuickUnlock => {
 
 const touch = () => writeState({ lastUsed: Date.now() });
 
+/** Restart the idle timer. Call only after the window binding has been checked, with no wait in between. */
+export const markUsed = touch;
+
 /** The session key if the vault is unlocked and not timed out. No bw call, so it's instant. */
 export const getSession = async (extend = true): Promise<string | undefined> => {
   const session = await keychainGet("session");
@@ -157,11 +160,16 @@ export const windowBinding = (): Record<string, string> => ({
 });
 
 /** True only while this window's secrets still belong to the current unlock, account and live session. */
-export const windowValid = async (): Promise<boolean> =>
-  Boolean(process.env.window_session) &&
-  process.env.window_session === readState().sessionId &&
-  process.env.window_account === accountId() &&
-  Boolean(await getSession(false));
+export const windowValid = async (): Promise<boolean> => {
+  if (!process.env.window_session) return false;
+  const live = await getSession(false);
+  // The binding is compared after the wait, so a lock and re-unlock during it cannot slip through.
+  return (
+    Boolean(live) &&
+    process.env.window_session === readState().sessionId &&
+    process.env.window_account === accountId()
+  );
+};
 
 export type Status = "unauthenticated" | "locked" | "unlocked";
 
@@ -298,13 +306,27 @@ export const lock = async (): Promise<void> => {
 };
 
 export const logout = async (): Promise<void> => {
-  await lock();
-  await forgetQuickUnlock();
-  await bw(["logout"]).catch(() => undefined);
-  forgetCacheKey();
-  for (const file of [statePath(), join(cacheDir(), `${perAccount("cache")}.json`)])
-    if (existsSync(file)) rmSync(file);
-  forgetAccount();
+  // Every step runs even if an earlier one fails (a locked Keychain must not stop you logging out);
+  // the first failure is reported at the end, like lock().
+  let failure: unknown;
+  const attempt = async (step: () => unknown): Promise<void> => {
+    try {
+      await step();
+    } catch (error) {
+      failure ??= error;
+    }
+  };
+  const account = accountId();
+  await attempt(lock);
+  await attempt(forgetQuickUnlock);
+  await attempt(() => bw(["logout"]).catch(() => undefined));
+  await attempt(() => forgetCacheKey(account));
+  await attempt(() => {
+    for (const file of [statePath(), join(cacheDir(), `${perAccount("cache")}.json`)])
+      if (existsSync(file)) rmSync(file);
+  });
+  await attempt(forgetAccount);
+  if (failure) throw failure;
 };
 
 // --- account list ---

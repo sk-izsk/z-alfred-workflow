@@ -171,7 +171,7 @@ Alfred Preferences → Workflows → **Bitwarden** → **Configure Workflow**.
 | Passwords on the clipboard | Allowed | Tick *Never put passwords on the clipboard* to type them instead (plain ASCII only). A TOTP is still copied after an autofill. |
 | Clear Clipboard | 1 minute | 15 s … 5 min, or never |
 | Lock After | 15 | Minutes idle before locking (0 = never) |
-| Lock on sleep | On | The checkbox under Lock After, "Also lock when the Mac sleeps or restarts": the next use after a sleep or restart asks for the master password |
+| Lock on sleep | On | The checkbox under Lock After, "Also lock when the Mac sleeps or restarts". The next use after a sleep or restart asks you to unlock again: for the master password, or, if you enabled Quick Unlock, for Touch ID or your PIN (which is weaker than the master password) |
 | Quick Unlock | Off | Off, or opt in to Touch ID (or Mac password / Apple Watch) or PIN |
 | Re-prompt Grace | 5 minutes | How long a confirmed master password counts for protected items |
 | Sync | On open, if older than 5 min | Pull changes when opening |

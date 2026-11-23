@@ -2,7 +2,7 @@ import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:
 import { existsSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { bw, bwJson } from "./bw.ts";
-import { accountId, cacheDir, perAccount } from "./env.ts";
+import { accountId, cacheDir, perAccountId } from "./env.ts";
 import { cacheKey } from "./cachekey.ts";
 import { isLegacyPlainCache, openCache, sealCache } from "./cachecrypt.ts";
 import { cachedIcon, fetchIconsLater } from "./icons.ts";
@@ -76,20 +76,21 @@ export const toMeta = (item: Item): Meta => ({
 
 // --- cache ---
 
-const cachePath = () => join(cacheDir(), `${perAccount("cache")}.json`);
+const cachePath = (account: string = accountId()) =>
+  join(cacheDir(), `${perAccountId("cache", account)}.json`);
 
 /**
  * The item-name cache (names, usernames, URLs, flags) is encrypted at rest, with a key in the Keychain.
  * An unreadable, tampered or old plaintext file counts as "no cache" and is removed.
  */
-export const readCache = (): Cache | undefined => {
+export const readCache = (account: string = accountId()): Cache | undefined => {
   try {
-    const blob = readFileSync(cachePath());
+    const blob = readFileSync(cachePath(account));
     if (isLegacyPlainCache(blob)) {
-      rmSync(cachePath());
+      rmSync(cachePath(account));
       return undefined;
     }
-    const key = cacheKey();
+    const key = cacheKey(account);
     const json = key && openCache(blob, key);
     return json ? (JSON.parse(json) as Cache) : undefined;
   } catch {
@@ -97,11 +98,11 @@ export const readCache = (): Cache | undefined => {
   }
 };
 
-export const writeCache = (cache: Cache): void => {
-  const key = cacheKey();
+export const writeCache = (cache: Cache, account: string = accountId()): void => {
+  const key = cacheKey(account);
   // No key means no cache: never fall back to writing names and URLs in plain text.
-  if (!key) return rmSync(cachePath(), { force: true });
-  writeFileSync(cachePath(), sealCache(JSON.stringify(cache), key), { mode: 0o600 });
+  if (!key) return rmSync(cachePath(account), { force: true });
+  writeFileSync(cachePath(account), sealCache(JSON.stringify(cache), key), { mode: 0o600 });
 };
 
 // --- fetching ---
@@ -115,14 +116,15 @@ export type Vault = { items: Item[]; folders: Folder[] };
 // Locking deletes the session, so the file can't be read until the next unlock.
 
 const FRESH_MS = 5 * 60_000;
-const securePath = () => join(cacheDir(), `${perAccount("vault")}.enc`);
+const securePath = (account: string = accountId()) =>
+  join(cacheDir(), `${perAccountId("vault", account)}.enc`);
 const keyFor = (session: string) => createHash("sha256").update(`com.izsk.bitwarden:${session}`).digest();
 
-const writeSecure = (session: string, vault: Vault): void => {
+const writeSecure = (session: string, vault: Vault, account: string = accountId()): void => {
   const iv = randomBytes(12);
   const cipher = createCipheriv("aes-256-gcm", keyFor(session), iv);
   const body = Buffer.concat([cipher.update(JSON.stringify(vault), "utf8"), cipher.final()]);
-  writeFileSync(securePath(), Buffer.concat([iv, cipher.getAuthTag(), body]), { mode: 0o600 });
+  writeFileSync(securePath(account), Buffer.concat([iv, cipher.getAuthTag(), body]), { mode: 0o600 });
 };
 
 const readSecure = (session: string, maxAgeMs = Number.POSITIVE_INFINITY): Vault | undefined => {
@@ -170,8 +172,9 @@ export const fetchVault = async (session: string, sync = false): Promise<Vault> 
   if (live !== session || account !== accountId() || generation !== readState().sessionId)
     throw new Error("Vault changed or locked during refresh");
   const metas = items.map(toMeta);
-  writeCache({ syncedAt: Date.now(), folders, items: metas });
-  writeSecure(session, { items, folders });
+  // Every path and key below uses the account captured when the fetch started, not whichever is active now.
+  writeCache({ syncedAt: Date.now(), folders, items: metas }, account);
+  writeSecure(session, { items, folders }, account);
   fetchIconsLater(metas.map((m) => hostOf(m.uris[0] ?? "")));
   return { items, folders };
 };

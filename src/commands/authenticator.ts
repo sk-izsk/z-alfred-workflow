@@ -1,6 +1,6 @@
 import { copySecret, scheduleClear } from "../clipboard.ts";
 import { bool, num } from "../env.ts";
-import { getSession, windowBinding, windowValid } from "../session.ts";
+import { getSession, markUsed, windowBinding, windowValid } from "../session.ts";
 import { formatCode, totpCode, totpPeriod, totpRemaining } from "../totp.ts";
 import { type Action, finish, fn, merge, status, update, vars } from "../ui.ts";
 import { loadVaultData } from "../vault.ts";
@@ -111,7 +111,7 @@ export const authTick = async (): Promise<Action> => {
 export const authCopy = async ([id = "", mode = "copy"]: string[]): Promise<Action> => {
   // Codes held by an open window must stop working once the vault locks or the account changes.
   if (!(await windowValid())) return staleWindow();
-  if (!(await getSession())) return staleWindow(); // a real use: restart the idle timer
+  markUsed(); // a real use restarts the idle timer, with no wait since the check above
   const entry = seeds().find((e) => e.id === id);
   if (!entry) return status("Select a code first", "systemOrangeColor");
   if (entry.protected) {

@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { BUNDLE_ID, perAccount } from "./env.ts";
+import { accountId, BUNDLE_ID, perAccountId } from "./env.ts";
 
 /**
  * The key that encrypts the item-name cache: 32 random bytes in the login Keychain, one per account.
@@ -9,7 +9,7 @@ import { BUNDLE_ID, perAccount } from "./env.ts";
  * No key (Keychain unavailable) means no cache: the file is never written unencrypted.
  */
 const known = new Map<string, Buffer>();
-const entry = (): string => perAccount("cachekey");
+const entry = (account: string): string => perAccountId("cachekey", account);
 
 const security = (args: string[], input?: string) =>
   spawnSync("/usr/bin/security", args, {
@@ -19,8 +19,8 @@ const security = (args: string[], input?: string) =>
     timeout: 5000,
   });
 
-export const cacheKey = (): Buffer | undefined => {
-  const name = entry();
+export const cacheKey = (account: string = accountId()): Buffer | undefined => {
+  const name = entry(account);
   const hit = known.get(name);
   if (hit) return hit;
   const found = security(["find-generic-password", "-s", BUNDLE_ID, "-a", name, "-w"]);
@@ -36,7 +36,7 @@ export const cacheKey = (): Buffer | undefined => {
 };
 
 /** Remove this account's key (logout), which also makes any leftover cache file unreadable. */
-export const forgetCacheKey = (): void => {
-  known.delete(entry());
-  security(["delete-generic-password", "-s", BUNDLE_ID, "-a", entry()]);
+export const forgetCacheKey = (account: string = accountId()): void => {
+  known.delete(entry(account));
+  security(["delete-generic-password", "-s", BUNDLE_ID, "-a", entry(account)]);
 };
