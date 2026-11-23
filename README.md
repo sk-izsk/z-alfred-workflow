@@ -4,6 +4,8 @@ Search, autofill and manage your [Bitwarden](https://bitwarden.com) vault from [
 
 > **Use at your own risk.** This is an unofficial community workflow, not affiliated with or endorsed by Bitwarden Inc. It handles your master password and vault data, has not been independently audited, and comes with no warranty. **The author is not responsible for any damage.** **This project was built with the help of AI tools (LLM coding assistants).** Read [how your passwords are handled](#use-at-your-own-risk-how-your-passwords-are-handled) before you install it.
 
+![Searching the vault in Alfred, with live TOTP codes and website icons](docs/screenshots/search.png)
+
 ## Features
 
 - **Search your vault** with website icons, favorites, folders, and badges for TOTP, re-prompt and passkeys.
@@ -94,6 +96,16 @@ Several of these choices follow the [Raycast Bitwarden extension](https://github
 - Create, edit and Send payloads go to `bw` on stdin. Password-protected file Sends are refused because the CLI would put the password in process arguments.
 - After a lock, a refresh that was already in flight is discarded instead of being saved.
 - Re-prompt items never show their TOTP code or password until you confirm your master password.
+
+## Screenshots
+
+Screenshots use a demo vault with the account email hidden.
+
+| | |
+|---|---|
+| ![Search with live TOTP codes](docs/screenshots/search.png)<br>**Search:** website icons, badges and live TOTP codes | ![Item details](docs/screenshots/details.png)<br>**Details:** copy any field, with ⌘1 to ⌘9 |
+| ![Authenticator](docs/screenshots/authenticator.png)<br>**Authenticator:** every code with its countdown | ![Password generator](docs/screenshots/generator.png)<br>**Generator:** passwords and passphrases |
+| ![New login](docs/screenshots/new-login.png)<br>**New login or note** without leaving Alfred | ![Unlock sheet](docs/screenshots/unlock.png)<br>**Unlock:** the master password, never stored by default |
 
 ## Requirements
 
