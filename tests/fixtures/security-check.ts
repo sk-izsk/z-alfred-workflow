@@ -1,7 +1,7 @@
 // Isolated subprocess: every OS/CLI/authentication boundary is stubbed; only dummy values.
 import assert from "node:assert/strict";
 import { mock } from "bun:test";
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -35,6 +35,11 @@ mock.module("../../src/keychain.ts", () => ({
     if (kind === "session") token = undefined;
     else master = undefined;
   },
+}));
+let cacheKeyValue: Buffer | undefined = Buffer.alloc(32, 5); // undefined = Keychain unavailable
+mock.module("../../src/cachekey.ts", () => ({
+  cacheKey: () => cacheKeyValue,
+  forgetCacheKey: () => undefined,
 }));
 mock.module("../../src/sleep.ts", () => ({ wokeSince: () => woke }));
 mock.module("../../src/touchid.ts", () => ({
@@ -223,25 +228,22 @@ try {
 
   // Footer TOTP codes come only from windows that still belong to the current unlock.
   const { selected } = await import("../../src/commands/search.ts");
-  const { toMeta } = await import("../../src/vault.ts");
-  writeFileSync(
-    join(temp, "cache.json"),
-    JSON.stringify({
-      syncedAt: 0,
-      folders: [],
-      items: [
-        toMeta({
-          id: "login",
-          name: "Test",
-          type: 1,
-          folderId: null,
-          favorite: false,
-          reprompt: 0,
-          notes: null,
-        }),
-      ],
-    }),
-  );
+  const { toMeta, writeCache } = await import("../../src/vault.ts");
+  writeCache({
+    syncedAt: 0,
+    folders: [],
+    items: [
+      toMeta({
+        id: "login",
+        name: "Test",
+        type: 1,
+        folderId: null,
+        favorite: false,
+        reprompt: 0,
+        notes: null,
+      }),
+    ],
+  });
   process.env.totp_display = "footer";
   process.env.totp_seeds = JSON.stringify({ login: "JBSWY3DPEHPK3PXP" });
   assert.match(JSON.stringify(await selected(["login"])), /\d{3} \d{3}/);
@@ -255,6 +257,35 @@ try {
   rmSync(join(temp, "cache.json"));
   await session.unlock("dummy master");
   bind();
+
+  // The item-name cache is encrypted at rest and fails closed.
+  const { readCache } = await import("../../src/vault.ts");
+  const cachePath = join(temp, "cache.json");
+  const cacheMeta = toMeta({
+    id: "login",
+    name: "Distinctive Site Name",
+    type: 1,
+    folderId: null,
+    favorite: false,
+    reprompt: 0,
+    notes: null,
+  });
+  const cacheBody = { syncedAt: 1, folders: [], items: [cacheMeta] };
+  writeCache(cacheBody);
+  const onDisk = readFileSync(cachePath);
+  assert(!onDisk.toString("latin1").includes("Distinctive Site Name")); // not readable from the file
+  assert.equal(readCache()?.items[0]?.name, "Distinctive Site Name"); // but readable with the key
+  const flipped = Buffer.from(onDisk);
+  flipped[flipped.length - 1] = (flipped.at(-1) ?? 0) ^ 1;
+  writeFileSync(cachePath, flipped);
+  assert.equal(readCache(), undefined); // tampering is detected
+  writeFileSync(cachePath, JSON.stringify(cacheBody)); // an old plaintext cache
+  assert.equal(readCache(), undefined);
+  assert(!existsSync(cachePath)); // is thrown away
+  cacheKeyValue = undefined; // Keychain unavailable: no cache, and never a plaintext one
+  writeCache(cacheBody);
+  assert(!existsSync(cachePath));
+  cacheKeyValue = Buffer.alloc(32, 5);
 
   // A refresh that spans a lock or an account change is discarded, and writes no cache.
   duringFetch = () => session.lock();
@@ -280,24 +311,21 @@ try {
   // `post` is a separate Run Script: it sees only the variables `finish` hands over, so the
   // window binding must travel with the fill. Simulate that exactly.
   const { itemCommand } = await import("../../src/commands/item.ts");
-  writeFileSync(
-    join(temp, "cache.json"),
-    JSON.stringify({
-      syncedAt: 0,
-      folders: [],
-      items: [
-        toMeta({
-          id: "login",
-          name: "Test",
-          type: 1,
-          folderId: null,
-          favorite: false,
-          reprompt: 0,
-          notes: null,
-        }),
-      ],
-    }),
-  );
+  writeCache({
+    syncedAt: 0,
+    folders: [],
+    items: [
+      toMeta({
+        id: "login",
+        name: "Test",
+        type: 1,
+        folderId: null,
+        favorite: false,
+        reprompt: 0,
+        notes: null,
+      }),
+    ],
+  });
   process.env.fill_data = JSON.stringify({ login: { u: "dummy", p: "dummy-ascii", t: "" } });
   const handoff = (await itemCommand(["fill", "login"])) as { finish: { variables: Record<string, string> } };
   assert.equal(handoff.finish.variables.fill_ready, "1");

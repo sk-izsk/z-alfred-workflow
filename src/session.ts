@@ -15,6 +15,7 @@ import {
   accountId,
   DEFAULT_ACCOUNT,
 } from "./env.ts";
+import { forgetCacheKey } from "./cachekey.ts";
 import { keychainDelete, keychainGet, keychainSet } from "./keychain.ts";
 import { logError } from "./log.ts";
 import { wokeSince } from "./sleep.ts";
@@ -252,6 +253,7 @@ export const logout = async (): Promise<void> => {
   await lock();
   await forgetQuickUnlock();
   await bw(["logout"]).catch(() => undefined);
+  forgetCacheKey();
   for (const file of [statePath(), join(cacheDir(), `${perAccount("cache")}.json`)])
     if (existsSync(file)) rmSync(file);
   forgetAccount();

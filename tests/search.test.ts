@@ -1,10 +1,16 @@
-import { expect, spyOn, test } from "bun:test";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { expect, mock, spyOn, test } from "bun:test";
+import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { tick } from "../src/commands/search.ts";
-import * as session from "../src/session.ts";
-import { toMeta } from "../src/vault.ts";
+
+// The item-name cache is encrypted with a Keychain key; tests use a fixed key instead of the Keychain.
+mock.module("../src/cachekey.ts", () => ({
+  cacheKey: () => Buffer.alloc(32, 5),
+  forgetCacheKey: () => undefined,
+}));
+const { tick } = await import("../src/commands/search.ts");
+const session = await import("../src/session.ts");
+const { toMeta, writeCache } = await import("../src/vault.ts");
 
 test("row TOTP turns red at 5 seconds and resets on rotation without refreshing every second", async () => {
   const dir = mkdtempSync(join(tmpdir(), "bwa-totp-"));
@@ -18,24 +24,21 @@ test("row TOTP turns red at 5 seconds and resets on rotation without refreshing 
     process.env.window_session = "dummy";
     process.env.totp_seeds = JSON.stringify({ login: "JBSWY3DPEHPK3PXP" });
     delete process.env.totp_period;
-    writeFileSync(
-      join(dir, "cache.json"),
-      JSON.stringify({
-        syncedAt: 0,
-        folders: [],
-        items: [
-          toMeta({
-            id: "login",
-            name: "Test",
-            type: 1,
-            folderId: null,
-            favorite: false,
-            reprompt: 0,
-            notes: null,
-          }),
-        ],
-      }),
-    );
+    writeCache({
+      syncedAt: 0,
+      folders: [],
+      items: [
+        toMeta({
+          id: "login",
+          name: "Test",
+          type: 1,
+          folderId: null,
+          favorite: false,
+          reprompt: 0,
+          notes: null,
+        }),
+      ],
+    });
     const at = async (now: number) => {
       clock.mockReturnValue(now);
       const action = await tick([]);

@@ -3,6 +3,8 @@ import { existsSync, readFileSync, rmSync, statSync, writeFileSync } from "node:
 import { join } from "node:path";
 import { bw, bwJson } from "./bw.ts";
 import { accountId, cacheDir, perAccount } from "./env.ts";
+import { cacheKey } from "./cachekey.ts";
+import { isLegacyPlainCache, openCache, sealCache } from "./cachecrypt.ts";
 import { cachedIcon, fetchIconsLater } from "./icons.ts";
 import { hostOf, matchesSite } from "./uri.ts";
 
@@ -76,15 +78,31 @@ export const toMeta = (item: Item): Meta => ({
 
 const cachePath = () => join(cacheDir(), `${perAccount("cache")}.json`);
 
+/**
+ * The item-name cache (names, usernames, URLs, flags) is encrypted at rest, with a key in the Keychain.
+ * An unreadable, tampered or old plaintext file counts as "no cache" and is removed.
+ */
 export const readCache = (): Cache | undefined => {
   try {
-    return JSON.parse(readFileSync(cachePath(), "utf8")) as Cache;
+    const blob = readFileSync(cachePath());
+    if (isLegacyPlainCache(blob)) {
+      rmSync(cachePath());
+      return undefined;
+    }
+    const key = cacheKey();
+    const json = key && openCache(blob, key);
+    return json ? (JSON.parse(json) as Cache) : undefined;
   } catch {
     return undefined;
   }
 };
 
-const writeCache = (cache: Cache) => writeFileSync(cachePath(), JSON.stringify(cache), { mode: 0o600 });
+export const writeCache = (cache: Cache): void => {
+  const key = cacheKey();
+  // No key means no cache: never fall back to writing names and URLs in plain text.
+  if (!key) return rmSync(cachePath(), { force: true });
+  writeFileSync(cachePath(), sealCache(JSON.stringify(cache), key), { mode: 0o600 });
+};
 
 // --- fetching ---
 
