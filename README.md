@@ -205,7 +205,7 @@ osascript 191ms          ← browser tab lookup
 - **Passkeys:** browsers send passkey requests only to registered credential providers (the Bitwarden extension or app). Neither Alfred nor the `bw` CLI can sign passkey logins. Items with a passkey get a badge, so you know to use the browser.
 - **Fonts:** Alfred UI has no font-family option, so windows use the system font rather than a custom Alfred theme font. Colours and selection follow your theme.
 - **Login:** uses the personal API key. Organisations that only allow SSO or "trusted devices" can't use the Bitwarden CLI.
-- **File Sends with a password** pass that password to `bw` as an argument; `bw send` offers no other way.
+- **File Sends with a password** can't be created here: `bw send` would put the password in the process arguments, so the workflow refuses and asks you to use Bitwarden. Text Sends with a password work.
 
 ## Development
 
