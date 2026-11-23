@@ -2,7 +2,7 @@
 
 Search, autofill and manage your [Bitwarden](https://bitwarden.com) vault from [Alfred 6](https://www.alfredapp.com). It uses native [Alfred UI](https://www.alfredapp.com/help/alfredui/) windows that follow your Alfred theme.
 
-> Unofficial community workflow. Not affiliated with or endorsed by Bitwarden Inc.
+> **Use at your own risk.** This is an unofficial community workflow, not affiliated with or endorsed by Bitwarden Inc. It handles your master password and vault data, has not been independently audited, and comes with no warranty. **The author is not responsible for any damage.** Read [how your passwords are handled](#use-at-your-own-risk-how-your-passwords-are-handled) before you install it.
 
 ## Features
 
@@ -17,6 +17,83 @@ Search, autofill and manage your [Bitwarden](https://bitwarden.com) vault from [
 - **Multiple accounts:** switch between them, each with its own unlock.
 - **Optional Touch ID or PIN** (off by default) to unlock again after the vault locks, and the **master-password re-prompt** for protected items.
 - **Self-hosted and EU servers**, including self-signed certificates.
+
+## Use at your own risk: how your passwords are handled
+
+> **Disclaimer.** This is an independent, community-built workflow. It handles your Bitwarden master password, session key and vault contents on your Mac. It is provided **"as is", without warranty of any kind**, and it has **not been independently audited**. **You use it entirely at your own risk. The author is not responsible or liable for any loss, damage, data exposure, locked-out accounts or other harm that results from using it**, as the [MIT license](LICENSE) also states. If you are not comfortable with that, use the official Bitwarden apps instead. This is a plain-language summary, not legal advice.
+
+### The short version
+
+- Your **master password is not saved** by default. You type it, it unlocks the vault once, and it is discarded.
+- After unlocking, a temporary **session key** stays in your login Keychain until you lock, the idle timer runs out, or the Mac sleeps or restarts.
+- While the vault is unlocked, **software running as you may be able to read it**. No launcher can fully prevent that, so keep the timeouts short.
+- Every convenience (Touch ID or PIN, long timeouts, copying to the clipboard) trades some protection for speed. The [table below](#choose-your-trade-off) shows the safest setup and what it costs you.
+- Try it with a **test account** first.
+
+### How your master password is handled
+
+1. You type it into Alfred's unlock sheet.
+2. The workflow hands it to the official `bw` CLI (`bw unlock`) through an environment variable of that one process. It never appears on a command line, so `ps` can't show it.
+3. The CLI returns a temporary **session key**. The workflow keeps the session key in your login Keychain and drops the password. **With Quick Unlock off (the default), your master password is not saved anywhere.**
+4. Every later action (search, autofill, copy) uses the session key until the vault locks.
+5. Two small leftovers while you are unlocked: a salted hash of your master password (used only for the *re-prompt* check on protected items, deleted when you lock), and the masked dots that stay in the unlock field after a wrong attempt until the window closes.
+
+### Our approach
+
+- **Let the official CLI do the cryptography, and store as little as possible.** No master password at rest by default, and the full vault cache is deleted on lock.
+- **Be explicit, not implicit.** Helper processes receive an allow-list of environment variables, not a copy of everything. Secrets travel through stdin or environment variables, never arguments.
+- **Fail closed.** If the Keychain refuses to delete the session, the vault still counts as locked. If the cache key is unavailable there is no cache, never a plain-text one. A modified cache is ignored. A window opened before a lock can't autofill, copy or show codes afterwards.
+- **Short sessions.** The vault locks after your idle time, and also when the Mac sleeps or restarts.
+- **Say what is not covered.** See [what it does not protect against](#what-it-does-not-protect-against).
+
+Several of these choices follow the [Raycast Bitwarden extension](https://github.com/raycast/extensions/tree/main/extensions/bitwarden) (an explicit child environment, locking on sleep, encrypted cached metadata, quiet error logs). Others differ: this workflow keeps the session in the macOS Keychain, sends create and Send payloads on stdin instead of arguments, and hashes the re-prompt check with a random salt.
+
+### Where things live
+
+| What | Where | When it goes away |
+|---|---|---|
+| Master password | Not stored (Quick Unlock off) | Never written |
+| Session key | Login Keychain (`com.izsk.bitwarden`) | Lock, idle timeout, Mac sleep or restart |
+| Re-prompt hash of your master password | Workflow data folder (scrypt, random salt) | Lock |
+| Full vault cache (`vault.enc`) | Disk, AES-256-GCM, key derived from the session | Lock |
+| Item names, usernames, URLs, flags | Disk, AES-256-GCM, with a random key kept in your login Keychain | Logout removes the file and the key. It stays while locked so the list can open instantly. |
+| Logins and TOTP seeds of an open window | Alfred's memory | The window closing or a lock |
+| Copied secrets | Clipboard, marked concealed | Cleared after your chosen time, if you haven't copied something else |
+| Debug log | With Debug off: command name and error type only. With Debug on: messages, with tokens and emails masked. | **Clear Debug Log** |
+| API key (`client_secret`) | The workflow's own `bw` data folder, **possibly in plain form** (upstream CLI behaviour; not verified here) | Logging out may not remove it. Revoke the key in the web vault if you stop using the workflow. |
+
+### Choose your trade-off
+
+| | Safest | Balanced (default) | Convenient |
+|---|---|---|---|
+| Quick Unlock | Off | Off | Touch ID or PIN (opt-in) |
+| Lock After | 1-5 minutes | 15 minutes | 60 minutes or more |
+| Lock when the Mac sleeps | On | On | Off |
+| Passwords on the clipboard | Never (tick *Never put passwords on the clipboard*) | Yes, cleared after 1 minute | Yes, longer or never cleared |
+| Website icons | Off | On | On |
+| Debug | Off | Off | Off |
+| Re-prompt Grace | Ask every time | 5 minutes | 5 minutes or more |
+| **What you give up** | More typing. Passwords with non-ASCII characters are refused in clipboard-free mode. | Passwords touch the clipboard briefly. | A saved master password sits in the Keychain, and the vault stays open longer. |
+
+**Quick Unlock is a convenience, not protection.** Touch ID or the PIN is checked by this workflow, not enforced by macOS. Your master password is stored in the login Keychain, so anything that can read your Keychain can skip the check. Leave it off if you want the strongest setup. **Lock After = 0 means never lock. Don't.**
+
+**Website icons** are fetched from Bitwarden's icon server (`icons.bitwarden.net`). That tells the server which sites you have logins for. Turn *Icons* off if that matters to you.
+
+### What it does *not* protect against
+
+- **Malware or a hostile app running as your user while the vault is unlocked.** It can likely read the session key from your Keychain and read your vault. A short *Lock After* only shortens that window.
+- **Anything that can read your login Keychain.** That includes the session key, the cache key and, if you opt in to Quick Unlock, the saved master password.
+- **Memory.** Secrets exist in memory while a window is open or while the CLI works.
+- **The clipboard.** Concealment is advisory, other apps can still read it, and the TOTP code is still copied after an autofill unless you turn that off.
+- **The CLI itself.** Upstream behaviour such as `client_secret` storage is outside this workflow's control.
+- **Highest-value secrets.** For bank logins, recovery codes and crypto seeds, use the official Bitwarden app. Turn on **FileVault** for the whole disk.
+
+### Other protections that are in place
+
+- Only the official `bw` CLI talks to Bitwarden. The workflow uses its own CLI data folder, so your terminal `bw` login is untouched.
+- Create, edit and Send payloads go to `bw` on stdin. Password-protected file Sends are refused because the CLI would put the password in process arguments.
+- After a lock, a refresh that was already in flight is discarded instead of being saved.
+- Re-prompt items never show their TOTP code or password until you confirm your master password.
 
 ## Requirements
 
@@ -94,72 +171,14 @@ Alfred Preferences → Workflows → **Bitwarden** → **Configure Workflow**.
 | Passwords on the clipboard | Allowed | Tick *Never put passwords on the clipboard* to type them instead (plain ASCII only). A TOTP is still copied after an autofill. |
 | Clear Clipboard | 1 minute | 15 s … 5 min, or never |
 | Lock After | 15 | Minutes idle before locking (0 = never) |
+| Lock on sleep | On | The checkbox under Lock After, "Also lock when the Mac sleeps or restarts": the next use after a sleep or restart asks for the master password |
 | Quick Unlock | Off | Off, or opt in to Touch ID (or Mac password / Apple Watch) or PIN |
 | Re-prompt Grace | 5 minutes | How long a confirmed master password counts for protected items |
 | Sync | On open, if older than 5 min | Pull changes when opening |
 | Icons | On | Website icons from Bitwarden's icon server |
 | Server URL / Self-signed Certificate | — | Self-hosted or EU servers |
 | Bitwarden CLI / Node.js path | auto | Only if they aren't found automatically |
-| Debug | Off | Write a timing log (see Troubleshooting) |
-
-## Security and privacy: what you are signing up for
-
-This is a convenience layer on top of the official Bitwarden CLI. It is **not** the Bitwarden app, it is **not affiliated with Bitwarden**, and it has **not been independently audited**. It was reviewed with automated checks and manual testing, but read this section and pick the trade-off you are comfortable with.
-
-### How your master password is handled
-
-1. You type it into Alfred's unlock sheet.
-2. The workflow hands it to the official `bw` CLI (`bw unlock`) through an environment variable of that one process. It never appears on a command line, so `ps` can't show it.
-3. The CLI returns a temporary **session key**. The workflow keeps the session key in your login Keychain and drops the password. **With Quick Unlock off (the default), your master password is not saved anywhere.**
-4. Every later action (search, autofill, copy) uses the session key until you lock or the idle timer runs out.
-5. Two small leftovers while you are unlocked: a salted hash of your master password (used only for the *re-prompt* check on protected items, deleted when you lock), and the masked dots that stay in the unlock field after a wrong attempt until the window closes.
-
-### Where things live
-
-| What | Where | When it goes away |
-|---|---|---|
-| Master password | Not stored (Quick Unlock off) | Never written |
-| Session key | Login Keychain (`com.izsk.bitwarden`) | Lock, or the first use after the idle timeout |
-| Re-prompt hash of your master password | Workflow data folder | Lock |
-| Full vault cache (`vault.enc`) | Disk, AES-256-GCM, key derived from the session | Lock |
-| Names, usernames, URLs, flags | Disk, **not encrypted** | Logout (stays while locked) |
-| Logins, TOTP seeds of an open window | Alfred's memory | The window closing or a lock |
-| Copied secrets | Clipboard, marked concealed | Cleared after your chosen time, if you haven't copied something else |
-| Debug log | Only if Debug is on | **Clear Debug Log**. It can contain error text from the `bw` CLI. |
-| API key (`client_secret`) | The workflow's own `bw` data folder, **possibly in plain form** (upstream CLI behaviour; not verified here) | Logging out may not remove it. Revoke the key in the web vault if you stop using the workflow. |
-
-### Choose your trade-off
-
-| | Safest | Balanced (default) | Convenient |
-|---|---|---|---|
-| Quick Unlock | Off | Off | Touch ID or PIN (opt-in) |
-| Lock After | 1-5 minutes | 15 minutes | 60 minutes or more |
-| Passwords on the clipboard | Never (tick *Never put passwords on the clipboard*) | Yes, cleared after 1 minute | Yes, longer or never cleared |
-| Website icons | Off | On | On |
-| Debug | Off | Off | Off |
-| Re-prompt Grace | Ask every time | 5 minutes | 5 minutes or more |
-| **What you give up** | More typing. Passwords with non-ASCII characters are refused in clipboard-free mode. | Passwords touch the clipboard briefly. | A saved master password sits in the Keychain, and the vault stays open longer. |
-
-**Quick Unlock is a convenience, not protection.** Touch ID or the PIN is checked by this workflow, not enforced by macOS. Your master password is stored in the login Keychain, so anything that can read your Keychain can skip the check. Leave it off if you want the strongest setup. **Lock After = 0 means never lock. Don't.**
-
-**Website icons** are fetched from Bitwarden's icon server (`icons.bitwarden.net`). That tells the server which sites you have logins for. Turn *Icons* off if that matters to you.
-
-### What it does *not* protect against
-
-- **Malware or a hostile app running as your user while the vault is unlocked.** It can likely read the session key from your Keychain and read your vault. A short *Lock After* only shortens that window.
-- **Anyone who can read your disk.** Item names, usernames and URLs are unencrypted. Turn on **FileVault** for the whole disk.
-- **Memory.** Secrets exist in memory while a window is open or while the CLI works.
-- **The clipboard.** Concealment is advisory, other apps can still read it, and the TOTP code is still copied after an autofill unless you turn that off.
-- **The CLI itself.** Upstream behaviour such as `client_secret` storage and error text is outside this workflow's control.
-- **Highest-value secrets.** For bank logins, recovery codes and crypto seeds, use the official Bitwarden app.
-
-### Other protections that are in place
-
-- Only the official `bw` CLI talks to Bitwarden. The workflow uses its own CLI data folder, so your terminal `bw` login is untouched.
-- Secrets go through stdin or environment variables, never arguments. Password-protected file Sends are refused because the CLI would put the password in process arguments.
-- Environment variables that hold secrets are not passed to unrelated helper processes.
-- After a lock, an old window can't autofill, copy or show codes, and a refresh that straddles a lock is discarded.
-- Re-prompt items never show their TOTP code or password until you confirm your master password.
+| Debug | Off | Write step timings and full error messages to a log (see Troubleshooting). With it off, errors are noted by command name and type only. |
 
 ## Troubleshooting
 
@@ -187,7 +206,7 @@ osascript 191ms          ← browser tab lookup
 ✓ search-refresh 1114ms
 ```
 
-- **Errors are always logged**, even with Debug off.
+- **Errors are always noted** by command name and error type. The message and stack are added only with Debug on, with tokens and email addresses masked.
 - Secrets are not logged on purpose, but error messages from the `bw` CLI are logged as received and could contain sensitive text. Check the log before sharing it.
 - File: `~/Library/Application Support/Alfred/Workflow Data/com.izsk.bitwarden/debug.log`. `bw` → **Clear Debug Log** empties it.
 
