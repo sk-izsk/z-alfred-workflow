@@ -84,7 +84,7 @@ export const bw = async (args: string[], opts: BwOptions = {}): Promise<string> 
   if (code !== 0) throw new BwError(cleanError(stderr || stdout), stderr);
   // Anything that changes the vault makes the encrypted cache stale.
   if (["create", "edit", "delete", "restore", "move"].includes(args[0] ?? "")) {
-    (await import("./vault.ts")).invalidateVault();
+    (await import("./vault.ts")).invalidateAllCaches();
   }
   return stdout.trim();
 };

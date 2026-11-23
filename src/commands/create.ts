@@ -6,7 +6,7 @@ import { parseTotp } from "../totp.ts";
 import { type Action, finish, merge, notify, status, update, vars } from "../ui.ts";
 import { hostOf } from "../uri.ts";
 import { type Folder, readCache } from "../vault.ts";
-import { withSession } from "./account.ts";
+import { isAuthError, withSession } from "./account.ts";
 import { DEFAULTS, generate, savedOptions } from "./generator.ts";
 
 const folderItems = (folders: Folder[]) => [
@@ -70,7 +70,7 @@ export const newSave = ([
         login: isLogin
           ? {
               username: username || null,
-              password: str("secret_input") || null,
+              password: process.env.secret_input || null, // exactly as typed: no trimming
               totp: totp || null,
               uris: url ? [{ match: null, uri: url }] : [],
             }
@@ -83,6 +83,7 @@ export const newSave = ([
         finish(),
       );
     } catch (error) {
+      if (isAuthError(error)) throw error; // let withSession ask for the master password again
       return merge(
         vars({ secret_input: "", secret_totp: "", secret_notes: "" }),
         status(

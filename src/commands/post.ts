@@ -33,6 +33,7 @@ const typeValue = async (value: string): Promise<number> => {
 const pasteValue = async (value: string): Promise<number> => {
   if (passwordsOffClipboard()) return typeValue(value);
   const count = await copySecret(value);
+  scheduleClear(count, clearSeconds()); // armed now: a failing paste must not leave the secret behind
   await sleep(40);
   await pressPaste();
   await sleep(SETTLE_MS);
@@ -73,14 +74,13 @@ const fill = async (): Promise<string> => {
     scheduleClear(last, Math.max(clearSeconds(), 30));
     return name ? `TOTP for ${name} copied` : "TOTP copied";
   }
-  scheduleClear(last, clearSeconds());
   return "";
 };
 
 const paste = async (): Promise<string> => {
+  scheduleClear(Number(str("bw_cc")), clearSeconds()); // before pressing ⌘V, so a failure still clears
   await sleep(SETTLE_MS);
   await pressPaste();
-  scheduleClear(Number(str("bw_cc")), clearSeconds());
   return "";
 };
 

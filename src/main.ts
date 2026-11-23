@@ -13,7 +13,7 @@ import * as search from "./commands/search.ts";
 import * as sends from "./commands/sends.ts";
 import { sleep } from "./keys.ts";
 import * as session from "./session.ts";
-import { type Action, errorStatus, merge, print, status } from "./ui.ts";
+import { type Action, errorStatus, merge, print, status, update, vars } from "./ui.ts";
 
 type Command = (args: string[]) => Promise<Action> | Action;
 
@@ -34,7 +34,13 @@ const ui: Record<string, Command> = {
   "account-switch": search.switchAccount,
   "lock-ui": async () => {
     await session.lock();
-    return merge(status("Locked"), await account.authSheet("search"));
+    return merge(
+      // Drop everything the window holds, so nothing stays on screen or in memory after a lock.
+      vars({ totp_seeds: "", fill_data: "", window_session: "" }),
+      update({ items: { data: { src: [] } } }),
+      status("Locked"),
+      await account.authSheet("search"),
+    );
   },
   // accounts (any window)
   login: account.login,

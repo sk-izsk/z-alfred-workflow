@@ -154,7 +154,8 @@ export const repromptSheet = (action: string, id: string): Action => {
 
 // --- item details (cards, identities, notes, logins) ---
 
-export type DetailField = { name: string; value: string; secret?: boolean };
+/** `secret` masks the value on screen. `concealCopy` only hides the copy from clipboard managers and clears it later. */
+export type DetailField = { name: string; value: string; secret?: boolean; concealCopy?: boolean };
 
 const MASK = "••••••••••";
 

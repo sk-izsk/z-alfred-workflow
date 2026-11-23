@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 
@@ -79,6 +79,16 @@ export type Accounts = { active: string; list: Account[] };
 /** The first account keeps the original un-suffixed paths, so nothing needs migrating. */
 export const DEFAULT_ACCOUNT = "default";
 
+/**
+ * Write to a temp file in the same folder, then rename it over the target. Another workflow process
+ * reading at that moment sees either the old file or the new one, never a half-written one.
+ */
+export const writeFileAtomic = (path: string, data: string): void => {
+  const temp = `${path}.${process.pid}.tmp`;
+  writeFileSync(temp, data, { mode: 0o600 });
+  renameSync(temp, path);
+};
+
 const accountsPath = () => join(dataDir(), "accounts.json");
 
 export const readAccounts = (): Accounts => {
@@ -90,7 +100,7 @@ export const readAccounts = (): Accounts => {
 };
 
 export const writeAccounts = (accounts: Accounts): void =>
-  writeFileSync(accountsPath(), JSON.stringify(accounts), { mode: 0o600 });
+  writeFileAtomic(accountsPath(), JSON.stringify(accounts));
 
 export const accountId = (): string => readAccounts().active || DEFAULT_ACCOUNT;
 

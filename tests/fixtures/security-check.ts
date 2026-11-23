@@ -17,6 +17,8 @@ let duringFetch: (() => Promise<void>) | undefined;
 const effects: string[] = [];
 const failGetKinds = new Set<string>();
 let woke = false; // pretend the Mac slept since the last use
+let failPaste = false; // make the paste keystroke fail
+const clears: number[] = []; // clipboard clears that were armed
 const reads: string[] = [];
 const bwCalls: string[][] = [];
 
@@ -70,13 +72,16 @@ mock.module("../../src/clipboard.ts", () => ({
   copyText: async () => {
     effects.push("copy");
   },
-  scheduleClear: () => undefined,
+  scheduleClear: (count: number) => {
+    clears.push(count);
+  },
 }));
 mock.module("../../src/keys.ts", () => ({
   typeText: async () => {
     effects.push("type");
   },
   pressPaste: async () => {
+    if (failPaste) throw new Error("paste failed");
     effects.push("paste");
   },
   pressKey: async () => {
@@ -364,6 +369,34 @@ try {
   process.env.type_value = "dummy-typed";
   assert.match(await captureOutput(post), /changed or locked/);
   assert.deepEqual(effects, []);
+
+  // The clipboard clear is armed before a paste that can fail, so a failure never leaves a secret behind.
+  process.env.no_clipboard = "0";
+  const { genQuick } = await import("../../src/commands/generator.ts");
+  failPaste = true;
+  clears.length = 0;
+  await assert.rejects(genQuick(), /paste failed/);
+  assert.equal(clears.length, 1);
+  clears.length = 0;
+  process.env.bw_out = "fill";
+  process.env.fill_ready = "1";
+  process.env.fill_u = "dummy-user";
+  process.env.fill_p = "dummy-pass";
+  await session.unlock("dummy master");
+  bind();
+  await captureOutput(post); // the paste fails, post reports it
+  assert(clears.length >= 1);
+  failPaste = false;
+  process.env.no_clipboard = "1";
+  effects.length = 0;
+
+  // Note fields are copied concealed (hidden from clipboard managers and cleared later) but stay readable.
+  const { detailFields } = await import("../../src/commands/item.ts");
+  const note = detailFields({ id: "n", name: "Note", type: 2, notes: "private note text" } as never).find(
+    (field) => field.name === "Notes",
+  );
+  assert.equal(note?.concealCopy, true);
+  assert.equal(note?.secret, false);
 
   // Password-protected file Sends are refused before the CLI is called.
   await session.unlock("dummy master");

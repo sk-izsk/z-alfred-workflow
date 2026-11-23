@@ -178,10 +178,10 @@ export const genQuick = async (): Promise<void> => {
     return;
   }
   const count = await copySecret(value);
+  scheduleClear(count, num("clipboard_clear", 60)); // armed before the paste, which can fail
   if (bool("quick_paste", true)) {
     await sleep(250);
     await pressPaste();
   }
-  scheduleClear(count, num("clipboard_clear", 60));
   process.stdout.write(bool("quick_paste", true) ? "" : "Password copied");
 };

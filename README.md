@@ -90,7 +90,7 @@ Several of these choices follow the [Raycast Bitwarden extension](https://github
 
 ### Other protections that are in place
 
-- Only the official `bw` CLI talks to Bitwarden. The workflow uses its own CLI data folder, so your terminal `bw` login is untouched.
+- Only the official `bw` CLI talks to your Bitwarden server. The one other connection is the optional website-icon fetch to `icons.bitwarden.net` (turn *Icons* off to stop it). The workflow uses its own CLI data folder, so your terminal `bw` login is untouched.
 - Create, edit and Send payloads go to `bw` on stdin. Password-protected file Sends are refused because the CLI would put the password in process arguments.
 - After a lock, a refresh that was already in flight is discarded instead of being saved.
 - Re-prompt items never show their TOTP code or password until you confirm your master password.

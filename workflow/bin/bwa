@@ -2,6 +2,8 @@
 # Runs the bundled workflow code with Node. Alfred doesn't load your shell setup,
 # so look in the usual install places (or the "Node path" set in the Workflow's Configuration).
 here=${0:A:h}
+# Window scripts get no workflow configuration in their environment, so read the Node path from prefs.
+[[ -z $node_path ]] && node_path=$(/usr/bin/plutil -extract node_path raw -o - "$here/../prefs.plist" 2>/dev/null)
 candidates=(
   "$node_path"
   /opt/homebrew/bin/node

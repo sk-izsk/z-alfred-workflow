@@ -34,6 +34,8 @@ const spawnRun = (cmd: string, args: string[], opts: RunOptions): Promise<RunRes
     const child = spawn(cmd, args, { env: opts.env ?? publicEnv(), timeout: opts.timeoutMs ?? 60_000 });
     let stdout = "";
     let stderr = "";
+    child.stdout.setEncoding("utf8"); // decode whole characters, not chunk by chunk
+    child.stderr.setEncoding("utf8");
     child.stdout.on("data", (chunk) => (stdout += chunk));
     child.stderr.on("data", (chunk) => (stderr += chunk));
     child.on("error", reject);

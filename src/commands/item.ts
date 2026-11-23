@@ -40,10 +40,16 @@ const MONTHS = [
 const nonEmpty = (fields: (DetailField | false)[]): DetailField[] =>
   fields.filter((f): f is DetailField => Boolean(f && f.value));
 
-const f = (name: string, value: string | null | undefined, secret = false): DetailField => ({
+const f = (
+  name: string,
+  value: string | null | undefined,
+  secret = false,
+  concealCopy = false,
+): DetailField => ({
   name,
   value: value ?? "",
   secret,
+  concealCopy,
 });
 
 const customFields = (item: Item): DetailField[] =>
@@ -100,7 +106,7 @@ export const detailFields = (item: Item): DetailField[] => {
       f("Private key", item.sshKey?.privateKey, true),
     ],
   };
-  return nonEmpty([...(typed[item.type] ?? []), ...customFields(item), f("Notes", item.notes)]);
+  return nonEmpty([...(typed[item.type] ?? []), ...customFields(item), f("Notes", item.notes, false, true)]);
 };
 
 const safeCode = (seed: string): string => {
@@ -237,7 +243,7 @@ export const fieldCommand = ([id = "", index = "0"]: string[]): Promise<Action> 
     if (field.name === "Password" && passwordsOffClipboard()) {
       return status("Copying passwords is turned off (Workflow Configuration)", "systemOrangeColor");
     }
-    return field.secret
+    return field.secret || field.concealCopy
       ? copyOut(field.value, field.name.toLowerCase())
       : (await copyText(field.value),
         bool("close_on_copy", true) ? finish() : status(`Copied ${field.name.toLowerCase()}`));

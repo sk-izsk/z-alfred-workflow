@@ -30,7 +30,7 @@ export const authSheet = async (view: View): Promise<Action> => {
   });
 };
 
-const isAuthError = (error: unknown): boolean =>
+export const isAuthError = (error: unknown): boolean =>
   /locked|not logged in|session key|unauthenticated|You are not logged in/i.test(
     error instanceof BwError ? `${error.message} ${error.stderr}` : String(error),
   );
@@ -135,7 +135,8 @@ export const quickUnlock = async ([view = "search", auto = ""]: string[]): Promi
 
 /** Re-prompt check for protected items; then run the action that asked for it. */
 export const reprompt = async ([action = "", id = ""]: string[]): Promise<Action> => {
-  if (!session.verifyMaster(str("secret_input"))) return sheetError(new Error("Wrong master password"));
+  if (!session.verifyMaster(process.env.secret_input ?? ""))
+    return sheetError(new Error("Wrong master password"));
   session.writeState({ repromptedAt: Date.now() });
   const { runItemAction } = await import("./item.ts");
   return merge(closeSheet("repromptSheet"), clearSecrets, await runItemAction(action, id, true));

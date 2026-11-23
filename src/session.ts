@@ -1,5 +1,5 @@
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
-import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { bw, bwDetached, bwJson } from "./bw.ts";
 import {
@@ -14,6 +14,7 @@ import {
   writeAccounts,
   accountId,
   DEFAULT_ACCOUNT,
+  writeFileAtomic,
 } from "./env.ts";
 import { forgetCacheKey } from "./cachekey.ts";
 import { keychainDelete, keychainGet, keychainSet } from "./keychain.ts";
@@ -46,7 +47,7 @@ export const readState = (): State => {
 
 export const writeState = (patch: State): State => {
   const next = { ...readState(), ...patch };
-  writeFileSync(statePath(), JSON.stringify(next), { mode: 0o600 });
+  writeFileAtomic(statePath(), JSON.stringify(next));
   return next;
 };
 

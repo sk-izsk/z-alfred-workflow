@@ -148,6 +148,12 @@ export const invalidateVault = (): void => {
   if (existsSync(securePath())) rmSync(securePath());
 };
 
+/** After a create, edit or delete the item-name cache is stale too (a lock keeps it, for a fast open). */
+export const invalidateAllCaches = (): void => {
+  invalidateVault();
+  rmSync(cachePath(), { force: true });
+};
+
 export const fetchVault = async (session: string, sync = false): Promise<Vault> => {
   const { getSession, readState } = await import("./session.ts");
   const account = accountId();

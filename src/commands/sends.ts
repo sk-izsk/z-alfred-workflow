@@ -1,11 +1,11 @@
+import { existsSync } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { basename, extname, join } from "node:path";
 import { bw, bwJson, encode } from "../bw.ts";
 import { copyText } from "../clipboard.ts";
-import { str } from "../env.ts";
 import { getSession, windowBinding, windowValid } from "../session.ts";
 import { type Action, closeSheet, finish, fn, merge, status, update, vars } from "../ui.ts";
-import { withSession } from "./account.ts";
+import { isAuthError, withSession } from "./account.ts";
 
 type Send = {
   id: string;
@@ -85,6 +85,33 @@ export const sendDelete = ([id = ""]: string[]): Promise<Action> =>
     return merge(await loadSends(active), status("Send deleted"));
   });
 
+/** Blank = unlimited. Anything else must be a whole number of 1 or more, never silently "unlimited". */
+export const parseMaxViews = (raw: string): number | null => {
+  const text = raw.trim();
+  if (text === "") return null;
+  if (!/^\d+$/.test(text) || Number(text) < 1)
+    throw new Error("Max views must be a whole number of 1 or more");
+  return Number(text);
+};
+
+/**
+ * Where a received file is saved: always inside `dir` (a hostile file name such as `../../x` is
+ * reduced to its last part) and never over an existing file (`name (1).ext`, `name (2).ext`, …).
+ */
+export const downloadTarget = (
+  dir: string,
+  fileName: string,
+  exists: (path: string) => boolean = existsSync,
+): string => {
+  const base = [...basename(fileName.replaceAll("\\", "/"))].filter((c) => c.charCodeAt(0) >= 32).join("");
+  const safe = base === "" || base === "." || base === ".." ? "send" : base;
+  const ext = extname(safe);
+  const stem = ext ? safe.slice(0, -ext.length) : safe;
+  let target = join(dir, safe);
+  for (let n = 1; exists(target); n++) target = join(dir, `${stem} (${n})${ext}`);
+  return target;
+};
+
 const isoInDays = (days: number) => new Date(Date.now() + days * 86_400_000).toISOString();
 
 /** New Send. Text and password come in env (`send_text`, `secret_input`), not args. */
@@ -97,7 +124,7 @@ export const sendCreate = ([
   file = "",
 ]: string[]): Promise<Action> =>
   withSession("sends", async (active) => {
-    const password = str("secret_input");
+    const password = process.env.secret_input ?? ""; // exactly as typed: spaces count
     const deletionDays = Number(days) || 7;
     try {
       if (!name.trim()) throw new Error("Give the Send a name");
@@ -108,7 +135,19 @@ export const sendCreate = ([
           throw new Error(
             "Create password-protected file Sends in Bitwarden. This CLI path exposes the password in process arguments.",
           );
-        const args = ["send", "-n", name, "-d", String(deletionDays), "-f", file];
+        const limit = parseMaxViews(maxViews);
+        // Without --fullObject the CLI prints only the access URL, which is not JSON.
+        const args = [
+          "send",
+          "-n",
+          name,
+          "-d",
+          String(deletionDays),
+          ...(limit ? ["-a", String(limit)] : []),
+          "--fullObject",
+          "-f",
+          file,
+        ];
         created = JSON.parse(await bw(args, { session: active })) as Send;
       } else {
         const text = process.env.send_text ?? "";
@@ -119,7 +158,7 @@ export const sendCreate = ([
           type: 0,
           text: { text, hidden: hidden === "true" || hidden === "1" },
           file: null,
-          maxAccessCount: Number(maxViews) > 0 ? Number(maxViews) : null,
+          maxAccessCount: parseMaxViews(maxViews),
           deletionDate: isoInDays(deletionDays),
           expirationDate: null,
           password: password || null,
@@ -128,14 +167,28 @@ export const sendCreate = ([
         };
         created = await bwJson<Send>(["send", "create"], { session: active, input: encode(payload) });
       }
-      await copyText(created.accessUrl);
+      // The Send now exists. A failure from here on must not leave the sheet open to create it twice.
+      let note = "Send created · link copied";
+      try {
+        await copyText(created.accessUrl);
+      } catch {
+        note = "Send created, but the link could not be copied";
+      }
+      let list: Action;
+      try {
+        list = await loadSends(active);
+      } catch {
+        list = status("Send created, but the list could not refresh");
+        note = "";
+      }
       return merge(
         closeSheet("newSendSheet"),
         vars({ secret_input: "", send_text: "" }),
-        await loadSends(active),
-        status("Send created · link copied"),
+        list,
+        note !== "" && status(note),
       );
     } catch (error) {
+      if (isAuthError(error)) throw error; // let withSession ask for the master password again
       return merge(
         update({ sheetStatus: { text: error instanceof Error ? error.message : String(error) } }),
         vars({ secret_input: "" }),
@@ -145,7 +198,7 @@ export const sendCreate = ([
 
 /** Receive a Send link: text shows in the sheet, files go to ~/Downloads. */
 export const sendReceive = async ([url = ""]: string[]): Promise<Action> => {
-  const password = str("secret_input");
+  const password = process.env.secret_input ?? "";
   try {
     if (!/^https?:\/\//.test(url.trim())) throw new Error("Paste a Send link");
     const info = JSON.parse(
@@ -155,7 +208,7 @@ export const sendReceive = async ([url = ""]: string[]): Promise<Action> => {
       }),
     ) as Send;
     if (info.type === 1) {
-      const target = join(homedir(), "Downloads", info.file?.fileName ?? "send");
+      const target = downloadTarget(join(homedir(), "Downloads"), info.file?.fileName ?? "send");
       await bw(["send", "receive", url.trim(), "--output", target], {
         input: password ? `${password}\n` : "",
         interactive: true,
