@@ -10,6 +10,7 @@ import {
   type Folder,
   type Item,
   ItemType,
+  loadCache,
   readCache,
   toMeta,
 } from "../vault.ts";
@@ -161,8 +162,8 @@ export const sync = async (): Promise<Action> => {
 };
 
 /** Folder picker changed. */
-export const folder = ([value = "all"]: string[]): Action => {
-  const cache = readCache();
+export const folder = async ([value = "all"]: string[]): Promise<Action> => {
+  const cache = await loadCache();
   return merge(
     vars({ folder_filter: value, totp_period: "" }), // rebuilt rows hide their codes until the next tick
     cache && rowsUpdate(cache, value, str("page_url")),
@@ -203,7 +204,7 @@ const codeFor = (seed: string, now = Date.now()) => {
 
 /** Selection changed: footer shows the primary action (and the TOTP in footer mode). */
 export const selected = async ([id = ""]: string[]): Promise<Action> => {
-  const meta = readCache()?.items.find((m) => m.id === id);
+  const meta = (await loadCache())?.items.find((m) => m.id === id);
   if (!meta) return update({ totpLabel: { text: "" } });
   const primary =
     meta.type === ItemType.Login ? (PRIMARY[str("enter_action", "fill")] ?? "Autofill") : "Details";

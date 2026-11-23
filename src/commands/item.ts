@@ -16,7 +16,7 @@ import {
   update,
   vars,
 } from "../ui.ts";
-import { getItem, type Item, ItemType, readCache, TYPE_SYMBOL } from "../vault.ts";
+import { getItem, type Item, ItemType, loadCache, TYPE_SYMBOL } from "../vault.ts";
 import { type DetailField, detailsSheet, repromptSheet } from "../views.ts";
 import { withSession } from "./account.ts";
 
@@ -197,7 +197,7 @@ const HANDLERS: Record<string, Handler> = {
   "copy-totp": async (item) => copyOut(safeCode((await item()).login?.totp ?? ""), "TOTP"),
   "copy-notes": async (item) => copyOut((await item()).notes ?? "", "notes"),
   "open-url": async (_, id) => {
-    const url = readCache()?.items.find((m) => m.id === id)?.uris[0] ?? "";
+    const url = (await loadCache())?.items.find((m) => m.id === id)?.uris[0] ?? "";
     if (!url) return status("No website on this item", "systemOrangeColor");
     return merge(open(/^\w+:\/\//.test(url) ? url : `https://${url}`), finish());
   },
@@ -222,7 +222,7 @@ const HANDLERS: Record<string, Handler> = {
 };
 
 export const runItemAction = async (action: string, id: string, reprompted = false): Promise<Action> => {
-  const meta = readCache()?.items.find((m) => m.id === id);
+  const meta = (await loadCache())?.items.find((m) => m.id === id);
   if (!meta) return status("Select an item first", "systemOrangeColor");
   const resolved = action === "primary" ? primaryFor(meta.type) : action;
   if (meta.reprompt === 1 && PROTECTED.has(resolved) && !reprompted && !repromptFresh()) {
@@ -256,8 +256,8 @@ const entry = (text: string, action: string, id: string): Action => ({
   action: script(["item", action, id]),
 });
 
-export const menuFor = (id: string): Action => {
-  const meta = readCache()?.items.find((m) => m.id === id);
+export const menuFor = async (id: string): Promise<Action> => {
+  const meta = (await loadCache())?.items.find((m) => m.id === id);
   if (!meta) return status("Select an item first", "systemOrangeColor");
   const login = meta.type === ItemType.Login;
   return popup(

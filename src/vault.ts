@@ -105,6 +105,20 @@ export const writeCache = (cache: Cache, account: string = accountId()): void =>
   writeFileSync(cachePath(account), sealCache(JSON.stringify(cache), key), { mode: 0o600 });
 };
 
+/**
+ * Item-name metadata for actions: normally the encrypted metadata cache. If its Keychain key is
+ * unavailable but the session works (they are separate Keychain entries), derive it from the encrypted
+ * full-vault cache instead, which is keyed by the session. Nothing extra is written to disk.
+ */
+export const loadCache = async (): Promise<Cache | undefined> => {
+  const cache = readCache();
+  if (cache) return cache;
+  const { getSession } = await import("./session.ts");
+  const session = await getSession(false);
+  const vault = session ? readSecure(session) : undefined;
+  return vault ? { syncedAt: 0, folders: vault.folders, items: vault.items.map(toMeta) } : undefined;
+};
+
 // --- fetching ---
 
 export type Vault = { items: Item[]; folders: Folder[] };

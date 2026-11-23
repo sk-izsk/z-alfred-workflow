@@ -317,7 +317,7 @@ try {
   // Rebuilt rows hide their codes, so a folder change must clear the refresh token for the next tick.
   writeCache(cacheBody);
   const { folder, loadVault } = await import("../../src/commands/search.ts");
-  assert.match(JSON.stringify(folder(["all"])), /"totp_period":""/);
+  assert.match(JSON.stringify(await folder(["all"])), /"totp_period":""/);
   rmSync(cachePath);
 
   // A cache is written under the account it was fetched for, never whichever account is active later.
@@ -345,6 +345,15 @@ try {
   const shown = JSON.stringify(await loadVault("dummy session", true));
   assert.match(shown, /Only From Fetch/);
   assert(!existsSync(cachePath));
+  // ...and the actions still work from the encrypted vault cache, which is keyed by the session instead.
+  // Re-prompt checks and the window binding still apply, because the same handlers run.
+  const itemMod = await import("../../src/commands/item.ts");
+  const viaVault = JSON.stringify(await itemMod.itemCommand(["fill", "fetched"]));
+  assert.doesNotMatch(viaVault, /Select an item first/);
+  assert.match(viaVault, /"item_id":"fetched"/);
+  assert.doesNotMatch(JSON.stringify(await itemMod.itemCommand(["menu", "fetched"])), /Select an item first/);
+  assert.match(JSON.stringify(await folder(["all"])), /Only From Fetch/);
+  assert(!existsSync(cachePath)); // still nothing written to disk
   cacheKeyValue = Buffer.alloc(32, 5);
   listItems = [];
 
