@@ -33,7 +33,9 @@ const SQLITE = "/usr/bin/sqlite3";
 
 const query = async (db: string, sql: string): Promise<string> => {
   if (!existsSync(db)) return "";
-  const { code, stdout } = await run(SQLITE, ["-readonly", db, sql]);
+  // No `-readonly`: with the editor running the DB is in WAL mode, and a read-only connection can't
+  // attach its shared-memory file ("unable to open database file"). We only ever SELECT.
+  const { code, stdout } = await run(SQLITE, [db, sql]);
   return code === 0 ? stdout : "";
 };
 

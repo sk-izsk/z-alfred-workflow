@@ -37,14 +37,20 @@
       "layout": "border",
       "events": [
         {
-          "triggers": "preload",
+          "triggers": "launched",
           "action": [
             {
               "type": "script",
               "src": "../bin/vsc",
               "args": [
-                "projects-init",
-                "{var:type_filter}"
+                "projects-init"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "projects-picker"
               ]
             },
             {

@@ -31,7 +31,7 @@ const versionPill = pill("rowVersionPill", [
 export const extensions = window("Show Installed Extensions", {
   type: "view",
   layout: "border",
-  events: [on("preload", [run(["ext-init"]), run(["chrome", "Open in {editor}  ↩"])])],
+  events: [on("launched", [run(["ext-init"]), run(["chrome", "Open in {editor}  ↩"])])],
   shortcuts: [...arrows("items"), key("{var:actions_shortcut}", act("menu"))],
   components: [
     searchBar({ placeholder: "Search Installed Extensions", list: "items", enter: act("open") }),

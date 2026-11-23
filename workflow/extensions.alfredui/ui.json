@@ -32,7 +32,7 @@
       "layout": "border",
       "events": [
         {
-          "triggers": "preload",
+          "triggers": "launched",
           "action": [
             {
               "type": "script",

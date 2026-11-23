@@ -44,8 +44,17 @@ const load = async (filter: string): Promise<Action> => {
   );
 };
 
-export const projectsInit = async ([filter = "all"]: string[]): Promise<Action> =>
-  merge(update({ typePicker: { items: KIND_FILTERS, selected: filter } }), await load(filter));
+/** The saved type filter. Read from env (like bitwarden), never trusted blindly: an unknown `selected` value makes Alfred drop the whole action. */
+const savedFilter = (): string => {
+  const value = process.env.type_filter ?? "all";
+  return KIND_FILTERS.some((f) => f.value === value) ? value : "all";
+};
+
+export const projectsInit = async (): Promise<Action> => load(savedFilter());
+
+/** Picker choices, sent on their own so a picker problem can never empty the list. */
+export const projectsPicker = async (): Promise<Action> =>
+  update({ typePicker: { items: KIND_FILTERS, selected: savedFilter() } });
 
 export const projectsFilter = async ([filter = "all"]: string[]): Promise<Action> =>
   merge(vars({ type_filter: filter }), await load(filter));
@@ -84,7 +93,7 @@ const menu = (p: Project): Action => {
   );
 };
 
-const refresh = async (note: string) => merge(await load(str("type_filter", "all")), status(note));
+const refresh = async (note: string) => merge(await load(savedFilter()), status(note));
 
 export const project = async ([action = "", uri = ""]: string[]): Promise<Action> => {
   const p = await find(uri);

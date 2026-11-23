@@ -36,7 +36,7 @@ const search = run(["gallery-search", "{value:searchField.text}"], { async: true
 export const install = window("Install Extension", {
   type: "view",
   layout: "border",
-  events: [on("preload", run(["gallery-init"])), on("launched", search)],
+  events: [on("launched", [run(["gallery-init"]), search])],
   shortcuts: [...arrows("items"), key("{var:actions_shortcut}", act("menu"))],
   components: [
     searchBar({

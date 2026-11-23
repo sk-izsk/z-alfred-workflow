@@ -32,26 +32,25 @@
       "layout": "border",
       "events": [
         {
-          "triggers": "preload",
-          "action": {
-            "type": "script",
-            "src": "../bin/vsc",
-            "args": [
-              "gallery-init"
-            ]
-          }
-        },
-        {
           "triggers": "launched",
-          "action": {
-            "type": "script",
-            "src": "../bin/vsc",
-            "args": [
-              "gallery-search",
-              "{value:searchField.text}"
-            ],
-            "async": true
-          }
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "gallery-init"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "gallery-search",
+                "{value:searchField.text}"
+              ],
+              "async": true
+            }
+          ]
         },
         {
           "triggers": "preload",

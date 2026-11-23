@@ -50,7 +50,11 @@ export const projects = window(
     type: "view",
     layout: "border",
     events: [
-      on("preload", [run(["projects-init", "{var:type_filter}"]), run(["chrome", "Open in {editor}  ↩"])]),
+      on("launched", [
+        run(["projects-init"]),
+        run(["projects-picker"]),
+        run(["chrome", "Open in {editor}  ↩"]),
+      ]),
     ],
     shortcuts: [
       ...arrows("items"),

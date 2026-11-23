@@ -13,6 +13,7 @@ type Command = (args: string[]) => Promise<Action>;
 /** Commands called from Alfred UI windows: they print a JSON action. */
 const ui: Record<string, Command> = {
   "projects-init": projects.projectsInit,
+  "projects-picker": projects.projectsPicker,
   "projects-filter": projects.projectsFilter,
   project: projects.project,
   "ext-init": ext.extInit,

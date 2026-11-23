@@ -31,7 +31,7 @@ export const clone = window(
   {
     type: "view",
     layout: "border",
-    events: [on("preload", run(["clone-init", "{var:query}"]))],
+    events: [on("launched", run(["clone-init", "{var:query}"]))],
     shortcuts: [key("⌘O", choose)],
     components: [
       {
