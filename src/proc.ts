@@ -5,15 +5,17 @@ import { spawn } from "node:child_process";
 export type RunOptions = { input?: string; env?: NodeJS.ProcessEnv; timeoutMs?: number };
 export type RunResult = { code: number; stdout: string; stderr: string };
 
-/** UI-held vault data must not leak into unrelated subprocesses or detached workers. */
+/**
+ * What a child process may inherit. An allow-list, not a deny-list: a secret-bearing variable we
+ * did not think of (UI-held vault data, someone's API token, a debugger hook) is dropped by default.
+ * Keeps the basics every tool needs, locale, proxy and certificate settings, and Alfred's own
+ * non-secret `alfred_*` variables. Anything else a child needs is passed explicitly.
+ */
+const ALLOWED_ENV =
+  /^(PATH|HOME|USER|LOGNAME|SHELL|TMPDIR|TERM|LANG|LC_[A-Z_]+|__CF_USER_TEXT_ENCODING|(https?|all|no)_proxy|SSL_CERT_(FILE|DIR)|alfred_[a-z_]+)$/i;
+
 export const publicEnv = (): NodeJS.ProcessEnv =>
-  Object.fromEntries(
-    Object.entries(process.env).filter(
-      ([key]) =>
-        !/^(secret_|fill_|BW_|DYLD_)/i.test(key) &&
-        !["auth_entries", "totp_seeds", "type_value", "generated", "send_text", "NODE_OPTIONS"].includes(key),
-    ),
-  );
+  Object.fromEntries(Object.entries(process.env).filter(([key]) => ALLOWED_ENV.test(key)));
 
 /** What a subprocess is, for the debug log, without any argument that could hold a secret. */
 const label = (cmd: string, args: string[]): string => {
