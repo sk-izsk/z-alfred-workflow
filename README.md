@@ -46,7 +46,7 @@ Search, autofill and manage your [Bitwarden](https://bitwarden.com) vault from [
 - **Short sessions.** The vault locks after your idle time, and also when the Mac sleeps or restarts.
 - **Say what is not covered.** See [what it does not protect against](#what-it-does-not-protect-against).
 
-Several of these choices follow the [Raycast Bitwarden extension](https://github.com/raycast/extensions/tree/main/extensions/bitwarden) (an explicit child environment, locking on sleep, encrypted cached metadata, quiet error logs). Others differ: this workflow keeps the session in the macOS Keychain, sends create and Send payloads on stdin instead of arguments, and hashes the re-prompt check with a random salt.
+Several of these choices follow the [Raycast Bitwarden extension](https://github.com/raycast/extensions/tree/main/extensions/bitwarden) (an explicit child environment, locking on sleep, encrypted cached metadata, quiet error logs). Others differ: this workflow keeps the session in the macOS Keychain, sends create and Send payloads on stdin instead of arguments, and hashes the re-prompt check with scrypt and a random salt per hash (Raycast uses PBKDF2 with a fixed salt).
 
 ### Where things live
 
@@ -54,7 +54,7 @@ Several of these choices follow the [Raycast Bitwarden extension](https://github
 |---|---|---|
 | Master password | Not stored (Quick Unlock off) | Never written |
 | Session key | Login Keychain (`com.izsk.bitwarden`) | Lock, idle timeout, Mac sleep or restart |
-| Re-prompt hash of your master password | Workflow data folder (scrypt, random salt) | Lock |
+| Re-prompt hash of your master password | Workflow data folder (scrypt, 128 MiB cost, random salt per hash) | Lock |
 | Full vault cache (`vault.enc`) | Disk, AES-256-GCM, key derived from the session | Lock |
 | Item names, usernames, URLs, flags | Disk, AES-256-GCM, with a random key kept in your login Keychain | Logout removes the file and the key. It stays while locked so the list can open instantly. |
 | Logins and TOTP seeds of an open window | Alfred's memory | The window closing or a lock |

@@ -52,16 +52,63 @@ export const writeState = (patch: State): State => {
 
 // --- password hashing (for re-prompt + PIN checks, never stored in clear) ---
 
+/**
+ * scrypt with a random salt per hash. The cost parameters travel with the hash
+ * (`scrypt$N$r$p$salt$hash`), so the cost can be raised later and older hashes keep verifying.
+ * N = 2^17 (about 128 MiB) is the current OWASP recommendation. The first versions wrote
+ * `scrypt:salt:hash` with Node's default N = 2^14.
+ */
+type ScryptParams = { N: number; r: number; p: number };
+const SCRYPT: ScryptParams = { N: 1 << 17, r: 8, p: 1 };
+const LEGACY_SCRYPT: ScryptParams = { N: 1 << 14, r: 8, p: 1 };
+const HASH_BYTES = 32;
+
+const derive = (secret: string, salt: Buffer, { N, r, p }: ScryptParams): Buffer =>
+  scryptSync(secret, salt, HASH_BYTES, { N, r, p, maxmem: 300 * 1024 * 1024 });
+
 export const hashSecret = (secret: string): string => {
   const salt = randomBytes(16);
-  return `scrypt:${salt.toString("hex")}:${scryptSync(secret, salt, 32).toString("hex")}`;
+  const { N, r, p } = SCRYPT;
+  return `scrypt$${N}$${r}$${p}$${salt.toString("hex")}$${derive(secret, salt, SCRYPT).toString("hex")}`;
 };
 
+/** A stored hash can be edited by anything that can write the state file, so bound what it may demand. */
+const sane = ({ N, r, p }: ScryptParams): boolean =>
+  Number.isInteger(N) &&
+  N >= 1 << 14 &&
+  N <= 1 << 18 &&
+  (N & (N - 1)) === 0 &&
+  r >= 1 &&
+  r <= 8 &&
+  p >= 1 &&
+  p <= 4;
+
+const isHex = (value: string | undefined, bytes?: number): value is string =>
+  value !== undefined &&
+  /^[0-9a-f]+$/.test(value) &&
+  value.length % 2 === 0 &&
+  (bytes === undefined || value.length === bytes * 2);
+
 export const verifySecret = (secret: string, stored = ""): boolean => {
-  const [, salt, hash] = stored.split(":");
-  if (!salt || !hash) return false;
-  const actual = scryptSync(secret, Buffer.from(salt, "hex"), 32);
-  return timingSafeEqual(actual, Buffer.from(hash, "hex"));
+  try {
+    let params = LEGACY_SCRYPT;
+    let salt: string | undefined;
+    let hash: string | undefined;
+    if (stored.startsWith("scrypt$")) {
+      const parts = stored.split("$");
+      if (parts.length !== 6) return false;
+      params = { N: Number(parts[1]), r: Number(parts[2]), p: Number(parts[3]) };
+      [salt, hash] = [parts[4], parts[5]];
+    } else if (stored.startsWith("scrypt:")) {
+      [, salt, hash] = stored.split(":");
+    } else {
+      return false;
+    }
+    if (!sane(params) || !isHex(salt) || !isHex(hash, HASH_BYTES)) return false;
+    return timingSafeEqual(derive(secret, Buffer.from(salt, "hex"), params), Buffer.from(hash, "hex"));
+  } catch {
+    return false;
+  }
 };
 
 // --- settings ---
