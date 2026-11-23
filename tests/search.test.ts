@@ -50,10 +50,16 @@ test("row TOTP turns red at 5 seconds and resets on rotation without refreshing 
     };
     const row = (action: Awaited<ReturnType<typeof at>>) =>
       action.update.ids.items?.data.modify.replace.srcmap.login;
-    expect(row(await at(24_000))?.["rowCode.colour"]).toBe("labelColor");
-    expect(row(await at(25_000))?.["rowCode.colour"]).toBe("systemRedColor");
+    const early = row(await at(24_000));
+    expect(early?.["rowCode.colour"]).toBe("labelColor");
+    expect(early?.["rowTotp.contenttintcolour"]).toBe("secondaryLabelColor");
+    const urgent = row(await at(25_000));
+    expect(urgent?.["rowCode.colour"]).toBe("systemRedColor");
+    expect(urgent?.["rowTotp.contenttintcolour"]).toBe("systemRedColor"); // the clock turns red too
     expect((await at(26_000)).update.ids.items).toBeUndefined();
-    expect(row(await at(30_000))?.["rowCode.colour"]).toBe("labelColor");
+    const rotated = row(await at(30_000));
+    expect(rotated?.["rowCode.colour"]).toBe("labelColor");
+    expect(rotated?.["rowTotp.contenttintcolour"]).toBe("secondaryLabelColor");
   } finally {
     clock.mockRestore();
     valid.mockRestore();

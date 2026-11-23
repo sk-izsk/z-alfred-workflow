@@ -228,6 +228,8 @@ const codeRows = (cache: Cache, seeds: Record<string, string>, now = Date.now())
         "rowCode.text": code?.code ?? "",
         "rowCode.hidden": !code,
         "rowCode.colour": code?.urgent ? "systemRedColor" : "labelColor",
+        // The clock beside the code warns along with it, then resets when the code rotates.
+        "rowTotp.contenttintcolour": code?.urgent ? "systemRedColor" : "secondaryLabelColor",
       };
     },
   );
