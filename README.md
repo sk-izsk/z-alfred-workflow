@@ -255,6 +255,14 @@ How it works:
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and the manual checklist in [TESTING.md](TESTING.md).
 
+## Credits
+
+This workflow was **inspired by the [Bitwarden Vault extension for Raycast](https://github.com/raycast/extensions/tree/main/extensions/bitwarden)**, created by **jomifepe** and maintained by many contributors (see the `contributors` list in its [`package.json`](https://github.com/raycast/extensions/blob/main/extensions/bitwarden/package.json)). Its feature set and its approach to unlock, re-prompt and Sends shaped this project, and its source was a useful reference while building it. Thank you.
+
+The keyword icons in `assets/icons/` come from that extension and are used under its MIT license. The required copyright and permission notice is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+This project is an independent Alfred implementation. It is not affiliated with or endorsed by Raycast, the extension's authors, or Bitwarden.
+
 ## License
 
-[MIT](LICENSE). Keyword icons come from the MIT-licensed [Raycast Bitwarden extension](https://github.com/raycast/extensions/tree/main/extensions/bitwarden), whose feature set inspired this workflow. Bitwarden is a trademark of Bitwarden Inc.
+[MIT](LICENSE). Third-party assets are covered by [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Bitwarden is a trademark of Bitwarden Inc.
