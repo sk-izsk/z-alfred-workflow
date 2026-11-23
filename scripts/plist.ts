@@ -445,7 +445,9 @@ Save a new login or secure note via the \`bwnew\` keyword. Create a folder via t
 
 Lock, sync or log out via the \`bwlock\`, \`bwsync\` and \`bwlogout\` keywords.
 
-Configure the Hotkey for faster access to the vault.`;
+Configure the Hotkey for faster access to the vault.
+
+This workflow was built with the help of AI tools and has not been independently audited. Use it at your own risk; see the project page for how your passwords are handled.`;
 
 export const infoPlist = {
   bundleid: "com.izsk.bitwarden",

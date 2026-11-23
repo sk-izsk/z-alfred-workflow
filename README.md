@@ -2,7 +2,7 @@
 
 Search, autofill and manage your [Bitwarden](https://bitwarden.com) vault from [Alfred 6](https://www.alfredapp.com). It uses native [Alfred UI](https://www.alfredapp.com/help/alfredui/) windows that follow your Alfred theme.
 
-> **Use at your own risk.** This is an unofficial community workflow, not affiliated with or endorsed by Bitwarden Inc. It handles your master password and vault data, has not been independently audited, and comes with no warranty. **The author is not responsible for any damage.** Read [how your passwords are handled](#use-at-your-own-risk-how-your-passwords-are-handled) before you install it.
+> **Use at your own risk.** This is an unofficial community workflow, not affiliated with or endorsed by Bitwarden Inc. It handles your master password and vault data, has not been independently audited, and comes with no warranty. **The author is not responsible for any damage.** **This project was built with the help of AI tools (LLM coding assistants).** Read [how your passwords are handled](#use-at-your-own-risk-how-your-passwords-are-handled) before you install it.
 
 ## Features
 
@@ -279,6 +279,10 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and the manual checklist in [TESTING.md](
 This workflow was **inspired by the [Bitwarden Vault extension for Raycast](https://github.com/raycast/extensions/tree/main/extensions/bitwarden)**, created by **jomifepe** and maintained by many contributors (see the `contributors` list in its [`package.json`](https://github.com/raycast/extensions/blob/main/extensions/bitwarden/package.json)). Its feature set and its approach to unlock, re-prompt and Sends shaped this project, and its source was a useful reference while building it. Thank you.
 
 The keyword icons in `assets/icons/` come from that extension and are used under its MIT license. The required copyright and permission notice is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+### AI assistance
+
+This workflow was created with the help of AI tools (LLM coding assistants). They were used to write and refactor much of the code, the tests and this documentation, and to review the changes, alongside automated tests. It has **not** had an independent human security audit, so treat the security notes above accordingly.
 
 This project is an independent Alfred implementation. It is not affiliated with or endorsed by Raycast, the extension's authors, or Bitwarden.
 
