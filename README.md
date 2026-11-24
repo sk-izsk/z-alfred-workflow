@@ -158,7 +158,7 @@ See [AGENTS.md](AGENTS.md) for conventions.
 
 ## AI disclosure
 
-This workflow was built with the help of AI tools (Claude), directed and tested by a human. Review the code
+This workflow was built with the help of AI tools, directed and tested by a human. Review the code
 before use, as you would any workflow; please report anything that doesn't work.
 
 ## License
