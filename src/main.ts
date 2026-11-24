@@ -1,10 +1,13 @@
 import * as clone from "./commands/clone.ts";
 import { chrome } from "./commands/common.ts";
+import { cloneFilter } from "./commands/clonefilter.ts";
+import { fileAction } from "./commands/fileactions.ts";
 import * as ext from "./commands/extensions.ts";
 import * as gallery from "./commands/gallery.ts";
 import { post } from "./commands/post.ts";
 import * as projects from "./commands/projects.ts";
 import * as root from "./commands/root.ts";
+import * as themes from "./commands/themes.ts";
 import { openPath } from "./launch.ts";
 import { type Action, errorStatus, print } from "./ui.ts";
 
@@ -13,7 +16,18 @@ type Command = (args: string[]) => Promise<Action>;
 /** Commands called from Alfred UI windows: they print a JSON action. */
 const ui: Record<string, Command> = {
   "projects-init": projects.projectsInit,
+  "projects-picker": projects.projectsPicker,
   "projects-filter": projects.projectsFilter,
+  "projects-refresh": projects.projectsRefresh,
+  "ext-pickers": ext.extPickers,
+  "ext-filter": ext.extFilter,
+  "gallery-pickers": gallery.galleryPickers,
+  "gallery-quit": gallery.galleryQuit,
+  "theme-init": themes.themeInit,
+  "theme-pickers": themes.themePickers,
+  "theme-filter": themes.themeFilter,
+  "theme-restore": themes.themeRestore,
+  theme: themes.theme,
   project: projects.project,
   "ext-init": ext.extInit,
   ext: ext.ext,
@@ -30,6 +44,8 @@ const ui: Record<string, Command> = {
 const scripts: Record<string, (args: string[]) => Promise<void>> = {
   root: root.root,
   "root-action": root.rootAction,
+  "clone-filter": cloneFilter,
+  "file-action": fileAction,
   post,
   // File Filter / File Action: one path, or several separated by tabs.
   open: async ([paths = ""]) => {

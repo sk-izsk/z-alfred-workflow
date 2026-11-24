@@ -67,3 +67,7 @@ export const separator: Action = { type: "separator" };
 export const print = (action: Action): void => {
   process.stdout.write(JSON.stringify(action));
 };
+
+export const sheet = (id: string, root: Action, closeOnEscape = true): Action => ({
+  sheet: { id, closeonescape: closeOnEscape, root },
+});

@@ -13,6 +13,10 @@ export type GalleryExtension = {
   version: string;
   installs: number | undefined;
   iconUrl: string;
+  /** README Markdown asset (for the preview). */
+  readmeUrl: string;
+  /** In the Marketplace's Themes category: can be tried live. */
+  isTheme: boolean;
 };
 
 type Raw = {
@@ -22,6 +26,7 @@ type Raw = {
   shortDescription?: string;
   versions?: { version: string; files?: { assetType: string; source: string }[] }[];
   statistics?: { statisticName: string; value: number }[];
+  categories?: string[];
 };
 
 const VS_MARKETPLACE = "https://marketplace.visualstudio.com/_apis/public/gallery";
@@ -46,20 +51,43 @@ export const itemUrl = (id: string): string => {
   return `${base || (galleryUrl() === VS_MARKETPLACE ? "https://marketplace.visualstudio.com/items" : "https://open-vsx.org/vscode/item")}?itemName=${id}`;
 };
 
-/** Same request body VS Code sends (see Microsoft's extensionGalleryService.ts). */
-const body = (text: string) =>
+/** The Marketplace's own categories (filterType 5). */
+export const CATEGORIES = [
+  "Themes",
+  "Programming Languages",
+  "Snippets",
+  "Formatters",
+  "Linters",
+  "Debuggers",
+  "Keymaps",
+  "AI",
+  "Chat",
+  "Testing",
+  "SCM Providers",
+  "Notebooks",
+  "Data Science",
+  "Visualization",
+  "Extension Packs",
+  "Language Packs",
+  "Education",
+  "Other",
+];
+
+/** Same request body VS Code sends. No text = most installed (in the category, if one is picked). */
+const body = (text: string, category: string) =>
   JSON.stringify({
     filters: [
       {
         criteria: [
           { filterType: 8, value: "Microsoft.VisualStudio.Code" },
-          { filterType: 10, value: text },
+          ...(text ? [{ filterType: 10, value: text }] : []),
+          ...(category ? [{ filterType: 5, value: category }] : []),
           { filterType: 12, value: "4096" }, // exclude unpublished
         ],
         pageNumber: 1,
         pageSize: 50,
-        sortBy: 0,
-        sortOrder: 0,
+        sortBy: text ? 0 : 4, // relevance, or install count
+        sortOrder: text ? 0 : 2,
       },
     ],
     assetTypes: [],
@@ -69,6 +97,8 @@ const body = (text: string) =>
 
 export const toGallery = (raw: Raw): GalleryExtension => {
   const latest = raw.versions?.[0];
+  const asset = (type: string) =>
+    latest?.files?.find((f) => f.assetType === `Microsoft.VisualStudio.Services.${type}`)?.source ?? "";
   return {
     id: `${raw.publisher.publisherName}.${raw.extensionName}`,
     name: raw.displayName || raw.extensionName,
@@ -76,18 +106,17 @@ export const toGallery = (raw: Raw): GalleryExtension => {
     description: raw.shortDescription ?? "",
     version: latest?.version ?? "",
     installs: raw.statistics?.find((s) => s.statisticName === "install")?.value,
-    iconUrl:
-      latest?.files?.find((f) => f.assetType === "Microsoft.VisualStudio.Services.Icons.Default")?.source ??
-      "",
+    iconUrl: asset("Icons.Default"),
+    readmeUrl: asset("Content.Details"),
+    isTheme: (raw.categories ?? []).includes("Themes"),
   };
 };
 
-export const searchGallery = async (text: string): Promise<GalleryExtension[]> => {
-  if (!text.trim()) return [];
+export const searchGallery = async (text: string, category = ""): Promise<GalleryExtension[]> => {
   const res = await fetch(`${galleryUrl()}/extensionquery?api-version=3.0-preview.1`, {
     method: "POST",
     headers: { "content-type": "application/json", accept: "application/json;api-version=3.0-preview.1" },
-    body: body(text.trim()),
+    body: body(text.trim(), category),
     signal: AbortSignal.timeout(10_000),
   });
   if (!res.ok) throw new Error(`${galleryName()} returned ${res.status}`);

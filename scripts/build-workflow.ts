@@ -29,10 +29,16 @@ const objectIcons: Record<string, string> = {
   PROJECTSHK: "projects",
   EXTENSIONSKW: "extensions",
   INSTALLKW: "install",
-  CLONEKW: "clone",
+  CLONEFILTER: "clone",
+  THEMESKW: "themes",
   FIND: "find",
   FILEACTION: "icon",
   NEWWINKW: "window",
+  UACLOSE: "window",
+  UAEDITOR: "finder",
+  UAPROFILE: "profiles",
+  UATERM: "palette",
+  UAGITHUB: "github",
 };
 for (const [uid, icon] of Object.entries(objectIcons)) {
   copyFileSync(join(assets, `${icon}.png`), join(root, `${uid}.png`));

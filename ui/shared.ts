@@ -52,7 +52,7 @@ export const pill = (id: string, components: Json[], tint = "#8080801f"): Json =
 
 const backAction = json({ finish: { variables: { vsc_out: "back" } } });
 
-/** "‹" before the search field: back to the `vsc` menu, like Raycast's back arrow. */
+/** "‹" before the search field: back to the `code` menu, like Raycast's back arrow. */
 const backArrow: Json = {
   id: "backButton",
   type: "button",
@@ -230,7 +230,8 @@ export const row = (opts: { right: Json[]; doubleClick: Json }): Json => ({
 });
 
 /** The list. `filter: false` for remote results (the Marketplace already filtered them). */
-export const list = (cell: Json, placeholder: string, filter = true): Json => ({
+export const list = (cell: Json, placeholder: string, filter = true, events?: Json[]): Json => ({
+  ...(events && { events }),
   constraints: { region: "centre" },
   id: "items",
   type: "dataview",
@@ -273,7 +274,7 @@ export const arrows = (listId: string): Json[] => [
   key("↓", call(listId, "selectnext")),
 ];
 
-/** ⌘[ (configurable) closes the window and reopens the `vsc` menu; ⎋ is Alfred's own close. */
+/** ⌘[ (configurable) closes the window and reopens the `code` menu; ⎋ is Alfred's own close. */
 const back = key("{var:back_shortcut}", backAction);
 
 export const window = (title: string, root: Json, extra: Json = {}): Json => ({
@@ -300,4 +301,18 @@ export const window = (title: string, root: Json, extra: Json = {}): Json => ({
       ],
     },
   },
+});
+
+/** Modifier combos go on invisible buttons: as root shortcuts they swallow other ⌘ keys. */
+export const hiddenKey = (id: string, shortcut: string, action: Json | Json[]): Json =>
+  footerButton(id, "", action, { shortcut, opacity: 0, constraints: { size: { width: 0, height: 0 } } });
+
+/** A borderless dropdown for the search bar; real choices arrive from a script after launch. */
+export const picker = (id: string, tooltip: string, text: string, changed: Json | Json[]): Json => ({
+  id,
+  type: "picker",
+  bordered: false,
+  tooltip,
+  items: [{ text, value: "" }],
+  events: [on("changed", changed)],
 });

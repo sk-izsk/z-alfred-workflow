@@ -16,6 +16,11 @@
     "actions_shortcut": {
       "src": "variable",
       "default": "⌘K"
+    },
+    "ext_kind": {
+      "persist": true,
+      "scriptenv": true,
+      "default": "all"
     }
   },
   "window": {
@@ -32,13 +37,20 @@
       "layout": "border",
       "events": [
         {
-          "triggers": "preload",
+          "triggers": "launched",
           "action": [
             {
               "type": "script",
               "src": "../bin/vsc",
               "args": [
                 "ext-init"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "ext-pickers"
               ]
             },
             {
@@ -192,6 +204,35 @@
                   }
                 }
               ]
+            },
+            {
+              "id": "kindPicker",
+              "type": "picker",
+              "bordered": false,
+              "tooltip": "Themes or other extensions",
+              "items": [
+                {
+                  "text": "All Extensions",
+                  "value": ""
+                }
+              ],
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/vsc",
+                    "args": [
+                      "ext-filter",
+                      "{value:kindPicker.selected.value}"
+                    ]
+                  }
+                }
+              ],
+              "constraints": {
+                "region": "right",
+                "position": "centre"
+              }
             }
           ]
         },
@@ -252,14 +293,16 @@
                   "rowTitle.colour": "labelColor",
                   "rowDetail.colour": "secondaryLabelColor",
                   "rowVersion.colour": "secondaryLabelColor",
-                  "rowIcon.contenttintcolour": "secondaryLabelColor"
+                  "rowIcon.contenttintcolour": "secondaryLabelColor",
+                  "rowTheme.contenttintcolour": "secondaryLabelColor"
                 },
                 "selected": {
                   "rowCell.background": "alfredSelectedResultBackgroundColor",
                   "rowTitle.colour": "alfredSelectedResultTextColor",
                   "rowDetail.colour": "alfredSelectedResultTextColor",
                   "rowVersion.colour": "alfredSelectedResultTextColor",
-                  "rowIcon.contenttintcolour": "alfredSelectedResultTextColor"
+                  "rowIcon.contenttintcolour": "alfredSelectedResultTextColor",
+                  "rowTheme.contenttintcolour": "alfredSelectedResultTextColor"
                 },
                 "root": {
                   "id": "rowCell",
@@ -357,6 +400,22 @@
                       "layout": "inline",
                       "spacing": 8,
                       "components": [
+                        {
+                          "id": "rowTheme",
+                          "type": "imageview",
+                          "image": {
+                            "type": "symbol",
+                            "src": "paintpalette",
+                            "size": {
+                              "height": 13
+                            }
+                          },
+                          "contenttintcolour": "secondaryLabelColor",
+                          "tooltip": "Color theme",
+                          "constraints": {
+                            "position": "centre"
+                          }
+                        },
                         {
                           "id": "rowPreRelease",
                           "type": "imageview",
@@ -536,6 +595,39 @@
                   ],
                   "constraints": {
                     "position": "centre"
+                  }
+                },
+                {
+                  "id": "previewKey",
+                  "type": "button",
+                  "text": "",
+                  "bordered": false,
+                  "font": {
+                    "size": 12.5,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/vsc",
+                        "args": [
+                          "ext",
+                          "preview",
+                          "{value:items.selected.uid}"
+                        ]
+                      }
+                    }
+                  ],
+                  "shortcut": "⌘Y",
+                  "opacity": 0,
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 0,
+                      "height": 0
+                    }
                   }
                 },
                 {

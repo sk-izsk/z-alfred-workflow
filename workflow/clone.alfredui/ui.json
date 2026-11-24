@@ -35,7 +35,7 @@
       "layout": "border",
       "events": [
         {
-          "triggers": "preload",
+          "triggers": "launched",
           "action": {
             "type": "script",
             "src": "../bin/vsc",
@@ -115,12 +115,17 @@
       "components": [
         {
           "constraints": {
-            "region": "top"
+            "region": "top",
+            "insets": {
+              "left": 24,
+              "right": 24,
+              "top": 20,
+              "bottom": 8
+            }
           },
           "type": "view",
-          "layout": "inline",
+          "layout": "border",
           "spacing": 12,
-          "padding": 20,
           "components": [
             {
               "type": "imageview",
@@ -133,6 +138,7 @@
               },
               "contenttintcolour": "controlAccentColor",
               "constraints": {
+                "region": "left",
                 "position": "centre"
               }
             },
@@ -142,7 +148,9 @@
               "direction": "vertical",
               "spacing": 2,
               "constraints": {
-                "position": "centre"
+                "region": "centre",
+                "position": "left",
+                "stretch": "horizontal"
               },
               "components": [
                 {
@@ -174,154 +182,187 @@
             "position": "top",
             "stretch": "horizontal",
             "insets": {
-              "left": 20,
-              "right": 20
+              "left": 24,
+              "right": 24,
+              "top": 8
             }
           },
           "type": "view",
-          "layout": "form",
-          "spacing": 10,
+          "layout": "inline",
+          "direction": "vertical",
+          "spacing": 12,
           "components": [
             {
-              "type": "label",
-              "text": "Save to",
-              "colour": "secondaryLabelColor",
-              "constraints": {
-                "position": "right",
-                "size": {
-                  "width": 110
-                }
-              }
-            },
-            {
               "type": "view",
-              "layout": "inline",
-              "spacing": 8,
+              "layout": "border",
+              "spacing": 12,
               "components": [
                 {
-                  "id": "cloneParent",
-                  "type": "textfield",
-                  "focus": true,
-                  "focusring": false,
-                  "placeholder": "~/Developer",
-                  "textinsets": {
-                    "horizontal": 6,
-                    "vertical": 5
-                  },
+                  "type": "label",
+                  "text": "Save to",
+                  "colour": "secondaryLabelColor",
+                  "textalign": "right",
                   "constraints": {
+                    "region": "left",
+                    "position": "centre",
                     "size": {
-                      "width": 380
+                      "width": 64
                     }
-                  },
-                  "events": [
+                  }
+                },
+                {
+                  "type": "view",
+                  "layout": "border",
+                  "spacing": 8,
+                  "components": [
                     {
-                      "triggers": "typingstopped",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/vsc",
-                        "args": [
-                          "clone-preview",
-                          "{var:query}",
-                          "{value:cloneParent.text}"
-                        ]
-                      }
-                    },
-                    {
-                      "triggers": "actioned",
-                      "action": [
+                      "id": "cloneParent",
+                      "type": "textfield",
+                      "focus": true,
+                      "focusring": false,
+                      "placeholder": "~/Developer",
+                      "textinsets": {
+                        "horizontal": 6,
+                        "vertical": 5
+                      },
+                      "constraints": {
+                        "region": "centre",
+                        "stretch": "horizontal"
+                      },
+                      "events": [
                         {
-                          "type": "json",
-                          "src": {
-                            "update": {
-                              "ids": {
-                                "statusLabel": {
-                                  "text": "Cloning…"
-                                }
-                              }
-                            }
+                          "triggers": "typingstopped",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/vsc",
+                            "args": [
+                              "clone-preview",
+                              "{var:query}",
+                              "{value:cloneParent.text}"
+                            ]
                           }
                         },
                         {
-                          "type": "script",
-                          "src": "../bin/vsc",
-                          "args": [
-                            "clone-run",
-                            "{var:query}",
-                            "{value:cloneParent.text}"
-                          ],
-                          "async": true
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "button",
-                  "text": "Choose…",
-                  "tooltip": "Pick a folder ⌘O",
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "json",
-                        "src": {
-                          "opendialog": {
-                            "canchoosefiles": false,
-                            "canchoosefolders": true,
-                            "prompt": "Choose",
-                            "message": "Where should the repository be cloned?",
-                            "setvariable": "clone_pick",
-                            "action": [
-                              {
-                                "type": "json",
-                                "src": {
-                                  "update": {
-                                    "ids": {
-                                      "cloneParent": {
-                                        "text": "{var:clone_pick}"
-                                      }
+                          "triggers": "actioned",
+                          "action": [
+                            {
+                              "type": "json",
+                              "src": {
+                                "update": {
+                                  "ids": {
+                                    "statusLabel": {
+                                      "text": "Cloning…"
                                     }
                                   }
                                 }
-                              },
-                              {
-                                "type": "script",
-                                "src": "../bin/vsc",
-                                "args": [
-                                  "clone-preview",
-                                  "{var:query}",
-                                  "{value:cloneParent.text}"
+                              }
+                            },
+                            {
+                              "type": "script",
+                              "src": "../bin/vsc",
+                              "args": [
+                                "clone-run",
+                                "{var:query}",
+                                "{value:cloneParent.text}"
+                              ],
+                              "async": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "button",
+                      "text": "Choose…",
+                      "tooltip": "Pick a folder ⌘O",
+                      "constraints": {
+                        "region": "right",
+                        "position": "centre"
+                      },
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "json",
+                            "src": {
+                              "opendialog": {
+                                "canchoosefiles": false,
+                                "canchoosefolders": true,
+                                "prompt": "Choose",
+                                "message": "Where should the repository be cloned?",
+                                "setvariable": "clone_pick",
+                                "action": [
+                                  {
+                                    "type": "json",
+                                    "src": {
+                                      "update": {
+                                        "ids": {
+                                          "cloneParent": {
+                                            "text": "{var:clone_pick}"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "type": "script",
+                                    "src": "../bin/vsc",
+                                    "args": [
+                                      "clone-preview",
+                                      "{var:query}",
+                                      "{value:cloneParent.text}"
+                                    ]
+                                  }
                                 ]
                               }
-                            ]
+                            }
                           }
                         }
-                      }
+                      ]
                     }
-                  ]
+                  ],
+                  "constraints": {
+                    "region": "centre",
+                    "position": "centre",
+                    "stretch": "horizontal"
+                  }
                 }
               ]
             },
             {
-              "type": "label",
-              "text": "Folder",
-              "colour": "secondaryLabelColor",
-              "constraints": {
-                "position": "right",
-                "size": {
-                  "width": 110
+              "type": "view",
+              "layout": "border",
+              "spacing": 12,
+              "components": [
+                {
+                  "type": "label",
+                  "text": "Folder",
+                  "colour": "secondaryLabelColor",
+                  "textalign": "right",
+                  "constraints": {
+                    "region": "left",
+                    "position": "centre",
+                    "size": {
+                      "width": 64
+                    }
+                  }
+                },
+                {
+                  "id": "cloneTarget",
+                  "type": "label",
+                  "text": "",
+                  "colour": "secondaryLabelColor",
+                  "font": {
+                    "size": 12.5,
+                    "monospaced": true
+                  },
+                  "constraints": {
+                    "region": "centre",
+                    "position": "centre",
+                    "stretch": "horizontal"
+                  }
                 }
-              }
-            },
-            {
-              "id": "cloneTarget",
-              "type": "label",
-              "text": "",
-              "colour": "secondaryLabelColor",
-              "font": {
-                "size": 12.5,
-                "monospaced": true
-              }
+              ]
             }
           ]
         },

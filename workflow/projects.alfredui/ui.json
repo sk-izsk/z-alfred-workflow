@@ -37,14 +37,20 @@
       "layout": "border",
       "events": [
         {
-          "triggers": "preload",
+          "triggers": "launched",
           "action": [
             {
               "type": "script",
               "src": "../bin/vsc",
               "args": [
-                "projects-init",
-                "{var:type_filter}"
+                "projects-init"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "projects-picker"
               ]
             },
             {
@@ -54,6 +60,14 @@
                 "chrome",
                 "Open in {editor}  ↩"
               ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "projects-refresh"
+              ],
+              "async": true
             }
           ]
         },
@@ -328,12 +342,14 @@
                   "rowCell.background": null,
                   "rowTitle.colour": "labelColor",
                   "rowDetail.colour": "secondaryLabelColor",
+                  "rowSync.colour": "secondaryLabelColor",
                   "rowIcon.contenttintcolour": "secondaryLabelColor"
                 },
                 "selected": {
                   "rowCell.background": "alfredSelectedResultBackgroundColor",
                   "rowTitle.colour": "alfredSelectedResultTextColor",
                   "rowDetail.colour": "alfredSelectedResultTextColor",
+                  "rowSync.colour": "alfredSelectedResultTextColor",
                   "rowIcon.contenttintcolour": "alfredSelectedResultTextColor"
                 },
                 "root": {
@@ -444,6 +460,35 @@
                           },
                           "contenttintcolour": "systemOrangeColor",
                           "tooltip": "Pinned",
+                          "constraints": {
+                            "position": "centre"
+                          }
+                        },
+                        {
+                          "id": "rowDirty",
+                          "type": "imageview",
+                          "image": {
+                            "type": "symbol",
+                            "src": "circle.fill",
+                            "size": {
+                              "height": 7
+                            }
+                          },
+                          "contenttintcolour": "systemOrangeColor",
+                          "tooltip": "Uncommitted changes",
+                          "constraints": {
+                            "position": "centre"
+                          }
+                        },
+                        {
+                          "id": "rowSync",
+                          "type": "label",
+                          "text": "",
+                          "colour": "secondaryLabelColor",
+                          "font": {
+                            "size": 12,
+                            "monospaced": "digits"
+                          },
                           "constraints": {
                             "position": "centre"
                           }
@@ -728,6 +773,39 @@
                   }
                 },
                 {
+                  "id": "webKey",
+                  "type": "button",
+                  "text": "",
+                  "bordered": false,
+                  "font": {
+                    "size": 12.5,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/vsc",
+                        "args": [
+                          "project",
+                          "web",
+                          "{value:items.selected.uid}"
+                        ]
+                      }
+                    }
+                  ],
+                  "shortcut": "⇧⌘G",
+                  "opacity": 0,
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 0,
+                      "height": 0
+                    }
+                  }
+                },
+                {
                   "id": "copyNameKey",
                   "type": "button",
                   "text": "",
@@ -817,6 +895,39 @@
                     }
                   ],
                   "shortcut": "⇧⌘P",
+                  "opacity": 0,
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 0,
+                      "height": 0
+                    }
+                  }
+                },
+                {
+                  "id": "removeKey",
+                  "type": "button",
+                  "text": "",
+                  "bordered": false,
+                  "font": {
+                    "size": 12.5,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/vsc",
+                        "args": [
+                          "project",
+                          "remove",
+                          "{value:items.selected.uid}"
+                        ]
+                      }
+                    }
+                  ],
+                  "shortcut": "⌃X",
                   "opacity": 0,
                   "constraints": {
                     "position": "centre",

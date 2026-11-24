@@ -14,11 +14,14 @@ const add = (uid: string, type: string, version: number, config: Obj, x: number,
   uidata[uid] = { xpos: x, ypos: y };
   return uid;
 };
-const link = (from: string, to: string, sourceoutputuid?: string) => {
+/** `modifiers`: 0 = ↩, CMD = ⌘↩ (a Script Filter item's `mods.cmd` needs its own connection). */
+const CMD = 1048576;
+const OPT = 524288;
+const link = (from: string, to: string, sourceoutputuid?: string, modifiers = 0, modifiersubtext = "") => {
   (connections[from] ??= []).push({
     destinationuid: to,
-    modifiers: 0,
-    modifiersubtext: "",
+    modifiers,
+    modifiersubtext,
     vitoclose: false,
     ...(sourceoutputuid && { sourceoutputuid }),
   });
@@ -127,14 +130,9 @@ const windows: [string, string, string, string, string, 0 | 1][] = [
     "install.alfredui",
     1,
   ],
-  [
-    "CLONE",
-    "{var:kw_clone}",
-    "Clone Repository",
-    "Paste a git URL, choose a folder, clone and open",
-    "clone.alfredui",
-    0,
-  ],
+  ["THEMES", "{var:kw_themes}", "Change Theme", "Pick a color theme for a profile", "themes.alfredui", 1],
+  // `codec` is a Script Filter (below), so the clone window has no keyword of its own.
+  ["CLONE", "", "Clone Repository", "", "clone.alfredui", 0],
 ];
 windows.forEach(([uid, kw, title, sub, path, arg], i) => {
   const y = 20 + i * 140;
@@ -142,39 +140,58 @@ windows.forEach(([uid, kw, title, sub, path, arg], i) => {
   const u = alfredui(`${uid}UI`, path, 920, y);
   link(j, u);
   link(u, post);
-  link(keyword(`${uid}KW`, kw, title, sub, 540, y, arg), j);
+  if (kw) link(keyword(`${uid}KW`, kw, title, sub, 540, y, arg), j);
 });
 
-// ── the `vsc` menu: Script Filter → route to a window, or run an action ──
-const rootFilter = add(
+const scriptFilter = (
+  uid: string,
+  kw: string,
+  title: string,
+  subtext: string,
+  body: string,
+  x: number,
+  y: number,
+) =>
+  add(
+    uid,
+    "input.scriptfilter",
+    3,
+    {
+      keyword: kw,
+      title,
+      subtext,
+      runningsubtext: "…",
+      script: body,
+      scriptargtype: 1,
+      type: 11,
+      escaping: 102,
+      scriptfile: "",
+      withspace: true,
+      argumenttype: 1,
+      argumenttreatemptyqueryasnil: false,
+      alfredfiltersresults: false,
+      alfredfiltersresultsmatchmode: 0,
+      queuemode: 1,
+      queuedelaymode: 0,
+      queuedelaycustom: 3,
+      queuedelayimmediatelyinitially: true,
+      skipuniversalaction: true,
+    },
+    x,
+    y,
+  );
+
+// ── the `code` menu: Script Filter → route to a window, or run an action ──
+const rootFilter = scriptFilter(
   "ROOT",
-  "input.scriptfilter",
-  3,
-  {
-    keyword: "{var:kw_main}",
-    title: "VS Code",
-    subtext: "Recent projects, extensions, clone a repo…",
-    runningsubtext: "…",
-    script: './bin/vsc root "$1"',
-    scriptargtype: 1,
-    type: 11,
-    escaping: 102,
-    scriptfile: "",
-    withspace: true,
-    argumenttype: 1,
-    argumenttreatemptyqueryasnil: false,
-    alfredfiltersresults: false,
-    alfredfiltersresultsmatchmode: 0,
-    queuemode: 1,
-    queuedelaymode: 0,
-    queuedelaycustom: 3,
-    queuedelayimmediatelyinitially: true,
-    skipuniversalaction: true,
-  },
+  "{var:kw_main}",
+  "VS Code",
+  "Recent projects, extensions, themes, clone a repo…",
+  './bin/vsc root "$1"',
   30,
   300,
 );
-const ROUTES = ["projects", "extensions", "install", "clone"];
+const ROUTES = ["projects", "extensions", "install", "clone", "themes"];
 const route = add(
   "ROUTE",
   "utility.conditional",
@@ -195,6 +212,20 @@ const route = add(
   300,
 );
 link(rootFilter, route);
+link(rootFilter, route, undefined, CMD);
+
+// ── `codec [folder] [url]`: folder suggestions + clone; ↩ opens the clone window, ⌘↩ clones now ──
+const cloneFilter = scriptFilter(
+  "CLONEFILTER",
+  "{var:kw_clone}",
+  "Clone Repository",
+  "Type a folder, paste a git URL (or copy one first)",
+  './bin/vsc clone-filter "$1"',
+  30,
+  480,
+);
+link(cloneFilter, route);
+link(cloneFilter, route, undefined, CMD);
 for (const target of ROUTES) link(route, `${target.toUpperCase()}JSON`, `ROUTE-${target}`);
 const rootAction = script("ROOTACT", './bin/vsc root-action "$1"', 540, 700);
 link(route, rootAction);
@@ -272,6 +303,36 @@ link(
   openScript,
 );
 
+// ── `codef` modifiers: ⌘↩ opens the folder in your terminal, ⌥↩ reveals it in Finder ──
+const fileScript = (uid: string, action: string, y: number) => {
+  const sc = script(uid, `./bin/vsc file-action ${action} "$1"`, 540, y);
+  link(sc, notification(`${uid}NOTE`, 760, y));
+  return sc;
+};
+link("FIND", fileScript("FINDTERM", "terminal", 1360), undefined, CMD, "Open in your terminal app");
+link("FIND", fileScript("FINDREVEAL", "reveal", 1460), undefined, OPT, "Reveal in Finder");
+
+// ── Universal Actions: → on any file or folder in Alfred (codef results, Finder selection, search) ──
+const universal: [string, string, string][] = [
+  ["UACLOSE", "Code Editor: Open and Close Other Windows", "close-others"],
+  ["UAEDITOR", "Code Editor: Open in Another Editor…", "pick-editor"],
+  ["UAPROFILE", "Code Editor: Open with Profile…", "pick-profile"],
+  ["UATERM", "Code Editor: Open in Terminal", "terminal"],
+  ["UAGITHUB", "Code Editor: Open on GitHub", "github"],
+];
+universal.forEach(([uid, name, action], i) => {
+  const y = 1560 + i * 100;
+  const trigger = add(
+    uid,
+    "trigger.universalaction",
+    1,
+    { acceptsfiles: true, acceptsmulti: 0, acceptstext: false, acceptsurls: false, name },
+    300,
+    y,
+  );
+  link(trigger, fileScript(`${uid}RUN`, action, y));
+});
+
 // ── New Window: keyword only, no window ──
 const newKw = keyword(
   "NEWWINKW",
@@ -345,19 +406,45 @@ const userconfigurationconfig = [
     "Code",
     "Opens projects in this editor and reads its recent projects.",
   ),
-  text("kw_main", "Keyword", "vsc", "Opens the menu: recent projects, extensions, clone, find…"),
-  text("kw_projects", "Recent Projects Keyword", "vscp"),
-  text("kw_extensions", "Extensions Keyword", "vsce"),
-  text("kw_install", "Install Keyword", "vsci"),
-  text("kw_clone", "Clone Keyword", "vscc"),
-  text("kw_find", "Find Keyword", "vscf", "Spotlight search for files and folders, opened in your editor."),
-  text("kw_new", "New Window Keyword", "vscn"),
+  text("kw_main", "Keyword", "code", "Opens the menu: recent projects, extensions, clone, find…"),
+  text("kw_projects", "Recent Projects Keyword", "codep"),
+  text("kw_extensions", "Extensions Keyword", "codee"),
+  text("kw_install", "Install Keyword", "codei"),
+  text("kw_clone", "Clone Keyword", "codec"),
+  text("kw_find", "Find Keyword", "codef", "Spotlight search for files and folders, opened in your editor."),
+  text("kw_themes", "Theme Keyword", "codet"),
+  text("kw_new", "New Window Keyword", "coden"),
   file(
     "clone_dir",
     "Clone Into",
     "Default folder for cloned repositories (you can change it each time).",
     1,
     "~/Developer",
+  ),
+  check("clone_clipboard", "", "Use a git URL from the clipboard", true),
+  text(
+    "scan_dirs",
+    "Project Folders",
+    "",
+    "Comma separated folders to scan for git repos you haven't opened yet, e.g. ~/Developer, /Volumes/Work/Projects",
+  ),
+  check(
+    "theme_auto_try",
+    "",
+    "Install Extension: try uninstalled themes automatically while browsing (otherwise ⌘T)",
+    false,
+  ),
+  text(
+    "profile",
+    "VS Code Profile",
+    "",
+    "Profile used by Change Theme and the extension windows, e.g. React. Blank = the profile of your most recently opened project.",
+  ),
+  check(
+    "theme_preview",
+    "Themes",
+    "Live preview in VS Code while moving through the list (⎋ restores)",
+    true,
   ),
   check("launch_external", "Window", "Open in a separate window", false),
   check("close_others", "Opening", "Close other editor windows (⇧⌘↩ does the opposite)", false),
@@ -380,18 +467,18 @@ const userconfigurationconfig = [
 
 const readme = `## Usage
 
-Type \`vsc\` to open the menu, then pick a command, or keep typing:
+Type \`code\` to open the menu, then pick a command, or keep typing:
 
-* \`vsc\` + a name searches your recent projects.
-* \`vsc install prettier\` searches the Marketplace.
-* \`vsc https://github.com/owner/repo\` clones a repository (you choose where), then opens it.
-* \`vsc ~/some/path\` opens that path.
+* \`code\` + a name searches your recent projects.
+* \`code install prettier\` searches the Marketplace.
+* \`code https://github.com/owner/repo\` clones a repository (you choose where), then opens it.
+* \`code ~/some/path\` opens that path.
 
 In a list: <kbd>↩</kbd> opens, <kbd>⌘</kbd><kbd>K</kbd> shows every action, <kbd>⌘</kbd><kbd>[</kbd> goes back to the menu.
 
 Recent projects: <kbd>⇧</kbd><kbd>⌘</kbd><kbd>↩</kbd> open and close other windows · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>F</kbd> show in Finder · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>T</kbd> open in Terminal · <kbd>⌘</kbd><kbd>O</kbd> open with… · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>C</kbd> copy name · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>P</kbd> pin · <kbd>⌘</kbd><kbd>P</kbd> filter by type.
 
-Shortcuts: \`vscp\` projects, \`vsce\` installed extensions, \`vsci\` install, \`vscc\` clone, \`vscf\` find files and folders, \`vscn\` new window. Set a Hotkey for recent projects.
+Shortcuts: \`codep\` projects, \`codee\` installed extensions, \`codei\` install, \`codec\` clone, \`codef\` find files and folders, \`coden\` new window. Set a Hotkey for recent projects.
 
 Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code forks: pick yours in the Workflow's Configuration.`;
 

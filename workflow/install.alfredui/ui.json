@@ -16,6 +16,11 @@
     "actions_shortcut": {
       "src": "variable",
       "default": "⌘K"
+    },
+    "gallery_category": {
+      "persist": true,
+      "scriptenv": true,
+      "default": ""
     }
   },
   "window": {
@@ -32,25 +37,42 @@
       "layout": "border",
       "events": [
         {
-          "triggers": "preload",
-          "action": {
-            "type": "script",
-            "src": "../bin/vsc",
-            "args": [
-              "gallery-init"
-            ]
-          }
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "gallery-init"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "gallery-pickers"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "gallery-search",
+                "{value:searchField.text}",
+                "{value:categoryPicker.selected.value}"
+              ],
+              "async": true
+            }
+          ]
         },
         {
-          "triggers": "launched",
+          "triggers": "quit",
           "action": {
             "type": "script",
             "src": "../bin/vsc",
             "args": [
-              "gallery-search",
-              "{value:searchField.text}"
-            ],
-            "async": true
+              "gallery-quit"
+            ]
           }
         },
         {
@@ -180,7 +202,8 @@
                     "src": "../bin/vsc",
                     "args": [
                       "gallery-search",
-                      "{value:searchField.text}"
+                      "{value:searchField.text}",
+                      "{value:categoryPicker.selected.value}"
                     ],
                     "async": true
                   }
@@ -213,6 +236,37 @@
                   ]
                 }
               ]
+            },
+            {
+              "id": "categoryPicker",
+              "type": "picker",
+              "bordered": false,
+              "tooltip": "Category",
+              "items": [
+                {
+                  "text": "All Categories",
+                  "value": ""
+                }
+              ],
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/vsc",
+                    "args": [
+                      "gallery-search",
+                      "{value:searchField.text}",
+                      "{value:categoryPicker.selected.value}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "constraints": {
+                "region": "right",
+                "position": "centre"
+              }
             }
           ]
         },
@@ -226,7 +280,7 @@
             {
               "id": "sectionLabel",
               "type": "label",
-              "text": "Found Extensions",
+              "text": "Extensions",
               "colour": "secondaryLabelColor",
               "font": {
                 "size": 11.5,
@@ -243,6 +297,21 @@
               }
             },
             {
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/vsc",
+                    "args": [
+                      "gallery",
+                      "auto-try",
+                      "{value:items.selected.uid}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
               "constraints": {
                 "region": "centre"
               },
@@ -250,7 +319,7 @@
               "type": "dataview",
               "padding": 6,
               "spacing": 2,
-              "placeholder": "Type to search the Marketplace",
+              "placeholder": "Loading the most installed extensions…",
               "behaviour": {
                 "selection": {
                   "wrap": "none"
@@ -608,6 +677,87 @@
                   ],
                   "constraints": {
                     "position": "centre"
+                  }
+                },
+                {
+                  "id": "previewKey",
+                  "type": "button",
+                  "text": "",
+                  "bordered": false,
+                  "font": {
+                    "size": 12.5,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/vsc",
+                        "args": [
+                          "gallery",
+                          "preview",
+                          "{value:items.selected.uid}"
+                        ]
+                      }
+                    }
+                  ],
+                  "shortcut": "⌘Y",
+                  "opacity": 0,
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 0,
+                      "height": 0
+                    }
+                  }
+                },
+                {
+                  "id": "tryKey",
+                  "type": "button",
+                  "text": "",
+                  "bordered": false,
+                  "font": {
+                    "size": 12.5,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": [
+                        {
+                          "type": "json",
+                          "src": {
+                            "update": {
+                              "ids": {
+                                "statusLabel": {
+                                  "text": "Installing theme to try it…"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "type": "script",
+                          "src": "../bin/vsc",
+                          "args": [
+                            "gallery",
+                            "try",
+                            "{value:items.selected.uid}"
+                          ],
+                          "async": true
+                        }
+                      ]
+                    }
+                  ],
+                  "shortcut": "⌘T",
+                  "opacity": 0,
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 0,
+                      "height": 0
+                    }
                   }
                 },
                 {
