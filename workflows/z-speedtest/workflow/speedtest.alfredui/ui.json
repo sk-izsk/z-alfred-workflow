@@ -1,0 +1,529 @@
+{
+  "bundleid": "com.izsk.speedtest",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "mode": {
+      "default": "meter",
+      "persist": true,
+      "scriptenv": true
+    },
+    "details": {
+      "default": "1",
+      "persist": true,
+      "scriptenv": true
+    },
+    "selection": {
+      "default": "ping",
+      "scriptenv": true
+    },
+    "last_phase": {
+      "default": "starting",
+      "scriptenv": true
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    },
+    "appearance": {
+      "src": "variable",
+      "default": "automatic",
+      "scriptenv": true
+    },
+    "speedtest_path": {
+      "src": "variable",
+      "default": "",
+      "scriptenv": true
+    }
+  },
+  "pulse": {
+    "src": "../bin/spt",
+    "args": [
+      "poll",
+      "{var:session}"
+    ],
+    "interval": 0
+  },
+  "window": {
+    "title": "Test Internet Speed",
+    "size": {
+      "height": 630
+    },
+    "minsize": {
+      "width": 760,
+      "height": 560
+    },
+    "root": {
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 1040
+                }
+              }
+            }
+          }
+        },
+        {
+          "triggers": "launched",
+          "action": {
+            "type": "script",
+            "src": "../bin/spt",
+            "args": [
+              "start",
+              "{var:session}"
+            ],
+            "async": false
+          }
+        },
+        {
+          "triggers": "quit",
+          "action": {
+            "type": "script",
+            "src": "../bin/spt",
+            "args": [
+              "cancel",
+              "{var:session}"
+            ],
+            "async": false
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/spt",
+            "args": [
+              "actions",
+              "{var:session}"
+            ],
+            "async": false
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/spt",
+            "args": [
+              "restart",
+              "{var:session}"
+            ],
+            "async": false
+          }
+        },
+        {
+          "shortcut": "⌘L",
+          "action": {
+            "type": "script",
+            "src": "../bin/spt",
+            "args": [
+              "view",
+              "{var:session}"
+            ],
+            "async": false
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "results",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "results",
+            "args": "selectprevious"
+          }
+        }
+      ],
+      "components": [
+        {
+          "type": "view",
+          "layout": "border",
+          "padding": 16,
+          "spacing": 12,
+          "constraints": {
+            "region": "top"
+          },
+          "components": [
+            {
+              "id": "backButton",
+              "type": "button",
+              "text": "‹",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "finish": {}
+                    }
+                  }
+                }
+              ],
+              "font": {
+                "size": 28
+              },
+              "constraints": {
+                "region": "left"
+              }
+            },
+            {
+              "id": "searchField",
+              "type": "textfield",
+              "placeholder": "Search…",
+              "focus": true,
+              "bordered": false,
+              "focusring": false,
+              "font": {
+                "size": 22
+              },
+              "constraints": {
+                "region": "centre"
+              },
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/spt",
+                    "args": [
+                      "filter",
+                      "{var:session}"
+                    ],
+                    "async": false
+                  }
+                },
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/spt",
+                    "args": [
+                      "primary",
+                      "{var:session}"
+                    ],
+                    "async": false
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "body",
+          "type": "view",
+          "layout": "border",
+          "constraints": {
+            "region": "centre"
+          },
+          "components": [
+            {
+              "type": "label",
+              "text": "Starting Speedtest…",
+              "textalign": "centre",
+              "constraints": {
+                "region": "centre"
+              }
+            }
+          ]
+        },
+        {
+          "type": "view",
+          "layout": "stack",
+          "constraints": {
+            "region": "bottom"
+          },
+          "components": [
+            {
+              "type": "view",
+              "layout": "border",
+              "padding": 14,
+              "components": [
+                {
+                  "type": "label",
+                  "text": "🚀  Test Internet Speed",
+                  "colour": "secondaryLabelColor",
+                  "constraints": {
+                    "region": "left",
+                    "position": "centre"
+                  }
+                },
+                {
+                  "type": "view",
+                  "layout": "inline",
+                  "spacing": 16,
+                  "constraints": {
+                    "region": "right"
+                  },
+                  "components": [
+                    {
+                      "id": "primaryButton",
+                      "type": "button",
+                      "text": "Show Detailed List  ↩",
+                      "bordered": false,
+                      "shortcut": "↩",
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/spt",
+                            "args": [
+                              "primary",
+                              "{var:session}"
+                            ],
+                            "async": false
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "actionsButton",
+                      "type": "button",
+                      "text": "Actions  ⌘K",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/spt",
+                            "args": [
+                              "actions",
+                              "{var:session}"
+                            ],
+                            "async": false
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "copyKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "shortcut": "⌘C",
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/spt",
+                    "args": [
+                      "copy-summary",
+                      "{var:session}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "copySectionKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "shortcut": "⇧⌘C",
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/spt",
+                    "args": [
+                      "copy-section",
+                      "{var:session}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "openKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "shortcut": "⌥↩",
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/spt",
+                    "args": [
+                      "open",
+                      "{var:session}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "copyImageKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "shortcut": "⌘D",
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/spt",
+                    "args": [
+                      "image",
+                      "{var:session}",
+                      "copy"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "pasteImageKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "shortcut": "⇧⌘V",
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/spt",
+                    "args": [
+                      "image",
+                      "{var:session}",
+                      "paste"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "saveImageKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "shortcut": "⇧⌘D",
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/spt",
+                    "args": [
+                      "image",
+                      "{var:session}",
+                      "save"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "clearKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "shortcut": "⌃X",
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/spt",
+                    "args": [
+                      "clear-confirm",
+                      "{var:session}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
