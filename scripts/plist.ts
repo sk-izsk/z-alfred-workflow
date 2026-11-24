@@ -480,7 +480,9 @@ Recent projects: <kbd>⇧</kbd><kbd>⌘</kbd><kbd>↩</kbd> open and close other
 
 Shortcuts: \`codep\` projects, \`codee\` installed extensions, \`codei\` install, \`codec\` clone, \`codef\` find files and folders, \`coden\` new window. Set a Hotkey for recent projects.
 
-Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code forks: pick yours in the Workflow's Configuration.`;
+Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code forks: pick yours in the Workflow's Configuration.
+
+This workflow was built with the help of AI tools. Review it before use, and report issues on the project page.`;
 
 export const infoPlist = {
   bundleid: "com.izsk.vscode",
