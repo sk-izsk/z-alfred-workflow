@@ -128,7 +128,11 @@ var run = () => {
         url: event.URL && !event.URL.isNil() ? text(event.URL.absoluteString) : "",
       });
     }
-    return JSON.stringify({ ok: true, ...result });
+    return JSON.stringify({
+      ok: true,
+      reducedMotion: !!$.NSWorkspace.sharedWorkspace.accessibilityDisplayShouldReduceMotion,
+      ...result,
+    });
   } catch {
     // OS errors can contain event contents. Keep diagnostics free of calendar data.
     return JSON.stringify({

@@ -25,16 +25,36 @@
     "cal_month": {
       "default": "",
       "scriptenv": true
+    },
+    "cal_selected": {
+      "default": "",
+      "scriptenv": true
+    },
+    "cal_window": {
+      "default": "",
+      "scriptenv": true
+    },
+    "cal_preview": {
+      "default": "",
+      "scriptenv": true
+    },
+    "cal_scroll_title": {
+      "default": "",
+      "scriptenv": true
+    },
+    "cal_scroll_started": {
+      "default": "0",
+      "scriptenv": true
     }
   },
   "window": {
     "title": "Quick Calendar",
     "size": {
-      "height": 560
+      "height": 450
     },
     "minsize": {
       "width": 620,
-      "height": 480
+      "height": 450
     },
     "root": {
       "type": "view",
@@ -42,13 +62,34 @@
       "events": [
         {
           "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "init",
+                "{var:cal_query}"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "triggers": "quit",
           "action": {
             "type": "script",
             "src": "../bin/cald",
             "args": [
-              "quick",
-              "init",
-              "{var:cal_query}"
+              "quick-preview-cleanup"
             ]
           }
         },
@@ -59,7 +100,7 @@
             "src": {
               "window": {
                 "resize": {
-                  "width": 800
+                  "width": 700
                 }
               }
             }
@@ -69,52 +110,159 @@
       "shortcuts": [
         {
           "shortcut": "←",
-          "action": {
-            "type": "script",
-            "src": "../bin/cald",
-            "args": [
-              "quick",
-              "shift",
-              "-1"
-            ]
-          }
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "shift",
+                "-1"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
         },
         {
           "shortcut": "→",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "shift",
+                "1"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "shortcut": "↑",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "move",
+                "-7"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "shortcut": "↓",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "move",
+                "7"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "shortcut": "c",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "today"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "shortcut": "⌘T",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "today"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "shortcut": "⌘O",
           "action": {
             "type": "script",
             "src": "../bin/cald",
             "args": [
               "quick",
-              "shift",
-              "1"
+              "agenda",
+              "{var:cal_selected}"
             ]
           }
         },
         {
-          "shortcut": "↑",
-          "action": {
-            "type": "function",
-            "src": "days",
-            "args": "selectup"
-          }
-        },
-        {
-          "shortcut": "↓",
-          "action": {
-            "type": "function",
-            "src": "days",
-            "args": "selectdown"
-          }
-        },
-        {
-          "shortcut": "⌘T",
+          "shortcut": "⌘J",
           "action": {
             "type": "script",
             "src": "../bin/cald",
             "args": [
-              "quick",
-              "today"
+              "quick-preview-join"
             ]
           }
         },
@@ -126,7 +274,7 @@
             "args": [
               "quick",
               "create",
-              "{value:days.selected.uid}"
+              "{var:cal_selected}"
             ]
           }
         },
@@ -138,21 +286,31 @@
             "args": [
               "quick",
               "copy",
-              "{value:days.selected.uid}"
+              "{var:cal_selected}"
             ]
           }
         },
         {
           "shortcut": "↩",
-          "action": {
-            "type": "script",
-            "src": "../bin/cald",
-            "args": [
-              "quick",
-              "agenda",
-              "{value:days.selected.uid}"
-            ]
-          }
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "today"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
         },
         {
           "shortcut": "{var:actions_shortcut}",
@@ -162,7 +320,7 @@
             "args": [
               "quick",
               "menu",
-              "{value:days.selected.uid}"
+              "{var:cal_selected}"
             ]
           }
         },
@@ -184,10 +342,11 @@
         {
           "type": "view",
           "layout": "border",
-          "padding": 14,
-          "spacing": 10,
           "constraints": {
-            "region": "top"
+            "region": "top",
+            "size": {
+              "height": 42
+            }
           },
           "components": [
             {
@@ -210,596 +369,389 @@
                   }
                 }
               ],
-              "font": {
-                "size": 26
-              },
               "tooltip": "Back to Calendar menu ⌘[",
+              "font": {
+                "size": 20
+              },
               "constraints": {
                 "region": "left",
-                "position": "centre"
+                "position": "centre",
+                "insets": {
+                  "left": 12
+                },
+                "size": {
+                  "width": 24,
+                  "height": 24
+                }
               }
             },
+            {
+              "type": "view",
+              "background": "separatorColor",
+              "constraints": {
+                "region": "bottom",
+                "size": {
+                  "height": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "view",
+          "layout": "inline",
+          "direction": "vertical",
+          "spacing": 10,
+          "constraints": {
+            "region": "centre",
+            "position": "top",
+            "stretch": "horizontal",
+            "insets": {
+              "left": 14,
+              "right": 14,
+              "top": 12
+            }
+          },
+          "components": [
             {
               "id": "monthTitle",
               "type": "label",
               "text": "",
               "font": {
-                "size": 25,
-                "weight": "light"
+                "size": 18,
+                "weight": "semibold"
               },
+              "textalign": "left",
               "constraints": {
-                "region": "centre",
-                "position": "centre",
                 "stretch": "horizontal"
               }
             },
             {
+              "id": "calendarTable",
               "type": "view",
-              "layout": "inline",
-              "spacing": 12,
-              "components": [
-                {
-                  "id": "previousButton",
-                  "type": "button",
-                  "text": "‹",
-                  "bordered": false,
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/cald",
-                        "args": [
-                          "quick",
-                          "shift",
-                          "-1"
-                        ]
-                      }
-                    }
-                  ]
-                },
-                {
-                  "id": "todayButton",
-                  "type": "button",
-                  "text": "Today",
-                  "bordered": false,
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/cald",
-                        "args": [
-                          "quick",
-                          "today"
-                        ]
-                      }
-                    }
-                  ]
-                },
-                {
-                  "id": "nextButton",
-                  "type": "button",
-                  "text": "›",
-                  "bordered": false,
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/cald",
-                        "args": [
-                          "quick",
-                          "shift",
-                          "1"
-                        ]
-                      }
-                    }
-                  ]
-                }
-              ],
               "constraints": {
-                "region": "right",
-                "position": "centre"
-              }
-            }
-          ]
-        },
-        {
-          "type": "view",
-          "layout": "border",
-          "padding": 14,
-          "spacing": 8,
-          "constraints": {
-            "region": "centre"
-          },
-          "components": [
-            {
-              "type": "view",
-              "layout": "border",
-              "constraints": {
-                "region": "top"
-              },
-              "components": [
-                {
-                  "id": "weekCaption",
-                  "type": "label",
-                  "text": "ISO",
-                  "colour": "tertiaryLabelColor",
-                  "font": {
-                    "size": 10
-                  },
-                  "constraints": {
-                    "region": "left",
-                    "size": {
-                      "width": 32
-                    }
-                  }
-                },
-                {
-                  "type": "view",
-                  "layout": "grid",
-                  "rows": 1,
-                  "cols": 7,
-                  "constraints": {
-                    "region": "centre",
-                    "size": {
-                      "height": 26
-                    }
-                  },
-                  "components": [
-                    {
-                      "id": "weekday0",
-                      "type": "label",
-                      "text": "",
-                      "textalign": "centre",
-                      "colour": "secondaryLabelColor",
-                      "font": {
-                        "size": 12,
-                        "weight": "medium"
-                      }
-                    },
-                    {
-                      "id": "weekday1",
-                      "type": "label",
-                      "text": "",
-                      "textalign": "centre",
-                      "colour": "secondaryLabelColor",
-                      "font": {
-                        "size": 12,
-                        "weight": "medium"
-                      }
-                    },
-                    {
-                      "id": "weekday2",
-                      "type": "label",
-                      "text": "",
-                      "textalign": "centre",
-                      "colour": "secondaryLabelColor",
-                      "font": {
-                        "size": 12,
-                        "weight": "medium"
-                      }
-                    },
-                    {
-                      "id": "weekday3",
-                      "type": "label",
-                      "text": "",
-                      "textalign": "centre",
-                      "colour": "secondaryLabelColor",
-                      "font": {
-                        "size": 12,
-                        "weight": "medium"
-                      }
-                    },
-                    {
-                      "id": "weekday4",
-                      "type": "label",
-                      "text": "",
-                      "textalign": "centre",
-                      "colour": "secondaryLabelColor",
-                      "font": {
-                        "size": 12,
-                        "weight": "medium"
-                      }
-                    },
-                    {
-                      "id": "weekday5",
-                      "type": "label",
-                      "text": "",
-                      "textalign": "centre",
-                      "colour": "secondaryLabelColor",
-                      "font": {
-                        "size": 12,
-                        "weight": "medium"
-                      }
-                    },
-                    {
-                      "id": "weekday6",
-                      "type": "label",
-                      "text": "",
-                      "textalign": "centre",
-                      "colour": "secondaryLabelColor",
-                      "font": {
-                        "size": 12,
-                        "weight": "medium"
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "view",
-              "layout": "inline",
-              "direction": "vertical",
-              "spacing": 0,
-              "constraints": {
-                "region": "left",
+                "stretch": "horizontal",
                 "size": {
-                  "width": 32
+                  "height": 224
                 }
               },
-              "components": [
-                {
-                  "id": "week0",
-                  "type": "label",
-                  "text": "",
-                  "textalign": "centre",
-                  "colour": "tertiaryLabelColor",
-                  "font": {
-                    "size": 11
-                  },
-                  "constraints": {
-                    "size": {
-                      "height": 58
-                    }
-                  }
-                },
-                {
-                  "id": "week1",
-                  "type": "label",
-                  "text": "",
-                  "textalign": "centre",
-                  "colour": "tertiaryLabelColor",
-                  "font": {
-                    "size": 11
-                  },
-                  "constraints": {
-                    "size": {
-                      "height": 58
-                    }
-                  }
-                },
-                {
-                  "id": "week2",
-                  "type": "label",
-                  "text": "",
-                  "textalign": "centre",
-                  "colour": "tertiaryLabelColor",
-                  "font": {
-                    "size": 11
-                  },
-                  "constraints": {
-                    "size": {
-                      "height": 58
-                    }
-                  }
-                },
-                {
-                  "id": "week3",
-                  "type": "label",
-                  "text": "",
-                  "textalign": "centre",
-                  "colour": "tertiaryLabelColor",
-                  "font": {
-                    "size": 11
-                  },
-                  "constraints": {
-                    "size": {
-                      "height": 58
-                    }
-                  }
-                },
-                {
-                  "id": "week4",
-                  "type": "label",
-                  "text": "",
-                  "textalign": "centre",
-                  "colour": "tertiaryLabelColor",
-                  "font": {
-                    "size": 11
-                  },
-                  "constraints": {
-                    "size": {
-                      "height": 58
-                    }
-                  }
-                },
-                {
-                  "id": "week5",
-                  "type": "label",
-                  "text": "",
-                  "textalign": "centre",
-                  "colour": "tertiaryLabelColor",
-                  "font": {
-                    "size": 11
-                  },
-                  "constraints": {
-                    "size": {
-                      "height": 58
-                    }
-                  }
-                }
-              ]
+              "components": []
             },
             {
-              "id": "days",
-              "type": "dataview",
-              "cols": 7,
-              "padding": 0,
-              "spacing": 0,
-              "focus": true,
+              "id": "dayPreview",
+              "type": "view",
               "constraints": {
-                "region": "centre"
-              },
-              "data": {
-                "type": "basic",
-                "src": []
-              },
-              "cell": {
-                "height": 58,
-                "init": {
-                  "dayCell.background": null
-                },
-                "selected": {
-                  "dayCell.background": "alfredSelectedResultBackgroundColor",
-                  "dayNumber.colour": "alfredSelectedResultTextColor",
-                  "todayMarker.colour": "alfredSelectedResultTextColor"
-                },
-                "root": {
-                  "id": "dayCell",
-                  "type": "view",
-                  "layout": "inline",
-                  "direction": "vertical",
-                  "padding": 8,
-                  "spacing": 2,
-                  "cornerradius": 8,
-                  "events": [
-                    {
-                      "triggers": "doubleclicked",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/cald",
-                        "args": [
-                          "quick",
-                          "agenda",
-                          "{data:uid}"
-                        ]
-                      }
-                    }
-                  ],
-                  "components": [
-                    {
-                      "id": "dayNumber",
-                      "type": "label",
-                      "text": "",
-                      "textalign": "centre",
-                      "font": {
-                        "size": 19,
-                        "weight": "medium"
-                      }
-                    },
-                    {
-                      "id": "todayMarker",
-                      "type": "label",
-                      "text": "",
-                      "textalign": "centre",
-                      "colour": "systemRedColor",
-                      "font": {
-                        "size": 9
-                      }
-                    }
-                  ]
+                "stretch": "horizontal",
+                "size": {
+                  "height": 0
                 }
               },
-              "events": [
-                {
-                  "triggers": "changed",
-                  "action": {
-                    "type": "script",
-                    "src": "../bin/cald",
-                    "args": [
-                      "quick",
-                      "selected",
-                      "{value:days.selected.uid}"
-                    ]
-                  }
-                }
-              ]
+              "components": []
             }
           ]
         },
         {
           "type": "view",
-          "layout": "border",
-          "padding": 10,
-          "background": {
-            "dark": "#00000033",
-            "light": "#0000000d"
-          },
+          "layout": "stack",
           "constraints": {
             "region": "bottom"
           },
           "components": [
             {
-              "id": "statusLabel",
-              "type": "label",
-              "text": "Loading…",
-              "colour": "secondaryLabelColor",
-              "font": {
-                "size": 11.5
-              },
-              "constraints": {
-                "region": "centre",
-                "position": "centre",
-                "stretch": "horizontal"
-              }
-            },
-            {
               "type": "view",
-              "layout": "inline",
-              "spacing": 10,
-              "constraints": {
-                "region": "right",
-                "position": "centre"
+              "layout": "border",
+              "padding": 14,
+              "background": {
+                "dark": "#00000033",
+                "light": "#0000000d"
               },
               "components": [
                 {
-                  "id": "primaryButton",
-                  "type": "button",
-                  "text": "View Events  ↩",
-                  "bordered": false,
-                  "events": [
+                  "type": "view",
+                  "layout": "border",
+                  "spacing": 7,
+                  "constraints": {
+                    "region": "centre",
+                    "stretch": "horizontal"
+                  },
+                  "components": [
                     {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/cald",
-                        "args": [
-                          "quick",
-                          "agenda",
-                          "{value:days.selected.uid}"
-                        ]
+                      "type": "imageview",
+                      "image": {
+                        "type": "file",
+                        "src": "../icon.png",
+                        "size": {
+                          "width": 15,
+                          "height": 15
+                        }
+                      },
+                      "constraints": {
+                        "region": "left",
+                        "position": "centre"
+                      }
+                    },
+                    {
+                      "id": "statusLabel",
+                      "type": "label",
+                      "text": "Loading…",
+                      "colour": "secondaryLabelColor",
+                      "font": {
+                        "size": 11.5
+                      },
+                      "constraints": {
+                        "region": "centre",
+                        "position": "centre",
+                        "stretch": "horizontal"
                       }
                     }
                   ]
                 },
                 {
-                  "id": "actionsButton",
-                  "type": "button",
-                  "text": "Actions  {var:actions_shortcut}",
-                  "bordered": false,
-                  "events": [
+                  "type": "view",
+                  "layout": "inline",
+                  "spacing": 10,
+                  "constraints": {
+                    "region": "right",
+                    "position": "centre"
+                  },
+                  "components": [
                     {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/cald",
-                        "args": [
-                          "quick",
-                          "menu",
-                          "{value:days.selected.uid}"
-                        ]
-                      }
+                      "id": "primaryButton",
+                      "type": "button",
+                      "text": "Current Month  ↩",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": [
+                            {
+                              "type": "script",
+                              "src": "../bin/cald",
+                              "args": [
+                                "quick",
+                                "today"
+                              ]
+                            },
+                            {
+                              "type": "script",
+                              "src": "../bin/cald",
+                              "args": [
+                                "quick-preview",
+                                "{var:cal_selected}"
+                              ],
+                              "async": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "actionsButton",
+                      "type": "button",
+                      "text": "Actions  {var:actions_shortcut}",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/cald",
+                            "args": [
+                              "quick",
+                              "menu",
+                              "{var:cal_selected}"
+                            ]
+                          }
+                        }
+                      ]
                     }
                   ]
-                },
-                {
-                  "id": "previousYearKey",
-                  "type": "button",
-                  "text": "",
-                  "bordered": false,
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/cald",
-                        "args": [
-                          "quick",
-                          "shift",
-                          "-12"
-                        ]
-                      }
-                    }
-                  ],
-                  "shortcut": "⇧←",
-                  "opacity": 0,
-                  "constraints": {
-                    "size": {
-                      "width": 0,
-                      "height": 0
-                    }
-                  }
-                },
-                {
-                  "id": "nextYearKey",
-                  "type": "button",
-                  "text": "",
-                  "bordered": false,
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/cald",
-                        "args": [
-                          "quick",
-                          "shift",
-                          "12"
-                        ]
-                      }
-                    }
-                  ],
-                  "shortcut": "⇧→",
-                  "opacity": 0,
-                  "constraints": {
-                    "size": {
-                      "width": 0,
-                      "height": 0
-                    }
-                  }
-                },
-                {
-                  "id": "previousDayKey",
-                  "type": "button",
-                  "text": "",
-                  "bordered": false,
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "function",
-                        "src": "days",
-                        "args": "selectprevious"
-                      }
-                    }
-                  ],
-                  "shortcut": "⌥←",
-                  "opacity": 0,
-                  "constraints": {
-                    "size": {
-                      "width": 0,
-                      "height": 0
-                    }
-                  }
-                },
-                {
-                  "id": "nextDayKey",
-                  "type": "button",
-                  "text": "",
-                  "bordered": false,
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "function",
-                        "src": "days",
-                        "args": "selectnext"
-                      }
-                    }
-                  ],
-                  "shortcut": "⌥→",
-                  "opacity": 0,
-                  "constraints": {
-                    "size": {
-                      "width": 0,
-                      "height": 0
-                    }
-                  }
                 }
               ]
+            },
+            {
+              "id": "previousYearKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": [
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick",
+                        "shift",
+                        "-12"
+                      ]
+                    },
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick-preview",
+                        "{var:cal_selected}"
+                      ],
+                      "async": true
+                    }
+                  ]
+                }
+              ],
+              "shortcut": "⇧←",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "nextYearKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": [
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick",
+                        "shift",
+                        "12"
+                      ]
+                    },
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick-preview",
+                        "{var:cal_selected}"
+                      ],
+                      "async": true
+                    }
+                  ]
+                }
+              ],
+              "shortcut": "⇧→",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "previousDayKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": [
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick",
+                        "move",
+                        "-1"
+                      ]
+                    },
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick-preview",
+                        "{var:cal_selected}"
+                      ],
+                      "async": true
+                    }
+                  ]
+                }
+              ],
+              "shortcut": "⌥←",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "nextDayKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": [
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick",
+                        "move",
+                        "1"
+                      ]
+                    },
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick-preview",
+                        "{var:cal_selected}"
+                      ],
+                      "async": true
+                    }
+                  ]
+                }
+              ],
+              "shortcut": "⌥→",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "copyCalendarKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/cald",
+                    "args": [
+                      "quick",
+                      "copy-calendar",
+                      "{var:cal_selected}"
+                    ]
+                  }
+                }
+              ],
+              "shortcut": "⌘↩",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
             }
           ]
         }

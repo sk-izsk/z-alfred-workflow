@@ -549,181 +549,187 @@
         },
         {
           "type": "view",
-          "layout": "border",
-          "padding": 10,
-          "background": {
-            "dark": "#00000033",
-            "light": "#0000000d"
-          },
+          "layout": "stack",
           "constraints": {
             "region": "bottom"
           },
           "components": [
             {
-              "id": "statusLabel",
-              "type": "label",
-              "text": "Loading…",
-              "colour": "secondaryLabelColor",
-              "font": {
-                "size": 11.5
-              },
-              "constraints": {
-                "region": "centre",
-                "position": "centre",
-                "stretch": "horizontal"
-              }
-            },
-            {
               "type": "view",
-              "layout": "inline",
-              "spacing": 10,
-              "constraints": {
-                "region": "right",
-                "position": "centre"
+              "layout": "border",
+              "padding": 14,
+              "background": {
+                "dark": "#00000033",
+                "light": "#0000000d"
               },
               "components": [
                 {
-                  "id": "accessButton",
-                  "type": "button",
-                  "text": "Allow Access",
-                  "bordered": false,
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/cald",
-                        "args": [
-                          "authorize"
-                        ],
-                        "async": true
-                      }
-                    }
-                  ],
-                  "tooltip": "Request full calendar access",
-                  "hidden": true,
+                  "id": "statusLabel",
+                  "type": "label",
+                  "text": "Loading…",
+                  "colour": "secondaryLabelColor",
+                  "font": {
+                    "size": 11.5
+                  },
                   "constraints": {
-                    "size": {
-                      "width": 0,
-                      "height": 0
-                    }
+                    "region": "centre",
+                    "position": "centre",
+                    "stretch": "horizontal"
                   }
                 },
                 {
-                  "id": "createButton",
-                  "type": "button",
-                  "text": "Create Event  ⌘↩",
-                  "bordered": false,
-                  "events": [
+                  "type": "view",
+                  "layout": "inline",
+                  "spacing": 10,
+                  "constraints": {
+                    "region": "right",
+                    "position": "centre"
+                  },
+                  "components": [
                     {
-                      "triggers": "actioned",
-                      "action": [
+                      "id": "accessButton",
+                      "type": "button",
+                      "text": "Allow Access",
+                      "bordered": false,
+                      "events": [
                         {
-                          "type": "json",
-                          "src": {
-                            "update": {
-                              "ids": {
-                                "createButton": {
-                                  "enabled": false
-                                },
-                                "statusLabel": {
-                                  "text": "Saving event…"
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/cald",
+                            "args": [
+                              "authorize"
+                            ],
+                            "async": true
+                          }
+                        }
+                      ],
+                      "tooltip": "Request full calendar access",
+                      "hidden": true,
+                      "constraints": {
+                        "size": {
+                          "width": 0,
+                          "height": 0
+                        }
+                      }
+                    },
+                    {
+                      "id": "createButton",
+                      "type": "button",
+                      "text": "Create Event  ⌘↩",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": [
+                            {
+                              "type": "json",
+                              "src": {
+                                "update": {
+                                  "ids": {
+                                    "createButton": {
+                                      "enabled": false
+                                    },
+                                    "statusLabel": {
+                                      "text": "Saving event…"
+                                    }
+                                  }
                                 }
+                              },
+                              "variables": {
+                                "cal_title": "{value:titleField.text}",
+                                "cal_calendar": "{value:calendarPicker.selected.value}",
+                                "cal_start_date": "{value:startDate.text}",
+                                "cal_start_time": "{value:startTime.text}",
+                                "cal_end_date": "{value:endDate.text}",
+                                "cal_end_time": "{value:endTime.text}",
+                                "cal_all_day": "{value:allDay.checked}",
+                                "cal_location": "{value:locationField.text}",
+                                "cal_notes": "{value:notesField.text}",
+                                "cal_meeting_url": "{value:meetingField.text}"
                               }
+                            },
+                            {
+                              "type": "script",
+                              "src": "../bin/cald",
+                              "args": [
+                                "create-save"
+                              ],
+                              "async": true
                             }
-                          },
-                          "variables": {
-                            "cal_title": "{value:titleField.text}",
-                            "cal_calendar": "{value:calendarPicker.selected.value}",
-                            "cal_start_date": "{value:startDate.text}",
-                            "cal_start_time": "{value:startTime.text}",
-                            "cal_end_date": "{value:endDate.text}",
-                            "cal_end_time": "{value:endTime.text}",
-                            "cal_all_day": "{value:allDay.checked}",
-                            "cal_location": "{value:locationField.text}",
-                            "cal_notes": "{value:notesField.text}",
-                            "cal_meeting_url": "{value:meetingField.text}"
-                          }
-                        },
-                        {
-                          "type": "script",
-                          "src": "../bin/cald",
-                          "args": [
-                            "create-save"
-                          ],
-                          "async": true
+                          ]
                         }
-                      ]
+                      ],
+                      "enabled": false,
+                      "shortcut": "⌘↩"
                     }
-                  ],
-                  "enabled": false,
-                  "shortcut": "⌘↩"
-                },
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "privacyKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
                 {
-                  "id": "privacyKey",
-                  "type": "button",
-                  "text": "",
-                  "bordered": false,
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "json",
-                        "src": {
-                          "open": {
-                            "type": "url",
-                            "src": "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars"
-                          }
-                        }
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "open": {
+                        "type": "url",
+                        "src": "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars"
                       }
-                    }
-                  ],
-                  "shortcut": "⇧⌘,",
-                  "opacity": 0,
-                  "constraints": {
-                    "size": {
-                      "width": 0,
-                      "height": 0
-                    }
-                  }
-                },
-                {
-                  "id": "refreshCalendarsKey",
-                  "type": "button",
-                  "text": "",
-                  "bordered": false,
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": [
-                        {
-                          "type": "script",
-                          "src": "../bin/cald",
-                          "args": [
-                            "create-refresh"
-                          ]
-                        },
-                        {
-                          "type": "script",
-                          "src": "../bin/cald",
-                          "args": [
-                            "create-pickers",
-                            "{value:calendarPicker.selected.value}"
-                          ]
-                        }
-                      ]
-                    }
-                  ],
-                  "shortcut": "⇧⌘R",
-                  "opacity": 0,
-                  "constraints": {
-                    "size": {
-                      "width": 0,
-                      "height": 0
                     }
                   }
                 }
-              ]
+              ],
+              "shortcut": "⇧⌘,",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "refreshCalendarsKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": [
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "create-refresh"
+                      ]
+                    },
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "create-pickers",
+                        "{value:calendarPicker.selected.value}"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "shortcut": "⇧⌘R",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
             }
           ]
         }

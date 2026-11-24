@@ -28,28 +28,56 @@ export const hiddenKey = (id: string, shortcut: string, action: Json | Json[]): 
   button(id, "", action, { shortcut, opacity: 0, constraints: { size: { width: 0, height: 0 } } });
 export const back = json({ finish: { variables: { cal_out: "back" } } });
 
-export const footer = (buttons: Json[]): Json => ({
-  type: "view",
-  layout: "border",
-  padding: 10,
-  background: { dark: "#00000033", light: "#0000000d" },
-  constraints: { region: "bottom" },
-  components: [
-    label("statusLabel", {
-      text: "Loading…",
-      colour: "secondaryLabelColor",
-      font: { size: 11.5 },
-      constraints: { region: "centre", position: "centre", stretch: "horizontal" },
-    }),
-    {
-      type: "view",
-      layout: "inline",
-      spacing: 10,
-      constraints: { region: "right", position: "centre" },
-      components: buttons,
-    },
-  ],
-});
+/** Invisible shortcut controls live in an overlay, so inline spacing cannot add phantom margins. */
+export const footer = (buttons: Json[], showIcon = false): Json => {
+  const hidden = buttons.filter((item) => item.opacity === 0);
+  const visible = buttons.filter((item) => item.opacity !== 0);
+  const status = label("statusLabel", {
+    text: "Loading…",
+    colour: "secondaryLabelColor",
+    font: { size: 11.5 },
+    constraints: { region: "centre", position: "centre", stretch: "horizontal" },
+  });
+  return {
+    type: "view",
+    layout: "stack",
+    constraints: { region: "bottom" },
+    components: [
+      {
+        type: "view",
+        layout: "border",
+        padding: 14,
+        background: { dark: "#00000033", light: "#0000000d" },
+        components: [
+          showIcon
+            ? {
+                type: "view",
+                layout: "border",
+                spacing: 7,
+                constraints: { region: "centre", stretch: "horizontal" },
+                components: [
+                  {
+                    type: "imageview",
+                    image: { type: "file", src: "../icon.png", size: { width: 15, height: 15 } },
+                    constraints: { region: "left", position: "centre" },
+                  },
+                  status,
+                ],
+              }
+            : status,
+          {
+            type: "view",
+            layout: "inline",
+            spacing: 10,
+            constraints: { region: "right", position: "centre" },
+            components: visible,
+          },
+        ],
+      },
+      ...hidden,
+    ],
+  };
+};
 
 export const header = (title: Json, right?: Json): Json => ({
   type: "view",
@@ -81,7 +109,12 @@ export const selection = (cell: string, labels: string[]): Json => ({
   },
 });
 
-export const window = (title: string, root: Json, variables: Json = {}): Json => ({
+export const window = (
+  title: string,
+  root: Json,
+  variables: Json = {},
+  size: { width?: number; height?: number; minHeight?: number } = {},
+): Json => ({
   bundleid: "com.izsk.calendar",
   log: { level: "error", internal: true },
   variablesconfig: {
@@ -93,15 +126,15 @@ export const window = (title: string, root: Json, variables: Json = {}): Json =>
   },
   window: {
     title,
-    size: { height: 560 },
-    minsize: { width: 620, height: 480 },
+    size: { height: size.height ?? 560 },
+    minsize: { width: 620, height: size.minHeight ?? 480 },
     root: {
       type: "view",
       layout: "border",
       ...root,
       events: [
         ...((root.events as Json[] | undefined) || []),
-        on("preload", json({ window: { resize: { width: 800 } } })),
+        on("preload", json({ window: { resize: { width: size.width ?? 800 } } })),
       ],
       shortcuts: [...((root.shortcuts as Json[] | undefined) || []), key("{var:back_shortcut}", back)],
     },

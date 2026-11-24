@@ -1,7 +1,9 @@
 import { expect, test } from "bun:test";
+import { compactDays, quickTable } from "../ui/quick-table.ts";
+import { footer, hiddenKey, button } from "../ui/shared.ts";
 import { packages } from "../ui/index.ts";
 import { infoPlist } from "../scripts/plist.ts";
-import { quick } from "../src/commands/quick.ts";
+import { calendarMarkdown, quick } from "../src/commands/quick.ts";
 import { createInit, formFromEnv } from "../src/commands/create.ts";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -43,11 +45,15 @@ test("filter commands preserve row data while changing the empty-state text", ()
 
 test("quick calendar selects a date and handles month/year navigation without calendar access", async () => {
   const initial = await quick(["init", "2024-02"]);
-  expect(initial.variables).toEqual({ cal_month: "2024-02-01" });
-  const ids = (initial.update as { ids: Record<string, any> }).ids;
-  expect(ids.days.data.src).toHaveLength(42);
-  expect(ids.days.select).toBe("2024-02-01");
-  expect(ids.weekday0.text).toBeTruthy();
+  expect(initial.variables).toMatchObject({
+    cal_month: "2024-02-01",
+    cal_selected: "2024-02-01",
+    cal_preview: "",
+  });
+  const table = (initial.replace as { ids: Record<string, any> }).ids.calendarTable;
+  expect(table.rows).toBe(6);
+  expect(table.cols).toBe(8);
+  expect(table.components).toHaveLength(48);
   const next = await quick(["shift", "12"]);
   expect(next.variables).toBeDefined();
   await expect(quick(["shift", "99"])).rejects.toThrow("Invalid");
@@ -97,4 +103,37 @@ test("windows have unique component IDs, valid local scripts and configured keyw
   const objects = infoPlist.objects as { uid: string; type: string; config: Record<string, unknown> }[];
   expect(objects.filter((o) => o.type === "alfred.workflow.trigger.external")).toHaveLength(3);
   expect(objects.filter((o) => o.type === "alfred.workflow.userinterface.alfredui")).toHaveLength(3);
+});
+
+test("compact calendar uses only the required weeks and copies the displayed table", async () => {
+  expect(compactDays(new Date(2021, 1, 1), 1)).toHaveLength(28);
+  expect(compactDays(new Date(2024, 0, 1), 1)).toHaveLength(35);
+  expect(compactDays(new Date(2026, 10, 1), 1)).toHaveLength(42);
+  const table = quickTable(new Date(2024, 0, 1), 1, false, "2024-01-01");
+  expect(table.cols).toBe(7);
+  expect(table.components as unknown[]).toHaveLength(42);
+  const text = calendarMarkdown(new Date(2024, 0, 1), 1, true, new Date(2024, 0, 31));
+  expect(text).toContain("# January 2024");
+  expect(text).toContain("| # | Mon | Tue | Wed | Thu | Fri | Sat | Sun |");
+  expect(text).toContain("• 31");
+  expect(text.trim().split("\n")).toHaveLength(9);
+  const menu = (await quick(["menu"])).popupmenu as { menu: { text?: string }[] };
+  expect(menu.menu.map((item) => item.text?.split("\t")[0]).filter(Boolean)).toEqual([
+    "Current Month",
+    "Copy Calendar to Clipboard",
+    "Previous Month",
+    "Next Month",
+    "Previous Year",
+    "Next Year",
+    "Selected Date",
+  ]);
+});
+
+test("hidden shortcuts do not consume inline footer spacing", () => {
+  const result = footer([button("action", "Actions", {}), hiddenKey("shortcut", "⌘X", {})], true);
+  const layers = result.components as Record<string, any>[];
+  expect(result.layout).toBe("stack");
+  expect(layers[1]?.id).toBe("shortcut");
+  expect(layers[0]?.padding).toBe(14);
+  expect(layers[0]?.components[1].components.map((item: any) => item.id)).toEqual(["action"]);
 });

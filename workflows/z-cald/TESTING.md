@@ -11,7 +11,10 @@ Use a temporary local test calendar and demo events. Never commit preferences or
 - [ ] Meetings only hides holidays; Timed events includes in-person meetings; All events restores all-day entries.
 - [ ] Empty calendars and permission denial have clear states; Allow Access + ⌘R recovers.
 - [ ] Quick Calendar handles leap February and December/January, month/year arrows, today, Monday/Sunday and week numbers.
-- [ ] Selected dates open the correct agenda and prefill event creation.
+- [ ] Selected-day preview is hidden on empty days; on populated days it shows the appropriate meeting, time and Join action.
+- [ ] Long preview titles pause with an ellipsis and scroll within their own bounds; Reduce Motion keeps them static.
+- [ ] Fast date navigation cannot join a stale preview.
+- [ ] ⌘O on selected dates opens the correct agenda and prefill event creation.
 - [ ] Create form uses the selected account, validates time ranges and remembers its last writable calendar.
 - [ ] Single-day and multi-day all-day events include exactly the selected dates.
 - [ ] Saving disables the button; failure preserves input and allows retry.
@@ -31,3 +34,12 @@ Real EventKit permission/read/write verification must be recorded separately fro
 - Automated create/save tests use a fake EventKit store. No local-only calendar source was available,
   so no test events were written into the user's synced accounts. Real event creation, meeting-link
   opening and full keyboard/permission-denial interaction still need manual confirmation.
+
+## Quick Calendar refinement
+
+- A single bordered grid aligns headers, week numbers and dates; four-, five- and six-week months are covered by tests.
+- Footer shortcut controls occupy an overlay, so both edges keep equal padding.
+- Selected-day previews are hidden on empty days; title/time/action columns are bounded separately.
+- Preview titles use a native label, ellipsis and native scrolling updates; no web view or fixed colour backing remains.
+- Long-title scrolling stops with Reduce Motion, on empty previews and when a preview becomes stale.
+- The Quick Calendar screenshot was refreshed using demo data only; live calendar data was restored afterwards.

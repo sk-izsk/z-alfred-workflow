@@ -584,163 +584,169 @@
         },
         {
           "type": "view",
-          "layout": "border",
-          "padding": 10,
-          "background": {
-            "dark": "#00000033",
-            "light": "#0000000d"
-          },
+          "layout": "stack",
           "constraints": {
             "region": "bottom"
           },
           "components": [
             {
-              "id": "statusLabel",
-              "type": "label",
-              "text": "Loading…",
-              "colour": "secondaryLabelColor",
-              "font": {
-                "size": 11.5
-              },
-              "constraints": {
-                "region": "centre",
-                "position": "centre",
-                "stretch": "horizontal"
-              }
-            },
-            {
               "type": "view",
-              "layout": "inline",
-              "spacing": 10,
-              "constraints": {
-                "region": "right",
-                "position": "centre"
+              "layout": "border",
+              "padding": 14,
+              "background": {
+                "dark": "#00000033",
+                "light": "#0000000d"
               },
               "components": [
                 {
-                  "id": "accessButton",
-                  "type": "button",
-                  "text": "Allow Access",
-                  "bordered": false,
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/cald",
-                        "args": [
-                          "authorize"
-                        ],
-                        "async": true
-                      }
-                    }
-                  ],
-                  "tooltip": "Request full calendar access",
-                  "hidden": true,
+                  "id": "statusLabel",
+                  "type": "label",
+                  "text": "Loading…",
+                  "colour": "secondaryLabelColor",
+                  "font": {
+                    "size": 11.5
+                  },
                   "constraints": {
-                    "size": {
-                      "width": 0,
-                      "height": 0
-                    }
+                    "region": "centre",
+                    "position": "centre",
+                    "stretch": "horizontal"
                   }
                 },
                 {
-                  "id": "primaryButton",
-                  "type": "button",
-                  "text": "Join / Open  ↩",
-                  "bordered": false,
-                  "events": [
+                  "type": "view",
+                  "layout": "inline",
+                  "spacing": 10,
+                  "constraints": {
+                    "region": "right",
+                    "position": "centre"
+                  },
+                  "components": [
                     {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/cald",
-                        "args": [
-                          "event",
-                          "join",
-                          "{value:items.selected.uid}"
-                        ]
-                      }
-                    }
-                  ]
-                },
-                {
-                  "id": "actionsButton",
-                  "type": "button",
-                  "text": "Actions  {var:actions_shortcut}",
-                  "bordered": false,
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/cald",
-                        "args": [
-                          "event",
-                          "menu",
-                          "{value:items.selected.uid}"
-                        ]
-                      }
-                    }
-                  ]
-                },
-                {
-                  "id": "privacyKey",
-                  "type": "button",
-                  "text": "",
-                  "bordered": false,
-                  "events": [
-                    {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "json",
-                        "src": {
-                          "open": {
-                            "type": "url",
-                            "src": "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars"
+                      "id": "accessButton",
+                      "type": "button",
+                      "text": "Allow Access",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/cald",
+                            "args": [
+                              "authorize"
+                            ],
+                            "async": true
                           }
                         }
+                      ],
+                      "tooltip": "Request full calendar access",
+                      "hidden": true,
+                      "constraints": {
+                        "size": {
+                          "width": 0,
+                          "height": 0
+                        }
                       }
-                    }
-                  ],
-                  "shortcut": "⇧⌘,",
-                  "opacity": 0,
-                  "constraints": {
-                    "size": {
-                      "width": 0,
-                      "height": 0
-                    }
-                  }
-                },
-                {
-                  "id": "copyDetailsKey",
-                  "type": "button",
-                  "text": "",
-                  "bordered": false,
-                  "events": [
+                    },
                     {
-                      "triggers": "actioned",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/cald",
-                        "args": [
-                          "event",
-                          "copy",
-                          "{value:items.selected.uid}"
-                        ]
-                      }
+                      "id": "primaryButton",
+                      "type": "button",
+                      "text": "Join / Open  ↩",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/cald",
+                            "args": [
+                              "event",
+                              "join",
+                              "{value:items.selected.uid}"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "actionsButton",
+                      "type": "button",
+                      "text": "Actions  {var:actions_shortcut}",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/cald",
+                            "args": [
+                              "event",
+                              "menu",
+                              "{value:items.selected.uid}"
+                            ]
+                          }
+                        }
+                      ]
                     }
-                  ],
-                  "shortcut": "⇧⌘C",
-                  "opacity": 0,
-                  "constraints": {
-                    "size": {
-                      "width": 0,
-                      "height": 0
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "privacyKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "open": {
+                        "type": "url",
+                        "src": "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars"
+                      }
                     }
                   }
                 }
-              ]
+              ],
+              "shortcut": "⇧⌘,",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "copyDetailsKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/cald",
+                    "args": [
+                      "event",
+                      "copy",
+                      "{value:items.selected.uid}"
+                    ]
+                  }
+                }
+              ],
+              "shortcut": "⇧⌘C",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
             }
           ]
         }

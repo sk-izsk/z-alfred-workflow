@@ -40,17 +40,26 @@ multiple supported links, choose the intended one. Unrecognized URLs are not ope
 ### Quick Calendar
 
 Browse a month via the `calq` keyword. Today is highlighted; select a date to view its events or
-create an event for that day. The month grid works without Calendar permission.
+create an event for that day. The month grid works without Calendar permission. Below it, a selected-day preview shows an
+ongoing or next meeting today, the earliest meeting on a future day, or the most recent meeting
+on a past day. It follows the default agenda filter and stays hidden when there is nothing to
+show or calendar access is unavailable. Long titles pause with an ellipsis, then scroll within
+their own native label area; macOS Reduce Motion keeps the title static. The preview uses native
+theme colours and a transparent background, with no embedded web view. The time, Join control and footer
+remain in separate fixed areas.
+
+Click **Join** or press <kbd>⌘</kbd><kbd>J</kbd> to join the previewed meeting.
 
 - <kbd>←</kbd> / <kbd>→</kbd> Previous / next month.
 - <kbd>⇧</kbd><kbd>←</kbd> / <kbd>⇧</kbd><kbd>→</kbd> Previous / next year.
-- <kbd>⌘</kbd><kbd>T</kbd> Current month.
+- <kbd>↩</kbd>, <kbd>C</kbd> or <kbd>⌘</kbd><kbd>T</kbd> Current month.
 - <kbd>⌥</kbd><kbd>←</kbd> / <kbd>⌥</kbd><kbd>→</kbd> Select previous / next day.
 - <kbd>↑</kbd> / <kbd>↓</kbd> Move the selected date by a week.
-- <kbd>↩</kbd> Show events on the selected date.
+- <kbd>⌘</kbd><kbd>O</kbd> Show events on the selected date.
 - <kbd>⌘</kbd><kbd>N</kbd> Create an event on the selected date.
 - <kbd>⌘</kbd><kbd>C</kbd> Copy the selected date as YYYY-MM-DD.
-- <kbd>⌘</kbd><kbd>K</kbd> Open actions.
+- <kbd>⌘</kbd><kbd>↩</kbd> Copy the displayed calendar as a Markdown table.
+- <kbd>⌘</kbd><kbd>K</kbd> Open month/year navigation, calendar copying and selected-date actions.
 
 ![Quick Calendar month view](docs/screenshots/quick-calendar.png)
 
@@ -100,7 +109,8 @@ Event notes are used transiently to find meeting links and are not cached. Event
 calendar names, locations and meeting links are cached locally for action handling, in a private
 0700 directory with 0600 files. Snapshots expire on access after 15 minutes and are replaced on
 refresh or cleared after a failed refresh. They are not encrypted and may remain on disk until
-accessed or refreshed. No calendar data is sent to a server by this workflow; joining a meeting
+accessed or refreshed. Preview requests keep only a request token in the local cache; preview links stay in the current
+window’s memory and are cleared when the selected date changes. No calendar data is sent to a server by this workflow; joining a meeting
 opens its provider URL. Calendar providers continue their normal macOS sync.
 
 The workflow prints event data only to Alfred's UI; do not share raw debugger output from your

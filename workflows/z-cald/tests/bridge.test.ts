@@ -42,6 +42,7 @@ const invoke = (input: object, status = 3, writable = true) => {
       NSFileHandle: { fileHandleWithStandardInput: { readDataToEndOfFile: JSON.stringify(input) } },
       NSString: { alloc: { initWithDataEncoding: (value: string) => value } },
       NSDate: { dateWithTimeIntervalSince1970: (value: number) => ({ timeIntervalSince1970: value }) },
+      NSWorkspace: { sharedWorkspace: { accessibilityDisplayShouldReduceMotion: false } },
       NSTimeZone: { localTimeZone: "local" },
       NSURL: { URLWithString: (value: string) => value },
     },

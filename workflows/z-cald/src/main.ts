@@ -1,3 +1,4 @@
+import { previewCleanup, previewJoin, previewLoad, scrollTitle } from "./commands/preview.ts";
 import { CalendarAccessError } from "./calendar.ts";
 import { BUNDLE_ID, str } from "./env.ts";
 import { exec, osascript } from "./proc.ts";
@@ -20,6 +21,10 @@ const commands: Record<string, Command> = {
   "create-refresh": createRefresh,
   "create-save": createSave,
   authorize,
+  "quick-preview": previewLoad,
+  "quick-scroll": scrollTitle,
+  "quick-preview-join": previewJoin,
+  "quick-preview-cleanup": previewCleanup,
   "create-all-day": async ([checked = "false"]) =>
     update({
       startTime: { enabled: !["true", "1"].includes(checked) },
