@@ -8,7 +8,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | --- | --- | --- |
 | [Bitwarden](workflows/z-bitwarden) | Search your vault, generate passwords, use authenticator codes and manage Sends | [Bitwarden 1.0.0](https://github.com/sk-izsk/z-bitwarden/releases/tag/v1.0.0) |
 | [VS Code](workflows/z-vscode) | Open projects, manage extensions and themes, and clone repositories across supported editors | [VS Code 0.1.0](https://github.com/sk-izsk/z-vscode-workflow/releases/tag/v0.1.0) |
-| [Calendar](workflows/z-cald) | Browse months, join upcoming meetings and create events in macOS Calendar | Build from source; first release pending |
+| [Calendar](workflows/z-cald) | Browse months, join upcoming meetings and create events in macOS Calendar | [Calendar 0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-cald%2Fv0.1.0) |
 
 Download a `.alfredworkflow` asset and double-click it to install. These workflows require macOS,
 Alfred 6 with the Powerpack and Node.js; see each workflow's README for its other requirements.
