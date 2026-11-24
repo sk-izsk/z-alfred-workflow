@@ -2,7 +2,7 @@ name: Release workflow
 
 on:
   push:
-    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*"]
+    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*", "z-brew/v*"]
 
 permissions:
   contents: read
@@ -25,6 +25,7 @@ jobs:
           case "$RELEASE_TAG" in
             z-bitwarden/v*) workflow=z-bitwarden; artifact=Bitwarden.alfredworkflow ;;
             z-vscode/v*) workflow=z-vscode; artifact='VS Code.alfredworkflow' ;;
+            z-brew/v*) workflow=z-brew; artifact=Brew.alfredworkflow ;;
             z-cald/v*) workflow=z-cald; artifact=Calendar.alfredworkflow ;;
             *) echo 'Unknown workflow tag' >&2; exit 1 ;;
           esac
