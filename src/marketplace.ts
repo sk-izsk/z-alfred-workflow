@@ -68,7 +68,7 @@ export const CATEGORIES = [
   "Other",
 ];
 
-/** Same request body VS Code sends. No text + a category = most installed in that category. */
+/** Same request body VS Code sends. No text = most installed (in the category, if one is picked). */
 const body = (text: string, category: string) =>
   JSON.stringify({
     filters: [
@@ -106,7 +106,6 @@ export const toGallery = (raw: Raw): GalleryExtension => {
 };
 
 export const searchGallery = async (text: string, category = ""): Promise<GalleryExtension[]> => {
-  if (!text.trim() && !category) return [];
   const res = await fetch(`${galleryUrl()}/extensionquery?api-version=3.0-preview.1`, {
     method: "POST",
     headers: { "content-type": "application/json", accept: "application/json;api-version=3.0-preview.1" },

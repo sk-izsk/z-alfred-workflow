@@ -31,6 +31,16 @@ import {
 import { entry, icon, zedNotice } from "./common.ts";
 import { confirmUninstall, previewSheet } from "./extensions.ts";
 
+/** Most installed (per category), cached for an hour: the window opens with a full list at no cost. */
+const popular = async (cat: string): Promise<GalleryExtension[]> => {
+  const file = join(cacheDir(), `gallery-popular-${cat.replace(/\W+/g, "-") || "all"}.json`);
+  const cache = readJson<{ at: number; list: GalleryExtension[] }>(file, { at: 0, list: [] });
+  if (Date.now() - cache.at < 3_600_000 && cache.list.length) return cache.list;
+  const list = await searchGallery("", cat);
+  writeJson(file, { at: Date.now(), list });
+  return list;
+};
+
 /** The last results, so row actions (↩, ⌘K) don't search the Marketplace again. */
 const lastFile = () => join(cacheDir(), "gallery-last.json");
 
@@ -85,12 +95,10 @@ export const gallerySearch = async ([text = "", category = ""]: string[]): Promi
   if (editor().kind === "zed") return zedNotice("The Marketplace");
   const cat = validCategory(category);
   const remember = vars({ gallery_category: cat });
-  if (!text.trim() && !cat)
-    return merge(remember, rows("items", []), status(`Type to search ${galleryName()}`));
-  const list = await searchGallery(text, cat);
+  const list = text.trim() ? await searchGallery(text, cat) : await popular(cat);
   writeJson(lastFile(), list);
   await fetchIcons(list);
-  const what = text.trim() ? `“${text.trim()}”` : `top ${cat}`;
+  const what = text.trim() ? `“${text.trim()}”` : `most installed${cat ? ` ${cat}` : ""}`;
   return merge(
     remember,
     show(

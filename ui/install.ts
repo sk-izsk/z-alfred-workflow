@@ -51,7 +51,7 @@ export const install = window(
         right: picker("categoryPicker", "Category", "All Categories", search),
       }),
       body(
-        sectionTitle("sectionLabel", "Found Extensions"),
+        sectionTitle("sectionLabel", "Extensions"),
         list(
           {
             ...selectionColours(
@@ -86,7 +86,7 @@ export const install = window(
               ],
             }),
           },
-          "Type to search, or pick a category",
+          "Loading the most installed extensions…",
           false,
         ),
       ),
