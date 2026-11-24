@@ -4,6 +4,15 @@ Open recent projects, manage extensions and clone repositories in **VS Code, Cur
 Zed, VSCodium** and other VS Code forks, from [Alfred 6](https://www.alfredapp.com).
 Built on Alfred UI, Alfred 6's native window toolkit.
 
+| | |
+| --- | --- |
+| ![The code menu](docs/screenshots/01-menu.png) | ![Search Recent Projects](docs/screenshots/02-recent-projects.png) |
+| **`code`**: every command in one menu | **Recent Projects**: Finder icons, git branch, pins |
+| ![Change Theme](docs/screenshots/04-change-theme.png) | ![Installed Extensions](docs/screenshots/05-installed-extensions.png) |
+| **Change Theme**: per profile, live preview in VS Code | **Installed Extensions**: per profile, filter themes |
+| ![Install Extension](docs/screenshots/06-install-extension.png) | ![Clone with folder suggestions](docs/screenshots/08-clone.png) |
+| **Install Extension**: most installed first, categories | **`codec`**: pick a folder, paste a git URL |
+
 ## Features
 
 | Type | What happens |
@@ -57,6 +66,13 @@ Open in Terminal, Open on GitHub. There's also an
 `codef`, `codet`, `coden`; all of them can be changed in the Workflow's Configuration, where you also pick the
 editor, the clone folder, the terminal app and a hotkey.
 
+## Editors
+
+Tested with **Visual Studio Code**. The other editors in the picker (Insiders, Cursor, Windsurf, VSCodium,
+Kiro, Positron, Trae…) are VS Code forks that store recent projects, settings, profiles and extensions the
+same way, so they should work, but they're untested; reports and fixes welcome. Zed support is limited to
+recent projects, opening, cloning and finding (no extensions, themes or profiles).
+
 ## Requirements
 
 - Alfred 6 with the Powerpack
@@ -85,6 +101,15 @@ workflow/       what Alfred loads (generated files are git-ignored)
 ```
 
 See [AGENTS.md](AGENTS.md) for conventions.
+
+## Credits
+
+- [Visual Studio Code for Raycast](https://github.com/raycast/extensions/tree/main/extensions/visual-studio-code-recent-projects)
+  by thomas and its many contributors (MIT): the commands, their wording, the list of
+  supported editors and the Marketplace query this workflow is modelled on.
+- [Visual Studio Code workflow for Alfred](https://github.com/alexchantastic/alfred-open-with-vscode-workflow)
+  by Alex Chan: the `code` keyword and the `codef` file search this one grew out of.
+- [Alfred](https://www.alfredapp.com) and Alfred UI by Running with Crayons.
 
 ## License
 
