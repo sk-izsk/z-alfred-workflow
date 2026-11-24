@@ -22,11 +22,7 @@ import {
 } from "./shared.ts";
 
 const act = (action: string) => run(["ext", action, sel("items")]);
-const refilter = run([
-  "ext-filter",
-  "{value:profilePicker.selected.value}",
-  "{value:kindPicker.selected.value}",
-]);
+const refilter = run(["ext-filter", "{value:kindPicker.selected.value}"]);
 
 const versionPill = pill("rowVersionPill", [
   inlineLabel("rowVersion", { colour: "secondaryLabelColor", font: { size: 11.5, monospaced: "digits" } }),
@@ -46,15 +42,7 @@ export const extensions = window(
         placeholder: "Search Installed Extensions",
         list: "items",
         enter: act("open"),
-        right: {
-          type: "view",
-          layout: "inline",
-          spacing: 6,
-          components: [
-            picker("profilePicker", "Profile", "Default", refilter),
-            picker("kindPicker", "Themes or other extensions", "All Extensions", refilter),
-          ],
-        },
+        right: picker("kindPicker", "Themes or other extensions", "All Extensions", refilter),
       }),
       body(
         sectionTitle("sectionLabel", "Installed Extensions"),
@@ -86,7 +74,6 @@ export const extensions = window(
   },
   {
     variablesconfig: {
-      ext_profile: { persist: true, scriptenv: true, default: "" },
       ext_kind: { persist: true, scriptenv: true, default: "all" },
     },
   },

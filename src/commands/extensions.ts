@@ -2,8 +2,7 @@ import { editor, shortName } from "../editors.ts";
 import { type LocalExtension, extensionUri, localExtensions, uninstallExtension } from "../extensions.ts";
 import { openUrl, revealInFinder } from "../launch.ts";
 import { itemUrl } from "../marketplace.ts";
-import { profileById, profiles, recentProfile } from "../profiles.ts";
-import { recents } from "../projects.ts";
+import { type Profile, configuredProfile } from "../profiles.ts";
 import {
   type Action,
   copy,
@@ -26,12 +25,6 @@ export const EXT_KINDS = [
 ];
 const validKind = (k = "") => (EXT_KINDS.some((x) => x.value === k) ? k : "all");
 
-/** The saved profile, else the profile of the last opened project. */
-export const activeProfile = async (saved = process.env.ext_profile ?? ""): Promise<string> =>
-  saved && profiles().some((p) => p.id === saved)
-    ? saved
-    : recentProfile((await recents()).map((p) => p.uri));
-
 export const toRow = (e: LocalExtension) => ({
   uid: e.id,
   ...(e.icon ? icon("file", e.icon) : icon("symbol", "puzzlepiece.extension")),
@@ -43,41 +36,30 @@ export const toRow = (e: LocalExtension) => ({
   match: [e.name, e.publisher, e.id].join(" "),
 });
 
-const installed = (profileId: string) => localExtensions(profileById(profileId).manifestPath);
-
-const load = (profileId: string, kind: string, note?: string): Action => {
-  const list = installed(profileId).filter(
+const load = (profile: Profile, kind: string, note?: string): Action => {
+  const list = localExtensions(profile.manifestPath).filter(
     (e) => kind === "all" || (kind === "themes" ? e.isTheme : !e.isTheme),
   );
   return merge(
     rows("items", list.map(toRow)),
-    status(note ?? `${list.length} extensions in ${profileById(profileId).name}`),
+    status(note ?? `${list.length} extensions in ${profile.name}`),
   );
 };
 
 export const extInit = async (): Promise<Action> => {
   if (editor().kind === "zed") return zedNotice("Extensions");
-  const profileId = await activeProfile();
   const kind = validKind(process.env.ext_kind);
-  return merge(vars({ ext_profile: profileId, ext_kind: kind }), load(profileId, kind));
+  return merge(vars({ ext_kind: kind }), load(await configuredProfile(), kind));
 };
 
 /** Picker choices, sent on their own (a bad picker update must never empty the list). */
 export const extPickers = async (): Promise<Action> =>
   editor().kind === "zed"
     ? {}
-    : update({
-        profilePicker: {
-          items: profiles().map((p) => ({ text: p.name, value: p.id })),
-          selected: await activeProfile(),
-        },
-        kindPicker: { items: EXT_KINDS, selected: validKind(process.env.ext_kind) },
-      });
+    : update({ kindPicker: { items: EXT_KINDS, selected: validKind(process.env.ext_kind) } });
 
-export const extFilter = async ([profileId = "", kind = "all"]: string[]): Promise<Action> => {
-  const id = await activeProfile(profileId);
-  return merge(vars({ ext_profile: id, ext_kind: validKind(kind) }), load(id, validKind(kind)));
-};
+export const extFilter = async ([kind = "all"]: string[]): Promise<Action> =>
+  merge(vars({ ext_kind: validKind(kind) }), load(await configuredProfile(), validKind(kind)));
 
 /** The Marketplace page (screenshots, README) in a sheet over the list. */
 export const previewSheet = (id: string, name: string): Action =>
@@ -136,7 +118,7 @@ export const confirmUninstall = (command: string, id: string, name: string, wher
   ]);
 
 export const ext = async ([action = "", id = ""]: string[]): Promise<Action> => {
-  const profile = profileById(await activeProfile());
+  const profile = await configuredProfile();
   const e = localExtensions(profile.manifestPath).find((x) => x.id === id);
   if (!e) throw new Error("Select an extension first");
   const item = entry("ext", id);
@@ -159,7 +141,7 @@ export const ext = async ([action = "", id = ""]: string[]): Promise<Action> => 
       return confirmUninstall("ext", id, e.name, profile.name);
     case "uninstall-yes":
       await uninstallExtension(id, profile.name);
-      return load(profile.id, kind, `Uninstalled ${e.name} from ${profile.name}`);
+      return load(profile, kind, `Uninstalled ${e.name} from ${profile.name}`);
     case "menu":
       return popup("actionsButton", [
         item(`Open in ${shortName()}`, "open", "↩"),

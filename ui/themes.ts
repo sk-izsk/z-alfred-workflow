@@ -18,10 +18,9 @@ import {
   window,
 } from "./shared.ts";
 
-const PROFILE = "{value:profilePicker.selected.value}";
 const KIND = "{value:kindPicker.selected.value}";
-const apply = run(["theme", "apply", sel("items"), PROFILE]);
-const refilter = run(["theme-filter", PROFILE, KIND]);
+const apply = run(["theme", "apply", sel("items")]);
+const refilter = run(["theme-filter", KIND]);
 
 export const themes = window(
   "Change Theme",
@@ -39,15 +38,7 @@ export const themes = window(
         placeholder: "Search themes...",
         list: "items",
         enter: apply,
-        right: {
-          type: "view",
-          layout: "inline",
-          spacing: 6,
-          components: [
-            picker("profilePicker", "Profile", "Default", refilter),
-            picker("kindPicker", "Light or dark", "All Themes", refilter),
-          ],
-        },
+        right: picker("kindPicker", "Light or dark", "All Themes", refilter),
       }),
       body(
         sectionTitle("sectionLabel", "Installed Themes"),
@@ -55,7 +46,7 @@ export const themes = window(
           {
             ...selectionColours("rowCell", ["rowTitle", "rowDetail", "rowKind"], ["rowIcon", "rowCurrent"]),
             root: row({
-              doubleClick: run(["theme", "apply", "{data:uid}", PROFILE]),
+              doubleClick: run(["theme", "apply", "{data:uid}"]),
               right: [
                 symbol("rowCurrent", "checkmark", {
                   tooltip: "Current theme",
@@ -70,7 +61,7 @@ export const themes = window(
           "No themes in this profile",
           true,
           // Live preview: each selection change applies the theme (ignored unless enabled in settings).
-          [on("changed", run(["theme", "preview", sel("items"), PROFILE], { async: true }))],
+          [on("changed", run(["theme", "preview", sel("items")], { async: true }))],
         ),
       ),
       footer([footerButton("primaryButton", "Apply Theme  ↩", apply)]),
@@ -78,7 +69,6 @@ export const themes = window(
   },
   {
     variablesconfig: {
-      theme_profile: { persist: true, scriptenv: true, default: "" },
       theme_kind: { persist: true, scriptenv: true, default: "all" },
     },
   },

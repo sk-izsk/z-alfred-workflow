@@ -14,7 +14,7 @@ import {
   itemUrl,
   searchGallery,
 } from "../marketplace.ts";
-import { profiles } from "../profiles.ts";
+import { configuredProfile, profiles } from "../profiles.ts";
 import {
   type Action,
   copy,
@@ -44,7 +44,9 @@ const popular = async (cat: string): Promise<GalleryExtension[]> => {
 /** The last results, so row actions (↩, ⌘K) don't search the Marketplace again. */
 const lastFile = () => join(cacheDir(), "gallery-last.json");
 
-const installedIds = () => new Set(localExtensions().map((e) => e.id.toLowerCase()));
+/** "Installed" means installed in the configured profile (Workflow Configuration → VS Code Profile). */
+const installedIds = async () =>
+  new Set(localExtensions((await configuredProfile()).manifestPath).map((e) => e.id.toLowerCase()));
 
 const validCategory = (c = "") => (CATEGORIES.includes(c) ? c : "");
 
@@ -63,8 +65,8 @@ export const toRow = (e: GalleryExtension, installed: Set<string>) => {
   };
 };
 
-const show = (list: GalleryExtension[], note: string): Action => {
-  const installed = installedIds();
+const show = async (list: GalleryExtension[], note: string): Promise<Action> => {
+  const installed = await installedIds();
   return merge(
     rows(
       "items",
@@ -101,7 +103,7 @@ export const gallerySearch = async ([text = "", category = ""]: string[]): Promi
   const what = text.trim() ? `“${text.trim()}”` : `most installed${cat ? ` ${cat}` : ""}`;
   return merge(
     remember,
-    show(
+    await show(
       list,
       list.length ? `${list.length} results for ${what} · ${galleryName()}` : `Nothing found for ${what}`,
     ),
@@ -111,13 +113,14 @@ export const gallerySearch = async ([text = "", category = ""]: string[]): Promi
 export const gallery = async ([action = "", id = "", profileName = ""]: string[]): Promise<Action> => {
   const e = readJson<GalleryExtension[]>(lastFile(), []).find((x) => x.id === id);
   if (!e) throw new Error("Select an extension first");
-  const installed = installedIds().has(id.toLowerCase());
+  const profile = await configuredProfile();
+  const installed = (await installedIds()).has(id.toLowerCase());
   const item = entry("gallery", id);
   const refresh = (note: string) => show(readJson<GalleryExtension[]>(lastFile(), []), note);
   switch (action) {
     case "install":
-      await installExtension(id, profileName);
-      return refresh(`Installed ${e.name}${profileName ? ` in ${profileName}` : ""}`);
+      await installExtension(id, profileName || profile.name);
+      return refresh(`Installed ${e.name} in ${profileName || profile.name}`);
     case "browser":
       await openUrl(itemUrl(id));
       return finish();
@@ -129,15 +132,15 @@ export const gallery = async ([action = "", id = "", profileName = ""]: string[]
     case "copy-id":
       return merge(copy(id), status(`Copied ${id}`));
     case "uninstall":
-      return confirmUninstall("gallery", id, e.name);
+      return confirmUninstall("gallery", id, e.name, profile.name);
     case "uninstall-yes":
-      await uninstallExtension(id);
-      return refresh(`Uninstalled ${e.name}`);
+      await uninstallExtension(id, profile.name);
+      return refresh(`Uninstalled ${e.name} from ${profile.name}`);
     case "menu":
       return popup("actionsButton", [
-        item(installed ? "Reinstall Extension" : "Install Extension", "install", "↩"),
+        item(installed ? `Reinstall in ${profile.name}` : `Install in ${profile.name}`, "install", "↩"),
         {
-          text: "Install in Profile",
+          text: "Install in Another Profile",
           submenu: profiles().map((p) => menuItem(p.name, ["gallery", "install", id, p.name])),
         },
         separator,

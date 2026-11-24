@@ -9,11 +9,11 @@ Status for whoever picks this up next (Codex, a person, or another session).
   - Folder scan (Workflow Configuration: Project Folders) for repos you haven't opened yet.
   - ⌘K: Open in ▸ another editor, Open with Profile ▸, Terminal (configurable, e.g. Ghostty), Open on GitHub, Copy Remote URL, Remove from Recent Projects (⌃X).
 - **Change Theme** (`codet`):
-  - Profile and Light/Dark/High Contrast pickers.
+  - A Light/Dark/High Contrast picker. The profile comes from Workflow Configuration → VS Code Profile (blank = the profile of the most recent project); there's no profile dropdown, by the user's request.
   - Themes come from that profile's extensions plus the built-in ones, one row per theme in a pack.
   - ↩ writes `workbench.colorTheme` to that profile's settings (`src/jsonc.ts` changes only the top-level key).
-  - Optional live preview; the window's `quit` event restores the old theme.
-- **Installed Extensions**: profile and All/Themes/Other pickers, ⌘Y preview (Marketplace page in a webkitview sheet), uninstall per profile.
+  - Live preview is on by default; the window's `quit` event restores the old theme (tested byte-identical on a real profile; a theme that was unset is removed again).
+- **Installed Extensions**: an All/Themes/Other picker for the configured profile, ⌘Y preview (Marketplace page in a webkitview sheet), uninstall per profile.
 - **Install Extension**: category picker (top installs when the search is empty), ⌘Y preview, Install in Profile ▸.
 - **`code` menu**:
   - Clone from the clipboard, `code gh` (the `gh` CLI), `code profile`, `code sync`.

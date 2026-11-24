@@ -2,7 +2,8 @@ import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { type Editor, editor } from "./editors.ts";
-import { readJson } from "./env.ts";
+import { readJson, str } from "./env.ts";
+import { recents } from "./projects.ts";
 
 export const DEFAULT_PROFILE = "__default__profile__";
 
@@ -65,4 +66,24 @@ export const recentProfile = (recentUris: string[], e: Editor = editor()): strin
   const map = storage(e).profileAssociations?.workspaces ?? {};
   for (const uri of recentUris) if (map[uri]) return map[uri]!;
   return DEFAULT_PROFILE;
+};
+
+/**
+ * The profile themes and extensions work on: "VS Code Profile" in the Workflow Configuration
+ * (a profile name), or, when blank or unknown, the profile of the most recently opened project.
+ */
+export const configuredProfile = async (e: Editor = editor()): Promise<Profile> => {
+  const wanted = str("profile").toLowerCase();
+  const all = profiles(e);
+  const named = wanted && all.find((p) => p.name.toLowerCase() === wanted);
+  return (
+    named ||
+    profileById(
+      recentProfile(
+        (await recents(e)).map((p) => p.uri),
+        e,
+      ),
+      e,
+    )
+  );
 };

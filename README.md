@@ -27,15 +27,18 @@ open and close other windows ⇧⌘↩ · Open in ▸ another editor · Open wit
 Open With… ⌘O (Alfred's File Actions) · Open in Terminal ⇧⌘T (Ghostty, iTerm…: set Terminal App) ·
 Open on GitHub ⇧⌘G · Copy Remote URL · Copy Name ⇧⌘C · Copy Path ⇧⌘. · Pin ⇧⌘P · Remove from Recent Projects ⌃X.
 
-**Change Theme** (`codet`): every color theme available in a profile (packs with several themes show one
-row each). Pick the profile and Light/Dark/High Contrast at the top; ↩ applies it to that profile.
-Optional live preview while you move through the list (⎋ puts the old theme back).
+**Change Theme** (`codet`): every color theme available in your profile (packs with several themes show one
+row each), filtered by Light/Dark/High Contrast. Moving through the list previews each theme live in VS Code,
+like its own theme picker; ↩ keeps it, ⎋ puts the old one back.
+
+**Profiles**: Change Theme and the extension windows work on one VS Code profile: set **VS Code Profile** in
+the Workflow Configuration, or leave it blank to follow the profile of your most recently opened project.
 
 **Clone** (`codec [folder] [url]`): type a folder name for suggestions (Spotlight, or a path with Tab to
 drill down), then paste a URL, or have one on the clipboard. ↩ opens the clone window with that folder,
 ⌘↩ clones and opens right away.
 
-**Show Installed Extensions**: per profile, filter All / Themes / Other. Preview the Marketplace page
+**Show Installed Extensions**: for your profile, filter All / Themes / Other. Preview the Marketplace page
 (⌘Y), open in the editor or browser (⇧⌘O), Show in Finder (⇧⌘F), Copy ID (⇧⌘C), Uninstall from the profile.
 
 **Install Extension**: search as you type, or pick a category (Themes, Languages, Formatters…) to see the

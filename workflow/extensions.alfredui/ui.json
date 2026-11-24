@@ -17,11 +17,6 @@
       "src": "variable",
       "default": "⌘K"
     },
-    "ext_profile": {
-      "persist": true,
-      "scriptenv": true,
-      "default": ""
-    },
     "ext_kind": {
       "persist": true,
       "scriptenv": true,
@@ -211,61 +206,27 @@
               ]
             },
             {
-              "type": "view",
-              "layout": "inline",
-              "spacing": 6,
-              "components": [
+              "id": "kindPicker",
+              "type": "picker",
+              "bordered": false,
+              "tooltip": "Themes or other extensions",
+              "items": [
                 {
-                  "id": "profilePicker",
-                  "type": "picker",
-                  "bordered": false,
-                  "tooltip": "Profile",
-                  "items": [
-                    {
-                      "text": "Default",
-                      "value": ""
-                    }
-                  ],
-                  "events": [
-                    {
-                      "triggers": "changed",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/vsc",
-                        "args": [
-                          "ext-filter",
-                          "{value:profilePicker.selected.value}",
-                          "{value:kindPicker.selected.value}"
-                        ]
-                      }
-                    }
-                  ]
-                },
+                  "text": "All Extensions",
+                  "value": ""
+                }
+              ],
+              "events": [
                 {
-                  "id": "kindPicker",
-                  "type": "picker",
-                  "bordered": false,
-                  "tooltip": "Themes or other extensions",
-                  "items": [
-                    {
-                      "text": "All Extensions",
-                      "value": ""
-                    }
-                  ],
-                  "events": [
-                    {
-                      "triggers": "changed",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/vsc",
-                        "args": [
-                          "ext-filter",
-                          "{value:profilePicker.selected.value}",
-                          "{value:kindPicker.selected.value}"
-                        ]
-                      }
-                    }
-                  ]
+                  "triggers": "changed",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/vsc",
+                    "args": [
+                      "ext-filter",
+                      "{value:kindPicker.selected.value}"
+                    ]
+                  }
                 }
               ],
               "constraints": {

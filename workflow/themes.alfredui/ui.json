@@ -17,11 +17,6 @@
       "src": "variable",
       "default": "⌘K"
     },
-    "theme_profile": {
-      "persist": true,
-      "scriptenv": true,
-      "default": ""
-    },
     "theme_kind": {
       "persist": true,
       "scriptenv": true,
@@ -194,69 +189,34 @@
                     "args": [
                       "theme",
                       "apply",
-                      "{value:items.selected.uid}",
-                      "{value:profilePicker.selected.value}"
+                      "{value:items.selected.uid}"
                     ]
                   }
                 }
               ]
             },
             {
-              "type": "view",
-              "layout": "inline",
-              "spacing": 6,
-              "components": [
+              "id": "kindPicker",
+              "type": "picker",
+              "bordered": false,
+              "tooltip": "Light or dark",
+              "items": [
                 {
-                  "id": "profilePicker",
-                  "type": "picker",
-                  "bordered": false,
-                  "tooltip": "Profile",
-                  "items": [
-                    {
-                      "text": "Default",
-                      "value": ""
-                    }
-                  ],
-                  "events": [
-                    {
-                      "triggers": "changed",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/vsc",
-                        "args": [
-                          "theme-filter",
-                          "{value:profilePicker.selected.value}",
-                          "{value:kindPicker.selected.value}"
-                        ]
-                      }
-                    }
-                  ]
-                },
+                  "text": "All Themes",
+                  "value": ""
+                }
+              ],
+              "events": [
                 {
-                  "id": "kindPicker",
-                  "type": "picker",
-                  "bordered": false,
-                  "tooltip": "Light or dark",
-                  "items": [
-                    {
-                      "text": "All Themes",
-                      "value": ""
-                    }
-                  ],
-                  "events": [
-                    {
-                      "triggers": "changed",
-                      "action": {
-                        "type": "script",
-                        "src": "../bin/vsc",
-                        "args": [
-                          "theme-filter",
-                          "{value:profilePicker.selected.value}",
-                          "{value:kindPicker.selected.value}"
-                        ]
-                      }
-                    }
-                  ]
+                  "triggers": "changed",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/vsc",
+                    "args": [
+                      "theme-filter",
+                      "{value:kindPicker.selected.value}"
+                    ]
+                  }
                 }
               ],
               "constraints": {
@@ -302,8 +262,7 @@
                     "args": [
                       "theme",
                       "preview",
-                      "{value:items.selected.uid}",
-                      "{value:profilePicker.selected.value}"
+                      "{value:items.selected.uid}"
                     ],
                     "async": true
                   }
@@ -366,8 +325,7 @@
                         "args": [
                           "theme",
                           "apply",
-                          "{data:uid}",
-                          "{value:profilePicker.selected.value}"
+                          "{data:uid}"
                         ]
                       }
                     }
@@ -580,8 +538,7 @@
                         "args": [
                           "theme",
                           "apply",
-                          "{value:items.selected.uid}",
-                          "{value:profilePicker.selected.value}"
+                          "{value:items.selected.uid}"
                         ]
                       }
                     }

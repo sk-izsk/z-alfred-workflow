@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { getSetting, setSetting } from "./jsonc.ts";
+import { getSetting, removeSetting, setSetting } from "./jsonc.ts";
 import { type Pkg, builtinExtensionDirs, localExtensions, nls, readJsonFile } from "./extensions.ts";
 import { writeFileSync } from "node:fs";
 import type { Profile } from "./profiles.ts";
@@ -52,6 +52,8 @@ const read = (path: string): string => {
 
 export const currentTheme = (profile: Profile): string => getSetting(read(profile.settingsPath), KEY) ?? "";
 
-/** VS Code watches settings.json, so open windows on this profile switch immediately. */
-export const applyTheme = (profile: Profile, id: string): void =>
-  writeFileSync(profile.settingsPath, setSetting(read(profile.settingsPath), KEY, id));
+/** VS Code watches settings.json, so open windows on this profile switch immediately. "" removes the setting. */
+export const applyTheme = (profile: Profile, id: string): void => {
+  const text = read(profile.settingsPath);
+  writeFileSync(profile.settingsPath, id ? setSetting(text, KEY, id) : removeSetting(text, KEY));
+};

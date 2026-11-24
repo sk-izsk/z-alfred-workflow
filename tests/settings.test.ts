@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { getSetting, setSetting } from "../src/jsonc.ts";
+import { getSetting, removeSetting, setSetting } from "../src/jsonc.ts";
 
 const settings = `{
   // my theme
@@ -23,4 +23,15 @@ test("adds the setting when missing", () => {
   expect(getSetting(setSetting('{ "a": 1 }', "k", "v"), "a" as string)).toBeUndefined();
   expect(setSetting('{ "a": 1 }', "k", "v")).toBe('{\n  "k": "v", "a": 1 }');
   expect(getSetting(setSetting('{ "x": {"k": "no"} }', "k", "v"), "k")).toBe("v");
+});
+
+test("removes a setting cleanly (restoring 'no theme set')", () => {
+  const text = '{\n  "a": 1,\n  "workbench.colorTheme": "X",\n  "b": 2\n}';
+  const removed = removeSetting(text, "workbench.colorTheme");
+  expect(getSetting(removed, "workbench.colorTheme")).toBeUndefined();
+  expect(JSON.parse(removed)).toEqual({ a: 1, b: 2 });
+  expect(
+    JSON.parse(removeSetting('{ "a": 1, "workbench.colorTheme": "X" }', "workbench.colorTheme")),
+  ).toEqual({ a: 1 });
+  expect(removeSetting(setSetting(text, "workbench.colorTheme", "Y"), "workbench.colorTheme")).toBe(removed);
 });

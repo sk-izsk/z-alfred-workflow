@@ -2,7 +2,7 @@
  * Read and set ONE top-level string setting in a JSONC file (VS Code's settings.json) without
  * touching anything else: comments, formatting, nested `"[python]": {…}` blocks all stay as they are.
  */
-type Span = { start: number; end: number };
+type Span = { start: number; end: number; keyStart: number };
 
 /** Finds the value span of a top-level `"key": "value"`. Skips strings and comments. */
 const findTopLevel = (text: string, key: string): Span | undefined => {
@@ -34,7 +34,7 @@ const findTopLevel = (text: string, key: string): Span | undefined => {
         const colon = skipSpace(end);
         if (text[colon] === ":") {
           const v = skipSpace(colon + 1);
-          if (text[v] === '"') return { start: v, end: readString(v) };
+          if (text[v] === '"') return { start: v, end: readString(v), keyStart: i };
         }
       }
       i = end;
@@ -64,4 +64,16 @@ export const setSetting = (text: string, key: string, value: string): string => 
       .replace(/\/\/.*|\/\*[\s\S]*?\*\//g, "")
       .trim() === "}";
   return `${text.slice(0, open + 1)}\n  ${JSON.stringify(key)}: ${literal}${empty ? "" : ","}${text.slice(open + 1)}`;
+};
+
+/** Remove a top-level `"key": "value"` (with its comma), e.g. to restore "no theme set". */
+export const removeSetting = (text: string, key: string): string => {
+  const span = findTopLevel(text, key);
+  if (!span) return text;
+  const after = text.slice(span.end).match(/^\s*,/);
+  if (after)
+    return text.slice(0, span.keyStart) + text.slice(span.end + after[0].length).replace(/^[ \t]*\n?/, "");
+  // Last property: drop the comma before it instead.
+  const before = text.slice(0, span.keyStart).replace(/,\s*$/, "");
+  return before + text.slice(span.end);
 };
