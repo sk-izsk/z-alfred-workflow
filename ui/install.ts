@@ -39,7 +39,11 @@ export const install = window(
   {
     type: "view",
     layout: "border",
-    events: [on("launched", [run(["gallery-init"]), run(["gallery-pickers"]), search])],
+    events: [
+      on("launched", [run(["gallery-init"]), run(["gallery-pickers"]), search]),
+      // Closing the window undoes a theme that was only being tried (⌘T).
+      on("quit", run(["gallery-quit"])),
+    ],
     shortcuts: [...arrows("items"), key("{var:actions_shortcut}", act("menu"))],
     components: [
       searchBar({
@@ -88,6 +92,8 @@ export const install = window(
           },
           "Loading the most installed extensions…",
           false,
+          // Automatic theme try-out (off unless enabled): the script waits for you to rest on a row.
+          [on("changed", run(["gallery", "auto-try", sel("items")], { async: true }))],
         ),
       ),
       footer([
@@ -95,6 +101,10 @@ export const install = window(
         divider,
         footerButton("actionsButton", "Actions  {var:actions_shortcut}", act("menu")),
         hiddenKey("previewKey", "⌘Y", act("preview")),
+        hiddenKey("tryKey", "⌘T", [
+          json({ update: { ids: { statusLabel: { text: "Installing theme to try it…" } } } }),
+          run(["gallery", "try", sel("items")], { async: true }),
+        ]),
         hiddenKey("browserKey", "⇧⌘O", act("browser")),
         hiddenKey("copyIdKey", "⇧⌘C", act("copy-id")),
       ]),

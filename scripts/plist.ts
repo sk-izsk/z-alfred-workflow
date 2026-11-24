@@ -16,11 +16,12 @@ const add = (uid: string, type: string, version: number, config: Obj, x: number,
 };
 /** `modifiers`: 0 = ↩, CMD = ⌘↩ (a Script Filter item's `mods.cmd` needs its own connection). */
 const CMD = 1048576;
-const link = (from: string, to: string, sourceoutputuid?: string, modifiers = 0) => {
+const OPT = 524288;
+const link = (from: string, to: string, sourceoutputuid?: string, modifiers = 0, modifiersubtext = "") => {
   (connections[from] ??= []).push({
     destinationuid: to,
     modifiers,
-    modifiersubtext: "",
+    modifiersubtext,
     vitoclose: false,
     ...(sourceoutputuid && { sourceoutputuid }),
   });
@@ -302,6 +303,36 @@ link(
   openScript,
 );
 
+// ── `codef` modifiers: ⌘↩ opens the folder in your terminal, ⌥↩ reveals it in Finder ──
+const fileScript = (uid: string, action: string, y: number) => {
+  const sc = script(uid, `./bin/vsc file-action ${action} "$1"`, 540, y);
+  link(sc, notification(`${uid}NOTE`, 760, y));
+  return sc;
+};
+link("FIND", fileScript("FINDTERM", "terminal", 1360), undefined, CMD, "Open in your terminal app");
+link("FIND", fileScript("FINDREVEAL", "reveal", 1460), undefined, OPT, "Reveal in Finder");
+
+// ── Universal Actions: → on any file or folder in Alfred (codef results, Finder selection, search) ──
+const universal: [string, string, string][] = [
+  ["UACLOSE", "Code Editor: Open and Close Other Windows", "close-others"],
+  ["UAEDITOR", "Code Editor: Open in Another Editor…", "pick-editor"],
+  ["UAPROFILE", "Code Editor: Open with Profile…", "pick-profile"],
+  ["UATERM", "Code Editor: Open in Terminal", "terminal"],
+  ["UAGITHUB", "Code Editor: Open on GitHub", "github"],
+];
+universal.forEach(([uid, name, action], i) => {
+  const y = 1560 + i * 100;
+  const trigger = add(
+    uid,
+    "trigger.universalaction",
+    1,
+    { acceptsfiles: true, acceptsmulti: 0, acceptstext: false, acceptsurls: false, name },
+    300,
+    y,
+  );
+  link(trigger, fileScript(`${uid}RUN`, action, y));
+});
+
 // ── New Window: keyword only, no window ──
 const newKw = keyword(
   "NEWWINKW",
@@ -396,6 +427,12 @@ const userconfigurationconfig = [
     "Project Folders",
     "",
     "Comma separated folders to scan for git repos you haven't opened yet, e.g. ~/Developer, /Volumes/Work/Projects",
+  ),
+  check(
+    "theme_auto_try",
+    "",
+    "Install Extension: try uninstalled themes automatically while browsing (otherwise ⌘T)",
+    false,
   ),
   text(
     "profile",

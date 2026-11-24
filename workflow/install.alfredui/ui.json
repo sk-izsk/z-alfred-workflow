@@ -66,6 +66,16 @@
           ]
         },
         {
+          "triggers": "quit",
+          "action": {
+            "type": "script",
+            "src": "../bin/vsc",
+            "args": [
+              "gallery-quit"
+            ]
+          }
+        },
+        {
           "triggers": "preload",
           "action": {
             "type": "json",
@@ -287,6 +297,21 @@
               }
             },
             {
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/vsc",
+                    "args": [
+                      "gallery",
+                      "auto-try",
+                      "{value:items.selected.uid}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
               "constraints": {
                 "region": "centre"
               },
@@ -678,6 +703,54 @@
                     }
                   ],
                   "shortcut": "⌘Y",
+                  "opacity": 0,
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 0,
+                      "height": 0
+                    }
+                  }
+                },
+                {
+                  "id": "tryKey",
+                  "type": "button",
+                  "text": "",
+                  "bordered": false,
+                  "font": {
+                    "size": 12.5,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": [
+                        {
+                          "type": "json",
+                          "src": {
+                            "update": {
+                              "ids": {
+                                "statusLabel": {
+                                  "text": "Installing theme to try it…"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "type": "script",
+                          "src": "../bin/vsc",
+                          "args": [
+                            "gallery",
+                            "try",
+                            "{value:items.selected.uid}"
+                          ],
+                          "async": true
+                        }
+                      ]
+                    }
+                  ],
+                  "shortcut": "⌘T",
                   "opacity": 0,
                   "constraints": {
                     "position": "centre",

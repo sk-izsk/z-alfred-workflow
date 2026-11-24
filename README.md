@@ -42,9 +42,15 @@ drill down), then paste a URL, or have one on the clipboard. ↩ opens the clone
 (⌘Y), open in the editor or browser (⇧⌘O), Show in Finder (⇧⌘F), Copy ID (⇧⌘C), Uninstall from the profile.
 
 **Install Extension**: search as you type, or pick a category (Themes, Languages, Formatters…) to see the
-most installed. Install counts, version, an "Installed" tag, ⌘Y preview, Install in Profile ▸.
+most installed. Install counts, version, an "Installed" tag, Install in Another Profile ▸.
+**⌘Y** previews the README with screenshots (↩ installs, ⎋ closes). **⌘T tries a theme** you don't have:
+it's installed for a moment and applied in VS Code; ⌘T again cycles through the pack, ↩ keeps it, closing the
+window uninstalls it and restores your theme. Optional: try themes automatically while browsing.
 
-**Find Files and Folders** (`codef`): Spotlight search, opened in your editor. There's also an
+**Find Files and Folders** (`codef`): Spotlight search, opened in your editor (↩). ⌘↩ opens it in your
+terminal, ⌥↩ reveals it in Finder, and → shows Alfred's actions, including this workflow's Universal Actions
+for any file or folder: Open and Close Other Windows, Open in Another Editor…, Open with Profile…,
+Open in Terminal, Open on GitHub. There's also an
 **Open in Code Editor** File Action, and **Open with …** for the Finder selection.
 
 ⌘[ goes back to the menu from any window. Shortcut keywords: `codep`, `codee`, `codei`, `codec`,

@@ -30,6 +30,7 @@ import {
 } from "../ui.ts";
 import { entry, icon, zedNotice } from "./common.ts";
 import { confirmUninstall, dataUri, previewSheet } from "./extensions.ts";
+import { autoTry, endTrial, keepTrial, tryTheme } from "./trytheme.ts";
 import { previewHtml } from "../preview.ts";
 
 /** Most installed (per category), cached for an hour: the window opens with a full list at no cost. */
@@ -113,6 +114,7 @@ export const gallerySearch = async ([text = "", category = ""]: string[]): Promi
 
 export const gallery = async ([action = "", id = "", profileName = ""]: string[]): Promise<Action> => {
   const e = readJson<GalleryExtension[]>(lastFile(), []).find((x) => x.id === id);
+  if (action === "auto-try" && !e?.isTheme) return {}; // fires on every arrow: stay silent
   if (!e) throw new Error("Select an extension first");
   const profile = await configuredProfile();
   const installed = (await installedIds()).has(id.toLowerCase());
@@ -120,11 +122,17 @@ export const gallery = async ([action = "", id = "", profileName = ""]: string[]
   const refresh = (note: string) => show(readJson<GalleryExtension[]>(lastFile(), []), note);
   switch (action) {
     case "install":
+      // ↩ on a theme being tried: it's already installed and applied, just stop treating it as a trial.
+      if (!profileName && keepTrial(id)) return refresh(`Kept ${e.name} in ${profile.name}`);
       await installExtension(id, profileName || profile.name);
       return refresh(`Installed ${e.name} in ${profileName || profile.name}`);
     case "browser":
       await openUrl(itemUrl(id));
       return finish();
+    case "try":
+      return tryTheme(e);
+    case "auto-try":
+      return autoTry(e);
     case "preview": {
       const readme = e.readmeUrl
         ? await fetch(e.readmeUrl, { signal: AbortSignal.timeout(8000) })
@@ -143,6 +151,7 @@ export const gallery = async ([action = "", id = "", profileName = ""]: string[]
         }),
         e.name,
         itemUrl(id),
+        { text: installed ? "Reinstall" : `Install in ${profile.name}`, args: ["gallery", "install", id] },
       );
     }
     case "open":
@@ -162,6 +171,7 @@ export const gallery = async ([action = "", id = "", profileName = ""]: string[]
           text: "Install in Another Profile",
           submenu: profiles().map((p) => menuItem(p.name, ["gallery", "install", id, p.name])),
         },
+        ...(e.isTheme ? [item("Try Theme", "try", "⌘T")] : []),
         separator,
         item("Preview", "preview", "⌘Y"),
         item(`Open in ${shortName()}`, "open"),
@@ -174,3 +184,6 @@ export const gallery = async ([action = "", id = "", profileName = ""]: string[]
       throw new Error(`Unknown action: ${action}`);
   }
 };
+
+/** Window closed: undo a theme that was only being tried. */
+export const galleryQuit = async (): Promise<Action> => (await endTrial(), {});

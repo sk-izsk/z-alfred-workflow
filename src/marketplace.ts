@@ -15,6 +15,8 @@ export type GalleryExtension = {
   iconUrl: string;
   /** README Markdown asset (for the preview). */
   readmeUrl: string;
+  /** In the Marketplace's Themes category: can be tried live. */
+  isTheme: boolean;
 };
 
 type Raw = {
@@ -24,6 +26,7 @@ type Raw = {
   shortDescription?: string;
   versions?: { version: string; files?: { assetType: string; source: string }[] }[];
   statistics?: { statisticName: string; value: number }[];
+  categories?: string[];
 };
 
 const VS_MARKETPLACE = "https://marketplace.visualstudio.com/_apis/public/gallery";
@@ -105,6 +108,7 @@ export const toGallery = (raw: Raw): GalleryExtension => {
     installs: raw.statistics?.find((s) => s.statisticName === "install")?.value,
     iconUrl: asset("Icons.Default"),
     readmeUrl: asset("Content.Details"),
+    isTheme: (raw.categories ?? []).includes("Themes"),
   };
 };
 

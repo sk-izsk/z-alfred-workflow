@@ -24,6 +24,10 @@ Status for whoever picks this up next (Codex, a person, or another session).
   - Projects, Extensions, Install, Clone, the `codef` finder, the File Action, 17 editors including Zed, and the `bun run check` pipeline.
   - The fixes from the "lists stay empty" PR.
 
+- **Preview sheet** (⌘Y): ↩ installs (Install) or opens (Installed), ⎋ closes (button key equivalent, since the web view takes keys).
+- **Try Theme** (`src/commands/trytheme.ts`): ⌘T installs the theme temporarily and applies it, ⌘T again cycles the pack, ↩ keeps it, the window's `quit` uninstalls it and restores the old theme (tested end to end with Night Owl). There's also an automatic mode setting (rests 1.2 s on a row).
+- **codef**: ⌘↩ opens in the terminal, ⌥↩ reveals in Finder. There are 5 Universal Actions for files and folders; the editor and profile pickers reopen the `code` menu with `open-in <path>` / `open-profile <path>`.
+
 ## Verify in Alfred (not seen on screen yet: Alfred hides its panel from screen captures)
 1. Each window's layout: Themes (two pickers in the search bar), Extensions (two pickers), Install (category picker), Clone (aligned rows).
 2. A `submenu` in the ⌘K popup (Open in ▸, Open with Profile ▸, Install in Profile ▸).

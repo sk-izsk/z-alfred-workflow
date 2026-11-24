@@ -1,6 +1,7 @@
 import * as clone from "./commands/clone.ts";
 import { chrome } from "./commands/common.ts";
 import { cloneFilter } from "./commands/clonefilter.ts";
+import { fileAction } from "./commands/fileactions.ts";
 import * as ext from "./commands/extensions.ts";
 import * as gallery from "./commands/gallery.ts";
 import { post } from "./commands/post.ts";
@@ -21,6 +22,7 @@ const ui: Record<string, Command> = {
   "ext-pickers": ext.extPickers,
   "ext-filter": ext.extFilter,
   "gallery-pickers": gallery.galleryPickers,
+  "gallery-quit": gallery.galleryQuit,
   "theme-init": themes.themeInit,
   "theme-pickers": themes.themePickers,
   "theme-filter": themes.themeFilter,
@@ -43,6 +45,7 @@ const scripts: Record<string, (args: string[]) => Promise<void>> = {
   root: root.root,
   "root-action": root.rootAction,
   "clone-filter": cloneFilter,
+  "file-action": fileAction,
   post,
   // File Filter / File Action: one path, or several separated by tabs.
   open: async ([paths = ""]) => {

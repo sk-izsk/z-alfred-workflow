@@ -7,7 +7,7 @@ import type { Project } from "./projects.ts";
 const OPEN = "/usr/bin/open";
 
 /** Closes every window of the editor first (System Events, needs Accessibility for Alfred). */
-const closeWindows = async (): Promise<void> => {
+export const closeWindows = async (): Promise<void> => {
   const name = editor().app.replace(/\.app$/, "");
   await osascript(
     `tell application "System Events"

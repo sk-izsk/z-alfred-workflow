@@ -15,6 +15,7 @@ import {
   rows,
   separator,
   sheet,
+  script,
   status,
   update,
   vars,
@@ -74,7 +75,18 @@ export const dataUri = (path: string): string => {
 };
 
 /** README + screenshots in a large sheet over the list (rendered by us: no cookie banner, fast). */
-export const previewSheet = (html: string, title: string, url: string): Action =>
+const closeSheet = { type: "json", src: { sheet: { close: "previewSheet" } } };
+
+/**
+ * `primary`: what ↩ does in the preview (Install, or Open in Code). It's a script action that runs
+ * after the sheet closes, so its result (status, rows) lands in the window underneath.
+ */
+export const previewSheet = (
+  html: string,
+  title: string,
+  url: string,
+  primary: { text: string; args: string[] },
+): Action =>
   sheet("previewSheet", {
     type: "view",
     layout: "border",
@@ -116,13 +128,17 @@ export const previewSheet = (html: string, title: string, url: string): Action =
               },
               {
                 type: "button",
-                text: "Close",
-                events: [
-                  {
-                    triggers: "actioned",
-                    action: { type: "json", src: { sheet: { close: "previewSheet" } } },
-                  },
-                ],
+                text: "Close  ⎋",
+                // The web view swallows keys once clicked, so ⎋ is also this button's key equivalent.
+                shortcut: "⎋",
+                events: [{ triggers: "actioned", action: closeSheet }],
+              },
+              {
+                type: "button",
+                text: `${primary.text}  ↩`,
+                shortcut: "↩",
+                focus: true,
+                events: [{ triggers: "actioned", action: [closeSheet, script(primary.args, true)] }],
               },
             ],
           },
@@ -165,6 +181,7 @@ export const ext = async ([action = "", id = ""]: string[]): Promise<Action> => 
         }),
         e.name,
         itemUrl(id),
+        { text: `Open in ${shortName()}`, args: ["ext", "open", id] },
       );
     case "reveal":
       await revealInFinder(e.path);

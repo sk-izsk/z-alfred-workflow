@@ -1,14 +1,16 @@
 import { existsSync } from "node:fs";
 import { cloneRepo, defaultCloneDir, parseRepo, targetPath } from "../clone.ts";
-import { editor, shortName } from "../editors.ts";
+import { EDITORS, editor, shortName } from "../editors.ts";
 import { str, tildify, untildify } from "../env.ts";
 import { finderSelection } from "../finder.ts";
 import { ghInstalled, myRepos, searchRepos } from "../github.ts";
 import {
   agentsWindow,
   alfredSearch,
+  installedEditors,
   newWindow,
   openPath,
+  openPathIn,
   openWithProfile,
   runPaletteCommand,
 } from "../launch.ts";
@@ -206,6 +208,31 @@ const subItems = async (q: string) => {
       actionItem(t!, `Runs “${cmd}” in ${shortName()}`, "icons/sync.png", "palette", cmd!),
     );
   }
+  // From the Universal Actions: pick an editor / a profile for one path.
+  if (lower.startsWith("open-in ")) {
+    const path = q.slice(8).trim();
+    return installedEditors().map((e) =>
+      actionItem(
+        e.title,
+        `Open ${tildify(path)} in ${e.title}`,
+        "icons/finder.png",
+        "open-in",
+        `${e.id}\t${path}`,
+      ),
+    );
+  }
+  if (lower.startsWith("open-profile ")) {
+    const path = q.slice(13).trim();
+    return profiles().map((p) =>
+      actionItem(
+        p.name,
+        `Open ${tildify(path)} with the ${p.name} profile`,
+        "icons/profiles.png",
+        "profile",
+        `${p.name}\t${path}`,
+      ),
+    );
+  }
   if (/^profiles?\b/.test(lower)) {
     const rest = lower.replace(/^profiles?/, "").trim();
     return profiles()
@@ -300,7 +327,18 @@ const ACTIONS: Record<string, (arg: string) => Promise<string>> = {
   find: async () => (await alfredSearch(`${str("kw_find", "codef")} `), ""),
   path: async (arg) => (await openPath(arg), ""),
   palette: async (arg) => (await runPaletteCommand(arg), ""),
-  profile: async (arg) => (await openWithProfile(arg), ""),
+  profile: async (arg) => {
+    const [name = "Default", path] = arg.split("\t");
+    await openWithProfile(name, path || undefined);
+    return "";
+  },
+  "open-in": async (arg) => {
+    const [id = "", path = ""] = arg.split("\t");
+    const target = EDITORS.find((e) => e.id === id);
+    if (!target) return `Unknown editor: ${id}`;
+    await openPathIn(target, path);
+    return "";
+  },
   "clone-now": async (arg) => {
     const [url = "", parent = defaultCloneDir()] = arg.split("\t");
     const repo = parseRepo(url);
