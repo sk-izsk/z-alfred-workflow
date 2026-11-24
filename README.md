@@ -156,6 +156,11 @@ See [AGENTS.md](AGENTS.md) for conventions.
   by Alex Chan: the `code` keyword and the `codef` file search this one grew out of.
 - [Alfred](https://www.alfredapp.com) and Alfred UI by Running with Crayons.
 
+## AI disclosure
+
+This workflow was built with the help of AI tools, directed and tested by a human. Review the code
+before use, as you would any workflow; please report anything that doesn't work.
+
 ## License
 
 MIT. Parts are adapted from the MIT-licensed Raycast extension; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
