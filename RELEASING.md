@@ -6,6 +6,7 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | --- | --- | --- |
 | `workflows/z-bitwarden` | `z-bitwarden/vX.Y.Z` | `Bitwarden.alfredworkflow` |
 | `workflows/z-vscode` | `z-vscode/vX.Y.Z` | `VS Code.alfredworkflow` |
+| `workflows/z-cald` | `z-cald/vX.Y.Z` | `Calendar.alfredworkflow` |
 
 1. Bump `version` in the selected workflow's `package.json`.
 2. In that folder, run `bun install --frozen-lockfile`, `bun run check` and `bun run package`.
@@ -22,7 +23,7 @@ git push origin z-bitwarden/v1.0.1
 ```
 
 The release action checks that the tag version matches `package.json`, checks and packages only
-that workflow, then creates its GitHub release with the asset and generated notes. The two
-workflows can have different versions. Do not push the original `v*` tags to this repository.
+that workflow, then creates its GitHub release with the asset and generated notes. Workflows can
+have different versions. Do not push the original `v*` tags to this repository.
 Do not reuse an already published version just to migrate it; historical downloads remain at
 the links in the root README. Publishing requires GitHub Actions to have write access to contents.

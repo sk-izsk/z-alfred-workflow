@@ -1,0 +1,761 @@
+{
+  "bundleid": "com.izsk.calendar",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "cal_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "cal_day": {
+      "default": "",
+      "scriptenv": true
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "cal_month": {
+      "default": "",
+      "scriptenv": true
+    },
+    "cal_selected": {
+      "default": "",
+      "scriptenv": true
+    },
+    "cal_window": {
+      "default": "",
+      "scriptenv": true
+    },
+    "cal_preview": {
+      "default": "",
+      "scriptenv": true
+    },
+    "cal_scroll_title": {
+      "default": "",
+      "scriptenv": true
+    },
+    "cal_scroll_started": {
+      "default": "0",
+      "scriptenv": true
+    }
+  },
+  "window": {
+    "title": "Quick Calendar",
+    "size": {
+      "height": 450
+    },
+    "minsize": {
+      "width": 620,
+      "height": 450
+    },
+    "root": {
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "init",
+                "{var:cal_query}"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "triggers": "quit",
+          "action": {
+            "type": "script",
+            "src": "../bin/cald",
+            "args": [
+              "quick-preview-cleanup"
+            ]
+          }
+        },
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 700
+                }
+              }
+            }
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "←",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "move",
+                "-1"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "shortcut": "→",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "move",
+                "1"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "shortcut": "↑",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "move",
+                "-7"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "shortcut": "↓",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "move",
+                "7"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "shortcut": "c",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "today"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "shortcut": "⌘T",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "today"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "shortcut": "⌘O",
+          "action": {
+            "type": "script",
+            "src": "../bin/cald",
+            "args": [
+              "quick",
+              "agenda",
+              "{var:cal_selected}"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘J",
+          "action": {
+            "type": "script",
+            "src": "../bin/cald",
+            "args": [
+              "quick-preview-join"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘N",
+          "action": {
+            "type": "script",
+            "src": "../bin/cald",
+            "args": [
+              "quick",
+              "create",
+              "{var:cal_selected}"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘C",
+          "action": {
+            "type": "script",
+            "src": "../bin/cald",
+            "args": [
+              "quick",
+              "copy",
+              "{var:cal_selected}"
+            ]
+          }
+        },
+        {
+          "shortcut": "↩",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick",
+                "today"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "quick-preview",
+                "{var:cal_selected}"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/cald",
+            "args": [
+              "quick",
+              "menu",
+              "{var:cal_selected}"
+            ]
+          }
+        },
+        {
+          "shortcut": "{var:back_shortcut}",
+          "action": {
+            "type": "json",
+            "src": {
+              "finish": {
+                "variables": {
+                  "cal_out": "back"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "components": [
+        {
+          "type": "view",
+          "layout": "border",
+          "constraints": {
+            "region": "top",
+            "size": {
+              "height": 42
+            }
+          },
+          "components": [
+            {
+              "id": "backButton",
+              "type": "button",
+              "text": "‹",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "finish": {
+                        "variables": {
+                          "cal_out": "back"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "tooltip": "Back to Calendar menu ⌘[",
+              "font": {
+                "size": 20
+              },
+              "constraints": {
+                "region": "left",
+                "position": "centre",
+                "insets": {
+                  "left": 12
+                },
+                "size": {
+                  "width": 24,
+                  "height": 24
+                }
+              }
+            },
+            {
+              "type": "view",
+              "background": "separatorColor",
+              "constraints": {
+                "region": "bottom",
+                "size": {
+                  "height": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "view",
+          "layout": "inline",
+          "direction": "vertical",
+          "spacing": 10,
+          "constraints": {
+            "region": "centre",
+            "position": "top",
+            "stretch": "horizontal",
+            "insets": {
+              "left": 14,
+              "right": 14,
+              "top": 12
+            }
+          },
+          "components": [
+            {
+              "id": "monthTitle",
+              "type": "label",
+              "text": "",
+              "font": {
+                "size": 18,
+                "weight": "semibold"
+              },
+              "textalign": "left",
+              "constraints": {
+                "stretch": "horizontal"
+              }
+            },
+            {
+              "id": "calendarTable",
+              "type": "view",
+              "constraints": {
+                "stretch": "horizontal",
+                "size": {
+                  "height": 224
+                }
+              },
+              "components": []
+            },
+            {
+              "id": "dayPreview",
+              "type": "view",
+              "constraints": {
+                "stretch": "horizontal",
+                "size": {
+                  "height": 0
+                }
+              },
+              "components": []
+            }
+          ]
+        },
+        {
+          "type": "view",
+          "layout": "stack",
+          "constraints": {
+            "region": "bottom"
+          },
+          "components": [
+            {
+              "type": "view",
+              "layout": "border",
+              "padding": 14,
+              "background": {
+                "dark": "#00000033",
+                "light": "#0000000d"
+              },
+              "components": [
+                {
+                  "type": "view",
+                  "layout": "border",
+                  "spacing": 7,
+                  "constraints": {
+                    "region": "centre",
+                    "stretch": "horizontal"
+                  },
+                  "components": [
+                    {
+                      "type": "imageview",
+                      "image": {
+                        "type": "file",
+                        "src": "../icon.png",
+                        "size": {
+                          "width": 15,
+                          "height": 15
+                        }
+                      },
+                      "constraints": {
+                        "region": "left",
+                        "position": "centre"
+                      }
+                    },
+                    {
+                      "id": "statusLabel",
+                      "type": "label",
+                      "text": "Loading…",
+                      "colour": "secondaryLabelColor",
+                      "font": {
+                        "size": 11.5
+                      },
+                      "constraints": {
+                        "region": "centre",
+                        "position": "centre",
+                        "stretch": "horizontal"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "view",
+                  "layout": "inline",
+                  "spacing": 10,
+                  "constraints": {
+                    "region": "right",
+                    "position": "centre"
+                  },
+                  "components": [
+                    {
+                      "id": "primaryButton",
+                      "type": "button",
+                      "text": "Current Month  ↩",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": [
+                            {
+                              "type": "script",
+                              "src": "../bin/cald",
+                              "args": [
+                                "quick",
+                                "today"
+                              ]
+                            },
+                            {
+                              "type": "script",
+                              "src": "../bin/cald",
+                              "args": [
+                                "quick-preview",
+                                "{var:cal_selected}"
+                              ],
+                              "async": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "actionsButton",
+                      "type": "button",
+                      "text": "Actions  {var:actions_shortcut}",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/cald",
+                            "args": [
+                              "quick",
+                              "menu",
+                              "{var:cal_selected}"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "previousYearKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": [
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick",
+                        "shift",
+                        "-12"
+                      ]
+                    },
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick-preview",
+                        "{var:cal_selected}"
+                      ],
+                      "async": true
+                    }
+                  ]
+                }
+              ],
+              "shortcut": "⇧←",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "nextYearKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": [
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick",
+                        "shift",
+                        "12"
+                      ]
+                    },
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick-preview",
+                        "{var:cal_selected}"
+                      ],
+                      "async": true
+                    }
+                  ]
+                }
+              ],
+              "shortcut": "⇧→",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "previousMonthKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": [
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick",
+                        "shift",
+                        "-1"
+                      ]
+                    },
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick-preview",
+                        "{var:cal_selected}"
+                      ],
+                      "async": true
+                    }
+                  ]
+                }
+              ],
+              "shortcut": "⌘←",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "nextMonthKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": [
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick",
+                        "shift",
+                        "1"
+                      ]
+                    },
+                    {
+                      "type": "script",
+                      "src": "../bin/cald",
+                      "args": [
+                        "quick-preview",
+                        "{var:cal_selected}"
+                      ],
+                      "async": true
+                    }
+                  ]
+                }
+              ],
+              "shortcut": "⌘→",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "copyCalendarKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/cald",
+                    "args": [
+                      "quick",
+                      "copy-calendar",
+                      "{var:cal_selected}"
+                    ]
+                  }
+                }
+              ],
+              "shortcut": "⌘↩",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
