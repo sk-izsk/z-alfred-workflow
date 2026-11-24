@@ -7,6 +7,7 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-bitwarden` | `z-bitwarden/vX.Y.Z` | `Bitwarden.alfredworkflow` |
 | `workflows/z-vscode` | `z-vscode/vX.Y.Z` | `VS Code.alfredworkflow` |
 | `workflows/z-cald` | `z-cald/vX.Y.Z` | `Calendar.alfredworkflow` |
+| `workflows/z-brew` | `z-brew/vX.Y.Z` | `Brew.alfredworkflow` |
 
 1. Bump `version` in the selected workflow's `package.json`.
 2. In that folder, run `bun install --frozen-lockfile`, `bun run check` and `bun run package`.
