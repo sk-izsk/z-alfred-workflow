@@ -90,6 +90,11 @@ normal syncing behavior. Refresh the form's calendar list with <kbd>⌘</kbd><kb
 Use <kbd>⌘</kbd><kbd>[</kbd> or the back button to return to the menu from any view. All four
 keywords, the actions/back shortcuts and window mode are configurable.
 
+## Install
+
+Download [Calendar.alfredworkflow](https://github.com/sk-izsk/z-alfred-workflow/releases/download/z-cald%2Fv0.1.0/Calendar.alfredworkflow)
+and double-click it to import into Alfred. See the [release notes](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-cald%2Fv0.1.0).
+
 ## Requirements and access
 
 - macOS 14 or later, Alfred 6 with the Powerpack, and Node.js (Bun is a fallback).
