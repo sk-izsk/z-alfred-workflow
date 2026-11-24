@@ -1,0 +1,24 @@
+name: Bug report
+description: Report a problem with a workflow
+body:
+  - type: dropdown
+    id: workflow
+    attributes:
+      label: Workflow
+      options: [Bitwarden, VS Code, Repository infrastructure]
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Include steps, expected behavior and actual behavior. Never include secrets or vault contents.
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Workflow, macOS, Alfred, Node.js and relevant editor or CLI versions
+    validations:
+      required: true

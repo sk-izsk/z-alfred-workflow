@@ -1,0 +1,10 @@
+node_modules/
+dist/
+workflow/bin/vsc.mjs
+workflow/prefs.plist
+ref/
+*.zip
+New File.txt
+.DS_Store
+.code-review-graph/
+.omc/

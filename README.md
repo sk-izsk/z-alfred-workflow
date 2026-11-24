@@ -1,3 +1,62 @@
 # z-alfred-workflow
 
-A collection of Alfred workflows, maintained together and released independently.
+Alfred workflows maintained in one repository, with independent builds, versions and releases.
+Inspired by [Raycast Extensions](https://github.com/raycast/extensions): each workflow owns its
+source, documentation, assets and package configuration under `workflows/`.
+
+| Workflow | What it does | Install the existing release |
+| --- | --- | --- |
+| [Bitwarden](workflows/z-bitwarden) | Search your vault, generate passwords, use authenticator codes and manage Sends | [Bitwarden 1.0.0](https://github.com/sk-izsk/z-bitwarden/releases/tag/v1.0.0) |
+| [VS Code](workflows/z-vscode) | Open projects, manage extensions and themes, and clone repositories across supported editors | [VS Code 0.1.0](https://github.com/sk-izsk/z-vscode-workflow/releases/tag/v0.1.0) |
+
+Download a `.alfredworkflow` asset and double-click it to install. Both workflows require macOS,
+Alfred 6 with the Powerpack and Node.js; see each workflow's README for its other requirements.
+Future packages will appear in [this repository's releases](https://github.com/sk-izsk/z-alfred-workflow/releases).
+
+## Repository layout
+
+```text
+workflows/
+  z-bitwarden/       Source, tests, screenshots, build scripts and workflow files
+  z-vscode/          Source, tests, screenshots, build scripts and workflow files
+.github/             Shared CI, independent releases and contribution templates
+docs/                Migration notes
+```
+
+Each project keeps its own `package.json`, `bun.lock`, license and third-party notices. There are
+no nested Git repositories, submodules or shared dependency upgrades to coordinate.
+
+## Development
+
+Install [Bun](https://bun.sh) and use macOS (builds require `plutil` and zsh).
+
+```bash
+git clone https://github.com/sk-izsk/z-alfred-workflow.git
+cd z-alfred-workflow/workflows/z-bitwarden # or workflows/z-vscode from the repository root
+bun install --frozen-lockfile
+bun run check
+bun run package
+```
+
+The package is written to that workflow's `dist/` folder. For local Alfred development, run
+`bun run link` from the workflow folder, then rebuild after edits. This redirects that workflow's
+development symlink to this checkout; it keeps the existing workflow identifier.
+
+Open feature PRs into `dev`. See [CONTRIBUTING.md](CONTRIBUTING.md) for adding workflows and
+[RELEASING.md](RELEASING.md) for independent release tags. CI checks and packages both workflows.
+
+## Migration
+
+Both original commit histories are retained through import merge commits. Existing release tags
+and assets remain on their original GitHub repositories; no new release is published by this
+migration. See [the migration record](docs/MIGRATION.md) for imported revisions and cutover steps.
+
+## License and credits
+
+[MIT](LICENSE). Each workflow retains its own license and third-party notices. Raycast inspired
+the repository organization; credits for adapted workflow code and assets remain in each project.
+
+## AI disclosure
+
+AI tools helped organize this repository and prepare the migration. See each workflow's README
+for its own disclosure and review the code before use.

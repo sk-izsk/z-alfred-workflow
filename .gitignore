@@ -1,0 +1,9 @@
+# Local dependencies, build output and Alfred preferences
+**/node_modules/
+**/dist/
+**/workflow/prefs.plist
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
