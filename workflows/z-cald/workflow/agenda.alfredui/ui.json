@@ -1,0 +1,750 @@
+{
+  "bundleid": "com.izsk.calendar",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "cal_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "cal_day": {
+      "default": "",
+      "scriptenv": true
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "cal_filter": {
+      "default": "",
+      "scriptenv": true
+    },
+    "cal_view": {
+      "default": "",
+      "scriptenv": true
+    }
+  },
+  "window": {
+    "title": "Upcoming Events",
+    "size": {
+      "height": 560
+    },
+    "minsize": {
+      "width": 620,
+      "height": 480
+    },
+    "root": {
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "agenda-load"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "agenda-pickers"
+              ]
+            }
+          ]
+        },
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 800
+                }
+              }
+            }
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/cald",
+            "args": [
+              "event",
+              "menu",
+              "{value:items.selected.uid}"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "agenda-load"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "agenda-pickers"
+              ]
+            }
+          ]
+        },
+        {
+          "shortcut": "⌘O",
+          "action": {
+            "type": "script",
+            "src": "../bin/cald",
+            "args": [
+              "event",
+              "open",
+              "{value:items.selected.uid}"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘N",
+          "action": {
+            "type": "script",
+            "src": "../bin/cald",
+            "args": [
+              "event",
+              "create",
+              "{value:items.selected.uid}"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘F",
+          "action": {
+            "type": "json",
+            "src": {
+              "update": {
+                "ids": {
+                  "searchField": {
+                    "focus": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "shortcut": "{var:back_shortcut}",
+          "action": {
+            "type": "json",
+            "src": {
+              "finish": {
+                "variables": {
+                  "cal_out": "back"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "components": [
+        {
+          "type": "view",
+          "layout": "border",
+          "padding": 14,
+          "spacing": 10,
+          "constraints": {
+            "region": "top"
+          },
+          "components": [
+            {
+              "id": "backButton",
+              "type": "button",
+              "text": "‹",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "finish": {
+                        "variables": {
+                          "cal_out": "back"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "font": {
+                "size": 26
+              },
+              "tooltip": "Back to Calendar menu ⌘[",
+              "constraints": {
+                "region": "left",
+                "position": "centre"
+              }
+            },
+            {
+              "id": "searchField",
+              "type": "textfield",
+              "text": "{var:cal_query}",
+              "placeholder": "Search events…",
+              "background": null,
+              "textinsets": {
+                "horizontal": 0,
+                "vertical": 6
+              },
+              "focus": true,
+              "bordered": false,
+              "focusring": false,
+              "font": {
+                "size": 24,
+                "weight": "light"
+              },
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "function",
+                    "src": "items",
+                    "args": "filterdata"
+                  }
+                },
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/cald",
+                    "args": [
+                      "event",
+                      "join",
+                      "{value:items.selected.uid}"
+                    ]
+                  }
+                }
+              ],
+              "constraints": {
+                "region": "centre",
+                "position": "centre",
+                "stretch": "horizontal"
+              }
+            },
+            {
+              "type": "view",
+              "layout": "inline",
+              "spacing": 8,
+              "components": [
+                {
+                  "id": "viewPicker",
+                  "type": "picker",
+                  "bordered": false,
+                  "items": [
+                    {
+                      "text": "Meetings only",
+                      "value": "meetings"
+                    },
+                    {
+                      "text": "Timed events",
+                      "value": "timed"
+                    },
+                    {
+                      "text": "All events",
+                      "value": "all"
+                    }
+                  ],
+                  "selected": "meetings",
+                  "tooltip": "Meetings only hides holidays and events without a meeting link",
+                  "events": [
+                    {
+                      "triggers": "changed",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/cald",
+                        "args": [
+                          "agenda-filter",
+                          "{value:calendarPicker.selected.value}",
+                          "{value:viewPicker.selected.value}"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "calendarPicker",
+                  "type": "picker",
+                  "bordered": false,
+                  "items": [
+                    {
+                      "text": "All Calendars",
+                      "value": ""
+                    }
+                  ],
+                  "tooltip": "Filter by calendar and account",
+                  "events": [
+                    {
+                      "triggers": "changed",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/cald",
+                        "args": [
+                          "agenda-filter",
+                          "{value:calendarPicker.selected.value}",
+                          "{value:viewPicker.selected.value}"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ],
+              "constraints": {
+                "region": "right",
+                "position": "centre"
+              }
+            }
+          ]
+        },
+        {
+          "id": "items",
+          "type": "dataview",
+          "padding": 8,
+          "spacing": 3,
+          "placeholder": "No events. Allow Calendar access, then refresh with ⌘R.",
+          "constraints": {
+            "region": "centre"
+          },
+          "data": {
+            "type": "basic",
+            "src": [],
+            "filter": {
+              "type": "basic",
+              "args": "match",
+              "match": "{value:searchField.text}",
+              "matchmode": "wordmatchanyorder"
+            }
+          },
+          "cell": {
+            "height": 68,
+            "root": {
+              "type": "view",
+              "id": "rowCell",
+              "layout": "border",
+              "padding": 10,
+              "spacing": 14,
+              "cornerradius": 8,
+              "events": [
+                {
+                  "triggers": "doubleclicked",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/cald",
+                    "args": [
+                      "event",
+                      "join",
+                      "{data:uid}"
+                    ]
+                  }
+                }
+              ],
+              "components": [
+                {
+                  "type": "view",
+                  "layout": "border",
+                  "spacing": 10,
+                  "constraints": {
+                    "region": "left",
+                    "position": "centre",
+                    "size": {
+                      "width": 108,
+                      "height": 40
+                    }
+                  },
+                  "components": [
+                    {
+                      "id": "rowStripe",
+                      "type": "view",
+                      "cornerradius": 2,
+                      "constraints": {
+                        "region": "left",
+                        "position": "centre",
+                        "size": {
+                          "width": 3,
+                          "height": 32
+                        }
+                      }
+                    },
+                    {
+                      "type": "view",
+                      "layout": "border",
+                      "constraints": {
+                        "region": "centre"
+                      },
+                      "components": [
+                        {
+                          "id": "rowTime",
+                          "type": "label",
+                          "text": "",
+                          "textalign": "left",
+                          "font": {
+                            "size": 13,
+                            "weight": "medium"
+                          },
+                          "constraints": {
+                            "region": "top"
+                          }
+                        },
+                        {
+                          "id": "rowDay",
+                          "type": "label",
+                          "text": "",
+                          "textalign": "left",
+                          "font": {
+                            "size": 10.5
+                          },
+                          "constraints": {
+                            "region": "bottom"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "view",
+                  "layout": "border",
+                  "spacing": 4,
+                  "constraints": {
+                    "region": "centre",
+                    "position": "centre",
+                    "stretch": "horizontal",
+                    "size": {
+                      "height": 40
+                    }
+                  },
+                  "components": [
+                    {
+                      "id": "rowTitle",
+                      "type": "label",
+                      "text": "",
+                      "textalign": "left",
+                      "font": {
+                        "size": 14,
+                        "weight": "medium"
+                      },
+                      "constraints": {
+                        "region": "top"
+                      }
+                    },
+                    {
+                      "id": "rowCalendar",
+                      "type": "label",
+                      "text": "",
+                      "textalign": "left",
+                      "colour": "secondaryLabelColor",
+                      "font": {
+                        "size": 11.5
+                      },
+                      "constraints": {
+                        "region": "bottom"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "rowProviderPill",
+                  "type": "view",
+                  "layout": "border",
+                  "padding": 7,
+                  "spacing": 7,
+                  "cornerradius": 6,
+                  "constraints": {
+                    "region": "right",
+                    "position": "centre",
+                    "size": {
+                      "width": 120,
+                      "height": 34
+                    }
+                  },
+                  "components": [
+                    {
+                      "id": "rowProviderIcon",
+                      "type": "imageview",
+                      "resize": "fit",
+                      "image": {
+                        "type": "symbol",
+                        "src": "calendar",
+                        "size": {
+                          "width": 19,
+                          "height": 19
+                        }
+                      },
+                      "constraints": {
+                        "region": "left",
+                        "position": "centre",
+                        "size": {
+                          "width": 19,
+                          "height": 19
+                        }
+                      },
+                      "contenttintcolour": "secondaryLabelColor"
+                    },
+                    {
+                      "id": "rowProvider",
+                      "type": "label",
+                      "text": "",
+                      "textalign": "left",
+                      "font": {
+                        "size": 11.5,
+                        "weight": "medium"
+                      },
+                      "constraints": {
+                        "region": "centre",
+                        "position": "centre"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "init": {
+              "rowCell.background": null,
+              "rowTitle.colour": "labelColor",
+              "rowCalendar.colour": "secondaryLabelColor",
+              "rowTime.colour": "secondaryLabelColor",
+              "rowDay.colour": "secondaryLabelColor",
+              "rowProvider.colour": "secondaryLabelColor"
+            },
+            "selected": {
+              "rowCell.background": "alfredSelectedResultBackgroundColor",
+              "rowTitle.colour": "alfredSelectedResultTextColor",
+              "rowCalendar.colour": "alfredSelectedResultTextColor",
+              "rowTime.colour": "alfredSelectedResultTextColor",
+              "rowDay.colour": "alfredSelectedResultTextColor",
+              "rowProvider.colour": "alfredSelectedResultTextColor"
+            }
+          },
+          "events": [
+            {
+              "triggers": "changed",
+              "action": {
+                "type": "script",
+                "src": "../bin/cald",
+                "args": [
+                  "event",
+                  "selected",
+                  "{value:items.selected.uid}"
+                ]
+              }
+            },
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "script",
+                "src": "../bin/cald",
+                "args": [
+                  "event",
+                  "join",
+                  "{value:items.selected.uid}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "view",
+          "layout": "border",
+          "padding": 10,
+          "background": {
+            "dark": "#00000033",
+            "light": "#0000000d"
+          },
+          "constraints": {
+            "region": "bottom"
+          },
+          "components": [
+            {
+              "id": "statusLabel",
+              "type": "label",
+              "text": "Loading…",
+              "colour": "secondaryLabelColor",
+              "font": {
+                "size": 11.5
+              },
+              "constraints": {
+                "region": "centre",
+                "position": "centre",
+                "stretch": "horizontal"
+              }
+            },
+            {
+              "type": "view",
+              "layout": "inline",
+              "spacing": 10,
+              "constraints": {
+                "region": "right",
+                "position": "centre"
+              },
+              "components": [
+                {
+                  "id": "accessButton",
+                  "type": "button",
+                  "text": "Allow Access",
+                  "bordered": false,
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/cald",
+                        "args": [
+                          "authorize"
+                        ],
+                        "async": true
+                      }
+                    }
+                  ],
+                  "tooltip": "Request full calendar access",
+                  "hidden": true,
+                  "constraints": {
+                    "size": {
+                      "width": 0,
+                      "height": 0
+                    }
+                  }
+                },
+                {
+                  "id": "primaryButton",
+                  "type": "button",
+                  "text": "Join / Open  ↩",
+                  "bordered": false,
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/cald",
+                        "args": [
+                          "event",
+                          "join",
+                          "{value:items.selected.uid}"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "actionsButton",
+                  "type": "button",
+                  "text": "Actions  {var:actions_shortcut}",
+                  "bordered": false,
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/cald",
+                        "args": [
+                          "event",
+                          "menu",
+                          "{value:items.selected.uid}"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "privacyKey",
+                  "type": "button",
+                  "text": "",
+                  "bordered": false,
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "open": {
+                            "type": "url",
+                            "src": "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars"
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "shortcut": "⇧⌘,",
+                  "opacity": 0,
+                  "constraints": {
+                    "size": {
+                      "width": 0,
+                      "height": 0
+                    }
+                  }
+                },
+                {
+                  "id": "copyDetailsKey",
+                  "type": "button",
+                  "text": "",
+                  "bordered": false,
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/cald",
+                        "args": [
+                          "event",
+                          "copy",
+                          "{value:items.selected.uid}"
+                        ]
+                      }
+                    }
+                  ],
+                  "shortcut": "⇧⌘C",
+                  "opacity": 0,
+                  "constraints": {
+                    "size": {
+                      "width": 0,
+                      "height": 0
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
