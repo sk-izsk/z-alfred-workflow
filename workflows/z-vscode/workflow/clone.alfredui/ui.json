@@ -1,0 +1,547 @@
+{
+  "bundleid": "com.izsk.vscode",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "query": {
+      "src": "args[0]",
+      "default": ""
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    },
+    "clone_pick": {
+      "default": ""
+    }
+  },
+  "window": {
+    "size": {
+      "height": 520
+    },
+    "minsize": {
+      "width": 620,
+      "height": 360
+    },
+    "title": "Clone Repository",
+    "root": {
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": {
+            "type": "script",
+            "src": "../bin/vsc",
+            "args": [
+              "clone-init",
+              "{var:query}"
+            ]
+          }
+        },
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 760
+                }
+              }
+            }
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "⌘O",
+          "action": {
+            "type": "json",
+            "src": {
+              "opendialog": {
+                "canchoosefiles": false,
+                "canchoosefolders": true,
+                "prompt": "Choose",
+                "message": "Where should the repository be cloned?",
+                "setvariable": "clone_pick",
+                "action": [
+                  {
+                    "type": "json",
+                    "src": {
+                      "update": {
+                        "ids": {
+                          "cloneParent": {
+                            "text": "{var:clone_pick}"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "script",
+                    "src": "../bin/vsc",
+                    "args": [
+                      "clone-preview",
+                      "{var:query}",
+                      "{value:cloneParent.text}"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "shortcut": "{var:back_shortcut}",
+          "action": {
+            "type": "json",
+            "src": {
+              "finish": {
+                "variables": {
+                  "vsc_out": "back"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "components": [
+        {
+          "constraints": {
+            "region": "top",
+            "insets": {
+              "left": 24,
+              "right": 24,
+              "top": 20,
+              "bottom": 8
+            }
+          },
+          "type": "view",
+          "layout": "border",
+          "spacing": 12,
+          "components": [
+            {
+              "type": "imageview",
+              "image": {
+                "type": "symbol",
+                "src": "square.and.arrow.down.on.square",
+                "size": {
+                  "height": 30
+                }
+              },
+              "contenttintcolour": "controlAccentColor",
+              "constraints": {
+                "region": "left",
+                "position": "centre"
+              }
+            },
+            {
+              "type": "view",
+              "layout": "inline",
+              "direction": "vertical",
+              "spacing": 2,
+              "constraints": {
+                "region": "centre",
+                "position": "left",
+                "stretch": "horizontal"
+              },
+              "components": [
+                {
+                  "id": "cloneTitle",
+                  "type": "label",
+                  "text": "Clone Repository",
+                  "font": {
+                    "size": 18,
+                    "weight": "semibold"
+                  }
+                },
+                {
+                  "id": "cloneRepo",
+                  "type": "label",
+                  "text": "",
+                  "colour": "secondaryLabelColor",
+                  "font": {
+                    "size": 12.5
+                  },
+                  "selectable": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "constraints": {
+            "region": "centre",
+            "position": "top",
+            "stretch": "horizontal",
+            "insets": {
+              "left": 24,
+              "right": 24,
+              "top": 8
+            }
+          },
+          "type": "view",
+          "layout": "inline",
+          "direction": "vertical",
+          "spacing": 12,
+          "components": [
+            {
+              "type": "view",
+              "layout": "border",
+              "spacing": 12,
+              "components": [
+                {
+                  "type": "label",
+                  "text": "Save to",
+                  "colour": "secondaryLabelColor",
+                  "textalign": "right",
+                  "constraints": {
+                    "region": "left",
+                    "position": "centre",
+                    "size": {
+                      "width": 64
+                    }
+                  }
+                },
+                {
+                  "type": "view",
+                  "layout": "border",
+                  "spacing": 8,
+                  "components": [
+                    {
+                      "id": "cloneParent",
+                      "type": "textfield",
+                      "focus": true,
+                      "focusring": false,
+                      "placeholder": "~/Developer",
+                      "textinsets": {
+                        "horizontal": 6,
+                        "vertical": 5
+                      },
+                      "constraints": {
+                        "region": "centre",
+                        "stretch": "horizontal"
+                      },
+                      "events": [
+                        {
+                          "triggers": "typingstopped",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/vsc",
+                            "args": [
+                              "clone-preview",
+                              "{var:query}",
+                              "{value:cloneParent.text}"
+                            ]
+                          }
+                        },
+                        {
+                          "triggers": "actioned",
+                          "action": [
+                            {
+                              "type": "json",
+                              "src": {
+                                "update": {
+                                  "ids": {
+                                    "statusLabel": {
+                                      "text": "Cloning…"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "type": "script",
+                              "src": "../bin/vsc",
+                              "args": [
+                                "clone-run",
+                                "{var:query}",
+                                "{value:cloneParent.text}"
+                              ],
+                              "async": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "button",
+                      "text": "Choose…",
+                      "tooltip": "Pick a folder ⌘O",
+                      "constraints": {
+                        "region": "right",
+                        "position": "centre"
+                      },
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "json",
+                            "src": {
+                              "opendialog": {
+                                "canchoosefiles": false,
+                                "canchoosefolders": true,
+                                "prompt": "Choose",
+                                "message": "Where should the repository be cloned?",
+                                "setvariable": "clone_pick",
+                                "action": [
+                                  {
+                                    "type": "json",
+                                    "src": {
+                                      "update": {
+                                        "ids": {
+                                          "cloneParent": {
+                                            "text": "{var:clone_pick}"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "type": "script",
+                                    "src": "../bin/vsc",
+                                    "args": [
+                                      "clone-preview",
+                                      "{var:query}",
+                                      "{value:cloneParent.text}"
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "constraints": {
+                    "region": "centre",
+                    "position": "centre",
+                    "stretch": "horizontal"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "view",
+              "layout": "border",
+              "spacing": 12,
+              "components": [
+                {
+                  "type": "label",
+                  "text": "Folder",
+                  "colour": "secondaryLabelColor",
+                  "textalign": "right",
+                  "constraints": {
+                    "region": "left",
+                    "position": "centre",
+                    "size": {
+                      "width": 64
+                    }
+                  }
+                },
+                {
+                  "id": "cloneTarget",
+                  "type": "label",
+                  "text": "",
+                  "colour": "secondaryLabelColor",
+                  "font": {
+                    "size": 12.5,
+                    "monospaced": true
+                  },
+                  "constraints": {
+                    "region": "centre",
+                    "position": "centre",
+                    "stretch": "horizontal"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "constraints": {
+            "region": "bottom"
+          },
+          "type": "view",
+          "layout": "border",
+          "padding": 10,
+          "background": {
+            "dark": "#00000033",
+            "light": "#0000000d"
+          },
+          "components": [
+            {
+              "constraints": {
+                "region": "left",
+                "insets": {
+                  "left": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 8,
+              "components": [
+                {
+                  "type": "imageview",
+                  "image": {
+                    "type": "file",
+                    "src": "../icon.png",
+                    "size": {
+                      "width": 18,
+                      "height": 18
+                    }
+                  },
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "statusLabel",
+                  "type": "label",
+                  "text": "…",
+                  "colour": "secondaryLabelColor",
+                  "font": {
+                    "size": 12.5
+                  },
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 300
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "constraints": {
+                "region": "right",
+                "insets": {
+                  "right": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 10,
+              "components": [
+                {
+                  "id": "primaryButton",
+                  "type": "button",
+                  "text": "Clone and Open  ↩",
+                  "bordered": false,
+                  "font": {
+                    "size": 12.5,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": [
+                        {
+                          "type": "json",
+                          "src": {
+                            "update": {
+                              "ids": {
+                                "statusLabel": {
+                                  "text": "Cloning…"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "type": "script",
+                          "src": "../bin/vsc",
+                          "args": [
+                            "clone-run",
+                            "{var:query}",
+                            "{value:cloneParent.text}"
+                          ],
+                          "async": true
+                        }
+                      ]
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "type": "view",
+                  "background": "separatorColor",
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 1,
+                      "height": 14
+                    }
+                  }
+                },
+                {
+                  "id": "chooseButton",
+                  "type": "button",
+                  "text": "Choose Folder  ⌘O",
+                  "bordered": false,
+                  "font": {
+                    "size": 12.5,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "opendialog": {
+                            "canchoosefiles": false,
+                            "canchoosefolders": true,
+                            "prompt": "Choose",
+                            "message": "Where should the repository be cloned?",
+                            "setvariable": "clone_pick",
+                            "action": [
+                              {
+                                "type": "json",
+                                "src": {
+                                  "update": {
+                                    "ids": {
+                                      "cloneParent": {
+                                        "text": "{var:clone_pick}"
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "type": "script",
+                                "src": "../bin/vsc",
+                                "args": [
+                                  "clone-preview",
+                                  "{var:query}",
+                                  "{value:cloneParent.text}"
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
