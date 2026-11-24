@@ -6,7 +6,7 @@ mkdir -p "$root/dist"
 out="$root/dist/VS Code.alfredworkflow"
 rm -f "$out"
 cd "$root/workflow"
-zip -qr "$out" . -x "prefs.plist" -x ".DS_Store" -x "*/.DS_Store"
+zip -qr "$out" . -x "prefs.plist" -x ".DS_Store" -x "*/.DS_Store" -x ".omc/*" -x "*/.omc/*"
 # Some wording comes from the MIT-licensed Raycast extension: its notice travels with the archive.
 cd "$root" && zip -q "$out" LICENSE THIRD_PARTY_NOTICES.md
 echo "Built $out ($(du -h "$out" | cut -f1))"
