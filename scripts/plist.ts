@@ -130,7 +130,7 @@ const windows: [string, string, string, string, string, 0 | 1][] = [
     1,
   ],
   ["THEMES", "{var:kw_themes}", "Change Theme", "Pick a color theme for a profile", "themes.alfredui", 1],
-  // `vscc` is a Script Filter (below), so the clone window has no keyword of its own.
+  // `codec` is a Script Filter (below), so the clone window has no keyword of its own.
   ["CLONE", "", "Clone Repository", "", "clone.alfredui", 0],
 ];
 windows.forEach(([uid, kw, title, sub, path, arg], i) => {
@@ -180,7 +180,7 @@ const scriptFilter = (
     y,
   );
 
-// ── the `vsc` menu: Script Filter → route to a window, or run an action ──
+// ── the `code` menu: Script Filter → route to a window, or run an action ──
 const rootFilter = scriptFilter(
   "ROOT",
   "{var:kw_main}",
@@ -213,7 +213,7 @@ const route = add(
 link(rootFilter, route);
 link(rootFilter, route, undefined, CMD);
 
-// ── `vscc [folder] [url]`: folder suggestions + clone; ↩ opens the clone window, ⌘↩ clones now ──
+// ── `codec [folder] [url]`: folder suggestions + clone; ↩ opens the clone window, ⌘↩ clones now ──
 const cloneFilter = scriptFilter(
   "CLONEFILTER",
   "{var:kw_clone}",
@@ -375,14 +375,14 @@ const userconfigurationconfig = [
     "Code",
     "Opens projects in this editor and reads its recent projects.",
   ),
-  text("kw_main", "Keyword", "vsc", "Opens the menu: recent projects, extensions, clone, find…"),
-  text("kw_projects", "Recent Projects Keyword", "vscp"),
-  text("kw_extensions", "Extensions Keyword", "vsce"),
-  text("kw_install", "Install Keyword", "vsci"),
-  text("kw_clone", "Clone Keyword", "vscc"),
-  text("kw_find", "Find Keyword", "vscf", "Spotlight search for files and folders, opened in your editor."),
-  text("kw_themes", "Theme Keyword", "vsct"),
-  text("kw_new", "New Window Keyword", "vscn"),
+  text("kw_main", "Keyword", "code", "Opens the menu: recent projects, extensions, clone, find…"),
+  text("kw_projects", "Recent Projects Keyword", "codep"),
+  text("kw_extensions", "Extensions Keyword", "codee"),
+  text("kw_install", "Install Keyword", "codei"),
+  text("kw_clone", "Clone Keyword", "codec"),
+  text("kw_find", "Find Keyword", "codef", "Spotlight search for files and folders, opened in your editor."),
+  text("kw_themes", "Theme Keyword", "codet"),
+  text("kw_new", "New Window Keyword", "coden"),
   file(
     "clone_dir",
     "Clone Into",
@@ -419,18 +419,18 @@ const userconfigurationconfig = [
 
 const readme = `## Usage
 
-Type \`vsc\` to open the menu, then pick a command, or keep typing:
+Type \`code\` to open the menu, then pick a command, or keep typing:
 
-* \`vsc\` + a name searches your recent projects.
-* \`vsc install prettier\` searches the Marketplace.
-* \`vsc https://github.com/owner/repo\` clones a repository (you choose where), then opens it.
-* \`vsc ~/some/path\` opens that path.
+* \`code\` + a name searches your recent projects.
+* \`code install prettier\` searches the Marketplace.
+* \`code https://github.com/owner/repo\` clones a repository (you choose where), then opens it.
+* \`code ~/some/path\` opens that path.
 
 In a list: <kbd>↩</kbd> opens, <kbd>⌘</kbd><kbd>K</kbd> shows every action, <kbd>⌘</kbd><kbd>[</kbd> goes back to the menu.
 
 Recent projects: <kbd>⇧</kbd><kbd>⌘</kbd><kbd>↩</kbd> open and close other windows · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>F</kbd> show in Finder · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>T</kbd> open in Terminal · <kbd>⌘</kbd><kbd>O</kbd> open with… · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>C</kbd> copy name · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>P</kbd> pin · <kbd>⌘</kbd><kbd>P</kbd> filter by type.
 
-Shortcuts: \`vscp\` projects, \`vsce\` installed extensions, \`vsci\` install, \`vscc\` clone, \`vscf\` find files and folders, \`vscn\` new window. Set a Hotkey for recent projects.
+Shortcuts: \`codep\` projects, \`codee\` installed extensions, \`codei\` install, \`codec\` clone, \`codef\` find files and folders, \`coden\` new window. Set a Hotkey for recent projects.
 
 Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code forks: pick yours in the Workflow's Configuration.`;
 

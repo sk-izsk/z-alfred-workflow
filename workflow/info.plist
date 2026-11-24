@@ -1182,18 +1182,18 @@
 	<key>readme</key>
 	<string>## Usage
 
-Type `vsc` to open the menu, then pick a command, or keep typing:
+Type `code` to open the menu, then pick a command, or keep typing:
 
-* `vsc` + a name searches your recent projects.
-* `vsc install prettier` searches the Marketplace.
-* `vsc https://github.com/owner/repo` clones a repository (you choose where), then opens it.
-* `vsc ~/some/path` opens that path.
+* `code` + a name searches your recent projects.
+* `code install prettier` searches the Marketplace.
+* `code https://github.com/owner/repo` clones a repository (you choose where), then opens it.
+* `code ~/some/path` opens that path.
 
 In a list: &lt;kbd&gt;↩&lt;/kbd&gt; opens, &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;K&lt;/kbd&gt; shows every action, &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;[&lt;/kbd&gt; goes back to the menu.
 
 Recent projects: &lt;kbd&gt;⇧&lt;/kbd&gt;&lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; open and close other windows · &lt;kbd&gt;⇧&lt;/kbd&gt;&lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;F&lt;/kbd&gt; show in Finder · &lt;kbd&gt;⇧&lt;/kbd&gt;&lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;T&lt;/kbd&gt; open in Terminal · &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;O&lt;/kbd&gt; open with… · &lt;kbd&gt;⇧&lt;/kbd&gt;&lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;C&lt;/kbd&gt; copy name · &lt;kbd&gt;⇧&lt;/kbd&gt;&lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;P&lt;/kbd&gt; pin · &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;P&lt;/kbd&gt; filter by type.
 
-Shortcuts: `vscp` projects, `vsce` installed extensions, `vsci` install, `vscc` clone, `vscf` find files and folders, `vscn` new window. Set a Hotkey for recent projects.
+Shortcuts: `codep` projects, `codee` installed extensions, `codei` install, `codec` clone, `codef` find files and folders, `coden` new window. Set a Hotkey for recent projects.
 
 Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code forks: pick yours in the Workflow's Configuration.</string>
 	<key>uidata</key>
@@ -1487,7 +1487,7 @@ Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code 
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>vsc</string>
+				<string>code</string>
 				<key>placeholder</key>
 				<string></string>
 				<key>required</key>
@@ -1508,7 +1508,7 @@ Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code 
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>vscp</string>
+				<string>codep</string>
 				<key>placeholder</key>
 				<string></string>
 				<key>required</key>
@@ -1529,7 +1529,7 @@ Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code 
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>vsce</string>
+				<string>codee</string>
 				<key>placeholder</key>
 				<string></string>
 				<key>required</key>
@@ -1550,7 +1550,7 @@ Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code 
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>vsci</string>
+				<string>codei</string>
 				<key>placeholder</key>
 				<string></string>
 				<key>required</key>
@@ -1571,7 +1571,7 @@ Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code 
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>vscc</string>
+				<string>codec</string>
 				<key>placeholder</key>
 				<string></string>
 				<key>required</key>
@@ -1592,7 +1592,7 @@ Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code 
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>vscf</string>
+				<string>codef</string>
 				<key>placeholder</key>
 				<string></string>
 				<key>required</key>
@@ -1613,7 +1613,7 @@ Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code 
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>vsct</string>
+				<string>codet</string>
 				<key>placeholder</key>
 				<string></string>
 				<key>required</key>
@@ -1634,7 +1634,7 @@ Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code 
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>vscn</string>
+				<string>coden</string>
 				<key>placeholder</key>
 				<string></string>
 				<key>required</key>

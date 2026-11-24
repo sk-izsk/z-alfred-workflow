@@ -52,7 +52,7 @@ export const pill = (id: string, components: Json[], tint = "#8080801f"): Json =
 
 const backAction = json({ finish: { variables: { vsc_out: "back" } } });
 
-/** "‹" before the search field: back to the `vsc` menu, like Raycast's back arrow. */
+/** "‹" before the search field: back to the `code` menu, like Raycast's back arrow. */
 const backArrow: Json = {
   id: "backButton",
   type: "button",
@@ -274,7 +274,7 @@ export const arrows = (listId: string): Json[] => [
   key("↓", call(listId, "selectnext")),
 ];
 
-/** ⌘[ (configurable) closes the window and reopens the `vsc` menu; ⎋ is Alfred's own close. */
+/** ⌘[ (configurable) closes the window and reopens the `code` menu; ⎋ is Alfred's own close. */
 const back = key("{var:back_shortcut}", backAction);
 
 export const window = (title: string, root: Json, extra: Json = {}): Json => ({

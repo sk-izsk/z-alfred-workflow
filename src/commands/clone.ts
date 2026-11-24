@@ -3,7 +3,7 @@ import { tildify } from "../env.ts";
 import { openPath } from "../launch.ts";
 import { type Action, finish, merge, status, update } from "../ui.ts";
 
-/** The window's query is `url` or `url<TAB>folder` (from `vscc folder url`). */
+/** The window's query is `url` or `url<TAB>folder` (from `codec folder url`). */
 const parse = (query: string) => {
   const [url = "", parent = ""] = query.split("\t");
   const repo = parseRepo(url);

@@ -18,6 +18,10 @@ test("the vsc menu routes queries", async () => {
   expect((await rootItems("install prettier"))[0]).toMatchObject({ arg: "prettier" });
   expect(await titles("https://github.com/owner/repo")).toEqual(["Clone github.com/owner/repo"]);
   expect(await titles("clone git@github.com:o/r.git")).toEqual(["Clone github.com/o/r"]);
+  // Inside the menu, clone keeps the "clone " prefix so Tab-completing a folder stays in the menu.
+  const folders = await rootItems("clone ~/");
+  expect(folders.length).toBeGreaterThan(0);
+  expect(folders.every((i) => String(i.autocomplete ?? "").startsWith("clone ~/"))).toBe(true);
   expect((await titles("> Toggle Zen Mode"))[0]).toBe("Run “Toggle Zen Mode”");
   expect(await titles("sync now")).toEqual(["Sync Now"]);
   expect((await titles("some-project")).at(-1)).toBe("Search Recent Projects for “some-project”");

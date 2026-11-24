@@ -20,7 +20,7 @@ export const cloneItem = (repo: Repo, parent: string, title = `Clone ${repo.labe
   },
 });
 
-/** `vscc [folder] [url]`: the URL is the last token that parses as one; the rest is the folder. */
+/** `codec [folder] [url]`: the URL is the last token that parses as one; the rest is the folder. */
 export const parseCloneQuery = (query: string): { folder: string; repo?: Repo } => {
   const tokens = query.trim().split(/\s+/);
   for (let i = tokens.length - 1; i >= 0; i--) {
@@ -34,11 +34,12 @@ export const parseCloneQuery = (query: string): { folder: string; repo?: Repo } 
 export const clipboardRepo = async (): Promise<Repo | undefined> =>
   bool("clone_clipboard", true) ? parseRepo(await clipboard().catch(() => "")) : undefined;
 
-export const cloneFilterItems = async (query: string) => {
+/** `prefix`: what precedes the clone query in Alfred's field ("clone " inside the `code` menu), so Tab completes correctly. */
+export const cloneFilterItems = async (query: string, prefix = "") => {
   const { folder, repo: typed } = parseCloneQuery(query);
   const repo = typed ?? (await clipboardRepo());
   const dir = existingDir(folder);
-  const items: object[] = [];
+  const items: { title: string; [key: string]: unknown }[] = [];
   if (repo && (!folder || dir)) items.push(cloneItem(repo, dir ?? defaultCloneDir()));
   // Folder suggestions: Tab/↩ fills the folder in, then keep typing or paste the URL.
   if (folder && !(dir && !folder.endsWith("/") && repo)) {
@@ -47,7 +48,7 @@ export const cloneFilterItems = async (query: string) => {
       items.push({
         title: basename(path),
         subtitle: repo ? `Clone ${repo.label} into ${tildify(path)}` : tildify(path),
-        autocomplete: `${tildify(path)}/${suffix}`,
+        autocomplete: `${prefix}${tildify(path)}/${suffix}`,
         valid: !!repo,
         arg: repo ? `${repo.url}\t${path}` : "",
         icon: { type: "fileicon", path },

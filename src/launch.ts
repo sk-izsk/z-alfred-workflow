@@ -53,7 +53,7 @@ export const openInTerminal = (dir: string): Promise<string> =>
 export const alfredActions = (path: string): Promise<string> =>
   osascript(`tell application id "com.runningwithcrayons.Alfred" to action {item 1 of argv}`, path);
 
-/** Reopen the `vsc` menu (after ⌘[ in a window). */
+/** Reopen the `code` menu (after ⌘[ in a window). */
 export const alfredSearch = (text: string): Promise<string> =>
   osascript(`tell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)`, text);
 

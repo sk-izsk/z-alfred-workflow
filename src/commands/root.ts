@@ -13,13 +13,13 @@ import {
   runPaletteCommand,
 } from "../launch.ts";
 import { profiles } from "../profiles.ts";
-import { clipboardRepo, cloneItem } from "./clonefilter.ts";
+import { clipboardRepo, cloneFilterItems, cloneItem } from "./clonefilter.ts";
 
 /**
- * The `vsc` Script Filter: one menu for everything, like `bw`.
- * `vsc` → commands; `vsc install prettier` → Install Extension searching "prettier";
- * `vsc <git url>` → Clone; `vsc gh name` → your GitHub repos; `vsc > cmd` → Command Palette;
- * `vsc profile`, `vsc sync`; anything else → Search Recent Projects for it.
+ * The `code` Script Filter: one menu for everything, like `bw`.
+ * `code` → commands; `code install prettier` → Install Extension searching "prettier";
+ * `code <git url>` → Clone; `code gh name` → your GitHub repos; `code > cmd` → Command Palette;
+ * `code profile`, `code sync`; anything else → Search Recent Projects for it.
  */
 type Entry = {
   title: string;
@@ -58,7 +58,7 @@ const commands = (): Entry[] => {
     },
     {
       title: "Clone Repository",
-      subtitle: "Paste a git URL after the keyword",
+      subtitle: "Type a folder for suggestions, then paste a git URL",
       icon: "icons/clone.png",
       autocomplete: "clone ",
       words: "git github gitlab repo",
@@ -257,16 +257,17 @@ export const rootItems = async (query: string) => {
   const q = query.trim();
   const all = commands();
   if (!q) {
-    // A git URL on the clipboard goes first: `vsc` ↩ clones it.
+    // A git URL on the clipboard goes first: `code` ↩ clones it.
     const clip = await clipboardRepo();
     return [...(clip ? [cloneItem(clip, defaultCloneDir())] : []), ...all.map((e) => toItem(e))];
   }
 
   const sub = await subItems(q);
   if (sub) return sub;
-  const typed = parseRepo(q.replace(/^clone\s+/i, ""));
+  // `code clone …` behaves exactly like `codec …` (folder suggestions, clipboard URL, ⌘↩).
+  if (/^clone\b/i.test(q)) return cloneFilterItems(q.replace(/^clone\s*/i, ""), "clone ");
+  const typed = parseRepo(q);
   if (typed) return [cloneItem(typed, defaultCloneDir())];
-  if (/^clone\b/i.test(q)) return [toItem(all.find((e) => e.autocomplete === "clone ")!)];
   const path = pathItem(q);
   if (path.length) return path;
 
@@ -296,7 +297,7 @@ export const root = async ([query = ""]: string[]): Promise<void> => {
 const ACTIONS: Record<string, (arg: string) => Promise<string>> = {
   "new-window": async () => (await newWindow(), ""),
   agents: async () => (await agentsWindow(), ""),
-  find: async () => (await alfredSearch(`${str("kw_find", "vscf")} `), ""),
+  find: async () => (await alfredSearch(`${str("kw_find", "codef")} `), ""),
   path: async (arg) => (await openPath(arg), ""),
   palette: async (arg) => (await runPaletteCommand(arg), ""),
   profile: async (arg) => (await openWithProfile(arg), ""),

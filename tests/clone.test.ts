@@ -27,7 +27,7 @@ test("rejects things that aren't repositories", () => {
   }
 });
 
-test("vscc splits a folder (with spaces) from the URL", () => {
+test("codec splits a folder (with spaces) from the URL", () => {
   expect(parseCloneQuery("/Volumes/Mac Mini/Projects https://github.com/o/r")).toMatchObject({
     folder: "/Volumes/Mac Mini/Projects",
     repo: { name: "r" },
