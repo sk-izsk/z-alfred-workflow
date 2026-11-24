@@ -1,0 +1,901 @@
+{
+  "bundleid": "com.izsk.bitwarden",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "query": {
+      "src": "args[0]",
+      "default": ""
+    },
+    "secret_input": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "secret_pin": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "window_session": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "window_account": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "page_url": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "totp_seeds": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "fill_data": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "totp_period": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "selected_id": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "folder_filter": {
+      "persist": true,
+      "scriptenv": true,
+      "default": "all"
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    }
+  },
+  "pulse": {
+    "interval": 1,
+    "intervalmode": "regular",
+    "src": "../bin/bwa",
+    "args": [
+      "search-tick"
+    ]
+  },
+  "window": {
+    "size": {
+      "height": 540
+    },
+    "minsize": {
+      "width": 620,
+      "height": 380
+    },
+    "title": "Bitwarden",
+    "root": {
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "search-init"
+            ]
+          }
+        },
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/bwa",
+              "args": [
+                "search-site"
+              ],
+              "async": true
+            },
+            {
+              "type": "script",
+              "src": "../bin/bwa",
+              "args": [
+                "search-refresh"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 780
+                }
+              }
+            }
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "⌘C",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "item",
+              "copy-password",
+              "{value:items.selected.uid}"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘U",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "item",
+              "copy-username",
+              "{value:items.selected.uid}"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘T",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "item",
+              "copy-totp",
+              "{value:items.selected.uid}"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘O",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "item",
+              "open-url",
+              "{value:items.selected.uid}"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘Y",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "item",
+              "details",
+              "{value:items.selected.uid}"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘I",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "item",
+              "details",
+              "{value:items.selected.uid}"
+            ]
+          }
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "item",
+              "menu",
+              "{value:items.selected.uid}"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "sync"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘L",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "lock-ui"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘P",
+          "action": {
+            "type": "json",
+            "src": {
+              "update": {
+                "ids": {
+                  "folderPicker": {
+                    "focus": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "shortcut": "⌘F",
+          "action": {
+            "type": "json",
+            "src": {
+              "update": {
+                "ids": {
+                  "searchField": {
+                    "focus": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "shortcut": "{var:back_shortcut}",
+          "action": {
+            "type": "json",
+            "src": {
+              "finish": {
+                "variables": {
+                  "bw_out": "back"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "components": [
+        {
+          "constraints": {
+            "region": "top"
+          },
+          "type": "view",
+          "layout": "border",
+          "padding": 12,
+          "spacing": 10,
+          "components": [
+            {
+              "constraints": {
+                "region": "centre"
+              },
+              "id": "searchField",
+              "type": "textfield",
+              "text": "{var:query}",
+              "placeholder": "Search Vault",
+              "focus": true,
+              "bordered": false,
+              "focusring": false,
+              "font": {
+                "size": 28,
+                "weight": "light"
+              },
+              "textinsets": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "function",
+                    "src": "items",
+                    "args": "filterdata"
+                  }
+                },
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/bwa",
+                    "args": [
+                      "item",
+                      "primary",
+                      "{value:items.selected.uid}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "constraints": {
+                "region": "right",
+                "position": "centre"
+              },
+              "id": "folderPicker",
+              "type": "picker",
+              "tooltip": "Folder ⌘P",
+              "items": [
+                {
+                  "text": "All Items",
+                  "value": "all"
+                }
+              ],
+              "selected": "{var:folder_filter}",
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/bwa",
+                    "args": [
+                      "folder",
+                      "{value:self.selected.value}"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "constraints": {
+            "region": "centre"
+          },
+          "id": "items",
+          "type": "dataview",
+          "padding": 6,
+          "spacing": 2,
+          "placeholder": "No matching items",
+          "behaviour": {
+            "selection": {
+              "wrap": "none"
+            }
+          },
+          "data": {
+            "type": "basic",
+            "src": [],
+            "filter": {
+              "type": "basic",
+              "args": "match",
+              "match": "{value:searchField.text}",
+              "matchmode": "wordmatchanyorder"
+            }
+          },
+          "cell": {
+            "height": 40,
+            "init": {
+              "rowCell.background": null,
+              "rowTitle.colour": "labelColor",
+              "rowSubtitle.colour": "secondaryLabelColor",
+              "rowFolder.colour": "secondaryLabelColor",
+              "rowIcon.contenttintcolour": "secondaryLabelColor",
+              "rowLock.contenttintcolour": "secondaryLabelColor",
+              "rowTotp.contenttintcolour": "secondaryLabelColor",
+              "rowPasskey.contenttintcolour": "secondaryLabelColor",
+              "rowFolderIcon.contenttintcolour": "secondaryLabelColor"
+            },
+            "selected": {
+              "rowCell.background": "alfredSelectedResultBackgroundColor",
+              "rowTitle.colour": "alfredSelectedResultTextColor",
+              "rowSubtitle.colour": "alfredSelectedResultTextColor",
+              "rowFolder.colour": "alfredSelectedResultTextColor",
+              "rowIcon.contenttintcolour": "alfredSelectedResultTextColor",
+              "rowLock.contenttintcolour": "alfredSelectedResultTextColor",
+              "rowTotp.contenttintcolour": "alfredSelectedResultTextColor",
+              "rowPasskey.contenttintcolour": "alfredSelectedResultTextColor",
+              "rowFolderIcon.contenttintcolour": "alfredSelectedResultTextColor"
+            },
+            "root": {
+              "id": "rowCell",
+              "type": "view",
+              "layout": "border",
+              "padding": 6,
+              "spacing": 10,
+              "cornerradius": 8,
+              "events": [
+                {
+                  "triggers": "doubleclicked",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/bwa",
+                    "args": [
+                      "item",
+                      "primary",
+                      "{data:uid}"
+                    ]
+                  }
+                }
+              ],
+              "components": [
+                {
+                  "id": "rowIcon",
+                  "type": "imageview",
+                  "image": {
+                    "type": "symbol",
+                    "src": "globe",
+                    "size": {
+                      "height": 19
+                    }
+                  },
+                  "contenttintcolour": "secondaryLabelColor",
+                  "constraints": {
+                    "position": "centre",
+                    "region": "left",
+                    "size": {
+                      "width": 26,
+                      "height": 26
+                    },
+                    "insets": {
+                      "left": 2,
+                      "right": 2
+                    }
+                  },
+                  "resize": "fit"
+                },
+                {
+                  "constraints": {
+                    "region": "centre",
+                    "position": "left",
+                    "stretch": "horizontal"
+                  },
+                  "type": "view",
+                  "layout": "inline",
+                  "direction": "vertical",
+                  "spacing": 1,
+                  "components": [
+                    {
+                      "id": "rowTitle",
+                      "type": "label",
+                      "text": "",
+                      "font": {
+                        "size": 14,
+                        "weight": "medium"
+                      },
+                      "constraints": {
+                        "size": {
+                          "height": 18
+                        }
+                      }
+                    },
+                    {
+                      "id": "rowSubtitle",
+                      "type": "label",
+                      "text": "",
+                      "colour": "secondaryLabelColor",
+                      "font": {
+                        "size": 11
+                      },
+                      "constraints": {
+                        "size": {
+                          "height": 15
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "constraints": {
+                    "region": "right",
+                    "position": "centre"
+                  },
+                  "type": "view",
+                  "layout": "inline",
+                  "spacing": 8,
+                  "components": [
+                    {
+                      "id": "rowSuggested",
+                      "type": "imageview",
+                      "image": {
+                        "type": "symbol",
+                        "src": "location.fill",
+                        "size": {
+                          "height": 14
+                        }
+                      },
+                      "contenttintcolour": "systemBlueColor",
+                      "tooltip": "Matches the page you're on",
+                      "constraints": {
+                        "position": "centre"
+                      }
+                    },
+                    {
+                      "id": "rowFolderPill",
+                      "type": "view",
+                      "layout": "inline",
+                      "constraints": {
+                        "position": "centre"
+                      },
+                      "spacing": 3,
+                      "components": [
+                        {
+                          "id": "rowFolderIcon",
+                          "type": "imageview",
+                          "image": {
+                            "type": "symbol",
+                            "src": "folder",
+                            "size": {
+                              "height": 12
+                            }
+                          },
+                          "contenttintcolour": "tertiaryLabelColor",
+                          "constraints": {
+                            "position": "centre"
+                          }
+                        },
+                        {
+                          "id": "rowFolder",
+                          "type": "label",
+                          "text": "",
+                          "colour": "secondaryLabelColor",
+                          "font": {
+                            "size": 12.5
+                          },
+                          "constraints": {
+                            "position": "centre"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "rowPasskey",
+                      "type": "imageview",
+                      "image": {
+                        "type": "symbol",
+                        "src": "person.badge.key",
+                        "size": {
+                          "height": 14
+                        }
+                      },
+                      "contenttintcolour": "secondaryLabelColor",
+                      "tooltip": "Has a passkey",
+                      "constraints": {
+                        "position": "centre"
+                      }
+                    },
+                    {
+                      "id": "rowLock",
+                      "type": "imageview",
+                      "image": {
+                        "type": "symbol",
+                        "src": "lock",
+                        "size": {
+                          "height": 14
+                        }
+                      },
+                      "contenttintcolour": "secondaryLabelColor",
+                      "tooltip": "Master password re-prompt",
+                      "constraints": {
+                        "position": "centre"
+                      }
+                    },
+                    {
+                      "type": "view",
+                      "layout": "inline",
+                      "spacing": 6,
+                      "constraints": {
+                        "position": "centre"
+                      },
+                      "components": [
+                        {
+                          "id": "rowCode",
+                          "type": "label",
+                          "text": "000 000",
+                          "hidden": true,
+                          "textalign": "right",
+                          "constraints": {
+                            "position": "centre",
+                            "size": {
+                              "width": 76
+                            }
+                          },
+                          "font": {
+                            "size": 15,
+                            "weight": "light",
+                            "monospaced": "digits"
+                          }
+                        },
+                        {
+                          "id": "rowTotp",
+                          "type": "imageview",
+                          "image": {
+                            "type": "symbol",
+                            "src": "clock",
+                            "size": {
+                              "height": 14
+                            }
+                          },
+                          "contenttintcolour": "secondaryLabelColor",
+                          "tooltip": "Has a TOTP key",
+                          "constraints": {
+                            "position": "centre"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "rowStar",
+                      "type": "imageview",
+                      "image": {
+                        "type": "symbol",
+                        "src": "star.fill",
+                        "size": {
+                          "height": 14
+                        }
+                      },
+                      "contenttintcolour": "systemYellowColor",
+                      "tooltip": "Favorite",
+                      "constraints": {
+                        "position": "centre"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "events": [
+            {
+              "triggers": "changed",
+              "action": [
+                {
+                  "type": "json",
+                  "src": {},
+                  "variables": {
+                    "selected_id": "{value:items.selected.uid}"
+                  }
+                },
+                {
+                  "type": "script",
+                  "src": "../bin/bwa",
+                  "args": [
+                    "selected",
+                    "{value:items.selected.uid}"
+                  ],
+                  "async": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "constraints": {
+            "region": "bottom"
+          },
+          "type": "view",
+          "layout": "border",
+          "padding": 12,
+          "background": {
+            "dark": "#00000033",
+            "light": "#0000000d"
+          },
+          "components": [
+            {
+              "constraints": {
+                "region": "left",
+                "insets": {
+                  "left": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 8,
+              "components": [
+                {
+                  "type": "imageview",
+                  "image": {
+                    "type": "file",
+                    "src": "../icon.png",
+                    "size": {
+                      "width": 18,
+                      "height": 18
+                    }
+                  }
+                },
+                {
+                  "id": "statusLabel",
+                  "type": "label",
+                  "text": "…",
+                  "colour": "secondaryLabelColor",
+                  "font": {
+                    "size": 13
+                  },
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 230
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "totpLabel",
+              "type": "label",
+              "text": "",
+              "textalign": "centre",
+              "font": {
+                "size": 15,
+                "weight": "medium",
+                "monospaced": "digits"
+              },
+              "colour": "labelColor",
+              "tooltip": "TOTP for the selected item · ⌘T to copy",
+              "constraints": {
+                "region": "centre",
+                "position": "centre",
+                "size": {
+                  "width": 170
+                }
+              }
+            },
+            {
+              "constraints": {
+                "region": "right",
+                "insets": {
+                  "right": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 10,
+              "components": [
+                {
+                  "id": "backButton",
+                  "type": "button",
+                  "text": "Back  {var:back_shortcut}",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "finish": {
+                            "variables": {
+                              "bw_out": "back"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "primaryButton",
+                  "type": "button",
+                  "text": "Autofill  ↩",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/bwa",
+                        "args": [
+                          "item",
+                          "primary",
+                          "{value:items.selected.uid}"
+                        ]
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "actionsButton",
+                  "type": "button",
+                  "text": "Actions  {var:actions_shortcut}",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/bwa",
+                        "args": [
+                          "item",
+                          "menu",
+                          "{value:items.selected.uid}"
+                        ]
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "pasteButton",
+                  "type": "button",
+                  "text": "",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/bwa",
+                        "args": [
+                          "item",
+                          "paste-password",
+                          "{value:items.selected.uid}"
+                        ]
+                      }
+                    }
+                  ],
+                  "shortcut": "⌘↩",
+                  "opacity": 0,
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 0,
+                      "height": 0
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

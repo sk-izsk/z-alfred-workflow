@@ -1,0 +1,1375 @@
+{
+  "bundleid": "com.izsk.bitwarden",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "query": {
+      "src": "args[0]",
+      "default": ""
+    },
+    "secret_input": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "secret_pin": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "window_session": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "window_account": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "send_urls": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "send_text": {
+      "scriptenv": true,
+      "default": ""
+    },
+    "send_file": {
+      "scriptenv": true,
+      "default": ""
+    }
+  },
+  "window": {
+    "size": {
+      "height": 540
+    },
+    "minsize": {
+      "width": 620,
+      "height": 380
+    },
+    "title": "Bitwarden",
+    "root": {
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "sends-init"
+            ]
+          }
+        },
+        {
+          "triggers": "launched",
+          "action": {
+            "type": "script",
+            "src": "../bin/bwa",
+            "args": [
+              "sends-load"
+            ],
+            "async": true
+          }
+        },
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 780
+                }
+              }
+            }
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "sends",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "sends",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "⌘N",
+          "action": {
+            "type": "json",
+            "src": {
+              "sheet": {
+                "id": "newSendSheet",
+                "root": {
+                  "type": "view",
+                  "layout": "inline",
+                  "direction": "vertical",
+                  "padding": 20,
+                  "spacing": 10,
+                  "constraints": {
+                    "size": {
+                      "width": 440
+                    }
+                  },
+                  "components": [
+                    {
+                      "type": "label",
+                      "text": "New Send",
+                      "font": {
+                        "size": 17,
+                        "weight": "semibold"
+                      }
+                    },
+                    {
+                      "id": "sendType",
+                      "type": "picker",
+                      "items": [
+                        {
+                          "text": "Text",
+                          "value": "text"
+                        },
+                        {
+                          "text": "File",
+                          "value": "file"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "sendName",
+                      "type": "textfield",
+                      "placeholder": "Name",
+                      "focusring": false,
+                      "textinsets": {
+                        "horizontal": 6,
+                        "vertical": 5
+                      },
+                      "focus": true
+                    },
+                    {
+                      "id": "sendTextArea",
+                      "type": "textarea",
+                      "text": "",
+                      "editable": true,
+                      "bordertype": "bezel",
+                      "textinsets": {
+                        "horizontal": 6,
+                        "vertical": 6
+                      },
+                      "constraints": {
+                        "size": {
+                          "height": 100
+                        }
+                      }
+                    },
+                    {
+                      "type": "view",
+                      "layout": "inline",
+                      "spacing": 8,
+                      "components": [
+                        {
+                          "type": "button",
+                          "text": "Choose File…",
+                          "events": [
+                            {
+                              "triggers": "actioned",
+                              "action": {
+                                "type": "json",
+                                "src": {
+                                  "opendialog": {
+                                    "prompt": "Choose",
+                                    "setvariable": "send_file",
+                                    "action": {
+                                      "type": "json",
+                                      "src": {
+                                        "update": {
+                                          "ids": {
+                                            "sendFileLabel": {
+                                              "text": "{var:send_file}"
+                                            },
+                                            "sendType": {
+                                              "selected": "file"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "sendFileLabel",
+                          "type": "label",
+                          "text": "",
+                          "colour": "secondaryLabelColor",
+                          "font": {
+                            "size": "small"
+                          },
+                          "linebreak": "truncatemiddle"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "view",
+                      "layout": "form",
+                      "spacing": 8,
+                      "components": [
+                        {
+                          "type": "label",
+                          "text": "Delete after",
+                          "constraints": {
+                            "position": "right"
+                          }
+                        },
+                        {
+                          "id": "sendDays",
+                          "type": "picker",
+                          "items": [
+                            {
+                              "text": "1 day",
+                              "value": "1"
+                            },
+                            {
+                              "text": "2 days",
+                              "value": "2"
+                            },
+                            {
+                              "text": "3 days",
+                              "value": "3"
+                            },
+                            {
+                              "text": "7 days",
+                              "value": "7"
+                            },
+                            {
+                              "text": "14 days",
+                              "value": "14"
+                            },
+                            {
+                              "text": "30 days",
+                              "value": "30"
+                            }
+                          ],
+                          "selected": "7"
+                        },
+                        {
+                          "type": "label",
+                          "text": "Max views",
+                          "constraints": {
+                            "position": "right"
+                          }
+                        },
+                        {
+                          "id": "sendMaxViews",
+                          "type": "textfield",
+                          "placeholder": "Unlimited",
+                          "focusring": false,
+                          "textinsets": {
+                            "horizontal": 6,
+                            "vertical": 5
+                          },
+                          "constraints": {
+                            "size": {
+                              "width": 100
+                            }
+                          }
+                        },
+                        {
+                          "type": "label",
+                          "text": "Password",
+                          "constraints": {
+                            "position": "right"
+                          }
+                        },
+                        {
+                          "id": "sendPassword",
+                          "type": "passwordfield",
+                          "placeholder": "Optional",
+                          "focusring": false,
+                          "textinsets": {
+                            "horizontal": 6,
+                            "vertical": 5
+                          }
+                        },
+                        {},
+                        {
+                          "id": "sendHidden",
+                          "type": "checkbox",
+                          "text": "Hide text by default"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "sheetStatus",
+                      "type": "label",
+                      "text": "",
+                      "colour": "systemRedColor",
+                      "font": {
+                        "size": "small"
+                      },
+                      "linebreak": "wordwrap"
+                    },
+                    {
+                      "constraints": {
+                        "position": "right"
+                      },
+                      "type": "view",
+                      "layout": "inline",
+                      "spacing": 8,
+                      "components": [
+                        {
+                          "type": "button",
+                          "text": "Cancel",
+                          "events": [
+                            {
+                              "triggers": "actioned",
+                              "action": {
+                                "type": "json",
+                                "src": {
+                                  "sheet": {
+                                    "close": "newSendSheet"
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "button",
+                          "text": "Create & Copy Link",
+                          "events": [
+                            {
+                              "triggers": "actioned",
+                              "action": [
+                                {
+                                  "type": "json",
+                                  "src": {},
+                                  "variables": {
+                                    "secret_input": "{value:sendPassword.text}",
+                                    "send_text": "{value:sendTextArea.text}"
+                                  }
+                                },
+                                {
+                                  "type": "script",
+                                  "src": "../bin/bwa",
+                                  "args": [
+                                    "send-create",
+                                    "{value:sendType.selected.value}",
+                                    "{value:sendName.text}",
+                                    "{value:sendDays.selected.value}",
+                                    "{value:sendMaxViews.text}",
+                                    "{value:sendHidden.checked}",
+                                    "{var:send_file}"
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "shortcut": "⌘↩"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "json",
+            "src": {
+              "sheet": {
+                "id": "receiveSheet",
+                "root": {
+                  "type": "view",
+                  "layout": "inline",
+                  "direction": "vertical",
+                  "padding": 20,
+                  "spacing": 10,
+                  "constraints": {
+                    "size": {
+                      "width": 440
+                    }
+                  },
+                  "components": [
+                    {
+                      "type": "label",
+                      "text": "Receive Send",
+                      "font": {
+                        "size": 17,
+                        "weight": "semibold"
+                      }
+                    },
+                    {
+                      "id": "receiveUrl",
+                      "type": "textfield",
+                      "placeholder": "https://send.bitwarden.com/#…",
+                      "focusring": false,
+                      "textinsets": {
+                        "horizontal": 6,
+                        "vertical": 5
+                      },
+                      "focus": true,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": [
+                            {
+                              "type": "json",
+                              "src": {},
+                              "variables": {
+                                "secret_input": "{value:receivePassword.text}"
+                              }
+                            },
+                            {
+                              "type": "script",
+                              "src": "../bin/bwa",
+                              "args": [
+                                "send-receive",
+                                "{value:receiveUrl.text}"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "receivePassword",
+                      "type": "passwordfield",
+                      "placeholder": "Password (if it has one)",
+                      "focusring": false,
+                      "textinsets": {
+                        "horizontal": 6,
+                        "vertical": 5
+                      }
+                    },
+                    {
+                      "id": "receivedText",
+                      "type": "textarea",
+                      "text": "",
+                      "editable": false,
+                      "selectable": true,
+                      "bordertype": "bezel",
+                      "textinsets": {
+                        "horizontal": 6,
+                        "vertical": 6
+                      },
+                      "constraints": {
+                        "size": {
+                          "height": 120
+                        }
+                      }
+                    },
+                    {
+                      "id": "sheetStatus",
+                      "type": "label",
+                      "text": "",
+                      "colour": "systemRedColor",
+                      "font": {
+                        "size": "small"
+                      },
+                      "linebreak": "wordwrap"
+                    },
+                    {
+                      "constraints": {
+                        "position": "right"
+                      },
+                      "type": "view",
+                      "layout": "inline",
+                      "spacing": 8,
+                      "components": [
+                        {
+                          "type": "button",
+                          "text": "Close",
+                          "events": [
+                            {
+                              "triggers": "actioned",
+                              "action": {
+                                "type": "json",
+                                "src": {
+                                  "sheet": {
+                                    "close": "receiveSheet"
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "button",
+                          "text": "Copy Text",
+                          "events": [
+                            {
+                              "triggers": "actioned",
+                              "action": {
+                                "type": "json",
+                                "src": {
+                                  "copy": {
+                                    "type": "text",
+                                    "src": "{value:receivedText.text}"
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "button",
+                          "text": "Receive",
+                          "events": [
+                            {
+                              "triggers": "actioned",
+                              "action": [
+                                {
+                                  "type": "json",
+                                  "src": {},
+                                  "variables": {
+                                    "secret_input": "{value:receivePassword.text}"
+                                  }
+                                },
+                                {
+                                  "type": "script",
+                                  "src": "../bin/bwa",
+                                  "args": [
+                                    "send-receive",
+                                    "{value:receiveUrl.text}"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "shortcut": "{var:back_shortcut}",
+          "action": {
+            "type": "json",
+            "src": {
+              "finish": {
+                "variables": {
+                  "bw_out": "back"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "components": [
+        {
+          "constraints": {
+            "region": "top"
+          },
+          "type": "view",
+          "layout": "stack",
+          "padding": 12,
+          "components": [
+            {
+              "id": "searchField",
+              "type": "textfield",
+              "text": "{var:query}",
+              "placeholder": "Search Sends",
+              "focus": true,
+              "bordered": false,
+              "focusring": false,
+              "font": {
+                "size": 28,
+                "weight": "light"
+              },
+              "textinsets": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "function",
+                    "src": "sends",
+                    "args": "filterdata"
+                  }
+                },
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/bwa",
+                    "args": [
+                      "send-copy",
+                      "{value:sends.selected.uid}"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "constraints": {
+            "region": "centre"
+          },
+          "id": "sends",
+          "type": "dataview",
+          "padding": 6,
+          "spacing": 2,
+          "placeholder": "No Sends",
+          "data": {
+            "type": "basic",
+            "src": [],
+            "filter": {
+              "type": "basic",
+              "args": "match",
+              "match": "{value:searchField.text}",
+              "matchmode": "wordmatchanyorder"
+            }
+          },
+          "cell": {
+            "height": 48,
+            "init": {
+              "sendCell.background": null,
+              "sendName.colour": "labelColor",
+              "sendInfo.colour": "secondaryLabelColor",
+              "sendIcon.contenttintcolour": "secondaryLabelColor"
+            },
+            "selected": {
+              "sendCell.background": "alfredSelectedResultBackgroundColor",
+              "sendName.colour": "alfredSelectedResultTextColor",
+              "sendInfo.colour": "alfredSelectedResultTextColor",
+              "sendIcon.contenttintcolour": "alfredSelectedResultTextColor"
+            },
+            "root": {
+              "id": "sendCell",
+              "type": "view",
+              "layout": "border",
+              "padding": 6,
+              "spacing": 10,
+              "cornerradius": 8,
+              "components": [
+                {
+                  "id": "sendIcon",
+                  "type": "imageview",
+                  "image": {
+                    "type": "symbol",
+                    "src": "text.alignleft",
+                    "size": {
+                      "height": 16
+                    }
+                  },
+                  "contenttintcolour": "secondaryLabelColor",
+                  "constraints": {
+                    "position": "centre",
+                    "region": "left",
+                    "insets": {
+                      "left": 4,
+                      "right": 4
+                    }
+                  }
+                },
+                {
+                  "constraints": {
+                    "region": "centre",
+                    "position": "left",
+                    "stretch": "horizontal"
+                  },
+                  "type": "view",
+                  "layout": "inline",
+                  "direction": "vertical",
+                  "spacing": 1,
+                  "components": [
+                    {
+                      "id": "sendName",
+                      "type": "label",
+                      "text": "",
+                      "font": {
+                        "size": 14,
+                        "weight": "medium"
+                      },
+                      "constraints": {
+                        "size": {
+                          "height": 18
+                        }
+                      }
+                    },
+                    {
+                      "id": "sendInfo",
+                      "type": "label",
+                      "text": "",
+                      "font": {
+                        "size": 11
+                      },
+                      "constraints": {
+                        "size": {
+                          "height": 15
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "constraints": {
+            "region": "bottom"
+          },
+          "type": "view",
+          "layout": "border",
+          "padding": 12,
+          "background": {
+            "dark": "#00000033",
+            "light": "#0000000d"
+          },
+          "components": [
+            {
+              "constraints": {
+                "region": "left",
+                "insets": {
+                  "left": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 8,
+              "components": [
+                {
+                  "type": "imageview",
+                  "image": {
+                    "type": "file",
+                    "src": "../icon.png",
+                    "size": {
+                      "width": 18,
+                      "height": 18
+                    }
+                  }
+                },
+                {
+                  "id": "statusLabel",
+                  "type": "label",
+                  "text": "…",
+                  "colour": "secondaryLabelColor",
+                  "font": {
+                    "size": 13
+                  },
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 230
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "constraints": {
+                "region": "right",
+                "insets": {
+                  "right": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 10,
+              "components": [
+                {
+                  "id": "backButton",
+                  "type": "button",
+                  "text": "Back  {var:back_shortcut}",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "finish": {
+                            "variables": {
+                              "bw_out": "back"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "receiveButton",
+                  "type": "button",
+                  "text": "Receive  ⌘R",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "sheet": {
+                            "id": "receiveSheet",
+                            "root": {
+                              "type": "view",
+                              "layout": "inline",
+                              "direction": "vertical",
+                              "padding": 20,
+                              "spacing": 10,
+                              "constraints": {
+                                "size": {
+                                  "width": 440
+                                }
+                              },
+                              "components": [
+                                {
+                                  "type": "label",
+                                  "text": "Receive Send",
+                                  "font": {
+                                    "size": 17,
+                                    "weight": "semibold"
+                                  }
+                                },
+                                {
+                                  "id": "receiveUrl",
+                                  "type": "textfield",
+                                  "placeholder": "https://send.bitwarden.com/#…",
+                                  "focusring": false,
+                                  "textinsets": {
+                                    "horizontal": 6,
+                                    "vertical": 5
+                                  },
+                                  "focus": true,
+                                  "events": [
+                                    {
+                                      "triggers": "actioned",
+                                      "action": [
+                                        {
+                                          "type": "json",
+                                          "src": {},
+                                          "variables": {
+                                            "secret_input": "{value:receivePassword.text}"
+                                          }
+                                        },
+                                        {
+                                          "type": "script",
+                                          "src": "../bin/bwa",
+                                          "args": [
+                                            "send-receive",
+                                            "{value:receiveUrl.text}"
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "id": "receivePassword",
+                                  "type": "passwordfield",
+                                  "placeholder": "Password (if it has one)",
+                                  "focusring": false,
+                                  "textinsets": {
+                                    "horizontal": 6,
+                                    "vertical": 5
+                                  }
+                                },
+                                {
+                                  "id": "receivedText",
+                                  "type": "textarea",
+                                  "text": "",
+                                  "editable": false,
+                                  "selectable": true,
+                                  "bordertype": "bezel",
+                                  "textinsets": {
+                                    "horizontal": 6,
+                                    "vertical": 6
+                                  },
+                                  "constraints": {
+                                    "size": {
+                                      "height": 120
+                                    }
+                                  }
+                                },
+                                {
+                                  "id": "sheetStatus",
+                                  "type": "label",
+                                  "text": "",
+                                  "colour": "systemRedColor",
+                                  "font": {
+                                    "size": "small"
+                                  },
+                                  "linebreak": "wordwrap"
+                                },
+                                {
+                                  "constraints": {
+                                    "position": "right"
+                                  },
+                                  "type": "view",
+                                  "layout": "inline",
+                                  "spacing": 8,
+                                  "components": [
+                                    {
+                                      "type": "button",
+                                      "text": "Close",
+                                      "events": [
+                                        {
+                                          "triggers": "actioned",
+                                          "action": {
+                                            "type": "json",
+                                            "src": {
+                                              "sheet": {
+                                                "close": "receiveSheet"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "button",
+                                      "text": "Copy Text",
+                                      "events": [
+                                        {
+                                          "triggers": "actioned",
+                                          "action": {
+                                            "type": "json",
+                                            "src": {
+                                              "copy": {
+                                                "type": "text",
+                                                "src": "{value:receivedText.text}"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "button",
+                                      "text": "Receive",
+                                      "events": [
+                                        {
+                                          "triggers": "actioned",
+                                          "action": [
+                                            {
+                                              "type": "json",
+                                              "src": {},
+                                              "variables": {
+                                                "secret_input": "{value:receivePassword.text}"
+                                              }
+                                            },
+                                            {
+                                              "type": "script",
+                                              "src": "../bin/bwa",
+                                              "args": [
+                                                "send-receive",
+                                                "{value:receiveUrl.text}"
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "newButton",
+                  "type": "button",
+                  "text": "New  ⌘N",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "sheet": {
+                            "id": "newSendSheet",
+                            "root": {
+                              "type": "view",
+                              "layout": "inline",
+                              "direction": "vertical",
+                              "padding": 20,
+                              "spacing": 10,
+                              "constraints": {
+                                "size": {
+                                  "width": 440
+                                }
+                              },
+                              "components": [
+                                {
+                                  "type": "label",
+                                  "text": "New Send",
+                                  "font": {
+                                    "size": 17,
+                                    "weight": "semibold"
+                                  }
+                                },
+                                {
+                                  "id": "sendType",
+                                  "type": "picker",
+                                  "items": [
+                                    {
+                                      "text": "Text",
+                                      "value": "text"
+                                    },
+                                    {
+                                      "text": "File",
+                                      "value": "file"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "id": "sendName",
+                                  "type": "textfield",
+                                  "placeholder": "Name",
+                                  "focusring": false,
+                                  "textinsets": {
+                                    "horizontal": 6,
+                                    "vertical": 5
+                                  },
+                                  "focus": true
+                                },
+                                {
+                                  "id": "sendTextArea",
+                                  "type": "textarea",
+                                  "text": "",
+                                  "editable": true,
+                                  "bordertype": "bezel",
+                                  "textinsets": {
+                                    "horizontal": 6,
+                                    "vertical": 6
+                                  },
+                                  "constraints": {
+                                    "size": {
+                                      "height": 100
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "view",
+                                  "layout": "inline",
+                                  "spacing": 8,
+                                  "components": [
+                                    {
+                                      "type": "button",
+                                      "text": "Choose File…",
+                                      "events": [
+                                        {
+                                          "triggers": "actioned",
+                                          "action": {
+                                            "type": "json",
+                                            "src": {
+                                              "opendialog": {
+                                                "prompt": "Choose",
+                                                "setvariable": "send_file",
+                                                "action": {
+                                                  "type": "json",
+                                                  "src": {
+                                                    "update": {
+                                                      "ids": {
+                                                        "sendFileLabel": {
+                                                          "text": "{var:send_file}"
+                                                        },
+                                                        "sendType": {
+                                                          "selected": "file"
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": "sendFileLabel",
+                                      "type": "label",
+                                      "text": "",
+                                      "colour": "secondaryLabelColor",
+                                      "font": {
+                                        "size": "small"
+                                      },
+                                      "linebreak": "truncatemiddle"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "view",
+                                  "layout": "form",
+                                  "spacing": 8,
+                                  "components": [
+                                    {
+                                      "type": "label",
+                                      "text": "Delete after",
+                                      "constraints": {
+                                        "position": "right"
+                                      }
+                                    },
+                                    {
+                                      "id": "sendDays",
+                                      "type": "picker",
+                                      "items": [
+                                        {
+                                          "text": "1 day",
+                                          "value": "1"
+                                        },
+                                        {
+                                          "text": "2 days",
+                                          "value": "2"
+                                        },
+                                        {
+                                          "text": "3 days",
+                                          "value": "3"
+                                        },
+                                        {
+                                          "text": "7 days",
+                                          "value": "7"
+                                        },
+                                        {
+                                          "text": "14 days",
+                                          "value": "14"
+                                        },
+                                        {
+                                          "text": "30 days",
+                                          "value": "30"
+                                        }
+                                      ],
+                                      "selected": "7"
+                                    },
+                                    {
+                                      "type": "label",
+                                      "text": "Max views",
+                                      "constraints": {
+                                        "position": "right"
+                                      }
+                                    },
+                                    {
+                                      "id": "sendMaxViews",
+                                      "type": "textfield",
+                                      "placeholder": "Unlimited",
+                                      "focusring": false,
+                                      "textinsets": {
+                                        "horizontal": 6,
+                                        "vertical": 5
+                                      },
+                                      "constraints": {
+                                        "size": {
+                                          "width": 100
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "label",
+                                      "text": "Password",
+                                      "constraints": {
+                                        "position": "right"
+                                      }
+                                    },
+                                    {
+                                      "id": "sendPassword",
+                                      "type": "passwordfield",
+                                      "placeholder": "Optional",
+                                      "focusring": false,
+                                      "textinsets": {
+                                        "horizontal": 6,
+                                        "vertical": 5
+                                      }
+                                    },
+                                    {},
+                                    {
+                                      "id": "sendHidden",
+                                      "type": "checkbox",
+                                      "text": "Hide text by default"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "id": "sheetStatus",
+                                  "type": "label",
+                                  "text": "",
+                                  "colour": "systemRedColor",
+                                  "font": {
+                                    "size": "small"
+                                  },
+                                  "linebreak": "wordwrap"
+                                },
+                                {
+                                  "constraints": {
+                                    "position": "right"
+                                  },
+                                  "type": "view",
+                                  "layout": "inline",
+                                  "spacing": 8,
+                                  "components": [
+                                    {
+                                      "type": "button",
+                                      "text": "Cancel",
+                                      "events": [
+                                        {
+                                          "triggers": "actioned",
+                                          "action": {
+                                            "type": "json",
+                                            "src": {
+                                              "sheet": {
+                                                "close": "newSendSheet"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "button",
+                                      "text": "Create & Copy Link",
+                                      "events": [
+                                        {
+                                          "triggers": "actioned",
+                                          "action": [
+                                            {
+                                              "type": "json",
+                                              "src": {},
+                                              "variables": {
+                                                "secret_input": "{value:sendPassword.text}",
+                                                "send_text": "{value:sendTextArea.text}"
+                                              }
+                                            },
+                                            {
+                                              "type": "script",
+                                              "src": "../bin/bwa",
+                                              "args": [
+                                                "send-create",
+                                                "{value:sendType.selected.value}",
+                                                "{value:sendName.text}",
+                                                "{value:sendDays.selected.value}",
+                                                "{value:sendMaxViews.text}",
+                                                "{value:sendHidden.checked}",
+                                                "{var:send_file}"
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ],
+                                      "shortcut": "⌘↩"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "type": "button",
+                  "text": "Delete  ⌘⌫",
+                  "bordered": false,
+                  "shortcut": "⌘⌫",
+                  "font": {
+                    "size": "small",
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "confirm": {
+                        "message": "Delete this Send?",
+                        "informativetext": "The link stops working for everyone.",
+                        "confirmbuttontext": "Delete"
+                      },
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/bwa",
+                        "args": [
+                          "send-delete",
+                          "{value:sends.selected.uid}"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "copyButton",
+                  "type": "button",
+                  "text": "Copy Link  ↩",
+                  "bordered": false,
+                  "font": {
+                    "size": 13,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/bwa",
+                        "args": [
+                          "send-copy",
+                          "{value:sends.selected.uid}"
+                        ]
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
