@@ -3,7 +3,7 @@ import { homedir } from "node:os";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { type Editor, editor, product } from "./editors.ts";
-import { tildify } from "./env.ts";
+import { str, tildify } from "./env.ts";
 import { run } from "./proc.ts";
 
 export type Kind = "folder" | "file" | "workspace" | "remote";
@@ -94,7 +94,10 @@ export const toProject = (entry: Entry): Project | undefined => {
 };
 
 /** Newer builds keep state in `~/.<shared>/sharedStorage`; older ones in the app's globalStorage. */
+/** `state_db` (hidden setting) points at another state.vscdb: for tests and demo screenshots. */
 const stateDb = (e: Editor): string => {
+  const override = str("state_db");
+  if (override) return override;
   const shared = product(e).sharedDataFolderName;
   const sharedDb = shared && join(homedir(), shared, "sharedStorage", "state.vscdb");
   return sharedDb && existsSync(sharedDb)

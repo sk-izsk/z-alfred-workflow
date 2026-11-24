@@ -32,7 +32,8 @@ export const markdownToHtml = (md: string): string => {
     const line = lines[i]!;
     if (rawHtml) {
       if (line.trim()) {
-        out.push(line);
+        // Markdown mixed into an HTML block (badges next to <img>) still gets inline formatting.
+        out.push(/^\s*</.test(line) ? line : inline(line));
         continue;
       }
       rawHtml = false;

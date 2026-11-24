@@ -7,11 +7,13 @@ Built on Alfred UI, Alfred 6's native window toolkit.
 | | |
 | --- | --- |
 | ![The code menu](docs/screenshots/01-menu.png) | ![Search Recent Projects](docs/screenshots/02-recent-projects.png) |
-| **`code`**: every command in one menu | **Recent Projects**: Finder icons, git branch, pins |
-| ![Change Theme](docs/screenshots/04-change-theme.png) | ![Installed Extensions](docs/screenshots/05-installed-extensions.png) |
-| **Change Theme**: per profile, live preview in VS Code | **Installed Extensions**: per profile, filter themes |
-| ![Install Extension](docs/screenshots/06-install-extension.png) | ![Clone with folder suggestions](docs/screenshots/08-clone.png) |
-| **Install Extension**: most installed first, categories | **`codec`**: pick a folder, paste a git URL |
+| **`code`**: every command in one menu | **Recent Projects**: Finder icons, git branch, ● uncommitted changes |
+| ![Project actions](docs/screenshots/03-project-actions.png) | ![Change Theme](docs/screenshots/04-change-theme.png) |
+| **⌘K**: every action for a project | **Change Theme**: live preview in VS Code |
+| ![Installed Extensions](docs/screenshots/05-installed-extensions.png) | ![Install Extension](docs/screenshots/06-install-extension.png) |
+| **Installed Extensions**: per profile, filter themes | **Install Extension**: most installed first, categories |
+| ![Extension preview](docs/screenshots/07-extension-preview.png) | ![Clone with folder suggestions](docs/screenshots/08-clone.png) |
+| **⌘Y**: README and screenshots, ↩ installs | **`codec`**: pick a folder, paste a git URL |
 
 ## Features
 
