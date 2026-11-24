@@ -10,6 +10,8 @@ Use a temporary local test calendar and demo events. Never commit preferences or
 - [ ] Ongoing, recurring and all-day events appear; cancelled/ended events do not.
 - [ ] Meetings only hides holidays; Timed events includes in-person meetings; All events restores all-day entries.
 - [ ] Empty calendars and permission denial have clear states; Allow Access + ⌘R recovers.
+- [ ] Plain ←/→ moves one day and ↑/↓ one week, crossing month/year boundaries and refreshing the day preview.
+- [ ] ⌘←/⌘→ changes month and ⇧←/⇧→ changes year; ⌘K hints match.
 - [ ] Quick Calendar handles leap February and December/January, month/year arrows, today, Monday/Sunday and week numbers.
 - [ ] Selected-day preview is hidden on empty days; on populated days it shows the appropriate meeting, time and Join action.
 - [ ] Long preview titles pause with an ellipsis and scroll within their own bounds; Reduce Motion keeps them static.

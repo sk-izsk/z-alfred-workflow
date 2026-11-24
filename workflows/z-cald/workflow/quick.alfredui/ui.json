@@ -116,7 +116,7 @@
               "src": "../bin/cald",
               "args": [
                 "quick",
-                "shift",
+                "move",
                 "-1"
               ]
             },
@@ -139,7 +139,7 @@
               "src": "../bin/cald",
               "args": [
                 "quick",
-                "shift",
+                "move",
                 "1"
               ]
             },
@@ -648,7 +648,7 @@
               }
             },
             {
-              "id": "previousDayKey",
+              "id": "previousMonthKey",
               "type": "button",
               "text": "",
               "bordered": false,
@@ -661,7 +661,7 @@
                       "src": "../bin/cald",
                       "args": [
                         "quick",
-                        "move",
+                        "shift",
                         "-1"
                       ]
                     },
@@ -677,7 +677,7 @@
                   ]
                 }
               ],
-              "shortcut": "⌥←",
+              "shortcut": "⌘←",
               "opacity": 0,
               "constraints": {
                 "size": {
@@ -687,7 +687,7 @@
               }
             },
             {
-              "id": "nextDayKey",
+              "id": "nextMonthKey",
               "type": "button",
               "text": "",
               "bordered": false,
@@ -700,7 +700,7 @@
                       "src": "../bin/cald",
                       "args": [
                         "quick",
-                        "move",
+                        "shift",
                         "1"
                       ]
                     },
@@ -716,7 +716,7 @@
                   ]
                 }
               ],
-              "shortcut": "⌥→",
+              "shortcut": "⌘→",
               "opacity": 0,
               "constraints": {
                 "size": {

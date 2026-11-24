@@ -597,7 +597,7 @@ Search Calendar commands via the `cal` keyword. Type `cal create`, `cal quick` o
 
 Search upcoming events via the `cald` keyword. Use ↑/↓ to select an event and ↩ to join its meeting. Without a meeting link, Calendar opens on the event’s date. Use ⌘K for more actions and ⌘R to refresh.
 
-Browse months via the `calq` keyword. ←/→ changes month; ⇧←/⇧→ changes year; ⌘T returns to today. ⌥←/⌥→ selects a day; ⌘O opens its agenda; ⌘N creates an event for that date. ↩ or C returns to the current month. ⌘↩ copies the calendar; ⌘K opens month/year navigation and date actions. The selected-day preview shows a meeting with its time when available; ⌘J joins it. Empty days show no preview.
+Browse months via the `calq` keyword. ←/→ selects a day; ↑/↓ moves a week; ⌘←/⌘→ changes month; ⇧←/⇧→ changes year; ⌘T returns to today. ⌘O opens its agenda; ⌘N creates an event for that date. ↩ or C returns to the current month. ⌘↩ copies the calendar; ⌘K opens month/year navigation and date actions. The selected-day preview shows a meeting with its time when available; ⌘J joins it. Empty days show no preview.
 
 Create events via the `calc` keyword. Choose a calendar/account, fill the form and press ⌘↩. Dates use YYYY-MM-DD; times use 24-hour HH:MM in the Mac’s time zone. For all-day events, the end date is the last included day. Paste existing Meet, Zoom, Teams or Webex links; this version does not generate new conferences or send invitations.
 

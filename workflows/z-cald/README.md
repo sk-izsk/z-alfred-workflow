@@ -50,10 +50,10 @@ remain in separate fixed areas.
 
 Click **Join** or press <kbd>⌘</kbd><kbd>J</kbd> to join the previewed meeting.
 
-- <kbd>←</kbd> / <kbd>→</kbd> Previous / next month.
+- <kbd>←</kbd> / <kbd>→</kbd> Select previous / next day.
 - <kbd>⇧</kbd><kbd>←</kbd> / <kbd>⇧</kbd><kbd>→</kbd> Previous / next year.
 - <kbd>↩</kbd>, <kbd>C</kbd> or <kbd>⌘</kbd><kbd>T</kbd> Current month.
-- <kbd>⌥</kbd><kbd>←</kbd> / <kbd>⌥</kbd><kbd>→</kbd> Select previous / next day.
+- <kbd>⌘</kbd><kbd>←</kbd> / <kbd>⌘</kbd><kbd>→</kbd> Previous / next month.
 - <kbd>↑</kbd> / <kbd>↓</kbd> Move the selected date by a week.
 - <kbd>⌘</kbd><kbd>O</kbd> Show events on the selected date.
 - <kbd>⌘</kbd><kbd>N</kbd> Create an event on the selected date.

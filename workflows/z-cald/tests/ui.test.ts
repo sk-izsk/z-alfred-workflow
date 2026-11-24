@@ -137,3 +137,38 @@ test("hidden shortcuts do not consume inline footer spacing", () => {
   expect(layers[0]?.padding).toBe(14);
   expect(layers[0]?.components[1].components.map((item: any) => item.id)).toEqual(["action"]);
 });
+
+test("plain arrow keys move the selected day and cross month/year boundaries", async () => {
+  const root = (packages["quick.alfredui"].window as any).root;
+  for (const [key, amount] of [
+    ["←", "-1"],
+    ["→", "1"],
+    ["↑", "-7"],
+    ["↓", "7"],
+  ]) {
+    const shortcut = root.shortcuts.find((item: any) => item.shortcut === key);
+    expect(shortcut.action[0].args).toEqual(["quick", "move", amount]);
+    expect(shortcut.action[1].args[0]).toBe("quick-preview");
+  }
+  const previous = { month: process.env.cal_month, day: process.env.cal_selected };
+  try {
+    process.env.cal_month = "2026-12-01";
+    process.env.cal_selected = "2026-12-31";
+    expect((await quick(["move", "1"])).variables).toMatchObject({
+      cal_month: "2027-01-01",
+      cal_selected: "2027-01-01",
+    });
+    process.env.cal_month = "2027-01-01";
+    process.env.cal_selected = "2027-01-01";
+    expect((await quick(["move", "-1"])).variables).toMatchObject({
+      cal_month: "2026-12-01",
+      cal_selected: "2026-12-31",
+    });
+    expect((await quick(["move", "7"])).variables).toMatchObject({ cal_selected: "2027-01-08" });
+  } finally {
+    if (previous.month === undefined) delete process.env.cal_month;
+    else process.env.cal_month = previous.month;
+    if (previous.day === undefined) delete process.env.cal_selected;
+    else process.env.cal_selected = previous.day;
+  }
+});
