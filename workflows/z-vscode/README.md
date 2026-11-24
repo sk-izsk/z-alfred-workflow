@@ -116,8 +116,13 @@ or the macOS Keychain).
 
 ## Development
 
+This workflow is maintained in the [central repository](../../README.md). Existing downloads
+above remain available; future releases use workflow-specific tags in the central repository.
+
 ```bash
-bun install
+git clone https://github.com/sk-izsk/z-alfred-workflow.git
+cd z-alfred-workflow/workflows/z-vscode
+bun install --frozen-lockfile
 bun run build     # bundle src/ → workflow/bin/vsc.mjs, write ui.json + info.plist
 bun run link      # symlink workflow/ into Alfred (then edit, rebuild, reopen)
 bun run check     # typecheck, oxlint, oxfmt, tests
@@ -129,21 +134,13 @@ src/            runtime (Node), small modules: editors, projects, git, extension
 src/commands/   one file per window/menu; each returns Alfred UI JSON actions
 ui/             window definitions in TypeScript → workflow/<name>.alfredui/ui.json
 scripts/        build, info.plist (plist.ts), icons, link, package
-workflow/       what Alfred loads (generated files are git-ignored)
+workflow/       what Alfred loads (UI JSON and info.plist are generated; runtime bundle is git-ignored)
 ```
 
 ### Releasing
 
-1. Bump `version` in `package.json` (it goes into the workflow's info.plist).
-2. Run `bun run check`, then `bun run package`. This builds `dist/VS Code.alfredworkflow` without your
-   `prefs.plist` or dev files.
-3. Optional: list the archive (`unzip -l "dist/VS Code.alfredworkflow"`) to check nothing personal slipped in.
-4. Merge to `dev`, then create a GitHub Release tagged `vX.Y.Z` and attach the package, e.g.:
-
-```bash
-cp "dist/VS Code.alfredworkflow" dist/VS-Code-for-Alfred-X.Y.Z.alfredworkflow
-gh release create vX.Y.Z dist/VS-Code-for-Alfred-X.Y.Z.alfredworkflow --target dev --title "vX.Y.Z" --notes "What changed"
-```
+Follow the central [release guide](../../RELEASING.md). Tags use `z-vscode/vX.Y.Z`;
+the release action builds and attaches `VS Code.alfredworkflow`.
 
 See [AGENTS.md](AGENTS.md) for conventions.
 

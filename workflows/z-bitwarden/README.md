@@ -240,14 +240,17 @@ osascript 191ms          ← browser tab lookup
 
 ## Development
 
+This workflow is maintained in the [central repository](../../README.md). Existing downloads
+above remain available; future releases use workflow-specific tags in the central repository.
+
 You'll need macOS, Alfred 6, [Bun](https://bun.sh), Node.js and the `bw` CLI.
 
 ```bash
-git clone https://github.com/sk-izsk/z-bitwarden.git
+git clone https://github.com/sk-izsk/z-alfred-workflow.git
 ```
 
 ```bash
-cd z-bitwarden && bun install
+cd z-alfred-workflow/workflows/z-bitwarden && bun install --frozen-lockfile
 ```
 
 ```bash

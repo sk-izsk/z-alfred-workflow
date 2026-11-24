@@ -11,7 +11,7 @@ Thanks for helping. Bug reports, fixes and small features are all welcome.
    - what you did, what you expected, and what happened;
    - the log lines.
 
-**Never post** API keys, session keys, master passwords or vault contents. Report security problems privately via a [GitHub security advisory](https://github.com/sk-izsk/z-bitwarden/security/advisories/new) instead of a public issue.
+**Never post** API keys, session keys, master passwords or vault contents. Report security problems privately via a [GitHub security advisory](https://github.com/sk-izsk/z-alfred-workflow/security/advisories/new) instead of a public issue.
 
 ## Development setup
 
@@ -66,4 +66,4 @@ These behaviours are easy to trip over:
 ## Releasing
 
 1. Bump `version` in `package.json`.
-2. Tag `vX.Y.Z` and push the tag. CI builds `Bitwarden.alfredworkflow` and attaches it to a GitHub release.
+2. Follow the central [release guide](../../RELEASING.md): tag `z-bitwarden/vX.Y.Z` and push that tag. CI checks and packages only this workflow, then attaches `Bitwarden.alfredworkflow` to its release.

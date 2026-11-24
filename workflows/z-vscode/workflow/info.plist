@@ -2642,6 +2642,6 @@ This workflow was built with the help of AI tools. Review it before use, and rep
 	<key>version</key>
 	<string>0.1.0</string>
 	<key>webaddress</key>
-	<string>https://github.com/sk-izsk/z-vscode-workflow</string>
+	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-vscode</string>
 </dict>
 </plist>

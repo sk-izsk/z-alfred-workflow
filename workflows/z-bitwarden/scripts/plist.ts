@@ -454,7 +454,7 @@ export const infoPlist = {
   name: "Bitwarden",
   createdby: "izsk",
   description: "Search, autofill and manage your Bitwarden vault",
-  webaddress: "https://github.com/sk-izsk/z-bitwarden",
+  webaddress: "https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-bitwarden",
   version: pkg.version,
   category: "Productivity",
   disabled: false,

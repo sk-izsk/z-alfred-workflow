@@ -489,7 +489,7 @@ export const infoPlist = {
   name: "VS Code",
   createdby: "izsk",
   description: "Recent projects, extensions and git clone for VS Code, Cursor, Zed and friends",
-  webaddress: "https://github.com/sk-izsk/z-vscode-workflow",
+  webaddress: "https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-vscode",
   version: pkg.version,
   category: "Productivity",
   disabled: false,
