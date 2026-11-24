@@ -16,6 +16,11 @@
     "actions_shortcut": {
       "src": "variable",
       "default": "⌘K"
+    },
+    "gallery_category": {
+      "persist": true,
+      "scriptenv": true,
+      "default": ""
     }
   },
   "window": {
@@ -45,8 +50,16 @@
               "type": "script",
               "src": "../bin/vsc",
               "args": [
+                "gallery-pickers"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
                 "gallery-search",
-                "{value:searchField.text}"
+                "{value:searchField.text}",
+                "{value:categoryPicker.selected.value}"
               ],
               "async": true
             }
@@ -179,7 +192,8 @@
                     "src": "../bin/vsc",
                     "args": [
                       "gallery-search",
-                      "{value:searchField.text}"
+                      "{value:searchField.text}",
+                      "{value:categoryPicker.selected.value}"
                     ],
                     "async": true
                   }
@@ -212,6 +226,37 @@
                   ]
                 }
               ]
+            },
+            {
+              "id": "categoryPicker",
+              "type": "picker",
+              "bordered": false,
+              "tooltip": "Category",
+              "items": [
+                {
+                  "text": "All Categories",
+                  "value": ""
+                }
+              ],
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/vsc",
+                    "args": [
+                      "gallery-search",
+                      "{value:searchField.text}",
+                      "{value:categoryPicker.selected.value}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "constraints": {
+                "region": "right",
+                "position": "centre"
+              }
             }
           ]
         },
@@ -249,7 +294,7 @@
               "type": "dataview",
               "padding": 6,
               "spacing": 2,
-              "placeholder": "Type to search the Marketplace",
+              "placeholder": "Type to search, or pick a category",
               "behaviour": {
                 "selection": {
                   "wrap": "none"
@@ -607,6 +652,39 @@
                   ],
                   "constraints": {
                     "position": "centre"
+                  }
+                },
+                {
+                  "id": "previewKey",
+                  "type": "button",
+                  "text": "",
+                  "bordered": false,
+                  "font": {
+                    "size": 12.5,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/vsc",
+                        "args": [
+                          "gallery",
+                          "preview",
+                          "{value:items.selected.uid}"
+                        ]
+                      }
+                    }
+                  ],
+                  "shortcut": "⌘Y",
+                  "opacity": 0,
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 0,
+                      "height": 0
+                    }
                   }
                 },
                 {

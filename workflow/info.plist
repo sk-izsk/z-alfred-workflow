@@ -8,11 +8,11 @@
 	<string>Productivity</string>
 	<key>connections</key>
 	<dict>
-		<key>CLONEJSON</key>
+		<key>CLONEFILTER</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>CLONEUI</string>
+				<string>ROUTE</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -20,12 +20,22 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>ROUTE</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 		</array>
-		<key>CLONEKW</key>
+		<key>CLONEJSON</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>CLONEJSON</string>
+				<string>CLONEUI</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -254,6 +264,16 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>ROUTE</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 		</array>
 		<key>ROOTACT</key>
 		<array>
@@ -320,7 +340,58 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
+				<string>THEMESJSON</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>ROUTE-themes</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>ROOTACT</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>THEMESJSON</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>THEMESUI</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>THEMESKW</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>THEMESJSON</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>THEMESUI</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>POST</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -603,6 +674,66 @@
 			<key>type</key>
 			<string>alfred.workflow.utility.json</string>
 			<key>uid</key>
+			<string>THEMESJSON</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>launchmode</key>
+				<integer>0</integer>
+				<key>path</key>
+				<string>themes.alfredui</string>
+				<key>stackview</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.userinterface.alfredui</string>
+			<key>uid</key>
+			<string>THEMESUI</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>keyword</key>
+				<string>{var:kw_themes}</string>
+				<key>skipuniversalaction</key>
+				<true/>
+				<key>subtext</key>
+				<string>Pick a color theme for a profile</string>
+				<key>text</key>
+				<string>Change Theme</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>THEMESKW</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>json</key>
+				<string>{
+  "alfredworkflow": {
+    "arg": "{query}",
+    "config": {
+      "launchmode": "{var:launch_external}"
+    }
+  }
+}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.json</string>
+			<key>uid</key>
 			<string>CLONEJSON</string>
 			<key>version</key>
 			<integer>1</integer>
@@ -621,29 +752,6 @@
 			<string>alfred.workflow.userinterface.alfredui</string>
 			<key>uid</key>
 			<string>CLONEUI</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>0</integer>
-				<key>keyword</key>
-				<string>{var:kw_clone}</string>
-				<key>skipuniversalaction</key>
-				<true/>
-				<key>subtext</key>
-				<string>Paste a git URL, choose a folder, clone and open</string>
-				<key>text</key>
-				<string>Clone Repository</string>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>CLONEKW</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -681,7 +789,7 @@
 				<key>skipuniversalaction</key>
 				<true/>
 				<key>subtext</key>
-				<string>Recent projects, extensions, clone a repo…</string>
+				<string>Recent projects, extensions, themes, clone a repo…</string>
 				<key>title</key>
 				<string>VS Code</string>
 				<key>type</key>
@@ -757,6 +865,20 @@
 						<key>uid</key>
 						<string>ROUTE-clone</string>
 					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:vsc_target}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>themes</string>
+						<key>outputlabel</key>
+						<string>themes</string>
+						<key>uid</key>
+						<string>ROUTE-themes</string>
+					</dict>
 				</array>
 				<key>elselabel</key>
 				<string>action</string>
@@ -769,6 +891,55 @@
 			<string>ROUTE</string>
 			<key>version</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>{var:kw_clone}</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>…</string>
+				<key>script</key>
+				<string>./bin/vsc clone-filter "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>skipuniversalaction</key>
+				<true/>
+				<key>subtext</key>
+				<string>Type a folder, paste a git URL (or copy one first)</string>
+				<key>title</key>
+				<string>Clone Repository</string>
+				<key>type</key>
+				<integer>11</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>CLONEFILTER</string>
+			<key>version</key>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1027,26 +1198,26 @@ Shortcuts: `vscp` projects, `vsce` installed extensions, `vsci` install, `vscc` 
 Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code forks: pick yours in the Workflow's Configuration.</string>
 	<key>uidata</key>
 	<dict>
+		<key>CLONEFILTER</key>
+		<dict>
+			<key>xpos</key>
+			<integer>30</integer>
+			<key>ypos</key>
+			<integer>480</integer>
+		</dict>
 		<key>CLONEJSON</key>
 		<dict>
 			<key>xpos</key>
 			<integer>760</integer>
 			<key>ypos</key>
-			<integer>470</integer>
-		</dict>
-		<key>CLONEKW</key>
-		<dict>
-			<key>xpos</key>
-			<integer>540</integer>
-			<key>ypos</key>
-			<integer>440</integer>
+			<integer>610</integer>
 		</dict>
 		<key>CLONEUI</key>
 		<dict>
 			<key>xpos</key>
 			<integer>920</integer>
 			<key>ypos</key>
-			<integer>440</integer>
+			<integer>580</integer>
 		</dict>
 		<key>EXTENSIONSJSON</key>
 		<dict>
@@ -1201,6 +1372,27 @@ Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code 
 			<integer>300</integer>
 			<key>ypos</key>
 			<integer>300</integer>
+		</dict>
+		<key>THEMESJSON</key>
+		<dict>
+			<key>xpos</key>
+			<integer>760</integer>
+			<key>ypos</key>
+			<integer>470</integer>
+		</dict>
+		<key>THEMESKW</key>
+		<dict>
+			<key>xpos</key>
+			<integer>540</integer>
+			<key>ypos</key>
+			<integer>440</integer>
+		</dict>
+		<key>THEMESUI</key>
+		<dict>
+			<key>xpos</key>
+			<integer>920</integer>
+			<key>ypos</key>
+			<integer>440</integer>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
@@ -1421,6 +1613,27 @@ Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code 
 			<key>config</key>
 			<dict>
 				<key>default</key>
+				<string>vsct</string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Theme Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>kw_themes</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
 				<string>vscn</string>
 				<key>placeholder</key>
 				<string></string>
@@ -1458,6 +1671,65 @@ Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code 
 			<string>filepicker</string>
 			<key>variable</key>
 			<string>clone_dir</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Use a git URL from the clipboard</string>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string></string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>clone_clipboard</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Comma separated folders to scan for git repos you haven't opened yet, e.g. ~/Developer, /Volumes/Work/Projects</string>
+			<key>label</key>
+			<string>Project Folders</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>scan_dirs</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<false/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Live preview while moving through the list (⎋ restores)</string>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Themes</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>theme_preview</string>
 		</dict>
 		<dict>
 			<key>config</key>

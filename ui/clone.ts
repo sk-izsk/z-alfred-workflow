@@ -7,13 +7,6 @@ const cloneNow = [
 ];
 const preview = run(["clone-preview", "{var:query}", "{value:cloneParent.text}"]);
 
-const caption = (text: string) => ({
-  type: "label",
-  text,
-  colour: "secondaryLabelColor",
-  constraints: { position: "right", size: { width: 110 } },
-});
-
 /** Pick a folder in a native Open panel, then put it in the field. */
 const choose = json({
   opendialog: {
@@ -26,6 +19,23 @@ const choose = json({
   },
 });
 
+/** A label + value line, both columns left-aligned at fixed widths. */
+const line = (caption: string, value: Record<string, unknown>) => ({
+  type: "view",
+  layout: "border",
+  spacing: 12,
+  components: [
+    {
+      type: "label",
+      text: caption,
+      colour: "secondaryLabelColor",
+      textalign: "right",
+      constraints: { region: "left", position: "centre", size: { width: 64 } },
+    },
+    { ...value, constraints: { region: "centre", position: "centre", stretch: "horizontal" } },
+  ],
+});
+
 export const clone = window(
   "Clone Repository",
   {
@@ -35,24 +45,23 @@ export const clone = window(
     shortcuts: [key("⌘O", choose)],
     components: [
       {
-        constraints: { region: "top" },
+        constraints: { region: "top", insets: { left: 24, right: 24, top: 20, bottom: 8 } },
         type: "view",
-        layout: "inline",
+        layout: "border",
         spacing: 12,
-        padding: 20,
         components: [
           {
             type: "imageview",
             image: { type: "symbol", src: "square.and.arrow.down.on.square", size: { height: 30 } },
             contenttintcolour: "controlAccentColor",
-            constraints: { position: "centre" },
+            constraints: { region: "left", position: "centre" },
           },
           {
             type: "view",
             layout: "inline",
             direction: "vertical",
             spacing: 2,
-            constraints: { position: "centre" },
+            constraints: { region: "centre", position: "left", stretch: "horizontal" },
             components: [
               label("cloneTitle", { text: "Clone Repository", font: { size: 18, weight: "semibold" } }),
               label("cloneRepo", { colour: "secondaryLabelColor", font: { size: 12.5 }, selectable: true }),
@@ -65,16 +74,16 @@ export const clone = window(
           region: "centre",
           position: "top",
           stretch: "horizontal",
-          insets: { left: 20, right: 20 },
+          insets: { left: 24, right: 24, top: 8 },
         },
         type: "view",
-        layout: "form",
-        spacing: 10,
+        layout: "inline",
+        direction: "vertical",
+        spacing: 12,
         components: [
-          caption("Save to"),
-          {
+          line("Save to", {
             type: "view",
-            layout: "inline",
+            layout: "border",
             spacing: 8,
             components: [
               {
@@ -84,19 +93,22 @@ export const clone = window(
                 focusring: false,
                 placeholder: "~/Developer",
                 textinsets: { horizontal: 6, vertical: 5 },
-                constraints: { size: { width: 380 } },
+                constraints: { region: "centre", stretch: "horizontal" },
                 events: [on("typingstopped", preview), on("actioned", cloneNow)],
               },
               {
                 type: "button",
                 text: "Choose…",
                 tooltip: "Pick a folder ⌘O",
+                constraints: { region: "right", position: "centre" },
                 events: [on("actioned", choose)],
               },
             ],
-          },
-          caption("Folder"),
-          label("cloneTarget", { colour: "secondaryLabelColor", font: { size: 12.5, monospaced: true } }),
+          }),
+          line(
+            "Folder",
+            label("cloneTarget", { colour: "secondaryLabelColor", font: { size: 12.5, monospaced: true } }),
+          ),
         ],
       },
       footer([

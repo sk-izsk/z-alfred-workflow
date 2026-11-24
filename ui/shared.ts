@@ -230,7 +230,8 @@ export const row = (opts: { right: Json[]; doubleClick: Json }): Json => ({
 });
 
 /** The list. `filter: false` for remote results (the Marketplace already filtered them). */
-export const list = (cell: Json, placeholder: string, filter = true): Json => ({
+export const list = (cell: Json, placeholder: string, filter = true, events?: Json[]): Json => ({
+  ...(events && { events }),
   constraints: { region: "centre" },
   id: "items",
   type: "dataview",
@@ -300,4 +301,18 @@ export const window = (title: string, root: Json, extra: Json = {}): Json => ({
       ],
     },
   },
+});
+
+/** Modifier combos go on invisible buttons: as root shortcuts they swallow other ⌘ keys. */
+export const hiddenKey = (id: string, shortcut: string, action: Json | Json[]): Json =>
+  footerButton(id, "", action, { shortcut, opacity: 0, constraints: { size: { width: 0, height: 0 } } });
+
+/** A borderless dropdown for the search bar; real choices arrive from a script after launch. */
+export const picker = (id: string, tooltip: string, text: string, changed: Json | Json[]): Json => ({
+  id,
+  type: "picker",
+  bordered: false,
+  tooltip,
+  items: [{ text, value: "" }],
+  events: [on("changed", changed)],
 });

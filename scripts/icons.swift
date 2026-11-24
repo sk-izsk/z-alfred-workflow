@@ -12,6 +12,11 @@ let icons: [(name: String, symbol: String, top: NSColor, bottom: NSColor)] = [
   ("install", "square.and.arrow.down", .systemYellow, .systemOrange),
   ("window", "macwindow.badge.plus", .systemGray, .darkGray),
   ("agents", "sparkles", .systemPink, .systemPurple),
+  ("themes", "paintpalette", .systemPink, .systemOrange),
+  ("github", "chevron.left.slash.chevron.right", .darkGray, .black),
+  ("profiles", "person.crop.rectangle.stack", .systemIndigo, .systemBlue),
+  ("sync", "arrow.triangle.2.circlepath", .systemTeal, .systemGreen),
+  ("palette", "command", .systemGray, .darkGray),
 ]
 
 let size: CGFloat = 256

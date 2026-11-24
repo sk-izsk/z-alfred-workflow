@@ -1,0 +1,26 @@
+import { expect, test } from "bun:test";
+import { getSetting, setSetting } from "../src/jsonc.ts";
+
+const settings = `{
+  // my theme
+  "workbench.colorTheme": "Old", /* keep */
+  "[python]": { "workbench.colorTheme": "Nested" },
+  "sync": { "blob": "{\\"workbench.colorTheme\\": \\"Fake\\"}" },
+  "editor.fontSize": 14,
+}`;
+
+test("reads and replaces only the top-level setting", () => {
+  expect(getSetting(settings, "workbench.colorTheme")).toBe("Old");
+  const next = setSetting(settings, "workbench.colorTheme", 'New "One"');
+  expect(getSetting(next, "workbench.colorTheme")).toBe('New "One"');
+  expect(next).toContain('"[python]": { "workbench.colorTheme": "Nested" }');
+  expect(next).toContain("// my theme");
+  expect(next.replace('"New \\"One\\""', '"Old"')).toBe(settings);
+});
+
+test("adds the setting when missing", () => {
+  expect(getSetting(setSetting("{}", "k", "v"), "k")).toBe("v");
+  expect(getSetting(setSetting('{ "a": 1 }', "k", "v"), "a" as string)).toBeUndefined();
+  expect(setSetting('{ "a": 1 }', "k", "v")).toBe('{\n  "k": "v", "a": 1 }');
+  expect(getSetting(setSetting('{ "x": {"k": "no"} }', "k", "v"), "k")).toBe("v");
+});

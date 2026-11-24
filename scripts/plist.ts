@@ -14,10 +14,12 @@ const add = (uid: string, type: string, version: number, config: Obj, x: number,
   uidata[uid] = { xpos: x, ypos: y };
   return uid;
 };
-const link = (from: string, to: string, sourceoutputuid?: string) => {
+/** `modifiers`: 0 = ↩, CMD = ⌘↩ (a Script Filter item's `mods.cmd` needs its own connection). */
+const CMD = 1048576;
+const link = (from: string, to: string, sourceoutputuid?: string, modifiers = 0) => {
   (connections[from] ??= []).push({
     destinationuid: to,
-    modifiers: 0,
+    modifiers,
     modifiersubtext: "",
     vitoclose: false,
     ...(sourceoutputuid && { sourceoutputuid }),
@@ -127,14 +129,9 @@ const windows: [string, string, string, string, string, 0 | 1][] = [
     "install.alfredui",
     1,
   ],
-  [
-    "CLONE",
-    "{var:kw_clone}",
-    "Clone Repository",
-    "Paste a git URL, choose a folder, clone and open",
-    "clone.alfredui",
-    0,
-  ],
+  ["THEMES", "{var:kw_themes}", "Change Theme", "Pick a color theme for a profile", "themes.alfredui", 1],
+  // `vscc` is a Script Filter (below), so the clone window has no keyword of its own.
+  ["CLONE", "", "Clone Repository", "", "clone.alfredui", 0],
 ];
 windows.forEach(([uid, kw, title, sub, path, arg], i) => {
   const y = 20 + i * 140;
@@ -142,39 +139,58 @@ windows.forEach(([uid, kw, title, sub, path, arg], i) => {
   const u = alfredui(`${uid}UI`, path, 920, y);
   link(j, u);
   link(u, post);
-  link(keyword(`${uid}KW`, kw, title, sub, 540, y, arg), j);
+  if (kw) link(keyword(`${uid}KW`, kw, title, sub, 540, y, arg), j);
 });
 
+const scriptFilter = (
+  uid: string,
+  kw: string,
+  title: string,
+  subtext: string,
+  body: string,
+  x: number,
+  y: number,
+) =>
+  add(
+    uid,
+    "input.scriptfilter",
+    3,
+    {
+      keyword: kw,
+      title,
+      subtext,
+      runningsubtext: "…",
+      script: body,
+      scriptargtype: 1,
+      type: 11,
+      escaping: 102,
+      scriptfile: "",
+      withspace: true,
+      argumenttype: 1,
+      argumenttreatemptyqueryasnil: false,
+      alfredfiltersresults: false,
+      alfredfiltersresultsmatchmode: 0,
+      queuemode: 1,
+      queuedelaymode: 0,
+      queuedelaycustom: 3,
+      queuedelayimmediatelyinitially: true,
+      skipuniversalaction: true,
+    },
+    x,
+    y,
+  );
+
 // ── the `vsc` menu: Script Filter → route to a window, or run an action ──
-const rootFilter = add(
+const rootFilter = scriptFilter(
   "ROOT",
-  "input.scriptfilter",
-  3,
-  {
-    keyword: "{var:kw_main}",
-    title: "VS Code",
-    subtext: "Recent projects, extensions, clone a repo…",
-    runningsubtext: "…",
-    script: './bin/vsc root "$1"',
-    scriptargtype: 1,
-    type: 11,
-    escaping: 102,
-    scriptfile: "",
-    withspace: true,
-    argumenttype: 1,
-    argumenttreatemptyqueryasnil: false,
-    alfredfiltersresults: false,
-    alfredfiltersresultsmatchmode: 0,
-    queuemode: 1,
-    queuedelaymode: 0,
-    queuedelaycustom: 3,
-    queuedelayimmediatelyinitially: true,
-    skipuniversalaction: true,
-  },
+  "{var:kw_main}",
+  "VS Code",
+  "Recent projects, extensions, themes, clone a repo…",
+  './bin/vsc root "$1"',
   30,
   300,
 );
-const ROUTES = ["projects", "extensions", "install", "clone"];
+const ROUTES = ["projects", "extensions", "install", "clone", "themes"];
 const route = add(
   "ROUTE",
   "utility.conditional",
@@ -195,6 +211,20 @@ const route = add(
   300,
 );
 link(rootFilter, route);
+link(rootFilter, route, undefined, CMD);
+
+// ── `vscc [folder] [url]`: folder suggestions + clone; ↩ opens the clone window, ⌘↩ clones now ──
+const cloneFilter = scriptFilter(
+  "CLONEFILTER",
+  "{var:kw_clone}",
+  "Clone Repository",
+  "Type a folder, paste a git URL (or copy one first)",
+  './bin/vsc clone-filter "$1"',
+  30,
+  480,
+);
+link(cloneFilter, route);
+link(cloneFilter, route, undefined, CMD);
 for (const target of ROUTES) link(route, `${target.toUpperCase()}JSON`, `ROUTE-${target}`);
 const rootAction = script("ROOTACT", './bin/vsc root-action "$1"', 540, 700);
 link(route, rootAction);
@@ -351,6 +381,7 @@ const userconfigurationconfig = [
   text("kw_install", "Install Keyword", "vsci"),
   text("kw_clone", "Clone Keyword", "vscc"),
   text("kw_find", "Find Keyword", "vscf", "Spotlight search for files and folders, opened in your editor."),
+  text("kw_themes", "Theme Keyword", "vsct"),
   text("kw_new", "New Window Keyword", "vscn"),
   file(
     "clone_dir",
@@ -359,6 +390,14 @@ const userconfigurationconfig = [
     1,
     "~/Developer",
   ),
+  check("clone_clipboard", "", "Use a git URL from the clipboard", true),
+  text(
+    "scan_dirs",
+    "Project Folders",
+    "",
+    "Comma separated folders to scan for git repos you haven't opened yet, e.g. ~/Developer, /Volumes/Work/Projects",
+  ),
+  check("theme_preview", "Themes", "Live preview while moving through the list (⎋ restores)", false),
   check("launch_external", "Window", "Open in a separate window", false),
   check("close_others", "Opening", "Close other editor windows (⇧⌘↩ does the opposite)", false),
   check("show_branch", "Git", "Show the current git branch", true),

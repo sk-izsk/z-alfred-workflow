@@ -1,7 +1,7 @@
 import { existsSync, statSync } from "node:fs";
 import { homedir } from "node:os";
 import { basename, dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { type Editor, editor, product } from "./editors.ts";
 import { tildify } from "./env.ts";
 import { run } from "./proc.ts";
@@ -19,6 +19,10 @@ export type Project = {
   detail: string;
   /** VS Code's remote authority, e.g. `ssh-remote+devbox`. */
   remote?: string;
+  /** Has a `.git` folder (local only). */
+  git?: boolean;
+  /** Found by the folder scan, never opened in the editor. */
+  discovered?: boolean;
 };
 
 type Entry = {
@@ -82,6 +86,7 @@ export const toProject = (entry: Entry): Project | undefined => {
   return {
     uri,
     kind,
+    git: kind === "folder" && existsSync(join(path, ".git")),
     name: kind === "workspace" ? basename(path).replace(/\.code-workspace$/, "") : basename(path),
     path,
     detail: tildify(dirname(path)),
@@ -147,6 +152,44 @@ export const KIND_FILTERS = [
   { text: "Files", value: "file" },
   { text: "Workspaces", value: "workspace" },
   { text: "Remote", value: "remote" },
+  { text: "Git Repos", value: "git" },
 ] as const;
 
-export const byKind = (filter: string) => (p: Project) => filter === "all" || p.kind === filter;
+export const byKind = (filter: string) => (p: Project) =>
+  filter === "all" || (filter === "git" ? !!p.git : p.kind === filter);
+
+/** Repos found by the folder scan that aren't already in the recents. */
+export const discovered = (repos: string[], known: Project[]): Project[] => {
+  const seen = new Set(known.map((p) => p.path));
+  return repos
+    .filter((path) => !seen.has(path) && existsSync(path))
+    .map((path) => ({
+      uri: pathToFileURL(path).href,
+      kind: "folder" as const,
+      name: basename(path),
+      path,
+      detail: tildify(dirname(path)),
+      git: true,
+      discovered: true,
+    }));
+};
+
+/** Remove one entry from the editor's recent list (what VS Code's "Remove from Recently Opened" does). */
+export const removeRecent = async (uri: string, e: Editor = editor()): Promise<void> => {
+  if (e.kind === "zed") throw new Error("Removing recents isn't supported for Zed");
+  const db = stateDb(e);
+  for (const key of ["recently.opened", "history.recentlyOpenedPathsList"]) {
+    const raw = await query(db, `SELECT value FROM ItemTable WHERE key = '${key}'`);
+    if (!raw.trim()) continue;
+    const data = JSON.parse(raw) as { entries?: Entry[] };
+    const entries = (data.entries ?? []).filter(
+      (x) => (x.folderUri ?? x.fileUri ?? x.workspace?.configPath) !== uri,
+    );
+    const json = JSON.stringify({ ...data, entries }).replaceAll("'", "''");
+    const { code, stderr } = await run(SQLITE, [
+      db,
+      `UPDATE ItemTable SET value = '${json}' WHERE key = '${key}'`,
+    ]);
+    if (code !== 0) throw new Error(stderr.trim() || "Couldn't update the recent list");
+  }
+};

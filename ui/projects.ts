@@ -4,6 +4,7 @@ import {
   divider,
   footer,
   footerButton,
+  hiddenKey,
   inlineLabel,
   json,
   key,
@@ -22,14 +23,16 @@ import {
 
 const act = (action: string) => run(["project", action, sel("items")]);
 
-/** Modifier combos go on invisible buttons: as root shortcuts they swallow other ⌘ keys. */
-const hiddenKey = (id: string, shortcut: string, action: string) =>
-  footerButton(id, "", act(action), { shortcut, opacity: 0, constraints: { size: { width: 0, height: 0 } } });
-
 const cell = row({
   doubleClick: run(["project", "open", "{data:uid}"]),
   right: [
     symbol("rowPin", "pin.fill", { tooltip: "Pinned", contenttintcolour: "systemOrangeColor" }),
+    symbol("rowDirty", "circle.fill", {
+      tooltip: "Uncommitted changes",
+      image: { type: "symbol", src: "circle.fill", size: { height: 7 } },
+      contenttintcolour: "systemOrangeColor",
+    }),
+    inlineLabel("rowSync", { colour: "secondaryLabelColor", font: { size: 12, monospaced: "digits" } }),
     pill(
       "rowBranchPill",
       [
@@ -54,6 +57,8 @@ export const projects = window(
         run(["projects-init"]),
         run(["projects-picker"]),
         run(["chrome", "Open in {editor}  ↩"]),
+        // Folder scan + git status in the background; rows are re-sent only if something changed.
+        run(["projects-refresh"], { async: true }),
       ]),
     ],
     shortcuts: [
@@ -81,7 +86,7 @@ export const projects = window(
         sectionTitle("sectionLabel", "Recent Projects"),
         list(
           {
-            ...selectionColours("rowCell", ["rowTitle", "rowDetail"], ["rowIcon"]),
+            ...selectionColours("rowCell", ["rowTitle", "rowDetail", "rowSync"], ["rowIcon"]),
             root: cell,
           },
           "No recent projects",
@@ -91,12 +96,14 @@ export const projects = window(
         footerButton("primaryButton", "Open in Code  ↩", act("open")),
         divider,
         footerButton("actionsButton", "Actions  {var:actions_shortcut}", act("menu")),
-        hiddenKey("closeOthersKey", "⇧⌘↩", "open-close"),
-        hiddenKey("finderKey", "⇧⌘F", "reveal"),
-        hiddenKey("terminalKey", "⇧⌘T", "terminal"),
-        hiddenKey("copyNameKey", "⇧⌘C", "copy-name"),
-        hiddenKey("copyPathKey", "⇧⌘.", "copy-path"),
-        hiddenKey("pinKey", "⇧⌘P", "pin"),
+        hiddenKey("closeOthersKey", "⇧⌘↩", act("open-close")),
+        hiddenKey("finderKey", "⇧⌘F", act("reveal")),
+        hiddenKey("terminalKey", "⇧⌘T", act("terminal")),
+        hiddenKey("webKey", "⇧⌘G", act("web")),
+        hiddenKey("copyNameKey", "⇧⌘C", act("copy-name")),
+        hiddenKey("copyPathKey", "⇧⌘.", act("copy-path")),
+        hiddenKey("pinKey", "⇧⌘P", act("pin")),
+        hiddenKey("removeKey", "⌃X", act("remove")),
       ]),
     ],
   },

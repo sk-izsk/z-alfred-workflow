@@ -1,0 +1,600 @@
+{
+  "bundleid": "com.izsk.vscode",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "query": {
+      "src": "args[0]",
+      "default": ""
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    },
+    "theme_profile": {
+      "persist": true,
+      "scriptenv": true,
+      "default": ""
+    },
+    "theme_kind": {
+      "persist": true,
+      "scriptenv": true,
+      "default": "all"
+    }
+  },
+  "window": {
+    "size": {
+      "height": 520
+    },
+    "minsize": {
+      "width": 620,
+      "height": 360
+    },
+    "title": "Change Theme",
+    "root": {
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "theme-init"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "theme-pickers"
+              ]
+            }
+          ]
+        },
+        {
+          "triggers": "quit",
+          "action": {
+            "type": "script",
+            "src": "../bin/vsc",
+            "args": [
+              "theme-restore"
+            ]
+          }
+        },
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 760
+                }
+              }
+            }
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "{var:back_shortcut}",
+          "action": {
+            "type": "json",
+            "src": {
+              "finish": {
+                "variables": {
+                  "vsc_out": "back"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "components": [
+        {
+          "constraints": {
+            "region": "top"
+          },
+          "type": "view",
+          "layout": "border",
+          "padding": 12,
+          "spacing": 8,
+          "components": [
+            {
+              "id": "backButton",
+              "type": "button",
+              "text": "‹",
+              "bordered": false,
+              "tooltip": "Back {var:back_shortcut}",
+              "font": {
+                "size": 26,
+                "weight": "light"
+              },
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "finish": {
+                        "variables": {
+                          "vsc_out": "back"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "constraints": {
+                "region": "left",
+                "position": "centre",
+                "insets": {
+                  "left": 2
+                }
+              }
+            },
+            {
+              "constraints": {
+                "region": "centre"
+              },
+              "id": "searchField",
+              "type": "textfield",
+              "text": "{var:query}",
+              "placeholder": "Search themes...",
+              "focus": true,
+              "bordered": false,
+              "focusring": false,
+              "font": {
+                "size": 24,
+                "weight": "light"
+              },
+              "textinsets": {
+                "horizontal": 4,
+                "vertical": 6
+              },
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "function",
+                    "src": "items",
+                    "args": "filterdata"
+                  }
+                },
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/vsc",
+                    "args": [
+                      "theme",
+                      "apply",
+                      "{value:items.selected.uid}",
+                      "{value:profilePicker.selected.value}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "view",
+              "layout": "inline",
+              "spacing": 6,
+              "components": [
+                {
+                  "id": "profilePicker",
+                  "type": "picker",
+                  "bordered": false,
+                  "tooltip": "Profile",
+                  "items": [
+                    {
+                      "text": "Default",
+                      "value": ""
+                    }
+                  ],
+                  "events": [
+                    {
+                      "triggers": "changed",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/vsc",
+                        "args": [
+                          "theme-filter",
+                          "{value:profilePicker.selected.value}",
+                          "{value:kindPicker.selected.value}"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "kindPicker",
+                  "type": "picker",
+                  "bordered": false,
+                  "tooltip": "Light or dark",
+                  "items": [
+                    {
+                      "text": "All Themes",
+                      "value": ""
+                    }
+                  ],
+                  "events": [
+                    {
+                      "triggers": "changed",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/vsc",
+                        "args": [
+                          "theme-filter",
+                          "{value:profilePicker.selected.value}",
+                          "{value:kindPicker.selected.value}"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ],
+              "constraints": {
+                "region": "right",
+                "position": "centre"
+              }
+            }
+          ]
+        },
+        {
+          "constraints": {
+            "region": "centre"
+          },
+          "type": "view",
+          "layout": "border",
+          "components": [
+            {
+              "id": "sectionLabel",
+              "type": "label",
+              "text": "Installed Themes",
+              "colour": "secondaryLabelColor",
+              "font": {
+                "size": 11.5,
+                "weight": "medium"
+              },
+              "textalign": "left",
+              "constraints": {
+                "region": "top",
+                "stretch": "horizontal",
+                "insets": {
+                  "left": 20,
+                  "top": 2
+                }
+              }
+            },
+            {
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/vsc",
+                    "args": [
+                      "theme",
+                      "preview",
+                      "{value:items.selected.uid}",
+                      "{value:profilePicker.selected.value}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "constraints": {
+                "region": "centre"
+              },
+              "id": "items",
+              "type": "dataview",
+              "padding": 6,
+              "spacing": 2,
+              "placeholder": "No themes in this profile",
+              "behaviour": {
+                "selection": {
+                  "wrap": "none"
+                }
+              },
+              "data": {
+                "type": "basic",
+                "src": [],
+                "filter": {
+                  "type": "basic",
+                  "args": "match",
+                  "match": "{value:searchField.text}",
+                  "matchmode": "wordmatchanyorder"
+                }
+              },
+              "cell": {
+                "height": 38,
+                "init": {
+                  "rowCell.background": null,
+                  "rowTitle.colour": "labelColor",
+                  "rowDetail.colour": "secondaryLabelColor",
+                  "rowKind.colour": "secondaryLabelColor",
+                  "rowIcon.contenttintcolour": "secondaryLabelColor",
+                  "rowCurrent.contenttintcolour": "secondaryLabelColor"
+                },
+                "selected": {
+                  "rowCell.background": "alfredSelectedResultBackgroundColor",
+                  "rowTitle.colour": "alfredSelectedResultTextColor",
+                  "rowDetail.colour": "alfredSelectedResultTextColor",
+                  "rowKind.colour": "alfredSelectedResultTextColor",
+                  "rowIcon.contenttintcolour": "alfredSelectedResultTextColor",
+                  "rowCurrent.contenttintcolour": "alfredSelectedResultTextColor"
+                },
+                "root": {
+                  "id": "rowCell",
+                  "type": "view",
+                  "layout": "border",
+                  "padding": 6,
+                  "spacing": 10,
+                  "cornerradius": 8,
+                  "events": [
+                    {
+                      "triggers": "doubleclicked",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/vsc",
+                        "args": [
+                          "theme",
+                          "apply",
+                          "{data:uid}",
+                          "{value:profilePicker.selected.value}"
+                        ]
+                      }
+                    }
+                  ],
+                  "components": [
+                    {
+                      "id": "rowIcon",
+                      "type": "imageview",
+                      "resize": "fit",
+                      "image": {
+                        "type": "symbol",
+                        "src": "folder",
+                        "size": {
+                          "height": 20
+                        }
+                      },
+                      "constraints": {
+                        "region": "left",
+                        "position": "centre",
+                        "size": {
+                          "width": 24,
+                          "height": 24
+                        },
+                        "insets": {
+                          "left": 4
+                        }
+                      }
+                    },
+                    {
+                      "constraints": {
+                        "region": "centre",
+                        "stretch": "horizontal"
+                      },
+                      "type": "view",
+                      "layout": "border",
+                      "spacing": 8,
+                      "components": [
+                        {
+                          "id": "rowTitle",
+                          "type": "label",
+                          "text": "",
+                          "font": {
+                            "size": 14,
+                            "weight": "medium"
+                          },
+                          "constraints": {
+                            "position": "centre",
+                            "region": "left"
+                          }
+                        },
+                        {
+                          "id": "rowDetail",
+                          "type": "label",
+                          "text": "",
+                          "colour": "secondaryLabelColor",
+                          "font": {
+                            "size": 13
+                          },
+                          "textalign": "left",
+                          "constraints": {
+                            "position": "centre",
+                            "region": "centre",
+                            "stretch": "horizontal"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "constraints": {
+                        "region": "right",
+                        "position": "centre",
+                        "insets": {
+                          "right": 4
+                        }
+                      },
+                      "type": "view",
+                      "layout": "inline",
+                      "spacing": 8,
+                      "components": [
+                        {
+                          "id": "rowCurrent",
+                          "type": "imageview",
+                          "image": {
+                            "type": "symbol",
+                            "src": "checkmark",
+                            "size": {
+                              "height": 13
+                            }
+                          },
+                          "contenttintcolour": "systemGreenColor",
+                          "tooltip": "Current theme",
+                          "constraints": {
+                            "position": "centre"
+                          }
+                        },
+                        {
+                          "id": "rowKindPill",
+                          "type": "view",
+                          "layout": "inline",
+                          "spacing": 4,
+                          "padding": 3,
+                          "cornerradius": 5,
+                          "background": "#8080801f",
+                          "components": [
+                            {
+                              "id": "rowKind",
+                              "type": "label",
+                              "text": "",
+                              "colour": "secondaryLabelColor",
+                              "font": {
+                                "size": 11.5
+                              },
+                              "constraints": {
+                                "position": "centre"
+                              }
+                            }
+                          ],
+                          "constraints": {
+                            "position": "centre"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "constraints": {
+            "region": "bottom"
+          },
+          "type": "view",
+          "layout": "border",
+          "padding": 10,
+          "background": {
+            "dark": "#00000033",
+            "light": "#0000000d"
+          },
+          "components": [
+            {
+              "constraints": {
+                "region": "left",
+                "insets": {
+                  "left": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 8,
+              "components": [
+                {
+                  "type": "imageview",
+                  "image": {
+                    "type": "file",
+                    "src": "../icon.png",
+                    "size": {
+                      "width": 18,
+                      "height": 18
+                    }
+                  },
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
+                  "id": "statusLabel",
+                  "type": "label",
+                  "text": "…",
+                  "colour": "secondaryLabelColor",
+                  "font": {
+                    "size": 12.5
+                  },
+                  "constraints": {
+                    "position": "centre",
+                    "size": {
+                      "width": 300
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "constraints": {
+                "region": "right",
+                "insets": {
+                  "right": 6
+                }
+              },
+              "type": "view",
+              "layout": "inline",
+              "spacing": 10,
+              "components": [
+                {
+                  "id": "primaryButton",
+                  "type": "button",
+                  "text": "Apply Theme  ↩",
+                  "bordered": false,
+                  "font": {
+                    "size": 12.5,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/vsc",
+                        "args": [
+                          "theme",
+                          "apply",
+                          "{value:items.selected.uid}",
+                          "{value:profilePicker.selected.value}"
+                        ]
+                      }
+                    }
+                  ],
+                  "constraints": {
+                    "position": "centre"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
