@@ -10,9 +10,6 @@ permissions:
 jobs:
   release:
     runs-on: macos-latest
-    env:
-      alfred_workflow_cache: ${{ runner.temp }}/alfred-cache-${{ github.job }}
-      alfred_workflow_data: ${{ runner.temp }}/alfred-data-${{ github.job }}
     permissions:
       contents: write
     steps:
@@ -37,6 +34,9 @@ jobs:
       - run: bun install --frozen-lockfile
         working-directory: workflows/${{ steps.project.outputs.workflow }}
       - run: bun run check
+        env:
+          alfred_workflow_cache: ${{ runner.temp }}/alfred-cache
+          alfred_workflow_data: ${{ runner.temp }}/alfred-data
         working-directory: workflows/${{ steps.project.outputs.workflow }}
       - run: bun run package
         working-directory: workflows/${{ steps.project.outputs.workflow }}
