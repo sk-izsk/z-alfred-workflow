@@ -328,18 +328,6 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>CLONEJSON</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>sourceoutputuid</key>
-				<string>ROUTE-clone</string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
 				<string>THEMESJSON</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -347,6 +335,18 @@
 				<string></string>
 				<key>sourceoutputuid</key>
 				<string>ROUTE-themes</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>CLONEJSON</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>ROUTE-clone</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -414,93 +414,6 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>0</integer>
-				<key>script</key>
-				<string>./bin/vsc post</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>11</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>POST</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>0</integer>
-				<key>script</key>
-				<string>./bin/vsc open "$1"</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>11</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>OPEN</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<true/>
-				<key>removeextension</key>
-				<false/>
-				<key>text</key>
-				<string>{query}</string>
-				<key>title</key>
-				<string>{const:alfred_workflow_name}</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
-			<key>uid</key>
-			<string>OPENNOTE</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>json</key>
-				<string>{
-  "alfredworkflow": {
-    "arg": "{query}",
-    "config": {
-      "launchmode": "{var:launch_external}"
-    }
-  }
-}</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.json</string>
-			<key>uid</key>
-			<string>PROJECTSJSON</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>launchmode</key>
 				<integer>0</integer>
 				<key>path</key>
@@ -541,6 +454,37 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
+				<key>hotstring</key>
+				<string></string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>PROJECTSHK</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>json</key>
 				<string>{
   "alfredworkflow": {
@@ -554,7 +498,7 @@
 			<key>type</key>
 			<string>alfred.workflow.utility.json</string>
 			<key>uid</key>
-			<string>EXTENSIONSJSON</string>
+			<string>PROJECTSJSON</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -614,7 +558,7 @@
 			<key>type</key>
 			<string>alfred.workflow.utility.json</string>
 			<key>uid</key>
-			<string>INSTALLJSON</string>
+			<string>EXTENSIONSJSON</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -638,171 +582,25 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>keyword</key>
-				<string>{var:kw_install}</string>
-				<key>skipuniversalaction</key>
-				<true/>
-				<key>subtext</key>
-				<string>Install extensions from the Marketplace</string>
-				<key>text</key>
-				<string>Install Extension</string>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>INSTALLKW</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>json</key>
-				<string>{
-  "alfredworkflow": {
-    "arg": "{query}",
-    "config": {
-      "launchmode": "{var:launch_external}"
-    }
-  }
-}</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.json</string>
-			<key>uid</key>
-			<string>THEMESJSON</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>launchmode</key>
-				<integer>0</integer>
-				<key>path</key>
-				<string>themes.alfredui</string>
-				<key>stackview</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.userinterface.alfredui</string>
-			<key>uid</key>
-			<string>THEMESUI</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>keyword</key>
-				<string>{var:kw_themes}</string>
-				<key>skipuniversalaction</key>
-				<true/>
-				<key>subtext</key>
-				<string>Pick a color theme for a profile</string>
-				<key>text</key>
-				<string>Change Theme</string>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>THEMESKW</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>json</key>
-				<string>{
-  "alfredworkflow": {
-    "arg": "{query}",
-    "config": {
-      "launchmode": "{var:launch_external}"
-    }
-  }
-}</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.json</string>
-			<key>uid</key>
-			<string>CLONEJSON</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>launchmode</key>
-				<integer>0</integer>
-				<key>path</key>
-				<string>clone.alfredui</string>
-				<key>stackview</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.userinterface.alfredui</string>
-			<key>uid</key>
-			<string>CLONEUI</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>alfredfiltersresults</key>
+				<key>concurrently</key>
 				<false/>
-				<key>alfredfiltersresultsmatchmode</key>
-				<integer>0</integer>
-				<key>argumenttreatemptyqueryasnil</key>
-				<false/>
-				<key>argumenttype</key>
-				<integer>1</integer>
 				<key>escaping</key>
-				<integer>102</integer>
-				<key>keyword</key>
-				<string>{var:kw_main}</string>
-				<key>queuedelaycustom</key>
-				<integer>3</integer>
-				<key>queuedelayimmediatelyinitially</key>
-				<true/>
-				<key>queuedelaymode</key>
 				<integer>0</integer>
-				<key>queuemode</key>
-				<integer>1</integer>
-				<key>runningsubtext</key>
-				<string>…</string>
 				<key>script</key>
-				<string>./bin/vsc root "$1"</string>
+				<string>./bin/vsc post</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
 				<string></string>
-				<key>skipuniversalaction</key>
-				<true/>
-				<key>subtext</key>
-				<string>Recent projects, extensions, themes, clone a repo…</string>
-				<key>title</key>
-				<string>VS Code</string>
 				<key>type</key>
 				<integer>11</integer>
-				<key>withspace</key>
-				<true/>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.input.scriptfilter</string>
+			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
-			<string>ROOT</string>
+			<string>POST</string>
 			<key>version</key>
-			<integer>3</integer>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -895,12 +693,168 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>keyword</key>
+				<string>{var:kw_install}</string>
+				<key>skipuniversalaction</key>
+				<true/>
+				<key>subtext</key>
+				<string>Install extensions from the Marketplace</string>
+				<key>text</key>
+				<string>Install Extension</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>INSTALLKW</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
 				<key>argumenttreatemptyqueryasnil</key>
 				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>{var:kw_main}</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>…</string>
+				<key>script</key>
+				<string>./bin/vsc root "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>skipuniversalaction</key>
+				<true/>
+				<key>subtext</key>
+				<string>Recent projects, extensions, themes, clone a repo…</string>
+				<key>title</key>
+				<string>VS Code</string>
+				<key>type</key>
+				<integer>11</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>ROOT</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>json</key>
+				<string>{
+  "alfredworkflow": {
+    "arg": "{query}",
+    "config": {
+      "launchmode": "{var:launch_external}"
+    }
+  }
+}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.json</string>
+			<key>uid</key>
+			<string>INSTALLJSON</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>launchmode</key>
+				<integer>0</integer>
+				<key>path</key>
+				<string>themes.alfredui</string>
+				<key>stackview</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.userinterface.alfredui</string>
+			<key>uid</key>
+			<string>THEMESUI</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>keyword</key>
+				<string>{var:kw_themes}</string>
+				<key>skipuniversalaction</key>
+				<true/>
+				<key>subtext</key>
+				<string>Pick a color theme for a profile</string>
+				<key>text</key>
+				<string>Change Theme</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>THEMESKW</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>json</key>
+				<string>{
+  "alfredworkflow": {
+    "arg": "{query}",
+    "config": {
+      "launchmode": "{var:launch_external}"
+    }
+  }
+}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.json</string>
+			<key>uid</key>
+			<string>THEMESJSON</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
 				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>escaping</key>
@@ -940,6 +894,43 @@
 			<string>CLONEFILTER</string>
 			<key>version</key>
 			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>launchmode</key>
+				<integer>0</integer>
+				<key>path</key>
+				<string>clone.alfredui</string>
+				<key>stackview</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.userinterface.alfredui</string>
+			<key>uid</key>
+			<string>CLONEUI</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>json</key>
+				<string>{
+  "alfredworkflow": {
+    "arg": "{query}",
+    "config": {
+      "launchmode": "{var:launch_external}"
+    }
+  }
+}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.json</string>
+			<key>uid</key>
+			<string>CLONEJSON</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -984,37 +975,6 @@
 			<string>ROOTNOTE</string>
 			<key>version</key>
 			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>action</key>
-				<integer>0</integer>
-				<key>argument</key>
-				<integer>0</integer>
-				<key>focusedappvariable</key>
-				<false/>
-				<key>focusedappvariablename</key>
-				<string></string>
-				<key>hotkey</key>
-				<integer>0</integer>
-				<key>hotmod</key>
-				<integer>0</integer>
-				<key>hotstring</key>
-				<string></string>
-				<key>leftcursor</key>
-				<false/>
-				<key>modsmode</key>
-				<integer>0</integer>
-				<key>relatedAppsMode</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.hotkey</string>
-			<key>uid</key>
-			<string>PROJECTSHK</string>
-			<key>version</key>
-			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1097,6 +1057,50 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>./bin/vsc open "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>OPEN</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<true/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>{query}</string>
+				<key>title</key>
+				<string>{const:alfred_workflow_name}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>OPENNOTE</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>acceptsmulti</key>
 				<integer>1</integer>
 				<key>filetypes</key>
@@ -1108,29 +1112,6 @@
 			<string>alfred.workflow.trigger.action</string>
 			<key>uid</key>
 			<string>FILEACTION</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>2</integer>
-				<key>keyword</key>
-				<string>{var:kw_new}</string>
-				<key>skipuniversalaction</key>
-				<true/>
-				<key>subtext</key>
-				<string>Open a new editor window</string>
-				<key>text</key>
-				<string>Open New Window</string>
-				<key>withspace</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>NEWWINKW</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1156,6 +1137,29 @@
 			<string>NEWWINRUN</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>{var:kw_new}</string>
+				<key>skipuniversalaction</key>
+				<true/>
+				<key>subtext</key>
+				<string>Open a new editor window</string>
+				<key>text</key>
+				<string>Open New Window</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>NEWWINKW</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1201,198 +1205,198 @@ Works with VS Code, Insiders, Cursor, Windsurf, Zed, VSCodium and other VS Code 
 		<key>CLONEFILTER</key>
 		<dict>
 			<key>xpos</key>
-			<integer>30</integer>
+			<real>30</real>
 			<key>ypos</key>
-			<integer>480</integer>
+			<real>480</real>
 		</dict>
 		<key>CLONEJSON</key>
 		<dict>
 			<key>xpos</key>
-			<integer>760</integer>
+			<real>760</real>
 			<key>ypos</key>
-			<integer>610</integer>
+			<real>610</real>
 		</dict>
 		<key>CLONEUI</key>
 		<dict>
 			<key>xpos</key>
-			<integer>920</integer>
+			<real>920</real>
 			<key>ypos</key>
-			<integer>580</integer>
+			<real>580</real>
 		</dict>
 		<key>EXTENSIONSJSON</key>
 		<dict>
 			<key>xpos</key>
-			<integer>760</integer>
+			<real>760</real>
 			<key>ypos</key>
-			<integer>190</integer>
+			<real>190</real>
 		</dict>
 		<key>EXTENSIONSKW</key>
 		<dict>
 			<key>xpos</key>
-			<integer>540</integer>
+			<real>540</real>
 			<key>ypos</key>
-			<integer>160</integer>
+			<real>160</real>
 		</dict>
 		<key>EXTENSIONSUI</key>
 		<dict>
 			<key>xpos</key>
-			<integer>920</integer>
+			<real>920</real>
 			<key>ypos</key>
-			<integer>160</integer>
+			<real>160</real>
 		</dict>
 		<key>FILEACTION</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<real>300</real>
 			<key>ypos</key>
-			<integer>1100</integer>
+			<real>1100</real>
 		</dict>
 		<key>FIND</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<real>300</real>
 			<key>ypos</key>
-			<integer>960</integer>
+			<real>960</real>
 		</dict>
 		<key>INSTALLJSON</key>
 		<dict>
 			<key>xpos</key>
-			<integer>760</integer>
+			<real>760</real>
 			<key>ypos</key>
-			<integer>330</integer>
+			<real>330</real>
 		</dict>
 		<key>INSTALLKW</key>
 		<dict>
 			<key>xpos</key>
-			<integer>540</integer>
+			<real>540</real>
 			<key>ypos</key>
-			<integer>300</integer>
+			<real>300</real>
 		</dict>
 		<key>INSTALLUI</key>
 		<dict>
 			<key>xpos</key>
-			<integer>920</integer>
+			<real>920</real>
 			<key>ypos</key>
-			<integer>300</integer>
+			<real>300</real>
 		</dict>
 		<key>NEWWINKW</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<real>300</real>
 			<key>ypos</key>
-			<integer>1240</integer>
+			<real>1240</real>
 		</dict>
 		<key>NEWWINNOTE</key>
 		<dict>
 			<key>xpos</key>
-			<integer>760</integer>
+			<real>760</real>
 			<key>ypos</key>
-			<integer>1240</integer>
+			<real>1240</real>
 		</dict>
 		<key>NEWWINRUN</key>
 		<dict>
 			<key>xpos</key>
-			<integer>540</integer>
+			<real>540</real>
 			<key>ypos</key>
-			<integer>1240</integer>
+			<real>1240</real>
 		</dict>
 		<key>OPEN</key>
 		<dict>
 			<key>xpos</key>
-			<integer>540</integer>
+			<real>540</real>
 			<key>ypos</key>
-			<integer>1000</integer>
+			<real>1000</real>
 		</dict>
 		<key>OPENNOTE</key>
 		<dict>
 			<key>xpos</key>
-			<integer>760</integer>
+			<real>760</real>
 			<key>ypos</key>
-			<integer>1000</integer>
+			<real>1000</real>
 		</dict>
 		<key>POST</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1100</integer>
+			<real>1100</real>
 			<key>ypos</key>
-			<integer>300</integer>
+			<real>300</real>
 		</dict>
 		<key>PROJECTSHK</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<real>300</real>
 			<key>ypos</key>
-			<integer>40</integer>
+			<real>40</real>
 		</dict>
 		<key>PROJECTSJSON</key>
 		<dict>
 			<key>xpos</key>
-			<integer>760</integer>
+			<real>760</real>
 			<key>ypos</key>
-			<integer>50</integer>
+			<real>50</real>
 		</dict>
 		<key>PROJECTSKW</key>
 		<dict>
 			<key>xpos</key>
-			<integer>540</integer>
+			<real>540</real>
 			<key>ypos</key>
-			<integer>20</integer>
+			<real>20</real>
 		</dict>
 		<key>PROJECTSUI</key>
 		<dict>
 			<key>xpos</key>
-			<integer>920</integer>
+			<real>920</real>
 			<key>ypos</key>
-			<integer>20</integer>
+			<real>20</real>
 		</dict>
 		<key>ROOT</key>
 		<dict>
 			<key>xpos</key>
-			<integer>30</integer>
+			<real>30</real>
 			<key>ypos</key>
-			<integer>300</integer>
+			<real>300</real>
 		</dict>
 		<key>ROOTACT</key>
 		<dict>
 			<key>xpos</key>
-			<integer>540</integer>
+			<real>540</real>
 			<key>ypos</key>
-			<integer>700</integer>
+			<real>700</real>
 		</dict>
 		<key>ROOTNOTE</key>
 		<dict>
 			<key>xpos</key>
-			<integer>760</integer>
+			<real>760</real>
 			<key>ypos</key>
-			<integer>700</integer>
+			<real>700</real>
 		</dict>
 		<key>ROUTE</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<real>300</real>
 			<key>ypos</key>
-			<integer>300</integer>
+			<real>300</real>
 		</dict>
 		<key>THEMESJSON</key>
 		<dict>
 			<key>xpos</key>
-			<integer>760</integer>
+			<real>760</real>
 			<key>ypos</key>
-			<integer>470</integer>
+			<real>470</real>
 		</dict>
 		<key>THEMESKW</key>
 		<dict>
 			<key>xpos</key>
-			<integer>540</integer>
+			<real>540</real>
 			<key>ypos</key>
-			<integer>440</integer>
+			<real>440</real>
 		</dict>
 		<key>THEMESUI</key>
 		<dict>
 			<key>xpos</key>
-			<integer>920</integer>
+			<real>920</real>
 			<key>ypos</key>
-			<integer>440</integer>
+			<real>440</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>

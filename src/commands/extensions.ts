@@ -1,7 +1,10 @@
+import { readFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 import { editor, shortName } from "../editors.ts";
 import { type LocalExtension, extensionUri, localExtensions, uninstallExtension } from "../extensions.ts";
 import { openUrl, revealInFinder } from "../launch.ts";
 import { itemUrl } from "../marketplace.ts";
+import { localReadme, previewHtml } from "../preview.ts";
 import { type Profile, configuredProfile } from "../profiles.ts";
 import {
   type Action,
@@ -61,21 +64,40 @@ export const extPickers = async (): Promise<Action> =>
 export const extFilter = async ([kind = "all"]: string[]): Promise<Action> =>
   merge(vars({ ext_kind: validKind(kind) }), load(await configuredProfile(), validKind(kind)));
 
-/** The Marketplace page (screenshots, README) in a sheet over the list. */
-export const previewSheet = (id: string, name: string): Action =>
+/** An image file as a data: URI, so the preview page needs no file access. */
+export const dataUri = (path: string): string => {
+  try {
+    return `data:image/png;base64,${readFileSync(path).toString("base64")}`;
+  } catch {
+    return "";
+  }
+};
+
+/** README + screenshots in a large sheet over the list (rendered by us: no cookie banner, fast). */
+export const previewSheet = (html: string, title: string, url: string): Action =>
   sheet("previewSheet", {
     type: "view",
     layout: "border",
-    constraints: { size: { width: 760, height: 480 } },
     components: [
-      { constraints: { region: "centre" }, type: "webkitview", src: itemUrl(id), openlinksexternally: true },
+      {
+        // The size goes on the web view itself: a sheet sizes to its content.
+        constraints: { region: "centre", size: { width: 860, height: 540 } },
+        type: "webkitview",
+        text: html,
+        openlinksexternally: true,
+      },
       {
         constraints: { region: "bottom" },
         type: "view",
         layout: "border",
         padding: 10,
         components: [
-          { constraints: { region: "left" }, type: "label", text: name, colour: "secondaryLabelColor" },
+          {
+            constraints: { region: "left", position: "centre" },
+            type: "label",
+            text: title,
+            colour: "secondaryLabelColor",
+          },
           {
             constraints: { region: "right" },
             type: "view",
@@ -88,7 +110,7 @@ export const previewSheet = (id: string, name: string): Action =>
                 events: [
                   {
                     triggers: "actioned",
-                    action: { type: "json", src: { open: { type: "url", src: itemUrl(id) } } },
+                    action: { type: "json", src: { open: { type: "url", src: url } } },
                   },
                 ],
               },
@@ -131,7 +153,19 @@ export const ext = async ([action = "", id = ""]: string[]): Promise<Action> => 
       await openUrl(itemUrl(id));
       return finish();
     case "preview":
-      return previewSheet(id, e.name);
+      return previewSheet(
+        previewHtml({
+          name: e.name,
+          publisher: e.publisher,
+          description: (e.pkg as { description?: string }).description ?? "",
+          version: e.version,
+          icon: e.icon ? dataUri(e.icon) : "",
+          readme: localReadme(e.path),
+          base: pathToFileURL(`${e.path}/`).href,
+        }),
+        e.name,
+        itemUrl(id),
+      );
     case "reveal":
       await revealInFinder(e.path);
       return finish();

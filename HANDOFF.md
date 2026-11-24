@@ -27,7 +27,7 @@ Status for whoever picks this up next (Codex, a person, or another session).
 ## Verify in Alfred (not seen on screen yet: Alfred hides its panel from screen captures)
 1. Each window's layout: Themes (two pickers in the search bar), Extensions (two pickers), Install (category picker), Clone (aligned rows).
 2. A `submenu` in the ⌘K popup (Open in ▸, Open with Profile ▸, Install in Profile ▸).
-3. The ⌘Y preview sheet: does the webkitview load the Marketplace page? It runs Microsoft's own scripts, so it may be slow.
+3. The ⌘Y preview sheet (860×540, our own README rendering via `src/preview.ts` + `src/markdown.ts`): size and scrolling inside Alfred.
 4. Live theme preview, and that ⎋ (the `quit` event) restores the theme.
 5. `code sync` / `code >` need Accessibility permission for Alfred.
 6. `codec`: Tab completion into folders, then ⌘↩ (needs the ⌘ connection the plist adds).

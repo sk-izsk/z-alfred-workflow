@@ -13,6 +13,8 @@ export type GalleryExtension = {
   version: string;
   installs: number | undefined;
   iconUrl: string;
+  /** README Markdown asset (for the preview). */
+  readmeUrl: string;
 };
 
 type Raw = {
@@ -92,6 +94,8 @@ const body = (text: string, category: string) =>
 
 export const toGallery = (raw: Raw): GalleryExtension => {
   const latest = raw.versions?.[0];
+  const asset = (type: string) =>
+    latest?.files?.find((f) => f.assetType === `Microsoft.VisualStudio.Services.${type}`)?.source ?? "";
   return {
     id: `${raw.publisher.publisherName}.${raw.extensionName}`,
     name: raw.displayName || raw.extensionName,
@@ -99,9 +103,8 @@ export const toGallery = (raw: Raw): GalleryExtension => {
     description: raw.shortDescription ?? "",
     version: latest?.version ?? "",
     installs: raw.statistics?.find((s) => s.statisticName === "install")?.value,
-    iconUrl:
-      latest?.files?.find((f) => f.assetType === "Microsoft.VisualStudio.Services.Icons.Default")?.source ??
-      "",
+    iconUrl: asset("Icons.Default"),
+    readmeUrl: asset("Content.Details"),
   };
 };
 

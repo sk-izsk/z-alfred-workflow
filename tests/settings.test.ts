@@ -35,3 +35,16 @@ test("removes a setting cleanly (restoring 'no theme set')", () => {
   ).toEqual({ a: 1 });
   expect(removeSetting(setSetting(text, "workbench.colorTheme", "Y"), "workbench.colorTheme")).toBe(removed);
 });
+
+test("README markdown renders headings, images, links, lists and code", async () => {
+  const { markdownToHtml } = await import("../src/markdown.ts");
+  const html = markdownToHtml(
+    '# Title\n\nSome **bold** `x<y` [link](https://a.b)\n\n![shot](https://i.png)\n\n- one\n- two\n\n```js\nif (a < b) {}\n```\n<p align="center">\n  <em>a</em> - b\n</p>',
+  );
+  expect(html).toContain("<h1>Title</h1>");
+  expect(html).toContain('<strong>bold</strong> <code>x&lt;y</code> <a href="https://a.b">link</a>');
+  expect(html).toContain('<img alt="shot" src="https://i.png">');
+  expect(html).toContain("<ul>\n<li>one</li>\n<li>two</li>\n</ul>");
+  expect(html).toContain("<pre><code>if (a &lt; b) {}</code></pre>");
+  expect(html).toContain('<p align="center">\n  <em>a</em> - b\n</p>');
+});
