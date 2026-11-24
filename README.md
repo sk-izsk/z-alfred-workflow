@@ -75,6 +75,36 @@ Kiro, Positron, Trae…) are VS Code forks that store recent projects, settings,
 same way, so they should work, but they're untested; reports and fixes welcome. Zed support is limited to
 recent projects, opening, cloning and finding (no extensions, themes or profiles).
 
+## Install
+
+1. Download the latest `.alfredworkflow` from [Releases](https://github.com/sk-izsk/z-vscode-workflow/releases).
+2. Double-click it and Alfred imports it.
+3. Type `code` in Alfred.
+
+### First-time setup
+
+Open Alfred Preferences → Workflows → **VS Code** → **Configure Workflow**:
+
+- **Editor**: the editor to open projects in (Visual Studio Code by default).
+- **VS Code Profile**: the profile Change Theme and the extension windows use. Leave it blank to follow the
+  profile of your most recently opened project.
+- **Clone Into**: the default folder for `codec`.
+- **Project Folders**: folders to scan for git repos you haven't opened yet (optional).
+- **Terminal App**: e.g. `Ghostty`, `iTerm`, `Warp` (default: Terminal).
+- **Keywords**: change any of the `code…` keywords, and set a Hotkey for Recent Projects if you like.
+
+Also:
+
+- **Accessibility**: `code sync` and `code > command` type into VS Code's Command Palette, so Alfred needs
+  Accessibility permission (System Settings → Privacy & Security → Accessibility → Alfred).
+- **GitHub search** (`code gh`): install and sign in to the [GitHub CLI](https://cli.github.com):
+  `brew install gh && gh auth login`.
+- **Other VS Code workflows**: disable them if they also use the `code` / `codef` keywords.
+
+## Updating
+
+Download the newer `.alfredworkflow` from Releases and double-click it. Alfred keeps your configuration.
+
 ## Requirements
 
 - Alfred 6 with the Powerpack
@@ -100,6 +130,19 @@ src/commands/   one file per window/menu; each returns Alfred UI JSON actions
 ui/             window definitions in TypeScript → workflow/<name>.alfredui/ui.json
 scripts/        build, info.plist (plist.ts), icons, link, package
 workflow/       what Alfred loads (generated files are git-ignored)
+```
+
+### Releasing
+
+1. Bump `version` in `package.json` (it goes into the workflow's info.plist).
+2. Run `bun run check`, then `bun run package`. This builds `dist/VS Code.alfredworkflow` without your
+   `prefs.plist` or dev files.
+3. Optional: list the archive (`unzip -l "dist/VS Code.alfredworkflow"`) to check nothing personal slipped in.
+4. Merge to `dev`, then create a GitHub Release tagged `vX.Y.Z` and attach the package, e.g.:
+
+```bash
+cp "dist/VS Code.alfredworkflow" dist/VS-Code-for-Alfred-X.Y.Z.alfredworkflow
+gh release create vX.Y.Z dist/VS-Code-for-Alfred-X.Y.Z.alfredworkflow --target dev --title "vX.Y.Z" --notes "What changed"
 ```
 
 See [AGENTS.md](AGENTS.md) for conventions.
