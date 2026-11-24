@@ -20,6 +20,8 @@ jobs:
             artifact: Bitwarden.alfredworkflow
           - workflow: z-vscode
             artifact: VS Code.alfredworkflow
+          - workflow: z-speedtest
+            artifact: Speed Test.alfredworkflow
           - workflow: z-brew
             artifact: Brew.alfredworkflow
           - workflow: z-cald
