@@ -87,7 +87,7 @@ integration; connecting an account to macOS Calendar does not provide Google/Zoo
 macOS handles synchronization with your calendar providers. Offline events follow Calendar's
 normal syncing behavior. Refresh the form's calendar list with <kbd>⌘</kbd><kbd>R</kbd>.
 
-Use <kbd>⌘</kbd><kbd>[</kbd> or the back button to return to the main Alfred search from any view. All four
+Use <kbd>⌘</kbd><kbd>[</kbd> or the back button to return to the previous screen, or the Calendar command menu from the first screen. All four
 keywords, the actions/back shortcuts and window mode are configurable.
 
 ## Install
@@ -166,6 +166,6 @@ before use, as you would any workflow; please report anything that doesn't work.
 
 [MIT](LICENSE), with the Raycast notice included in every exported workflow.
 
-Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Every Back button and shortcut, including sheets, closes the workflow UI and returns to the main Alfred search.
+Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Back returns one screen at a time. Sheets close to their parent view; Back from the first screen returns to the Calendar command menu.
 
 Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.

@@ -71,7 +71,7 @@ export const print = (action: Action): void => {
 export const sheet = (id: string, root: Action, closeOnEscape = true): Action => {
   const back: Action = {
     type: "json",
-    src: { sheet: { close: id }, finish: { variables: { brew_out: "back" } } },
+    src: { sheet: { close: id } },
   };
   return {
     sheet: {
@@ -81,7 +81,6 @@ export const sheet = (id: string, root: Action, closeOnEscape = true): Action =>
         type: "view",
         layout: "border",
         spacing: 4,
-        shortcuts: [{ shortcut: "{var:back_shortcut}", action: back }],
         components: [
           { ...root, constraints: { ...(root.constraints as Action | undefined), region: "centre" } },
           {

@@ -206,7 +206,12 @@ const userconfigurationconfig: Obj[] = [
     config: { default: true, text: "Show ISO week numbers" },
   },
   text("actions_shortcut", "Actions shortcut", "⌘K", "Open the selected item’s action menu."),
-  text("back_shortcut", "Back shortcut", "⌘[", "Return to the main Alfred search from every view and sheet."),
+  text(
+    "back_shortcut",
+    "Back shortcut",
+    "⌘[",
+    "Return to the previous screen; from the first screen, return to the Calendar command menu.",
+  ),
   {
     type: "popupbutton",
     variable: "launch_external",

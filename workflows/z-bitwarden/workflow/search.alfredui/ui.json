@@ -276,19 +276,6 @@
               }
             }
           }
-        },
-        {
-          "shortcut": "{var:back_shortcut}",
-          "action": {
-            "type": "json",
-            "src": {
-              "finish": {
-                "variables": {
-                  "bw_out": "back"
-                }
-              }
-            }
-          }
         }
       ],
       "components": [

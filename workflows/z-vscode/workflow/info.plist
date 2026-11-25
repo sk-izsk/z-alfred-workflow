@@ -1778,7 +1778,7 @@ Type `code` to open the menu, then pick a command, or keep typing:
 * `code https://github.com/owner/repo` clones a repository (you choose where), then opens it.
 * `code ~/some/path` opens that path.
 
-In a list: &lt;kbd&gt;↩&lt;/kbd&gt; opens, &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;K&lt;/kbd&gt; shows every action, &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;[&lt;/kbd&gt; returns to the main Alfred search.
+In a list: &lt;kbd&gt;↩&lt;/kbd&gt; opens, &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;K&lt;/kbd&gt; shows every action, &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;[&lt;/kbd&gt; returns to the VS Code command menu.
 
 Recent projects: &lt;kbd&gt;⇧&lt;/kbd&gt;&lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; open and close other windows · &lt;kbd&gt;⇧&lt;/kbd&gt;&lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;F&lt;/kbd&gt; show in Finder · &lt;kbd&gt;⇧&lt;/kbd&gt;&lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;T&lt;/kbd&gt; open in Terminal · &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;O&lt;/kbd&gt; open with… · &lt;kbd&gt;⇧&lt;/kbd&gt;&lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;C&lt;/kbd&gt; copy name · &lt;kbd&gt;⇧&lt;/kbd&gt;&lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;P&lt;/kbd&gt; pin · &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;P&lt;/kbd&gt; filter by type.
 
@@ -2607,7 +2607,7 @@ This workflow was built with the help of AI tools. Review it before use, and rep
 				<true/>
 			</dict>
 			<key>description</key>
-			<string>Closes the workflow UI and returns to the main Alfred search. ⎋ can't do this: Alfred closes its windows on ⎋ itself.</string>
+			<string>Returns one screen; from the first screen, returns to the VS Code command menu. ⎋ can't do this: Alfred closes its windows on ⎋ itself.</string>
 			<key>label</key>
 			<string>Back Shortcut</string>
 			<key>type</key>
@@ -2640,7 +2640,7 @@ This workflow was built with the help of AI tools. Review it before use, and rep
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.1.1</string>
+	<string>0.1.2</string>
 	<key>webaddress</key>
 	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-vscode</string>
 </dict>

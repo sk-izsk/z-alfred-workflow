@@ -57,7 +57,7 @@ test("quick calendar selects a date and handles month/year navigation without ca
   const next = await quick(["shift", "12"]);
   expect(next.variables).toBeDefined();
   await expect(quick(["shift", "99"])).rejects.toThrow("Invalid");
-  expect((await quick(["agenda", "2026-12-01"])).finish).toEqual({
+  expect((await quick(["agenda", "2026-12-01"])).finish).toMatchObject({
     args: "",
     variables: { cal_out: "agenda", cal_day: "2026-12-01" },
   });

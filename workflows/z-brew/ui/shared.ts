@@ -90,7 +90,6 @@ export const header = (title: Json, right?: Json): Json => ({
   constraints: { region: "top" },
   components: [
     button("backButton", "‹", back, {
-      shortcut: "{var:back_shortcut}",
       font: { size: 26 },
       tooltip: "Back {var:back_shortcut}",
       constraints: { region: "left", position: "centre" },
@@ -141,7 +140,7 @@ export const window = (
         ...((root.events as Json[] | undefined) || []),
         on("preload", json({ window: { resize: { width: size.width ?? 800 } } })),
       ],
-      shortcuts: [...((root.shortcuts as Json[] | undefined) || []), key("{var:back_shortcut}", back)],
+      shortcuts: (root.shortcuts as Json[] | undefined) || [],
     },
   },
 });

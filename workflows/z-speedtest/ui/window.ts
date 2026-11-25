@@ -25,8 +25,21 @@ const web = (id: string, text: string, region = "centre"): Json => ({
   openlinksexternally: true,
   constraints: { region, size: { height: 480 } },
 });
-export const body = (s: State, mode: string, details: boolean, selection: string): Json[] => {
-  if (s.phase === "error" || mode !== "list") return [web("dashboard", dashboardHTML(s))];
+export const body = (
+  s: State,
+  mode: string,
+  details: boolean,
+  selection: string,
+  meterPath?: string,
+): Json[] => {
+  if (s.phase === "error" || mode !== "list") {
+    const dashboard = web("dashboard", dashboardHTML(s));
+    if (meterPath && s.phase !== "error") {
+      delete dashboard.text;
+      dashboard.src = meterPath;
+    }
+    return [dashboard];
+  }
   return [
     {
       type: "view",
@@ -156,9 +169,10 @@ export const speedtestWindow = {
   log: { level: "error", internal: true },
   variablesconfig: {
     session: { default: "", scriptenv: true },
+    speed_query: { default: "", scriptenv: true },
     launch_view: { src: "args[0]", default: "", scriptenv: true },
     back_shortcut: { src: "variable", default: "⌘[" },
-    mode: { default: "meter", persist: true, scriptenv: true },
+    mode: { default: "meter", scriptenv: true },
     details: { default: "1", persist: true, scriptenv: true },
     selection: { default: "ping", scriptenv: true },
     last_phase: { default: "starting", scriptenv: true },
@@ -182,7 +196,6 @@ export const speedtestWindow = {
       shortcuts: [
         { shortcut: "{var:actions_shortcut}", action: run("actions") },
         { shortcut: "⌘R", action: run("restart") },
-        { shortcut: "{var:back_shortcut}", action: run("back") },
         { shortcut: "⌘L", action: run("view") },
         { shortcut: "↓", action: { type: "function", src: "results", args: "selectnext" } },
         { shortcut: "↑", action: { type: "function", src: "results", args: "selectprevious" } },
@@ -196,7 +209,7 @@ export const speedtestWindow = {
           constraints: { region: "top" },
           components: [
             {
-              ...button("backButton", "‹", run("back"), "{var:back_shortcut}"),
+              ...button("backButton", "‹", run("back")),
               font: { size: 28 },
               constraints: { region: "left" },
             },
@@ -210,7 +223,13 @@ export const speedtestWindow = {
               focusring: false,
               font: { size: 22 },
               constraints: { region: "centre" },
-              events: [on("changed", run("filter")), on("actioned", run("primary"))],
+              events: [
+                on("changed", [
+                  json({ variables: { speed_query: "{value:searchField.text}" } }),
+                  run("filter"),
+                ]),
+                on("actioned", run("primary")),
+              ],
             },
           ],
         },
@@ -250,12 +269,7 @@ export const speedtestWindow = {
                   spacing: 16,
                   constraints: { region: "right" },
                   components: [
-                    button(
-                      "footerBack",
-                      "Back  {var:back_shortcut}",
-                      json({ finish: { variables: { speedtest_out: "back" } } }),
-                      "{var:back_shortcut}",
-                    ),
+                    button("footerBack", "Back  {var:back_shortcut}", run("back"), "{var:back_shortcut}"),
                     button("primaryButton", "Show Detailed List  ↩", run("primary"), "↩"),
                     button("actionsButton", "Actions  ⌘K", run("actions")),
                   ],

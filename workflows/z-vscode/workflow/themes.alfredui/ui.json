@@ -95,19 +95,6 @@
             "src": "items",
             "args": "selectnext"
           }
-        },
-        {
-          "shortcut": "{var:back_shortcut}",
-          "action": {
-            "type": "json",
-            "src": {
-              "finish": {
-                "variables": {
-                  "vsc_out": "back"
-                }
-              }
-            }
-          }
         }
       ],
       "components": [
@@ -122,7 +109,6 @@
           "components": [
             {
               "id": "backButton",
-              "shortcut": "{var:back_shortcut}",
               "type": "button",
               "text": "‹",
               "bordered": false,

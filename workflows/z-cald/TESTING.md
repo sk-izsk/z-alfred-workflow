@@ -21,7 +21,7 @@ Use a temporary local test calendar and demo events. Never commit preferences or
 - [ ] Single-day and multi-day all-day events include exactly the selected dates.
 - [ ] Saving disables the button; failure preserves input and allows retry.
 - [ ] Refreshing the calendar picker preserves entered form fields.
-- [ ] ⌘[ and the back button return to the main Alfred search; ⎋ closes; separate-window mode works.
+- [ ] ⌘[ and the back button return to the previous screen; the first screen returns to the Calendar command menu; ⎋ closes; separate-window mode works.
 - [ ] Rebuild, package and inspect with `unzip -l`; no preferences, snapshots or dependencies are included.
 
 Automated tests exercise parsing and a fake EventKit store without modifying user calendars.

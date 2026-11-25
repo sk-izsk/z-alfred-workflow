@@ -6,6 +6,7 @@ import {
   header,
   hiddenKey,
   key,
+  json,
   label,
   on,
   privacyKey,
@@ -126,7 +127,13 @@ export const agenda = window(
           bordered: false,
           focusring: false,
           font: { size: 24, weight: "light" },
-          events: [on("changed", call("items", "filterdata")), on("actioned", event("join"))],
+          events: [
+            on("changed", [
+              json({ variables: { cal_search: "{value:searchField.text}" } }),
+              call("items", "filterdata"),
+            ]),
+            on("actioned", event("join")),
+          ],
         },
         {
           type: "view",

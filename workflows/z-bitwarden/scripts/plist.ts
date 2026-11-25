@@ -319,7 +319,7 @@ const userconfigurationconfig = [
     "back_shortcut",
     "Back Shortcut",
     "⌘[",
-    "Closes the workflow UI and returns to the main Alfred search. ⎋ can't do this: Alfred closes its windows on ⎋ itself.",
+    "Returns one screen; from the first screen, returns to the Bitwarden command menu. ⎋ can't do this: Alfred closes its windows on ⎋ itself.",
   ),
   pick(
     "enter_action",

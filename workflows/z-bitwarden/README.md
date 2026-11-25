@@ -159,7 +159,7 @@ Type **`bw`** for the menu, or **`bw something`** to search the vault for it str
 | <kbd>⌘</kbd><kbd>Y</kbd> | Details |
 | <kbd>⌘</kbd><kbd>K</kbd> | All actions for the item (configurable) |
 | <kbd>⌘</kbd><kbd>P</kbd> · <kbd>⌘</kbd><kbd>R</kbd> · <kbd>⌘</kbd><kbd>L</kbd> | Folder picker · Sync · Lock |
-| <kbd>⌘</kbd><kbd>[</kbd> | Back to the main Alfred search (configurable) |
+| <kbd>⌘</kbd><kbd>[</kbd> | Back one screen; from the first screen, return to the Bitwarden command menu (configurable) |
 | <kbd>⎋</kbd> | Close a popup, or close the window |
 
 Every window's footer shows its main shortcuts.
@@ -305,6 +305,6 @@ This project is an independent Alfred implementation. It is not affiliated with 
 
 [MIT](LICENSE). Third-party assets are covered by [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Bitwarden is a trademark of Bitwarden Inc.
 
-Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Every Back button and shortcut, including sheets, closes the workflow UI and returns to the main Alfred search.
+Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Back returns one screen at a time. Sheets close to their parent view; Back from the first screen returns to the Bitwarden command menu.
 
 Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.

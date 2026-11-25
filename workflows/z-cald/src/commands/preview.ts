@@ -1,3 +1,4 @@
+import { forward } from "../navigation.ts";
 import { emptyPreview, previewPanel } from "../../ui/quick-preview.ts";
 import { randomUUID } from "node:crypto";
 import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
@@ -117,7 +118,7 @@ export const previewJoin = async ([index = ""]: string[]): Promise<Action> => {
   }
   if (data.day !== process.env.cal_selected || !Array.isArray(data.links)) return {};
   const links = data.links.map((link) => meetingLink(String(link.url))).filter((link) => !!link);
-  if (!links.length) return finish({ cal_out: "agenda", cal_day: data.day });
+  if (!links.length) return forward("quick", "agenda", data.day);
   if (links.length > 1 && !index)
     return popup(
       "actionsButton",

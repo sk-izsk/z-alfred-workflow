@@ -84,9 +84,13 @@ const paste = async (): Promise<string> => {
   return "";
 };
 
-/** Back shortcut (default ⌘[) in a window: return to the main Alfred search. */
+/** Back shortcut (default ⌘[) in a window: return to the Bitwarden command menu. */
 const back = async (): Promise<string> => {
-  await run("/usr/bin/osascript", ["-e", 'tell application id "com.runningwithcrayons.Alfred" to search ""']);
+  await run("/usr/bin/osascript", [
+    "-e",
+    'on run argv\ntell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)\nend run',
+    `${str("kw_main", "bw")} `,
+  ]);
   return "";
 };
 

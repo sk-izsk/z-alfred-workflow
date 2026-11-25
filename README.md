@@ -6,11 +6,11 @@ source, documentation, assets and package configuration under `workflows/`.
 
 | Workflow | What it does | Install the existing release |
 | --- | --- | --- |
-| [Bitwarden](workflows/z-bitwarden) | Search your vault, generate passwords, use authenticator codes and manage Sends | [Bitwarden 1.0.0](https://github.com/sk-izsk/z-bitwarden/releases/tag/v1.0.0) |
-| [VS Code](workflows/z-vscode) | Open projects, manage extensions and themes, and clone repositories across supported editors | [VS Code 0.1.0](https://github.com/sk-izsk/z-vscode-workflow/releases/tag/v0.1.0) |
-| [Calendar](workflows/z-cald) | Browse months, join upcoming meetings and create events in macOS Calendar | [Calendar 0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-cald%2Fv0.1.0) |
-| [Brew](workflows/z-brew) | Search packages, review upgrades, adopt apps and manage services and taps | Initial release pending |
-| [Speed Test](workflows/z-speedtest) | Live Ookla speed meters, connection details and image export | [Speed Test 0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-speedtest%2Fv0.1.0) |
+| [Bitwarden](workflows/z-bitwarden) | Search your vault, generate passwords, use authenticator codes and manage Sends | [Bitwarden 1.0.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-bitwarden%2Fv1.0.2) |
+| [VS Code](workflows/z-vscode) | Open projects, manage extensions and themes, and clone repositories across supported editors | [VS Code 0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-vscode%2Fv0.1.2) |
+| [Calendar](workflows/z-cald) | Browse months, join upcoming meetings and create events in macOS Calendar | [Calendar 0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-cald%2Fv0.1.2) |
+| [Brew](workflows/z-brew) | Search packages, review upgrades, adopt apps and manage services and taps | [Brew 0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-brew%2Fv0.1.2) |
+| [Speed Test](workflows/z-speedtest) | Live Ookla speed meters, connection details and image export | [Speed Test 0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-speedtest%2Fv0.1.2) |
 | [GitHub & Git](workflows/z-github) | GitHub activity, full-history My PRs and local repositories | Initial release pending |
 
 Download a `.alfredworkflow` asset and double-click it to install. These workflows require macOS,

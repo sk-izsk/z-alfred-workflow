@@ -123,11 +123,6 @@
                         "src": {
                           "sheet": {
                             "close": "newSendSheet"
-                          },
-                          "finish": {
-                            "variables": {
-                              "bw_out": "back"
-                            }
                           }
                         }
                       }
@@ -362,11 +357,6 @@
                                 "src": {
                                   "sheet": {
                                     "close": "newSendSheet"
-                                  },
-                                  "finish": {
-                                    "variables": {
-                                      "bw_out": "back"
-                                    }
                                   }
                                 }
                               }
@@ -430,11 +420,6 @@
                         "src": {
                           "sheet": {
                             "close": "receiveSheet"
-                          },
-                          "finish": {
-                            "variables": {
-                              "bw_out": "back"
-                            }
                           }
                         }
                       }
@@ -548,11 +533,6 @@
                                 "src": {
                                   "sheet": {
                                     "close": "receiveSheet"
-                                  },
-                                  "finish": {
-                                    "variables": {
-                                      "bw_out": "back"
-                                    }
                                   }
                                 }
                               }
@@ -609,19 +589,6 @@
                       ]
                     }
                   ]
-                }
-              }
-            }
-          }
-        },
-        {
-          "shortcut": "{var:back_shortcut}",
-          "action": {
-            "type": "json",
-            "src": {
-              "finish": {
-                "variables": {
-                  "bw_out": "back"
                 }
               }
             }
@@ -899,11 +866,6 @@
                                     "src": {
                                       "sheet": {
                                         "close": "receiveSheet"
-                                      },
-                                      "finish": {
-                                        "variables": {
-                                          "bw_out": "back"
-                                        }
                                       }
                                     }
                                   }
@@ -1017,11 +979,6 @@
                                             "src": {
                                               "sheet": {
                                                 "close": "receiveSheet"
-                                              },
-                                              "finish": {
-                                                "variables": {
-                                                  "bw_out": "back"
-                                                }
                                               }
                                             }
                                           }
@@ -1114,11 +1071,6 @@
                                     "src": {
                                       "sheet": {
                                         "close": "newSendSheet"
-                                      },
-                                      "finish": {
-                                        "variables": {
-                                          "bw_out": "back"
-                                        }
                                       }
                                     }
                                   }
@@ -1353,11 +1305,6 @@
                                             "src": {
                                               "sheet": {
                                                 "close": "newSendSheet"
-                                              },
-                                              "finish": {
-                                                "variables": {
-                                                  "bw_out": "back"
-                                                }
                                               }
                                             }
                                           }

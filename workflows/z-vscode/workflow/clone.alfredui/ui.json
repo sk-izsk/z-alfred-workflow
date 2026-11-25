@@ -97,19 +97,6 @@
               }
             }
           }
-        },
-        {
-          "shortcut": "{var:back_shortcut}",
-          "action": {
-            "type": "json",
-            "src": {
-              "finish": {
-                "variables": {
-                  "vsc_out": "back"
-                }
-              }
-            }
-          }
         }
       ],
       "components": [
