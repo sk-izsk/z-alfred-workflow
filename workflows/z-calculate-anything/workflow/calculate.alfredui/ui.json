@@ -1,0 +1,131 @@
+{
+  "bundleid": "com.izsk.calculate-anything",
+  "variablesconfig": {
+    "calcany_session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "calcany_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    }
+  },
+  "window": {
+    "title": "Calculate Anything",
+    "size": {
+      "height": 450
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": {
+            "type": "script",
+            "src": "../bin/calcany",
+            "args": [
+              "launch",
+              "{var:calcany_session}"
+            ],
+            "async": true
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/calcany",
+            "args": [
+              "menu",
+              "{var:calcany_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/calcany",
+            "args": [
+              "refresh",
+              "{var:calcany_session}"
+            ],
+            "async": true
+          }
+        }
+      ],
+      "components": [
+        {
+          "id": "statusLabel",
+          "type": "label",
+          "text": "Loading calculator…",
+          "constraints": {
+            "region": "centre",
+            "position": "centre"
+          }
+        },
+        {
+          "id": "initialBack",
+          "type": "button",
+          "text": "Back  {var:back_shortcut}",
+          "bordered": false,
+          "shortcut": "{var:back_shortcut}",
+          "constraints": {
+            "region": "bottom",
+            "position": "left",
+            "insets": {
+              "left": 16,
+              "bottom": 16
+            }
+          },
+          "events": [
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "json",
+                "src": {
+                  "finish": {
+                    "variables": {
+                      "calcany_out": "back"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
