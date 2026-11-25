@@ -68,6 +68,33 @@ export const print = (action: Action): void => {
   process.stdout.write(JSON.stringify(action));
 };
 
-export const sheet = (id: string, root: Action, closeOnEscape = true): Action => ({
-  sheet: { id, closeonescape: closeOnEscape, root },
-});
+export const sheet = (id: string, root: Action, closeOnEscape = true): Action => {
+  const back: Action = {
+    type: "json",
+    src: { sheet: { close: id }, finish: { variables: { cal_out: "back" } } },
+  };
+  return {
+    sheet: {
+      id,
+      closeonescape: closeOnEscape,
+      root: {
+        type: "view",
+        layout: "border",
+        spacing: 4,
+        shortcuts: [{ shortcut: "{var:back_shortcut}", action: back }],
+        components: [
+          { ...root, constraints: { ...(root.constraints as Action | undefined), region: "centre" } },
+          {
+            id: `${id}Back`,
+            type: "button",
+            text: "Back  {var:back_shortcut}",
+            bordered: false,
+            shortcut: "{var:back_shortcut}",
+            constraints: { region: "bottom", position: "left", insets: { left: 16, bottom: 12 } },
+            events: [{ triggers: "actioned", action: back }],
+          },
+        ],
+      },
+    },
+  };
+};

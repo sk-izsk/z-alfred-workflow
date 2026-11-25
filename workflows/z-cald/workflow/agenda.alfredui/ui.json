@@ -208,10 +208,11 @@
                   }
                 }
               ],
+              "shortcut": "{var:back_shortcut}",
               "font": {
                 "size": 26
               },
-              "tooltip": "Back to Calendar menu ⌘[",
+              "tooltip": "Back {var:back_shortcut}",
               "constraints": {
                 "region": "left",
                 "position": "centre"
@@ -622,6 +623,28 @@
                   },
                   "components": [
                     {
+                      "id": "footerBack",
+                      "type": "button",
+                      "text": "Back  {var:back_shortcut}",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "json",
+                            "src": {
+                              "finish": {
+                                "variables": {
+                                  "cal_out": "back"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ],
+                      "shortcut": "{var:back_shortcut}"
+                    },
+                    {
                       "id": "accessButton",
                       "type": "button",
                       "text": "Allow Access",
@@ -740,6 +763,31 @@
                 }
               ],
               "shortcut": "⇧⌘C",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "closeWindowKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "finish": {}
+                    }
+                  }
+                }
+              ],
+              "shortcut": "⌘W",
               "opacity": 0,
               "constraints": {
                 "size": {

@@ -73,3 +73,8 @@ The Alfred implementation is independent and uses native Alfred UI controls. See
 
 This workflow was built with the help of AI tools. Review it before use and report issues on the
 [project issue tracker](https://github.com/sk-izsk/z-alfred-workflow/issues).
+
+Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Every Back button and shortcut, including sheets, closes the workflow UI and returns to the main Alfred search.
+Screenshots use illustrative data.
+
+Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.

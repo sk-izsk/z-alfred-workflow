@@ -800,6 +800,7 @@
                       }
                     }
                   ],
+                  "shortcut": "{var:back_shortcut}",
                   "constraints": {
                     "position": "centre"
                   }

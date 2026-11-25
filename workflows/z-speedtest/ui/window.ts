@@ -156,6 +156,8 @@ export const speedtestWindow = {
   log: { level: "error", internal: true },
   variablesconfig: {
     session: { default: "", scriptenv: true },
+    launch_view: { src: "args[0]", default: "", scriptenv: true },
+    back_shortcut: { src: "variable", default: "⌘[" },
     mode: { default: "meter", persist: true, scriptenv: true },
     details: { default: "1", persist: true, scriptenv: true },
     selection: { default: "ping", scriptenv: true },
@@ -180,6 +182,7 @@ export const speedtestWindow = {
       shortcuts: [
         { shortcut: "{var:actions_shortcut}", action: run("actions") },
         { shortcut: "⌘R", action: run("restart") },
+        { shortcut: "{var:back_shortcut}", action: run("back") },
         { shortcut: "⌘L", action: run("view") },
         { shortcut: "↓", action: { type: "function", src: "results", args: "selectnext" } },
         { shortcut: "↑", action: { type: "function", src: "results", args: "selectprevious" } },
@@ -193,12 +196,13 @@ export const speedtestWindow = {
           constraints: { region: "top" },
           components: [
             {
-              ...button("backButton", "‹", json({ finish: {} })),
+              ...button("backButton", "‹", run("back"), "{var:back_shortcut}"),
               font: { size: 28 },
               constraints: { region: "left" },
             },
             {
               id: "searchField",
+              background: null,
               type: "textfield",
               placeholder: "Search…",
               focus: true,
@@ -246,11 +250,27 @@ export const speedtestWindow = {
                   spacing: 16,
                   constraints: { region: "right" },
                   components: [
+                    button(
+                      "footerBack",
+                      "Back  {var:back_shortcut}",
+                      json({ finish: { variables: { speedtest_out: "back" } } }),
+                      "{var:back_shortcut}",
+                    ),
                     button("primaryButton", "Show Detailed List  ↩", run("primary"), "↩"),
                     button("actionsButton", "Actions  ⌘K", run("actions")),
                   ],
                 },
               ],
+            },
+            {
+              ...button(
+                "closeWindowKey",
+                "",
+                json({ finish: { variables: { speedtest_out: "back" } } }),
+                "⌘W",
+              ),
+              opacity: 0,
+              constraints: { size: { width: 0, height: 0 } },
             },
             hidden("copyKey", "⌘C", "copy-summary"),
             hidden("copySectionKey", "⇧⌘C", "copy-section"),

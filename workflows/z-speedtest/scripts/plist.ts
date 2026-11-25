@@ -109,6 +109,12 @@ export const infoPlist = {
       "",
       "Optional absolute path if Node.js is not detected. Bun is also supported.",
     ),
+    text(
+      "back_shortcut",
+      "Back shortcut",
+      "⌘[",
+      "Return to the main Alfred search from every view and sheet.",
+    ),
     text("actions_shortcut", "Actions shortcut", "⌘K", "Open the action menu."),
     {
       type: "popupbutton",

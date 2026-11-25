@@ -1,0 +1,280 @@
+{
+  "bundleid": "com.izsk.github",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "g_session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "g_mode": {
+      "src": "variable",
+      "default": "repos",
+      "scriptenv": true
+    },
+    "g_form": {
+      "src": "variable",
+      "default": "",
+      "scriptenv": true
+    },
+    "g_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    }
+  },
+  "window": {
+    "title": "GitHub",
+    "size": {
+      "height": 630
+    },
+    "minsize": {
+      "width": 760,
+      "height": 520
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 1040
+                }
+              }
+            }
+          }
+        },
+        {
+          "triggers": "launched",
+          "action": {
+            "type": "script",
+            "src": "../bin/gith",
+            "args": [
+              "launch",
+              "{var:g_session}"
+            ],
+            "async": true
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/gith",
+            "args": [
+              "action",
+              "{var:g_session}",
+              "menu",
+              "{value:items.selected.uid}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/gith",
+            "args": [
+              "refresh",
+              "{var:g_session}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "{var:back_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/gith",
+            "args": [
+              "back",
+              "{var:g_session}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        }
+      ],
+      "components": [
+        {
+          "type": "view",
+          "layout": "border",
+          "padding": 20,
+          "constraints": {
+            "region": "top"
+          },
+          "components": [
+            {
+              "id": "initialBack",
+              "type": "button",
+              "text": "‹",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "finish": {
+                        "variables": {
+                          "github_out": "back"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "shortcut": "{var:back_shortcut}",
+              "font": {
+                "size": 26
+              },
+              "tooltip": "Back to Alfred Search",
+              "constraints": {
+                "region": "left",
+                "position": "centre"
+              }
+            },
+            {
+              "id": "loadingHeading",
+              "type": "label",
+              "text": "GitHub",
+              "font": {
+                "size": 20,
+                "weight": "medium"
+              },
+              "constraints": {
+                "region": "centre",
+                "position": "centre"
+              }
+            }
+          ]
+        },
+        {
+          "type": "view",
+          "layout": "inline",
+          "direction": "vertical",
+          "spacing": 14,
+          "padding": 24,
+          "constraints": {
+            "region": "centre",
+            "position": "centre",
+            "size": {
+              "width": 420,
+              "height": 130
+            }
+          },
+          "components": [
+            {
+              "type": "imageview",
+              "image": {
+                "type": "symbol",
+                "src": "arrow.triangle.2.circlepath",
+                "size": {
+                  "width": 30,
+                  "height": 30
+                }
+              },
+              "contenttintcolour": "systemBlueColor"
+            },
+            {
+              "id": "statusLabel",
+              "type": "label",
+              "text": "Loading GitHub…",
+              "font": {
+                "size": 16,
+                "weight": "medium"
+              },
+              "textalign": "centre",
+              "constraints": {
+                "size": {
+                  "width": 380
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "view",
+          "layout": "border",
+          "padding": 16,
+          "constraints": {
+            "region": "bottom"
+          },
+          "components": [
+            {
+              "id": "loadingBack",
+              "type": "button",
+              "text": "Back  {var:back_shortcut}",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "finish": {
+                        "variables": {
+                          "github_out": "back"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "shortcut": "{var:back_shortcut}",
+              "constraints": {
+                "region": "right"
+              }
+            },
+            {
+              "id": "loadingHint",
+              "type": "label",
+              "text": "Connecting with GitHub CLI",
+              "colour": "secondaryLabelColor",
+              "font": {
+                "size": 12
+              },
+              "constraints": {
+                "region": "left"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

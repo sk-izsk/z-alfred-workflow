@@ -183,10 +183,11 @@
                   }
                 }
               ],
+              "shortcut": "{var:back_shortcut}",
               "font": {
                 "size": 26
               },
-              "tooltip": "Back to Brew menu ⌘[",
+              "tooltip": "Back {var:back_shortcut}",
               "constraints": {
                 "region": "left",
                 "position": "centre"
@@ -682,6 +683,28 @@
                     "position": "centre"
                   },
                   "components": [
+                    {
+                      "id": "footerBack",
+                      "type": "button",
+                      "text": "Back  {var:back_shortcut}",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "json",
+                            "src": {
+                              "finish": {
+                                "variables": {
+                                  "brew_out": "back"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ],
+                      "shortcut": "{var:back_shortcut}"
+                    },
                     {
                       "id": "primaryButton",
                       "type": "button",

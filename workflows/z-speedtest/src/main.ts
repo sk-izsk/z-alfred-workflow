@@ -58,7 +58,8 @@ const begin = (previous: string): Json => {
     writeJson(join(dir, "state.json"), state);
   });
   child.unref();
-  const result = render(state, true);
+  const initial = str("launch_view");
+  const result = render(state, true, ["meter", "list"].includes(initial) ? initial : mode());
   result.variables = { ...(result.variables as Json), session: id };
   return result;
 };
@@ -68,6 +69,15 @@ const clearConfirmation = (): Json => ({
     closeonescape: true,
     root: {
       type: "view",
+      shortcuts: [
+        {
+          shortcut: "{var:back_shortcut}",
+          action: {
+            type: "json",
+            src: { sheet: { close: "clearSheet" }, finish: { variables: { speedtest_out: "back" } } },
+          },
+        },
+      ],
       layout: "inline",
       direction: "vertical",
       padding: 24,
@@ -86,10 +96,16 @@ const clearConfirmation = (): Json => ({
         },
         {
           type: "button",
-          text: "Cancel",
-          shortcut: "⎋",
+          text: "Back  {var:back_shortcut}",
+          shortcut: "{var:back_shortcut}",
           events: [
-            { triggers: "actioned", action: { type: "json", src: { sheet: { close: "clearSheet" } } } },
+            {
+              triggers: "actioned",
+              action: {
+                type: "json",
+                src: { sheet: { close: "clearSheet" }, finish: { variables: { speedtest_out: "back" } } },
+              },
+            },
           ],
         },
       ],
@@ -132,6 +148,12 @@ const main = async (): Promise<Json | undefined> => {
     return;
   }
   if (command === "post") {
+    if (str("speedtest_out") === "back")
+      execFileSync(
+        "/usr/bin/osascript",
+        ["-e", 'tell application id "com.runningwithcrayons.Alfred" to search ""'],
+        { timeout: 5000 },
+      );
     if (str("speedtest_out") === "paste")
       execFileSync(
         "/usr/bin/osascript",
@@ -141,10 +163,13 @@ const main = async (): Promise<Json | undefined> => {
     return;
   }
   if (command === "start") return begin(session);
+  if (command === "back") return { finish: { variables: { speedtest_out: "back" } } };
   if (!session) return {};
   const s = snapshot(session);
   if (command === "primary" && str("last_phase") === "cleared") return begin(session);
   switch (command) {
+    case "back":
+      return { finish: { variables: { speedtest_out: "back" } } };
     case "restart":
       return busy(s) ? {} : begin(session);
     case "poll":

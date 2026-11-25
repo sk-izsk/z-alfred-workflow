@@ -7,3 +7,7 @@
 - Run the affected workflow's `bun run check` and `bun run package` before proposing a merge.
 - Keep secrets, local Alfred preferences, dependencies and compiled bundles out of Git.
 - Use feature branches and PRs into `dev`; use namespaced tags as described in RELEASING.md.
+
+- Every workflow must expose a configurable Back shortcut, default `⌘[`, and a visible Back action
+  in every footer at every UI level, including sheets. Never put Back inside the Actions / ⌘K menu. Follow the VS Code/Bitwarden finish → post pattern: close
+  the current workflow UI and reopen Alfred's main search. Keep Back behavior consistent.

@@ -9,6 +9,15 @@
       "default": "",
       "scriptenv": true
     },
+    "launch_view": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
     "mode": {
       "default": "meter",
       "persist": true,
@@ -127,6 +136,18 @@
           }
         },
         {
+          "shortcut": "{var:back_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/spt",
+            "args": [
+              "back",
+              "{var:session}"
+            ],
+            "async": false
+          }
+        },
+        {
           "shortcut": "⌘L",
           "action": {
             "type": "script",
@@ -170,14 +191,18 @@
               "type": "button",
               "text": "‹",
               "bordered": false,
+              "shortcut": "{var:back_shortcut}",
               "events": [
                 {
                   "triggers": "actioned",
                   "action": {
-                    "type": "json",
-                    "src": {
-                      "finish": {}
-                    }
+                    "type": "script",
+                    "src": "../bin/spt",
+                    "args": [
+                      "back",
+                      "{var:session}"
+                    ],
+                    "async": false
                   }
                 }
               ],
@@ -190,6 +215,7 @@
             },
             {
               "id": "searchField",
+              "background": null,
               "type": "textfield",
               "placeholder": "Search…",
               "focus": true,
@@ -278,6 +304,28 @@
                   },
                   "components": [
                     {
+                      "id": "footerBack",
+                      "type": "button",
+                      "text": "Back  {var:back_shortcut}",
+                      "bordered": false,
+                      "shortcut": "{var:back_shortcut}",
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "json",
+                            "src": {
+                              "finish": {
+                                "variables": {
+                                  "speedtest_out": "back"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
                       "id": "primaryButton",
                       "type": "button",
                       "text": "Show Detailed List  ↩",
@@ -321,6 +369,35 @@
                   ]
                 }
               ]
+            },
+            {
+              "id": "closeWindowKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "shortcut": "⌘W",
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "finish": {
+                        "variables": {
+                          "speedtest_out": "back"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
             },
             {
               "id": "copyKey",

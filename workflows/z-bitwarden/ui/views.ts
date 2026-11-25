@@ -541,6 +541,12 @@ const newSendSheet = json({
   sheet: {
     id: "newSendSheet",
     root: {
+      shortcuts: [
+        {
+          shortcut: "{var:back_shortcut}",
+          action: json({ sheet: { close: "newSendSheet" }, finish: { variables: { bw_out: "back" } } }),
+        },
+      ],
       type: "view",
       layout: "inline",
       direction: "vertical",
@@ -624,7 +630,10 @@ const newSendSheet = json({
         },
         sheetStatus,
         buttonRow([
-          button("Cancel", json({ sheet: { close: "newSendSheet" } })),
+          button(
+            "Back  {var:back_shortcut}",
+            json({ sheet: { close: "newSendSheet" }, finish: { variables: { bw_out: "back" } } }),
+          ),
           button(
             "Create & Copy Link",
             [
@@ -656,6 +665,12 @@ const receiveSheet = json({
   sheet: {
     id: "receiveSheet",
     root: {
+      shortcuts: [
+        {
+          shortcut: "{var:back_shortcut}",
+          action: json({ sheet: { close: "receiveSheet" }, finish: { variables: { bw_out: "back" } } }),
+        },
+      ],
       type: "view",
       layout: "inline",
       direction: "vertical",
@@ -687,8 +702,17 @@ const receiveSheet = json({
         },
         sheetStatus,
         buttonRow([
-          button("Close", json({ sheet: { close: "receiveSheet" } })),
-          button("Copy Text", json({ copy: { type: "text", src: "{value:receivedText.text}" } })),
+          button(
+            "Back  {var:back_shortcut}",
+            json({ sheet: { close: "receiveSheet" }, finish: { variables: { bw_out: "back" } } }),
+          ),
+          button(
+            "Copy Text",
+            json(
+              { copy: { type: "text", src: "{var:received_copy}" } },
+              { received_copy: "{value:receivedText.text}" },
+            ),
+          ),
           button("Receive", receiveAction),
         ]),
       ],

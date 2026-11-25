@@ -11,6 +11,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Calendar](workflows/z-cald) | Browse months, join upcoming meetings and create events in macOS Calendar | [Calendar 0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-cald%2Fv0.1.0) |
 | [Brew](workflows/z-brew) | Search packages, review upgrades, adopt apps and manage services and taps | Initial release pending |
 | [Speed Test](workflows/z-speedtest) | Live Ookla speed meters, connection details and image export | [Speed Test 0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-speedtest%2Fv0.1.0) |
+| [GitHub & Git](workflows/z-github) | GitHub activity, full-history My PRs and local repositories | Initial release pending |
 
 Download a `.alfredworkflow` asset and double-click it to install. These workflows require macOS,
 Alfred 6 with the Powerpack and Node.js; see each workflow's README for its other requirements.
@@ -23,6 +24,7 @@ workflows/
   z-bitwarden/       Source, tests, screenshots, build scripts and workflow files
   z-vscode/          Source, tests, screenshots, build scripts and workflow files
   z-cald/            Quick calendar, upcoming meetings and event creation
+  z-github/          GitHub activity, pull requests and local repositories
   z-speedtest/       Live internet speed meters and connection details
   z-brew/            Homebrew packages, upgrades, adoption and diagnostics
 .github/             Shared CI, independent releases and contribution templates

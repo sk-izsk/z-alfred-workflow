@@ -319,7 +319,7 @@ const userconfigurationconfig = [
     "back_shortcut",
     "Back Shortcut",
     "⌘[",
-    "Closes the window and returns to the bw menu. ⎋ can't do this: Alfred closes its windows on ⎋ itself.",
+    "Closes the workflow UI and returns to the main Alfred search. ⎋ can't do this: Alfred closes its windows on ⎋ itself.",
   ),
   pick(
     "enter_action",

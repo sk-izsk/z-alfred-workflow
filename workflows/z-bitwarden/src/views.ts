@@ -272,7 +272,7 @@ export const detailsSheet = (
       },
       fields.length > 0 && table,
       notes !== "" && notesArea,
-      label("↩ Copy field   ⌘1–⌘9 Copy by number   ⎋ Back", {
+      label("↩ Copy field   ⌘1–⌘9 Copy by number   ⎋ Close sheet", {
         colour: "tertiaryLabelColor",
         font: { size: "small" },
       }),

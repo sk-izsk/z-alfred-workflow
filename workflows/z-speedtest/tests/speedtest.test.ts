@@ -188,3 +188,12 @@ test("closing cancels the CLI and releases the single-test lock", async () => {
   expect(existsSync(join(cache, "running"))).toBe(false);
   expect(existsSync(marker)).toBe(false);
 }, 10000);
+
+test("Back exits to Alfred search from both speed-test views", () => {
+  for (const mode of ["meter", "list"]) {
+    expect(
+      command({ ...envFor(join(root, "back-cache"), "/missing"), mode }, "back", "").finish.variables
+        .speedtest_out,
+    ).toBe("back");
+  }
+});

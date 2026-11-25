@@ -135,7 +135,7 @@ test("hidden shortcuts do not consume inline footer spacing", () => {
   expect(result.layout).toBe("stack");
   expect(layers[1]?.id).toBe("shortcut");
   expect(layers[0]?.padding).toBe(14);
-  expect(layers[0]?.components[1].components.map((item: any) => item.id)).toEqual(["action"]);
+  expect(layers[0]?.components[1].components.map((item: any) => item.id)).toEqual(["footerBack", "action"]);
 });
 
 test("plain arrow keys move the selected day and cross month/year boundaries", async () => {
