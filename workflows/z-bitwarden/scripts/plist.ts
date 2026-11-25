@@ -383,6 +383,14 @@ const userconfigurationconfig = [
   ),
   text("vault_timeout", "Lock After", "15", "Minutes of inactivity before the vault locks. 0 = never."),
   check("lock_on_sleep", "", "Also lock when the Mac sleeps or restarts", true),
+  check("lock_on_screen_lock", "", "Also lock when the screen locks", true),
+  check(
+    "background_agent",
+    "Background Agent",
+    "Enforce the locks even while the workflow is closed (a small LaunchAgent, every 30 s)",
+    true,
+  ),
+  check("background_sync", "", "Sync in the background while unlocked, so opening needs no sync", true),
   pick(
     "quick_unlock",
     "Quick Unlock",

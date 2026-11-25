@@ -75,6 +75,39 @@ export const login = async ([view = "search", clientId = "", server = ""]: strin
   }
 };
 
+/** Email + master password, then a two-step or new-device code if Bitwarden asks for one. */
+export const loginPassword = async ([
+  view = "search",
+  email = "",
+  server = "",
+  method = "",
+]: string[]): Promise<Action> => {
+  const password = process.env.secret_input ?? "";
+  const code = process.env.secret_pin ?? "";
+  try {
+    if (!email.trim() || !password) throw new Error("Enter your email and master password");
+    if (!(method in session.TWO_STEP_METHODS)) throw new Error("Unknown two-step method");
+    await session.loginWithPassword(email, password, method as session.TwoStepMethod, code, server);
+    return merge(closeSheet("authSheet"), clearSecrets, await authSheet(view as View));
+  } catch (error) {
+    return sheetError(new Error(loginHint(error, Boolean(code))));
+  }
+};
+
+/** bw's terse login errors, turned into what to do next. */
+export const loginHint = (error: unknown, hadCode: boolean): string => {
+  const text = error instanceof BwError ? `${error.message} ${error.stderr}` : String(error);
+  if (/no provider selected/i.test(text))
+    return "This account has several two-step methods. Pick one, then Log In.";
+  if (/code is required/i.test(text))
+    return hadCode
+      ? "Bitwarden didn't accept that code. Check it and try again."
+      : "Bitwarden needs a code. If you use two-step login, pick its method and enter the code. Otherwise enter the new-device code Bitwarden emailed you. Then Log In again.";
+  if (/username or password is incorrect|invalid_grant/i.test(text))
+    return "Email or master password is incorrect";
+  return error instanceof Error ? error.message : text;
+};
+
 export const unlock = async ([view = "search"]: string[]): Promise<Action> => {
   const master = process.env.secret_input ?? "";
   const pin = process.env.secret_pin ?? "";

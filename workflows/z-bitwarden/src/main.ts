@@ -32,6 +32,8 @@ const ui: Record<string, Command> = {
   "set-totp": item.setTotp,
   "account-add": search.addAccount,
   "account-switch": search.switchAccount,
+  "login-sheet": async ([view = "search", method = "password"]) =>
+    (await import("./views.ts")).loginSheet(view as never, method === "apikey" ? "apikey" : "password"),
   "lock-ui": async () => {
     await session.lock();
     return merge(
@@ -44,6 +46,7 @@ const ui: Record<string, Command> = {
   },
   // accounts (any window)
   login: account.login,
+  "login-password": account.loginPassword,
   unlock: account.unlock,
   "quick-unlock": account.quickUnlock,
   reprompt: account.reprompt,
@@ -81,6 +84,8 @@ const scripts: Record<string, (args: string[]) => Promise<void>> = {
   "gen-quick": gen.genQuick,
   "create-folder": create.createFolder,
   "fetch-icons": (hosts) => fetchIcons(hosts),
+  /** The LaunchAgent, every 30 s: enforce the locks and sync in the background. */
+  "agent-tick": async () => (await import("./agent.ts")).agentTick(),
   /** Detached helper from clipboard.scheduleClear. */
   "clear-after": async ([seconds = "0", count = "0"]) => {
     await sleep(Number(seconds) * 1000);

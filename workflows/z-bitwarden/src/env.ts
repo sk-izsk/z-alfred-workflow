@@ -102,7 +102,8 @@ export const readAccounts = (): Accounts => {
 export const writeAccounts = (accounts: Accounts): void =>
   writeFileAtomic(accountsPath(), JSON.stringify(accounts));
 
-export const accountId = (): string => readAccounts().active || DEFAULT_ACCOUNT;
+/** The background agent visits each account in turn by setting `bw_account` in its own process. */
+export const accountId = (): string => process.env.bw_account || readAccounts().active || DEFAULT_ACCOUNT;
 
 /** `name` for the default account, `name-<id>` for the others (files, Keychain entries). */
 export const perAccountId = (name: string, id: string): string =>

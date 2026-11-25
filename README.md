@@ -6,7 +6,7 @@ source, documentation, assets and package configuration under `workflows/`.
 
 | Workflow | What it does | Install the existing release |
 | --- | --- | --- |
-| [Bitwarden](workflows/z-bitwarden) | Search your vault, generate passwords, use authenticator codes and manage Sends | [Bitwarden 1.0.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-bitwarden%2Fv1.0.2) |
+| [Bitwarden](workflows/z-bitwarden) | Search your vault, generate passwords, use authenticator codes and manage Sends. Two-step login, background locking and sync, and Firefox support | [Bitwarden 1.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-bitwarden%2Fv1.1.0) |
 | [VS Code](workflows/z-vscode) | Open projects, manage extensions and themes, and clone repositories across supported editors | [VS Code 0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-vscode%2Fv0.1.2) |
 | [Calendar](workflows/z-cald) | Browse months, join upcoming meetings and create events in macOS Calendar | [Calendar 0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-cald%2Fv0.1.2) |
 | [Brew](workflows/z-brew) | Search packages, review upgrades, adopt apps and manage services and taps | [Brew 0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-brew%2Fv0.1.2) |

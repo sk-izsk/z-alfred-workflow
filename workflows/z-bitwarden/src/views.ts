@@ -74,34 +74,74 @@ const withSecrets = (secrets: Record<string, string>, args: string[]): Action[] 
   script(args),
 ];
 
-export const loginSheet = (view: View): Action => {
-  const submit = withSecrets({ secret_input: "{value:clientSecretField.text}" }, [
-    "login",
-    view,
-    "{value:clientIdField.text}",
-    "{value:serverField.text}",
-  ]);
+export type LoginMethod = "password" | "apikey";
+
+/**
+ * Email + master password keeps two-step login in force, so it is the default.
+ * The API key skips two-step login; it stays for accounts that need it.
+ */
+export const loginSheet = (view: View, method: LoginMethod = "password"): Action => {
+  const apiKey = method === "apikey";
+  const submit = apiKey
+    ? withSecrets({ secret_input: "{value:clientSecretField.text}" }, [
+        "login",
+        view,
+        "{value:clientIdField.text}",
+        "{value:serverField.text}",
+      ])
+    : withSecrets({ secret_input: "{value:masterField.text}", secret_pin: "{value:codeField.text}" }, [
+        "login-password",
+        view,
+        "{value:emailField.text}",
+        "{value:serverField.text}",
+        "{value:twoStepField.selected.value}",
+      ]);
+  const fields = apiKey
+    ? [
+        muted(
+          "Use your personal API key: web vault → Settings → Security → Keys → View API key. It skips two-step login.",
+        ),
+        field("serverField", "Server URL (blank = bitwarden.com)", { text: str("server_url") }),
+        field("clientIdField", "client_id", { focus: true }),
+        secretField("clientSecretField", "client_secret", submit),
+      ]
+    : [
+        muted(
+          "Log in with your email and master password. Leave the code blank: if Bitwarden asks for one, it says so here (and emails it when that is the method).",
+        ),
+        field("serverField", "Server URL (blank = bitwarden.com)", { text: str("server_url") }),
+        field("emailField", "Email", { focus: true }),
+        secretField("masterField", "Master password", submit),
+        {
+          id: "twoStepField",
+          type: "picker",
+          items: [
+            { text: "Two-step login: automatic", value: "" },
+            { text: "Authenticator app", value: "authenticator" },
+            { text: "Email code", value: "email" },
+            { text: "YubiKey OTP", value: "yubikey" },
+          ],
+        },
+        secretField("codeField", "Two-step or new-device code", submit),
+      ];
   return sheet(
     "authSheet",
     column(
       [
         logo,
         title("Log in to Bitwarden"),
-        muted("Use your personal API key: web vault → Settings → Security → Keys → View API key."),
-        field("serverField", "Server URL (blank = bitwarden.com)", { text: str("server_url") }),
-        field("clientIdField", "client_id", { focus: true }),
-        secretField("clientSecretField", "client_secret", submit),
+        ...fields,
         sheetStatus,
         buttons(
-          button("Open Web Vault", {
-            type: "json",
-            src: { open: { type: "url", src: str("server_url") || "https://vault.bitwarden.com" } },
-          }),
+          button(
+            apiKey ? "Use Email & Password" : "Use API Key",
+            script(["login-sheet", view, apiKey ? "password" : "apikey"]),
+          ),
           button("Cancel", closeWindow),
           button("Log In", submit),
         ),
       ],
-      380,
+      400,
     ),
   );
 };
