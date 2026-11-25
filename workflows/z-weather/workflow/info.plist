@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.izsk.weather</string>
+	<key>category</key>
+	<string>Tools</string>
+	<key>connections</key>
+	<dict>
+		<key>KEYWORD</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>MODE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>MODE</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>UI</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>TRIGGER</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>MODE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>UI</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>POST</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>izsk</string>
+	<key>description</key>
+	<string>Saved cities and detailed current weather and forecasts in Alfred 6</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Weather</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>keyword</key>
+				<string>{var:kw_main}</string>
+				<key>subtext</key>
+				<string>Saved cities, current conditions and forecasts</string>
+				<key>text</key>
+				<string>Weather</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>KEYWORD</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>availableviaurlscheme</key>
+				<true/>
+				<key>triggerid</key>
+				<string>open</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>TRIGGER</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>json</key>
+				<string>{"alfredworkflow":{"arg":"{query}","config":{"launchmode":"{var:launch_external}"}}}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.json</string>
+			<key>uid</key>
+			<string>MODE</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>launchmode</key>
+				<integer>0</integer>
+				<key>path</key>
+				<string>weather.alfredui</string>
+				<key>stackview</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.userinterface.alfredui</string>
+			<key>uid</key>
+			<string>UI</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>./bin/wthr post</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>POST</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>Type weather to browse saved cities, or weather London to open a report directly. Add multiple predefined cities in Workflow Configuration, separated by semicolons, or use Actions → Add City. Use the country name when cities share a name; the detail header shows the location actually returned by wttr.in.
+
+Use arrows and Return, Command-K for actions, Command-R to refresh, and Command-[ to go Back one level. Details opened from the city list return to the same list/search; direct reports return to Alfred search. Sheets close to their parent. Back stays visible in every footer.
+
+The left half shows current conditions and native Hourly/Daily forecast cards with left/right navigation arrows. The right half shows seven measurement rows with up/down arrows, without scrollbars. Details include AQI (US), feels-like temperature, humidity, cloud cover, wind, UV, pressure, visibility, precipitation, coordinates, sun/moon information and low/high temperatures. Choose another available date for a noon forecast; Hourly Forecast shows local forecast slots. Metric/imperial units are supported.
+
+Weather comes from wttr.in (the provider used by the Raycast reference). Reports cache for ten minutes; refresh bypasses the cache. If refresh fails, a cached report is explicitly marked. Dates and observation times come from the service, and forecasts are estimates. City queries and your IP are visible to wttr.in. AQI comes from Open-Meteo / CAMS, uses a fifteen-minute cache and is modeled regional data. Resolved city coordinates and your IP are sent to Open-Meteo; no device location permission is requested.
+
+Requires Alfred 6 Powerpack, macOS, Node.js 22+ or Bun, and an internet connection for new reports. No API key or runtime software installation is required.
+
+The icon and inspiration come from Raycast Weather by tonka3000 and contributors (MIT). See THIRD_PARTY_NOTICES.md. This workflow was built with the help of AI tools. Review it before use and report issues on the project page.</string>
+	<key>uidata</key>
+	<dict>
+		<key>KEYWORD</key>
+		<dict>
+			<key>xpos</key>
+			<integer>0</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
+		<key>MODE</key>
+		<dict>
+			<key>xpos</key>
+			<integer>380</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
+		<key>POST</key>
+		<dict>
+			<key>xpos</key>
+			<integer>760</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
+		<key>TRIGGER</key>
+		<dict>
+			<key>xpos</key>
+			<integer>190</integer>
+			<key>ypos</key>
+			<integer>180</integer>
+		</dict>
+		<key>UI</key>
+		<dict>
+			<key>xpos</key>
+			<integer>570</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>weather</string>
+				<key>placeholder</key>
+				<string>weather</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Open saved cities; append a city for its weather report.</string>
+			<key>label</key>
+			<string>Weather keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>kw_main</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>Toronto, Canada; London, United Kingdom</string>
+				<key>placeholder</key>
+				<string>Toronto, Canada; London, United Kingdom</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Separate locations with semicolons; include countries to reduce ambiguity. More cities can be saved in the UI.</string>
+			<key>label</key>
+			<string>Predefined cities</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>cities</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>metric</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Metric (°C, km/h)</string>
+						<string>metric</string>
+					</array>
+					<array>
+						<string>Imperial (°F, mph)</string>
+						<string>imperial</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>Can be changed in the details screen.</string>
+			<key>label</key>
+			<string>Default units</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>units</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>⌘K</string>
+				<key>placeholder</key>
+				<string>⌘K</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Open weather/location actions.</string>
+			<key>label</key>
+			<string>Actions shortcut</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>actions_shortcut</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>⌘[</string>
+				<key>placeholder</key>
+				<string>⌘[</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Retrace city-list and details navigation; sheets return to their parent.</string>
+			<key>label</key>
+			<string>Back shortcut</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>back_shortcut</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>0</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Inside Alfred</string>
+						<string>0</string>
+					</array>
+					<array>
+						<string>Separate window</string>
+						<string>1</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>Choose Alfred’s window or a separate window.</string>
+			<key>label</key>
+			<string>Open window</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>launch_external</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Optional absolute path if automatic discovery fails.</string>
+			<key>label</key>
+			<string>Node.js executable</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>node_path</string>
+		</dict>
+	</array>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>0.1.0</string>
+	<key>webaddress</key>
+	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-weather</string>
+</dict>
+</plist>
