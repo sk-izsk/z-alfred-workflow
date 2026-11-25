@@ -5,13 +5,15 @@ Inspired by [Raycast Currency Exchange](https://www.raycast.com/xeric/currency-e
 
 ![Currency conversion and pinned targets](assets/screenshots/conversion.png)
 
-Requires macOS, Alfred 6 Powerpack, Node.js 22+ or Bun. The default provider requires no API key.
+![Bangladeshi taka in the broader no-key table](assets/screenshots/bangladesh.png)
+
+Requires macOS, Alfred 6 Powerpack, Node.js 22+ or Bun. The default provider requires no API key and covers 160+ currencies, including BDT.
 
 ## Use
 
 - **`currency`** converts 1 unit of the configured base currency.
 - **`currency 100+24/12`** converts 102 units.
-- **`currency 100 in Canada`** filters targets by currency name, code or country.
+- **`currency 100 in Bangladesh`** filters targets by currency name, code or country.
 - Choose the base currency from the top-right picker. Pinned targets appear first.
 - Return copies the selected result with four decimal places; Copy Full Conversion includes both codes
   and the provider's rate date. Display values use up to four decimal places.
@@ -30,6 +32,7 @@ Workflow Configuration includes provider, API key, default base currency, keywor
 
 | Provider | Key | Coverage / history |
 | --- | --- | --- |
+| ExchangeRate-API Open Access (default) | None | 160+ currencies, daily; no history |
 | AllRatesToday ECB reference | None | About 30 currencies, daily reference rates; no history |
 | ExchangeRate-API | Required | Broader coverage; history requires a supporting plan |
 | UniRateAPI | Required | Broader coverage; history depends on the API and plan |
@@ -44,6 +47,10 @@ Use **Actions → Set Currency Date** or append **`at 2021/9/25`** for history. 
 it. Unsupported history, quota/key errors and unverified dates show an error. Current rates are never
 presented as a historical result. Keyed provider responses are validated but live authenticated
 requests need your key and have not been tested in this checkout.
+
+[Open Access documentation](https://www.exchangerate-api.com/docs/free). Rates By
+[Exchange Rate API](https://www.exchangerate-api.com). The live table was verified with 166 currencies,
+including BDT, PKR, NPR and LKR. ECB remains an optional smaller reference table.
 
 Rates cache for one hour by provider/key/date. Failed refresh falls back only to the same cached table
 and marks it stale. Provider timestamps are preserved; if a provider supplies no timestamp, the UI
@@ -74,3 +81,9 @@ MIT icon, currency/country catalog and feature reference: Raycast Currency Excha
 taken and contributors, [pinned source](https://github.com/raycast/extensions/tree/e38232e713cc42a58cac81b8d3af9261fd1624e5/extensions/currency-exchange).
 Data belongs to the selected provider. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 Built with help from AI tools; review before use and report issues on the project tracker.
+
+## Swiss launcher integration
+
+When opened from Swiss, the root Back returns to the same launcher search/selection. Child screens
+and sheets still go back one level first. Direct launches keep their normal Back behavior. Install
+Swiss separately; it is optional and does not run this tool until selected.

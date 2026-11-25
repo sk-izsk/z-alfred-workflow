@@ -68,3 +68,9 @@ Prayer calculations: Aladhan. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.m
 
 Built with help from AI tools. Review before use and report issues on the
 [project tracker](https://github.com/sk-izsk/z-alfred-workflow/issues).
+
+## Swiss launcher integration
+
+When opened from Swiss, the root Back returns to the same launcher search/selection. Child screens
+and sheets still go back one level first. Direct launches keep their normal Back behavior. Install
+Swiss separately; it is optional and does not run this tool until selected.

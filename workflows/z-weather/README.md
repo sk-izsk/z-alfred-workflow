@@ -27,9 +27,9 @@ The left half shows a large weather icon, temperature, conditions, high/low, sun
 provider’s observation time (UTC). Its bottom forecast has Hourly/Daily tabs and left/right buttons
 for browsing four time slots at a time. All controls use native Alfred views and theme colors.
 
-The right half shows seven measurement rows at a time, including AQI, feels-like temperature, UV
+The right half shows all eleven measurements across the available height, including AQI, feels-like temperature, UV
 index, pressure, visibility, coordinates, humidity, cloud cover, wind, precipitation and moon
-information. Use the bottom up/down buttons or keyboard arrows for the remaining rows. There are
+information. Arrow controls appear only when additional rows exceed the available page. There are
 no scrollbars and the forecast stays entirely inside the left half.
 
 AQI uses the **US scale**, with a colored category and model timestamp. **Actions → Air Quality
@@ -96,3 +96,9 @@ server code is bundled. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and
 
 This workflow was built with the help of AI tools. Review it before use and report issues on the
 [project tracker](https://github.com/sk-izsk/z-alfred-workflow/issues).
+
+## Swiss launcher integration
+
+When opened from Swiss, the root Back returns to the same launcher search/selection. Child screens
+and sheets still go back one level first. Direct launches keep their normal Back behavior. Install
+Swiss separately; it is optional and does not run this tool until selected.

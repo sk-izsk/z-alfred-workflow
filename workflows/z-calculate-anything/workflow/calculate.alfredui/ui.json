@@ -1,6 +1,9 @@
 {
   "bundleid": "com.izsk.calculate-anything",
   "variablesconfig": {
+    "swiss_return": {
+      "default": ""
+    },
     "calcany_session": {
       "default": "",
       "scriptenv": true
@@ -31,15 +34,26 @@
       "events": [
         {
           "triggers": "launched",
-          "action": {
-            "type": "script",
-            "src": "../bin/calcany",
-            "args": [
-              "launch",
-              "{var:calcany_session}"
-            ],
-            "async": true
-          }
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/calcany",
+              "args": [
+                "prepare-origin",
+                "{var:calcany_session}"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/calcany",
+              "args": [
+                "launch",
+                "{var:calcany_session}"
+              ],
+              "async": true
+            }
+          ]
         }
       ],
       "shortcuts": [
@@ -117,7 +131,8 @@
                 "src": {
                   "finish": {
                     "variables": {
-                      "calcany_out": "back"
+                      "calcany_out": "back",
+                      "swiss_return": "{var:swiss_return}"
                     }
                   }
                 }

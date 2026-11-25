@@ -1,0 +1,131 @@
+{
+  "bundleid": "com.izsk.swiss",
+  "variablesconfig": {
+    "swiss_session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "swiss_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    }
+  },
+  "window": {
+    "title": "Swiss",
+    "size": {
+      "height": 580
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": {
+            "type": "script",
+            "src": "../bin/swiss",
+            "args": [
+              "launch",
+              "{var:swiss_session}"
+            ],
+            "async": true
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/swiss",
+            "args": [
+              "menu",
+              "{var:swiss_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/swiss",
+            "args": [
+              "refresh",
+              "{var:swiss_session}"
+            ],
+            "async": true
+          }
+        }
+      ],
+      "components": [
+        {
+          "id": "statusLabel",
+          "type": "label",
+          "text": "Loading calculator…",
+          "constraints": {
+            "region": "centre",
+            "position": "centre"
+          }
+        },
+        {
+          "id": "initialBack",
+          "type": "button",
+          "text": "Back  {var:back_shortcut}",
+          "bordered": false,
+          "shortcut": "{var:back_shortcut}",
+          "constraints": {
+            "region": "bottom",
+            "position": "left",
+            "insets": {
+              "left": 16,
+              "bottom": 16
+            }
+          },
+          "events": [
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "json",
+                "src": {
+                  "finish": {
+                    "variables": {
+                      "swiss_out": "back"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

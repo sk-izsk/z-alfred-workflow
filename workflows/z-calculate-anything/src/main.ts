@@ -1,3 +1,4 @@
+import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { randomUUID } from "node:crypto";
 import { results } from "./engine.ts";
 import { create, read, save, type State } from "./state.ts";
@@ -15,7 +16,6 @@ import {
   finish,
   type Action,
 } from "./ui.ts";
-import { osascript } from "./proc.ts";
 const populate = (s: State): Action =>
   update({
     items: {
@@ -35,7 +35,7 @@ const screen = (s: State): Action =>
   merge(vars({ calcany_session: s.id }), update({ root: { components: components(s) } }, true), {
     pulse: { src: "../bin/calcany", args: ["populate", s.id], interval: 0, now: true },
   });
-const load = async (s: State): Promise<Action> => {
+const load = async (s: State, initial = false): Promise<Action> => {
   const ticket = randomUUID();
   s.request = ticket;
   save(s);
@@ -45,26 +45,34 @@ const load = async (s: State): Promise<Action> => {
   latest.results = output;
   save(latest);
   return merge(
-    screen(latest),
+    initial ? screen(latest) : populate(latest),
     output.length
-      ? {}
+      ? update(
+          {
+            statusLabel: {
+              text: "Calculate Anything engine · local arithmetic",
+              colour: "secondaryLabelColor",
+            },
+          },
+          true,
+        )
       : update({ statusLabel: { text: "No result. Try 100 km in miles, 2 GB in MB, or 100 + 16%." } }, true),
   );
 };
 const main = async (): Promise<Action | void> => {
   const [cmd = "", id = "", ...args] = process.argv.slice(2);
+  if (cmd === "prepare-origin") return vars(backVariables("calcany_out", process.env.calcany_query));
   if (cmd === "post") {
-    if (process.env.calcany_out === "back")
-      await osascript('tell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)', "");
+    if (process.env.calcany_out === "back") performBack(process.env.swiss_return);
     return;
   }
   if (cmd === "launch") {
-    const s = create(process.env.calcany_query || "");
-    return merge(vars({ calcany_session: s.id }), s.query ? await load(s) : screen(s));
+    const s = create(launchInput(process.env.calcany_query).query);
+    return merge(vars({ calcany_session: s.id }), s.query ? await load(s, true) : screen(s));
   }
   const s = read(id),
     selected = args[0] || s.selected;
-  if (cmd === "back") return finish({ calcany_out: "back" });
+  if (cmd === "back") return finish(backVariables("calcany_out", process.env.calcany_query));
   if (cmd === "populate") return populate(s);
   if (cmd === "select") {
     s.selected = selected;

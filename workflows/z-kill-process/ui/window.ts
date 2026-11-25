@@ -58,6 +58,7 @@ export const processWindow = {
   bundleid: "com.izsk.kill-process",
   log: { level: "error", internal: true },
   variablesconfig: {
+    swiss_return: { default: "" },
     kp_session: { default: "", scriptenv: true },
     kp_query: { src: "args[0]", default: "", scriptenv: true },
     back_shortcut: { src: "variable", default: "⌘[" },
@@ -73,7 +74,7 @@ export const processWindow = {
       layout: "border",
       events: [
         on("preload", json({ window: { resize: { width: 1000 } } })),
-        on("launched", run("launch")),
+        on("launched", [run("prepare-origin", [], false), run("launch")]),
         on("quit", run("cleanup", [], false)),
       ],
       shortcuts: [
@@ -91,11 +92,19 @@ export const processWindow = {
           spacing: 14,
           constraints: { region: "top" },
           components: [
-            button("headerBack", "‹", json({ finish: { variables: { kp_out: "back" } } }), {
-              font: { size: 27 },
-              tooltip: "Back {var:back_shortcut}",
-              constraints: { region: "left", position: "centre" },
-            }),
+            button(
+              "headerBack",
+              "‹",
+              {
+                type: "json",
+                src: { finish: { variables: { kp_out: "back", swiss_return: "{var:swiss_return}" } } },
+              },
+              {
+                font: { size: 27 },
+                tooltip: "Back {var:back_shortcut}",
+                constraints: { region: "left", position: "centre" },
+              },
+            ),
             {
               id: "searchField",
               type: "textfield",
@@ -266,7 +275,15 @@ export const processWindow = {
                     button(
                       "footerBack",
                       "Back  {var:back_shortcut}",
-                      json({ finish: { variables: { kp_out: "back" } } }),
+                      [
+                        run("initial-back", [], false),
+                        {
+                          type: "json",
+                          src: {
+                            finish: { variables: { kp_out: "back", swiss_return: "{var:swiss_return}" } },
+                          },
+                        },
+                      ],
                       {
                         shortcut: "{var:back_shortcut}",
                       },

@@ -28,3 +28,9 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Open Access exchange-rate data
+
+Rates By [Exchange Rate API](https://www.exchangerate-api.com).
+Endpoint and terms: https://www.exchangerate-api.com/docs/free
+Data is fetched for local conversion/cache; no rate tables are bundled or redistributed.

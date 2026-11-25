@@ -168,6 +168,7 @@ export const speedtestWindow = {
   bundleid: "com.izsk.speedtest",
   log: { level: "error", internal: true },
   variablesconfig: {
+    swiss_return: { default: "" },
     session: { default: "", scriptenv: true },
     speed_query: { default: "", scriptenv: true },
     launch_view: { src: "args[0]", default: "", scriptenv: true },
@@ -280,7 +281,9 @@ export const speedtestWindow = {
               ...button(
                 "closeWindowKey",
                 "",
-                json({ finish: { variables: { speedtest_out: "back" } } }),
+                json({
+                  finish: { variables: { speedtest_out: "back", swiss_return: "{var:swiss_return}" } },
+                }),
                 "⌘W",
               ),
               opacity: 0,

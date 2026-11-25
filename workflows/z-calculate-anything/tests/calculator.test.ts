@@ -51,3 +51,20 @@ test("blank and oversized queries have explicit behavior", async () => {
   expect(await results("")).toEqual([]);
   await expect(results("x".repeat(501))).rejects.toThrow("too long");
 });
+
+test("typing updates results without replacing or refocusing the search field", () => {
+  const { create } = require("../src/state.ts");
+  const { execFileSync } = require("node:child_process");
+  const s = create("20");
+  for (const query of ["20", "200", "200+5"]) {
+    const action = JSON.parse(
+      execFileSync(process.execPath, [join(import.meta.dir, "../src/main.ts"), "query", s.id, query], {
+        encoding: "utf8",
+        env: process.env,
+      }),
+    );
+    expect(action.update.ids).not.toHaveProperty("root");
+    expect(action.update.ids).not.toHaveProperty("query");
+    expect(action.update.ids.items.data.src[0]["rowTitle.text"]).toBe(query === "200+5" ? "205" : query);
+  }
+});

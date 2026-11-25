@@ -1,6 +1,9 @@
 {
   "bundleid": "com.izsk.adhan-time",
   "variablesconfig": {
+    "swiss_return": {
+      "default": ""
+    },
     "adhan_session": {
       "default": "",
       "scriptenv": true
@@ -36,15 +39,26 @@
       "events": [
         {
           "triggers": "launched",
-          "action": {
-            "type": "script",
-            "src": "../bin/adhan",
-            "args": [
-              "launch",
-              "{var:adhan_session}"
-            ],
-            "async": true
-          }
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/adhan",
+              "args": [
+                "prepare-origin",
+                "{var:adhan_session}"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/adhan",
+              "args": [
+                "launch",
+                "{var:adhan_session}"
+              ],
+              "async": true
+            }
+          ]
         }
       ],
       "shortcuts": [
@@ -122,7 +136,8 @@
                 "src": {
                   "finish": {
                     "variables": {
-                      "adhan_out": "back"
+                      "adhan_out": "back",
+                      "swiss_return": "{var:swiss_return}"
                     }
                   }
                 }

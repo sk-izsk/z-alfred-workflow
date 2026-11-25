@@ -5,6 +5,9 @@
     "internal": true
   },
   "variablesconfig": {
+    "swiss_return": {
+      "default": ""
+    },
     "weather_session": {
       "default": "",
       "scriptenv": true
@@ -52,15 +55,26 @@
         },
         {
           "triggers": "launched",
-          "action": {
-            "type": "script",
-            "src": "../bin/wthr",
-            "args": [
-              "launch",
-              "{var:weather_session}"
-            ],
-            "async": true
-          }
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/wthr",
+              "args": [
+                "prepare-origin",
+                "{var:weather_session}"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/wthr",
+              "args": [
+                "launch",
+                "{var:weather_session}"
+              ],
+              "async": true
+            }
+          ]
         }
       ],
       "shortcuts": [
@@ -161,7 +175,8 @@
                 "src": {
                   "finish": {
                     "variables": {
-                      "weather_out": "back"
+                      "weather_out": "back",
+                      "swiss_return": "{var:swiss_return}"
                     }
                   }
                 }

@@ -1,3 +1,4 @@
+import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { randomUUID } from "node:crypto";
 import { calendar, validate, type Settings } from "./api.ts";
 import { create, read, save, saveSettings, type State } from "./state.ts";
@@ -19,7 +20,6 @@ import {
   finish,
   type Action,
 } from "./ui.ts";
-import { osascript } from "./proc.ts";
 const screen = (s: State): Action =>
   merge(vars({ adhan_session: s.id }), update({ root: { components: components(s) } }, true), {
     pulse: { src: "../bin/adhan", args: ["tick", s.id], interval: 30, now: false },
@@ -134,14 +134,14 @@ const settingsSheet = (s: State): Action =>
   });
 const main = async (): Promise<Action | void> => {
   const [command = "", id = "", ...args] = process.argv.slice(2);
+  if (command === "prepare-origin") return vars(backVariables("adhan_out", process.env.adhan_query));
   if (command === "post") {
-    if (process.env.adhan_out === "back")
-      await osascript('tell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)', "");
+    if (process.env.adhan_out === "back") performBack(process.env.swiss_return);
     return;
   }
   if (command === "launch") {
     const s = create(),
-      query = process.env.adhan_query?.trim();
+      query = launchInput(process.env.adhan_query).query.trim();
     if (query) {
       const parts = query.split(",");
       s.settings.city = parts.shift()!.trim();
@@ -157,7 +157,7 @@ const main = async (): Promise<Action | void> => {
     return merge(vars({ adhan_session: s.id }), await load(s));
   }
   const s = read(id);
-  if (command === "back") return finish({ adhan_out: "back" });
+  if (command === "back") return finish(backVariables("adhan_out", process.env.adhan_query));
   if (command === "settings") return settingsSheet(s);
   if (command === "save-settings") {
     try {

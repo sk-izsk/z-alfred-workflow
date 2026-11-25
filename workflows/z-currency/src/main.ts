@@ -1,3 +1,4 @@
+import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { randomUUID } from "node:crypto";
 import { create, read, save, pin, pinned, type State } from "./state.ts";
 import { loadRates } from "./api.ts";
@@ -17,7 +18,6 @@ import {
   finish,
   type Action,
 } from "./ui.ts";
-import { osascript } from "./proc.ts";
 const populate = (s: State): Action => {
   const data = rows(s);
   return update({
@@ -31,7 +31,7 @@ const render = (s: State): Action =>
   merge(vars({ fx_session: s.id }), update({ root: { components: components(s) } }, true), {
     pulse: { src: "../bin/fx", args: ["populate", s.id], interval: 0, now: true },
   });
-const load = async (s: State, fresh = false): Promise<Action> => {
+const load = async (s: State, fresh = false, initial = true): Promise<Action> => {
   const parsed = parseQuery(s.query);
   const requested = parsed.date || s.date,
     ticket = randomUUID();
@@ -45,22 +45,39 @@ const load = async (s: State, fresh = false): Promise<Action> => {
   latest.rates = rates;
   latest.date = requested;
   save(latest);
-  return render(latest);
+  if (initial) return render(latest);
+  return merge(
+    populate(latest),
+    update(
+      {
+        sectionTitle: {
+          text: `${latest.amount} ${latest.base} · ${rates.date || "Rate date unavailable"} · ${Object.keys(rates.rates).length} currencies · Pinned first`,
+        },
+        statusLabel: {
+          text: rates.stale
+            ? "Cached rates · provider stale or refresh failed"
+            : `${rates.provider} · Reference rates`,
+          colour: rates.stale ? "systemOrangeColor" : "secondaryLabelColor",
+        },
+      },
+      true,
+    ),
+  );
 };
 const main = async (): Promise<Action | void> => {
   const [command = "", id = "", ...args] = process.argv.slice(2);
+  if (command === "prepare-origin") return vars(backVariables("fx_out", process.env.fx_query));
   if (command === "post") {
-    if (process.env.fx_out === "back")
-      await osascript('tell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)', "");
+    if (process.env.fx_out === "back") performBack(process.env.swiss_return);
     return;
   }
   if (command === "launch") {
-    const s = create(process.env.fx_query || "");
+    const s = create(launchInput(process.env.fx_query).query);
     return merge(vars({ fx_session: s.id }), await load(s));
   }
   const s = read(id),
     code = args[0] || s.selected;
-  if (command === "back") return finish({ fx_out: "back" });
+  if (command === "back") return finish(backVariables("fx_out", process.env.fx_query));
   if (command === "populate") return populate(s);
   if (command === "select") {
     s.selected = code || "";
@@ -71,7 +88,7 @@ const main = async (): Promise<Action | void> => {
     s.query = args[0] || "";
     s.date = "";
     save(s);
-    const result = await load(s);
+    const result = await load(s, false, false);
     return result;
   }
   if (command === "base") {
@@ -79,7 +96,14 @@ const main = async (): Promise<Action | void> => {
     s.base = code;
     save(s);
     return merge(
-      update({ sectionTitle: { text: `${s.amount} ${s.base} · ${s.rates.asof} · Pinned first` } }, true),
+      update(
+        {
+          sectionTitle: {
+            text: `${s.amount} ${s.base} · ${s.rates.date || "Rate date unavailable"} · ${Object.keys(s.rates.rates).length} currencies · Pinned first`,
+          },
+        },
+        true,
+      ),
       populate(s),
     );
   }
@@ -156,11 +180,13 @@ const main = async (): Promise<Action | void> => {
   }
   if (command === "provider")
     return open(
-      s.rates?.provider === "allratestoday"
-        ? "https://allratestoday.com/central-bank-rates-api/ecb/"
-        : s.rates?.provider === "unirate"
-          ? "https://unirateapi.com"
-          : "https://www.exchangerate-api.com/docs/overview",
+      s.rates?.provider === "open-er"
+        ? "https://www.exchangerate-api.com"
+        : s.rates?.provider === "allratestoday"
+          ? "https://allratestoday.com/central-bank-rates-api/ecb/"
+          : s.rates?.provider === "unirate"
+            ? "https://unirateapi.com"
+            : "https://www.exchangerate-api.com/docs/overview",
     );
   if (command === "menu")
     return popup("actionsButton", [

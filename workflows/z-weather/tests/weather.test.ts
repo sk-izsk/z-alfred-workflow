@@ -272,10 +272,10 @@ describe("native split report and pagination", () => {
     expect(nodes(overview).some((n) => n.id === "forecastPanel")).toBe(true);
     expect(tree.some((n) => n.type === "webkitview")).toBe(false);
     const rows = nodes(detailPane(s)).find((n) => n.id === "detailRows")!;
-    expect(rows.layout).toBe("inline");
-    expect(rows.direction).toBe("vertical");
-    expect(rows.components).toHaveLength(7);
-    expect(tree.some((n) => n.id === "detailsDown")).toBe(true);
+    expect(rows.layout).toBe("grid");
+    expect(rows.rows).toBe(11);
+    expect(rows.components).toHaveLength(11);
+    expect(tree.some((n) => n.id === "detailsDown")).toBe(false);
     expect(tree.some((n) => n.id === "forecastNext")).toBe(true);
   });
   test("arrows clamp at the last measurement and preserve report state", () => {
@@ -284,7 +284,7 @@ describe("native split report and pagination", () => {
     s.report = parsed();
     save(s);
     invoke("detail-scroll", s.id, "100");
-    expect(read(s.id).detailOffset).toBe(4);
+    expect(read(s.id).detailOffset).toBe(0);
     expect(nodes(invoke("detail-scroll", s.id, "-100")).find((n) => n.id === "detailTitle0")?.text).toBe(
       "AQI (US)",
     );

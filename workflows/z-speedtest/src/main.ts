@@ -1,3 +1,4 @@
+import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { spawn, execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
@@ -84,7 +85,7 @@ const navigate = (session: string, s: State, view: string, show = details()): Js
 const back = (session: string): Json => {
   const history = session ? readJson<Screen[]>(historyFile(session), []) : [];
   const previous = history.pop();
-  if (!previous) return { finish: { variables: { speedtest_out: "back" } } };
+  if (!previous) return { finish: { variables: backVariables("speedtest_out", str("launch_view")) } };
   writeJson(historyFile(session), history);
   return restore(snapshot(session), previous);
 };
@@ -107,7 +108,7 @@ const begin = (previous: string): Json => {
     writeJson(join(dir, "state.json"), state);
   });
   child.unref();
-  const initial = str("launch_view");
+  const initial = launchInput(str("launch_view")).query;
   const result = render(
     state,
     true,
@@ -116,7 +117,12 @@ const begin = (previous: string): Json => {
     selection(),
     id,
   );
-  result.variables = { ...(result.variables as Json), session: id, speed_query: "" };
+  result.variables = {
+    ...(result.variables as Json),
+    session: id,
+    speed_query: "",
+    swiss_return: launchInput(str("launch_view")).returnTo,
+  };
   ((result.update as Json).ids as Json).searchField = { text: "" };
   return result;
 };
@@ -196,12 +202,7 @@ const main = async (): Promise<Json | undefined> => {
     return;
   }
   if (command === "post") {
-    if (str("speedtest_out") === "back")
-      execFileSync(
-        "/usr/bin/osascript",
-        ["-e", 'tell application id "com.runningwithcrayons.Alfred" to search ""'],
-        { timeout: 5000 },
-      );
+    if (str("speedtest_out") === "back") performBack(str("swiss_return"));
     if (str("speedtest_out") === "paste")
       execFileSync(
         "/usr/bin/osascript",

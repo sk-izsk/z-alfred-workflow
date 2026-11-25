@@ -5,6 +5,9 @@
     "internal": true
   },
   "variablesconfig": {
+    "swiss_return": {
+      "default": ""
+    },
     "kp_session": {
       "default": "",
       "scriptenv": true
@@ -60,15 +63,26 @@
         },
         {
           "triggers": "launched",
-          "action": {
-            "type": "script",
-            "src": "../bin/kproc",
-            "args": [
-              "launch",
-              "{var:kp_session}"
-            ],
-            "async": true
-          }
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/kproc",
+              "args": [
+                "prepare-origin",
+                "{var:kp_session}"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/kproc",
+              "args": [
+                "launch",
+                "{var:kp_session}"
+              ],
+              "async": true
+            }
+          ]
         },
         {
           "triggers": "quit",
@@ -165,7 +179,8 @@
                     "src": {
                       "finish": {
                         "variables": {
-                          "kp_out": "back"
+                          "kp_out": "back",
+                          "swiss_return": "{var:swiss_return}"
                         }
                       }
                     }
@@ -682,16 +697,28 @@
                       "events": [
                         {
                           "triggers": "actioned",
-                          "action": {
-                            "type": "json",
-                            "src": {
-                              "finish": {
-                                "variables": {
-                                  "kp_out": "back"
+                          "action": [
+                            {
+                              "type": "script",
+                              "src": "../bin/kproc",
+                              "args": [
+                                "initial-back",
+                                "{var:kp_session}"
+                              ],
+                              "async": false
+                            },
+                            {
+                              "type": "json",
+                              "src": {
+                                "finish": {
+                                  "variables": {
+                                    "kp_out": "back",
+                                    "swiss_return": "{var:swiss_return}"
+                                  }
                                 }
                               }
                             }
-                          }
+                          ]
                         }
                       ],
                       "shortcut": "{var:back_shortcut}"

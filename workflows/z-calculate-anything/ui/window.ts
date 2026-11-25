@@ -150,6 +150,7 @@ export const components = (s: State): Json[] => [
 export const calculateWindow = {
   bundleid: "com.izsk.calculate-anything",
   variablesconfig: {
+    swiss_return: { default: "" },
     calcany_session: { default: "", scriptenv: true },
     calcany_query: { src: "args[0]", default: "", scriptenv: true },
     back_shortcut: { src: "variable", default: "⌘[" },
@@ -162,7 +163,7 @@ export const calculateWindow = {
       id: "root",
       type: "view",
       layout: "border",
-      events: [{ triggers: "launched", action: run("launch") }],
+      events: [{ triggers: "launched", action: [run("prepare-origin", [], false), run("launch")] }],
       shortcuts: [
         { shortcut: "↑", action: { type: "function", src: "items", args: "selectprevious" } },
         { shortcut: "↓", action: { type: "function", src: "items", args: "selectnext" } },
@@ -186,7 +187,10 @@ export const calculateWindow = {
           events: [
             {
               triggers: "actioned",
-              action: { type: "json", src: { finish: { variables: { calcany_out: "back" } } } },
+              action: {
+                type: "json",
+                src: { finish: { variables: { calcany_out: "back", swiss_return: "{var:swiss_return}" } } },
+              },
             },
           ],
         },

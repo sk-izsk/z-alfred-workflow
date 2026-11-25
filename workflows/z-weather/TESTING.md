@@ -12,7 +12,7 @@ run from the .alfredui directory with only HOME, system PATH, a public London qu
 Alfred cache/data paths. It fetched real provider data and populated weather measurements. AQI was also fetched from Open-Meteo.
 
 The workflow was linked and opened in Alfred. Targeted captures verified the split layout, readable right-side rows including AQI, native forecast
-cards entirely inside the left column, bottom arrow controls, absence of WebKit backgrounds and
+cards entirely inside the left column, forecast arrow controls, all eleven right-pane measurements filling the height, absence of WebKit backgrounds and
 scrollbars, unit/date pickers and visible footer Back/Actions. Pagination and tab changes were
 validated through the same bundled CLI commands used by the buttons.
 The README screenshot uses a public London example, not a private saved location. Actual keyboard

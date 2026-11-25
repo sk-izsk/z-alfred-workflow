@@ -14,6 +14,7 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-adhan-time` | `z-adhan-time/vX.Y.Z` | `Adhan Time.alfredworkflow` |
 | `workflows/z-currency` | `z-currency/vX.Y.Z` | `Currency Exchange.alfredworkflow` |
 | `workflows/z-calculate-anything` | `z-calculate-anything/vX.Y.Z` | `Calculate Anything.alfredworkflow` |
+| `workflows/z-swiss` | `z-swiss/vX.Y.Z` | `Swiss.alfredworkflow` |
 | `workflows/z-weather` | `z-weather/vX.Y.Z` | `Weather.alfredworkflow` |
 
 1. Bump `version` in the selected workflow's `package.json`.

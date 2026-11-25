@@ -127,3 +127,38 @@ test("native IDs, footer Back, date sheet and screenshot Actions", () => {
     expect(menu.some((text: string) => text.startsWith(expected))).toBe(true);
   expect(JSON.stringify(invoke("date"))).toContain("dateSheetBack");
 });
+
+test("typing refreshes amounts without replacing or refocusing the query field", () => {
+  const s = create("20");
+  s.rates = parseRates(raw, "allratestoday");
+  save(s);
+  const result = JSON.parse(
+    execFileSync(process.execPath, [join(import.meta.dir, "../src/main.ts"), "query", s.id, "200"], {
+      encoding: "utf8",
+      env: process.env,
+    }),
+  );
+  expect(result.update.ids).not.toHaveProperty("root");
+  expect(result.update.ids).not.toHaveProperty("query");
+  expect(result.update.ids.items.data.src.some((row: any) => row["rowTitle.text"] === "USD  200.00")).toBe(
+    true,
+  );
+});
+
+test("open access includes Bangladesh and other broader currencies without a key", () => {
+  const table = parseRates(
+    {
+      result: "success",
+      base_code: "USD",
+      time_last_update_utc: "Wed, 25 Nov 2026 00:02:31 +0000",
+      rates: { USD: 1, BDT: 124.68, PKR: 280, NPR: 134, LKR: 300 },
+    },
+    "open-er",
+  );
+  const s = create("");
+  s.rates = table;
+  s.amount = 10;
+  s.filter = "bangladesh";
+  expect(rows(s).map((row) => row.uid)).toEqual(["BDT"]);
+  expect(converted(s, "BDT")).toBeCloseTo(1246.8);
+});

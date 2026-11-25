@@ -56,3 +56,9 @@ UI and metadata are generated from TypeScript. See [TESTING.md](TESTING.md).
 
 Calculate Anything icon and feature reference: Copyright (c) 2020 biati digital, MIT.
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Built with help from AI tools.
+
+## Swiss launcher integration
+
+When opened from Swiss, the root Back returns to the same launcher search/selection. Child screens
+and sheets still go back one level first. Direct launches keep their normal Back behavior. Install
+Swiss separately; it is optional and does not run this tool until selected.

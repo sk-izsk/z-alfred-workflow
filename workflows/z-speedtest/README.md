@@ -106,3 +106,9 @@ Screenshots use illustrative data.
 Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.
 
 The workflow starts with the speed meter. Enter opens the detailed list; Back restores the meter without restarting the test. Live dials animate between CLI samples in a persistent local WebKit page, with reduced-motion support. No local web server is used.
+
+## Swiss launcher integration
+
+When opened from Swiss, the root Back returns to the same launcher search/selection. Child screens
+and sheets still go back one level first. Direct launches keep their normal Back behavior. Install
+Swiss separately; it is optional and does not run this tool until selected.

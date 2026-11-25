@@ -90,10 +90,11 @@ export const infoPlist = {
       variable: "provider",
       label: "Rate provider",
       description:
-        "No-key ECB reference rates cover about 30 currencies with no history. Keyed providers offer broader coverage and plan-dependent history.",
+        "Open access covers 160+ currencies including BDT, with daily updates and no key. ECB covers about 30. History needs a supporting keyed plan.",
       config: {
-        default: "allratestoday",
+        default: "open-er",
         pairs: [
+          ["ExchangeRate-API Open — 160+ currencies (no key)", "open-er"],
           ["AllRatesToday — ECB reference (no key)", "allratestoday"],
           ["ExchangeRate-API", "exchangerate-api"],
           ["UniRateAPI", "unirate"],
@@ -104,7 +105,7 @@ export const infoPlist = {
       "api_key",
       "API key",
       "",
-      "Key for the selected provider. Not required for AllRatesToday. Stored in Alfred preferences; excluded from exports.",
+      "Key for the selected provider. Not required for Open Access or AllRatesToday. Stored in Alfred preferences; excluded from exports.",
     ),
     text(
       "base_currency",
@@ -132,7 +133,7 @@ export const infoPlist = {
   variablesdontexport: ["api_key"],
   readme: `Type currency, currency 100+24/12, or currency 100 in Canada. Choose the base from the picker. The list shows only currencies supported by your provider; pinned targets appear first. Return copies the value, Command-K offers Copy, Pin/Unpin, Set Currency Date, Latest Rates, Refresh and Provider Documentation. Command-[ is configurable Back and stays visible in all footers.
 
-Default provider: AllRatesToday ECB reference rates, no key, about 30 currencies, daily business-day updates and no history. Select ExchangeRate-API or UniRateAPI and supply your API key in Workflow Configuration for broader coverage. History depends on provider/plan and is never silently replaced by current rates. Keys are excluded from exports but stored in local Alfred preferences.
+Default provider: ExchangeRate-API Open Access, no key, 160+ currencies including BDT, daily updates and no history. Rates By Exchange Rate API: https://www.exchangerate-api.com. ECB reference rates remain optional. Select ExchangeRate-API or UniRateAPI and supply your API key in Workflow Configuration for broader coverage. History depends on provider/plan and is never silently replaced by current rates. Keys are excluded from exports but stored in local Alfred preferences.
 
 Arithmetic supports + - * / ^ % and parentheses without executing JavaScript. Use at YYYY/MM/DD for historical requests, or Actions → Set Currency Date. Rates are reference figures, not transaction quotes; the provider date is shown separately from fetch time. Cache lasts one hour and fallback is marked stale. Provider requests reveal your IP and selected date; conversion amounts are calculated locally.
 

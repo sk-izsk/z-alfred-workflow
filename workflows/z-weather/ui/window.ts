@@ -185,9 +185,10 @@ const arrowButton = (id: string, text: string, action: Json, enabled = true): Js
   constraints: { size: { width: 32, height: 32 } },
   components: [button(id, text, action, { font: { size: 19 }, enabled })],
 });
+export const detailPageSize = 11;
 export const detailPane = (s: State): Json[] => {
   const all = visibleDetails(s),
-    page = 7,
+    page = detailPageSize,
     offset = Math.max(0, Math.min(s.detailOffset || 0, Math.max(0, all.length - page)));
   return [
     label("detailHeading", "WEATHER DETAILS", {
@@ -198,10 +199,11 @@ export const detailPane = (s: State): Json[] => {
     {
       id: "detailRows",
       type: "view",
-      layout: "inline",
-      direction: "vertical",
+      layout: "grid",
+      rows: Math.min(page, all.length),
+      cols: 1,
       spacing: 3,
-      constraints: { region: "centre", position: "top", stretch: "horizontal" },
+      constraints: { region: "centre" },
       components: all.slice(offset, offset + page).map((d, i) => ({
         type: "view",
         layout: "border",
@@ -229,29 +231,38 @@ export const detailPane = (s: State): Json[] => {
         ],
       })),
     },
-    {
-      type: "view",
-      layout: "border",
-      padding: 8,
-      constraints: { region: "bottom" },
-      components: [
-        label("detailRange", `${offset + 1}–${Math.min(all.length, offset + page)} of ${all.length}`, {
-          font: { size: 10 },
-          colour: "secondaryLabelColor",
-          constraints: { region: "left", position: "centre" },
-        }),
-        {
-          type: "view",
-          layout: "inline",
-          spacing: 9,
-          constraints: { region: "right" },
-          components: [
-            arrowButton("detailsUp", "↑", run("detail-scroll", ["-1"], false), offset > 0),
-            arrowButton("detailsDown", "↓", run("detail-scroll", ["1"], false), offset + page < all.length),
-          ],
-        },
-      ],
-    },
+    ...(all.length > page
+      ? [
+          {
+            type: "view",
+            layout: "border",
+            padding: 8,
+            constraints: { region: "bottom" },
+            components: [
+              label("detailRange", `${offset + 1}–${Math.min(all.length, offset + page)} of ${all.length}`, {
+                font: { size: 10 },
+                colour: "secondaryLabelColor",
+                constraints: { region: "left", position: "centre" },
+              }),
+              {
+                type: "view",
+                layout: "inline",
+                spacing: 9,
+                constraints: { region: "right" },
+                components: [
+                  arrowButton("detailsUp", "↑", run("detail-scroll", ["-1"], false), offset > 0),
+                  arrowButton(
+                    "detailsDown",
+                    "↓",
+                    run("detail-scroll", ["1"], false),
+                    offset + page < all.length,
+                  ),
+                ],
+              },
+            ],
+          },
+        ]
+      : []),
   ];
 };
 export const forecastPanel = (s: State): Json => {
@@ -547,6 +558,7 @@ export const weatherWindow = {
   bundleid: "com.izsk.weather",
   log: { level: "error", internal: true },
   variablesconfig: {
+    swiss_return: { default: "" },
     weather_session: { default: "", scriptenv: true },
     weather_query: { src: "args[0]", default: "", scriptenv: true },
     actions_shortcut: { src: "variable", default: "⌘K" },
@@ -560,7 +572,10 @@ export const weatherWindow = {
       id: "root",
       type: "view",
       layout: "border",
-      events: [on("preload", json({ window: { resize: { width: 1000 } } })), on("launched", run("launch"))],
+      events: [
+        on("preload", json({ window: { resize: { width: 1000 } } })),
+        on("launched", [run("prepare-origin", [], false), run("launch")]),
+      ],
       shortcuts: [
         { shortcut: "↑", action: { type: "function", src: "items", args: "selectprevious" } },
         { shortcut: "↓", action: { type: "function", src: "items", args: "selectnext" } },
@@ -579,7 +594,10 @@ export const weatherWindow = {
         button(
           "initialBack",
           "Back  {var:back_shortcut}",
-          json({ finish: { variables: { weather_out: "back" } } }),
+          {
+            type: "json",
+            src: { finish: { variables: { weather_out: "back", swiss_return: "{var:swiss_return}" } } },
+          },
           {
             shortcut: "{var:back_shortcut}",
             constraints: { region: "bottom", position: "left", insets: { left: 16, bottom: 16 } },

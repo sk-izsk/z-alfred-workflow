@@ -40,7 +40,7 @@ export const create = (query: string): State => {
   return s;
 };
 export const pinned = (): string[] =>
-  readJson<string[]>(join(dataDir(), "pinned.json"), ["USD", "CAD", "EUR"]);
+  readJson<string[]>(join(dataDir(), "pinned.json"), ["USD", "CAD", "EUR", "BDT"]);
 export const pin = (code: string): void => {
   if (!/^[A-Z]{3}$/.test(code)) throw new Error("Invalid currency.");
   const all = pinned();

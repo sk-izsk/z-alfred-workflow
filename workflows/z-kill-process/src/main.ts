@@ -1,3 +1,4 @@
+import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { randomUUID } from "node:crypto";
 import { unlinkSync } from "node:fs";
 import { processes, metrics, ancestors, appExists } from "./system.ts";
@@ -16,7 +17,7 @@ import { render } from "./presentation.ts";
 import { titles, operations, makePlan, type Plan, type Operation, bytes } from "./model.ts";
 import { executePlan } from "./operations.ts";
 import { bool, str, readJson, writeJson } from "./env.ts";
-import { exec, osascript } from "./proc.ts";
+import { exec } from "./proc.ts";
 import {
   type Action,
   errorStatus,
@@ -219,9 +220,9 @@ const action = async (s: State, verb: string, id: string): Promise<Action> => {
 };
 const main = async (): Promise<Action | void> => {
   const [cmd = "", id = "", ...args] = process.argv.slice(2);
+  if (cmd === "prepare-origin") return vars(backVariables("kp_out", process.env.kp_query));
   if (cmd === "post") {
-    if (process.env.kp_out === "back")
-      await osascript('tell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)', "");
+    if (process.env.kp_out === "back") performBack(process.env.swiss_return);
     return;
   }
   if (cmd === "cleanup") {
@@ -237,9 +238,12 @@ const main = async (): Promise<Action | void> => {
     unlinkSync(windowFile(id));
     return {};
   }
-  if (cmd === "back") return finish({ kp_out: "back" });
+  if (cmd === "back") return finish(backVariables("kp_out", process.env.kp_query));
   if (cmd === "launch") {
-    const s = create(process.env.kp_query || "", str("default_sort", "cpu") === "memory" ? "memory" : "cpu");
+    const s = create(
+      launchInput(process.env.kp_query).query,
+      str("default_sort", "cpu") === "memory" ? "memory" : "cpu",
+    );
     return merge(
       vars({ kp_session: s.id }),
       await poll(s.id),

@@ -1,8 +1,8 @@
 # Verification
 
-Four tests check upstream result/copy normalization, rejected nonactionable rows, local arithmetic,
+Five main tests plus two Swiss navigation tests check upstream result/copy normalization, rejected nonactionable rows, local arithmetic,
 division errors, configured engine discovery, query transport through stdin, blank input and query
-limits. The fake PHP engine and data/cache directories are temporary; tests do not use user settings.
+limits. Typing updates are checked to preserve the existing input field and cursor. The fake PHP engine and data/cache directories are temporary; tests do not use user settings.
 
 Real local engine checks passed for 100 km in miles, 2 GB in MB, 100 + 16%, and time now plus 6 hours.
 The installed original 4.0.7 workflow lacked vendor/; only that missing directory was restored from the

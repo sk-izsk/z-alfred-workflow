@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { cacheDir, readJson, writeJson, str } from "./env.ts";
-export type Provider = "allratestoday" | "exchangerate-api" | "unirate";
+export type Provider = "open-er" | "allratestoday" | "exchangerate-api" | "unirate";
 export type Rates = {
   provider: Provider;
   date: string;
@@ -11,8 +11,8 @@ export type Rates = {
   stale: boolean;
 };
 export const provider = (): Provider => {
-  const value = str("provider", "allratestoday");
-  if (!["allratestoday", "exchangerate-api", "unirate"].includes(value))
+  const value = str("provider", "open-er");
+  if (!["open-er", "allratestoday", "exchangerate-api", "unirate"].includes(value))
     throw new Error("Choose a supported rate provider.");
   return value as Provider;
 };
@@ -86,18 +86,21 @@ export const parseRates = (raw: any, p: Provider, requested = ""): Rates => {
 export const loadRates = async (date = "", fresh = false): Promise<Rates> => {
   const p = provider(),
     key = str("api_key");
-  if (p === "allratestoday" && date)
+  if ((p === "allratestoday" || p === "open-er") && date)
     throw new Error(
-      "The no-key ECB provider has no history. Choose a keyed provider with historical access, or clear the date.",
+      "This no-key provider has no history. Choose a keyed provider with historical access, or clear the date.",
     );
-  if (p !== "allratestoday" && !key)
+  if (p !== "allratestoday" && p !== "open-er" && !key)
     throw new Error("Add this provider’s API key in Workflow Configuration.");
   const identity = createHash("sha256").update(`${p}:${key}:${date}`).digest("hex").slice(0, 24),
     path = join(cacheDir(), `rates-${identity}.json`),
     old = readJson<Rates | null>(path, null);
   if (old && !fresh && Date.now() - old.fetched < 3600000) return old;
   try {
-    let url = "https://allratestoday.com/api/open/central-bank/ecb";
+    let url =
+      p === "open-er"
+        ? "https://open.er-api.com/v6/latest/USD"
+        : "https://allratestoday.com/api/open/central-bank/ecb";
     if (p === "exchangerate-api")
       url = `https://v6.exchangerate-api.com/v6/${encodeURIComponent(key)}/${date ? `history/USD/${date.split("-").map(Number).join("/")}` : "latest/USD"}`;
     if (p === "unirate")

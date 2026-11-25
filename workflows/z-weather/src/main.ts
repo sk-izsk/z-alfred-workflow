@@ -1,3 +1,4 @@
+import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { forecastCards } from "./forecast.ts";
 import { loadAirQuality, airForDate, airCategory } from "./air-quality.ts";
 import { randomUUID } from "node:crypto";
@@ -11,6 +12,7 @@ import {
   label,
   button,
   detailPane,
+  detailPageSize,
   forecastPanel,
   visibleDetails,
 } from "../ui/window.ts";
@@ -30,7 +32,6 @@ import {
   copy,
   open,
 } from "./ui.ts";
-import { osascript } from "./proc.ts";
 const cityRows = (s: State): Action[] => {
   const q = s.query.trim().toLowerCase();
   const saved = cities().filter((c) => q.split(/\s+/).every((w) => c.query.toLowerCase().includes(w)));
@@ -222,13 +223,13 @@ const menu = (s: State, id: string): Action => {
 };
 const main = async (): Promise<Action | void> => {
   const [command = "", id = "", ...args] = process.argv.slice(2);
+  if (command === "prepare-origin") return vars(backVariables("weather_out", process.env.weather_query));
   if (command === "post") {
-    if (process.env.weather_out === "back")
-      await osascript('tell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)', "");
+    if (process.env.weather_out === "back") performBack(process.env.swiss_return);
     return;
   }
   if (command === "launch") {
-    const s = create(process.env.weather_query || "");
+    const s = create(launchInput(process.env.weather_query).query);
     if (s.query) {
       s.fromList = false;
       save(s);
@@ -251,7 +252,10 @@ const main = async (): Promise<Action | void> => {
   if (command === "detail-scroll") {
     s.detailOffset = Math.max(
       0,
-      Math.min((s.detailOffset || 0) + Number(args[0] || 0), Math.max(0, visibleDetails(s).length - 7)),
+      Math.min(
+        (s.detailOffset || 0) + Number(args[0] || 0),
+        Math.max(0, visibleDetails(s).length - detailPageSize),
+      ),
     );
     save(s);
     return update({ details: { components: detailPane(s) } }, true);
@@ -293,7 +297,7 @@ const main = async (): Promise<Action | void> => {
       save(s);
       return screen(s);
     }
-    return finish({ weather_out: "back" });
+    return finish(backVariables("weather_out", process.env.weather_query));
   }
   if (command === "cities") {
     s.mode = "cities";

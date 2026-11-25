@@ -92,11 +92,15 @@ export const components = (s: State): Json[] => [
         events: [{ triggers: "changed", action: run("base", ["{value:self.selected.value}"], false) }],
         constraints: { region: "right", size: { width: 290 } },
       },
-      label("sectionTitle", `${s.amount} ${s.base} · ${s.rates?.asof || "Loading rates…"} · Pinned first`, {
-        font: { size: 12 },
-        colour: "secondaryLabelColor",
-        constraints: { region: "bottom", insets: { left: 20, bottom: 8 } },
-      }),
+      label(
+        "sectionTitle",
+        `${s.amount} ${s.base} · ${s.rates?.date || "Rate date unavailable"} · ${Object.keys(s.rates?.rates || {}).length} currencies · Pinned first`,
+        {
+          font: { size: 12 },
+          colour: "secondaryLabelColor",
+          constraints: { region: "bottom", insets: { left: 20, bottom: 8 } },
+        },
+      ),
     ],
   },
 
@@ -169,6 +173,14 @@ export const components = (s: State): Json[] => [
     spacing: 12,
     constraints: { region: "bottom" },
     components: [
+      ...(s.rates?.provider === "open-er"
+        ? [
+            button("attribution", "Rates By Exchange Rate API", run("provider"), {
+              font: { size: 11 },
+              constraints: { region: "left", position: "centre" },
+            }),
+          ]
+        : []),
       label(
         "statusLabel",
         s.rates?.stale
@@ -204,6 +216,7 @@ export const components = (s: State): Json[] => [
 export const currencyWindow = {
   bundleid: "com.izsk.currency",
   variablesconfig: {
+    swiss_return: { default: "" },
     fx_session: { default: "", scriptenv: true },
     fx_query: { src: "args[0]", default: "", scriptenv: true },
     back_shortcut: { src: "variable", default: "⌘[" },
@@ -219,7 +232,7 @@ export const currencyWindow = {
       layout: "border",
       events: [
         { triggers: "preload", action: { type: "json", src: { window: { resize: { width: 900 } } } } },
-        { triggers: "launched", action: run("launch") },
+        { triggers: "launched", action: [run("prepare-origin", [], false), run("launch")] },
       ],
       shortcuts: [
         { shortcut: "↑", action: { type: "function", src: "items", args: "selectprevious" } },
@@ -232,7 +245,10 @@ export const currencyWindow = {
         button(
           "initialBack",
           "Back  {var:back_shortcut}",
-          { type: "json", src: { finish: { variables: { fx_out: "back" } } } },
+          {
+            type: "json",
+            src: { finish: { variables: { fx_out: "back", swiss_return: "{var:swiss_return}" } } },
+          },
           {
             shortcut: "{var:back_shortcut}",
             constraints: { region: "bottom", position: "left", insets: { left: 16, bottom: 16 } },

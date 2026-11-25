@@ -211,6 +211,7 @@ export const components = (s: State): Json[] => {
 export const adhanWindow = {
   bundleid: "com.izsk.adhan-time",
   variablesconfig: {
+    swiss_return: { default: "" },
     adhan_session: { default: "", scriptenv: true },
     adhan_query: { src: "args[0]", default: "", scriptenv: true },
     back_shortcut: { src: "variable", default: "⌘[" },
@@ -224,7 +225,7 @@ export const adhanWindow = {
       id: "root",
       type: "view",
       layout: "border",
-      events: [{ triggers: "launched", action: run("launch") }],
+      events: [{ triggers: "launched", action: [run("prepare-origin", [], false), run("launch")] }],
       shortcuts: [
         { shortcut: "{var:actions_shortcut}", action: run("menu") },
         { shortcut: "←", action: run("date", ["-1"]) },
@@ -238,7 +239,10 @@ export const adhanWindow = {
         button(
           "initialBack",
           "Back  {var:back_shortcut}",
-          { type: "json", src: { finish: { variables: { adhan_out: "back" } } } },
+          {
+            type: "json",
+            src: { finish: { variables: { adhan_out: "back", swiss_return: "{var:swiss_return}" } } },
+          },
           {
             shortcut: "{var:back_shortcut}",
             constraints: { region: "bottom", position: "left", insets: { left: 16, bottom: 16 } },
