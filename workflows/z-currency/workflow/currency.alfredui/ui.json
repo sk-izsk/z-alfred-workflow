@@ -1,0 +1,148 @@
+{
+  "bundleid": "com.izsk.currency",
+  "variablesconfig": {
+    "fx_session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "fx_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    }
+  },
+  "window": {
+    "title": "Currency Exchange",
+    "size": {
+      "height": 600
+    },
+    "minsize": {
+      "width": 850,
+      "height": 550
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 900
+                }
+              }
+            }
+          }
+        },
+        {
+          "triggers": "launched",
+          "action": {
+            "type": "script",
+            "src": "../bin/fx",
+            "args": [
+              "launch",
+              "{var:fx_session}"
+            ],
+            "async": true
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/fx",
+            "args": [
+              "menu",
+              "{var:fx_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/fx",
+            "args": [
+              "refresh",
+              "{var:fx_session}"
+            ],
+            "async": true
+          }
+        }
+      ],
+      "components": [
+        {
+          "id": "statusLabel",
+          "type": "label",
+          "text": "Loading rates…",
+          "constraints": {
+            "region": "centre",
+            "position": "centre"
+          }
+        },
+        {
+          "id": "initialBack",
+          "type": "button",
+          "text": "Back  {var:back_shortcut}",
+          "bordered": false,
+          "events": [
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "json",
+                "src": {
+                  "finish": {
+                    "variables": {
+                      "fx_out": "back"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "shortcut": "{var:back_shortcut}",
+          "constraints": {
+            "region": "bottom",
+            "position": "left",
+            "insets": {
+              "left": 16,
+              "bottom": 16
+            }
+          }
+        }
+      ]
+    }
+  }
+}

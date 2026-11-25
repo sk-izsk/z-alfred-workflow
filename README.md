@@ -14,6 +14,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [GitHub & Git](workflows/z-github) | GitHub activity, full-history My PRs and local repositories | Initial release pending |
 | [Kill Process](workflows/z-kill-process) | Monitor CPU/RAM, terminate processes and restart apps | Initial release pending |
 | [Adhan Time](workflows/z-adhan-time) | City-local prayer calendar and next-prayer countdown | Initial release pending |
+| [Currency Exchange](workflows/z-currency) | Arithmetic, cross-rates, pinned targets and provider-based history | Initial release pending |
 | [Weather](workflows/z-weather) | Saved cities, colorful conditions and detailed weather forecasts | Initial release pending |
 
 Download a `.alfredworkflow` asset and double-click it to install. These workflows require macOS,

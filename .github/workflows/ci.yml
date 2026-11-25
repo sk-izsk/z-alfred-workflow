@@ -26,6 +26,8 @@ jobs:
             artifact: Speed Test.alfredworkflow
           - workflow: z-adhan-time
             artifact: Adhan Time.alfredworkflow
+          - workflow: z-currency
+            artifact: Currency Exchange.alfredworkflow
           - workflow: z-weather
             artifact: Weather.alfredworkflow
           - workflow: z-kill-process
