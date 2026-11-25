@@ -1,0 +1,932 @@
+{
+  "bundleid": "com.izsk.kill-process",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "kp_session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "kp_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    }
+  },
+  "pulse": {
+    "src": "../bin/kproc",
+    "args": [
+      "poll",
+      "{var:kp_session}"
+    ],
+    "interval": 0,
+    "intervalmode": "delay"
+  },
+  "window": {
+    "title": "Kill Process",
+    "size": {
+      "height": 590
+    },
+    "minsize": {
+      "width": 900,
+      "height": 420
+    },
+    "root": {
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 1000
+                }
+              }
+            }
+          }
+        },
+        {
+          "triggers": "launched",
+          "action": {
+            "type": "script",
+            "src": "../bin/kproc",
+            "args": [
+              "launch",
+              "{var:kp_session}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "triggers": "quit",
+          "action": {
+            "type": "script",
+            "src": "../bin/kproc",
+            "args": [
+              "cleanup",
+              "{var:kp_session}"
+            ],
+            "async": false
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/kproc",
+            "args": [
+              "action",
+              "{var:kp_session}",
+              "menu",
+              "{value:items.selected.uid}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/kproc",
+            "args": [
+              "poll",
+              "{var:kp_session}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘F",
+          "action": {
+            "type": "json",
+            "src": {
+              "update": {
+                "ids": {
+                  "searchField": {
+                    "focus": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "components": [
+        {
+          "type": "view",
+          "layout": "border",
+          "padding": 16,
+          "spacing": 14,
+          "constraints": {
+            "region": "top"
+          },
+          "components": [
+            {
+              "id": "headerBack",
+              "type": "button",
+              "text": "‹",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "finish": {
+                        "variables": {
+                          "kp_out": "back"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "font": {
+                "size": 27
+              },
+              "tooltip": "Back {var:back_shortcut}",
+              "constraints": {
+                "region": "left",
+                "position": "centre"
+              }
+            },
+            {
+              "id": "searchField",
+              "type": "textfield",
+              "text": "{var:kp_query}",
+              "placeholder": "Filter by name, PID or path…",
+              "background": null,
+              "bordered": false,
+              "focusring": false,
+              "focus": true,
+              "font": {
+                "size": 23,
+                "weight": "light"
+              },
+              "constraints": {
+                "region": "centre"
+              },
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/kproc",
+                    "args": [
+                      "filter",
+                      "{var:kp_session}",
+                      "{value:self.text}",
+                      "{value:sortPicker.selected.value}"
+                    ],
+                    "async": true
+                  }
+                },
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/kproc",
+                    "args": [
+                      "action",
+                      "{var:kp_session}",
+                      "terminate",
+                      "{value:items.selected.uid}"
+                    ],
+                    "async": true
+                  }
+                }
+              ]
+            },
+            {
+              "type": "view",
+              "layout": "inline",
+              "spacing": 14,
+              "constraints": {
+                "region": "right",
+                "position": "centre"
+              },
+              "components": [
+                {
+                  "id": "countLabel",
+                  "type": "label",
+                  "text": "…",
+                  "font": {
+                    "size": 12
+                  },
+                  "colour": "secondaryLabelColor",
+                  "textalign": "right",
+                  "constraints": {
+                    "size": {
+                      "width": 80
+                    }
+                  }
+                },
+                {
+                  "id": "sortPicker",
+                  "type": "picker",
+                  "constraints": {
+                    "size": {
+                      "width": 160
+                    }
+                  },
+                  "bordered": false,
+                  "items": [
+                    {
+                      "text": "CPU Usage",
+                      "value": "cpu"
+                    },
+                    {
+                      "text": "Memory Usage",
+                      "value": "memory"
+                    }
+                  ],
+                  "selected": "cpu",
+                  "events": [
+                    {
+                      "triggers": "changed",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/kproc",
+                        "args": [
+                          "filter",
+                          "{var:kp_session}",
+                          "{value:searchField.text}",
+                          "{value:self.selected.value}"
+                        ],
+                        "async": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "items",
+          "type": "dataview",
+          "padding": 10,
+          "spacing": 3,
+          "placeholder": "Reading processes and system usage…",
+          "data": {
+            "type": "basic",
+            "src": []
+          },
+          "constraints": {
+            "region": "centre"
+          },
+          "events": [
+            {
+              "triggers": "changed",
+              "action": {
+                "type": "script",
+                "src": "../bin/kproc",
+                "args": [
+                  "selected",
+                  "{var:kp_session}",
+                  "{value:items.selected.uid}"
+                ],
+                "async": false
+              }
+            },
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "script",
+                "src": "../bin/kproc",
+                "args": [
+                  "action",
+                  "{var:kp_session}",
+                  "terminate",
+                  "{value:items.selected.uid}"
+                ],
+                "async": true
+              }
+            }
+          ],
+          "cell": {
+            "height": 57,
+            "init": {
+              "row.background": null,
+              "rowName.colour": "labelColor",
+              "rowPath.colour": "secondaryLabelColor",
+              "rowCPU.colour": "secondaryLabelColor",
+              "rowMemory.colour": "secondaryLabelColor"
+            },
+            "selected": {
+              "row.background": "alfredSelectedResultBackgroundColor",
+              "rowName.colour": "alfredSelectedResultTextColor",
+              "rowPath.colour": "alfredSelectedResultTextColor",
+              "rowCPU.colour": "alfredSelectedResultTextColor",
+              "rowMemory.colour": "alfredSelectedResultTextColor"
+            },
+            "root": {
+              "id": "row",
+              "type": "view",
+              "layout": "border",
+              "padding": 9,
+              "spacing": 12,
+              "cornerradius": 8,
+              "events": [
+                {
+                  "triggers": "doubleclicked",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/kproc",
+                    "args": [
+                      "action",
+                      "{var:kp_session}",
+                      "terminate",
+                      "{data:uid}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "components": [
+                {
+                  "id": "rowIcon",
+                  "type": "imageview",
+                  "image": {
+                    "type": "symbol",
+                    "src": "terminal",
+                    "size": {
+                      "width": 27,
+                      "height": 27
+                    }
+                  },
+                  "constraints": {
+                    "region": "left",
+                    "position": "centre",
+                    "size": {
+                      "width": 30,
+                      "height": 30
+                    }
+                  }
+                },
+                {
+                  "type": "view",
+                  "layout": "border",
+                  "spacing": 3,
+                  "constraints": {
+                    "region": "centre",
+                    "position": "centre",
+                    "stretch": "horizontal",
+                    "size": {
+                      "height": 36
+                    }
+                  },
+                  "components": [
+                    {
+                      "id": "rowName",
+                      "type": "label",
+                      "text": "",
+                      "font": {
+                        "size": 14,
+                        "weight": "medium"
+                      },
+                      "linebreak": "truncatetail",
+                      "constraints": {
+                        "region": "top"
+                      }
+                    },
+                    {
+                      "id": "rowPath",
+                      "type": "label",
+                      "text": "",
+                      "font": {
+                        "size": 11.5
+                      },
+                      "linebreak": "truncatetail",
+                      "colour": "secondaryLabelColor",
+                      "constraints": {
+                        "region": "bottom"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "view",
+                  "layout": "inline",
+                  "spacing": 7,
+                  "constraints": {
+                    "region": "right",
+                    "position": "centre"
+                  },
+                  "components": [
+                    {
+                      "id": "rowCPUIcon",
+                      "type": "imageview",
+                      "image": {
+                        "type": "symbol",
+                        "src": "cpu",
+                        "size": {
+                          "width": 14,
+                          "height": 14
+                        }
+                      },
+                      "contenttintcolour": "secondaryLabelColor",
+                      "constraints": {
+                        "size": {
+                          "width": 14,
+                          "height": 14
+                        }
+                      }
+                    },
+                    {
+                      "id": "rowCPU",
+                      "type": "label",
+                      "text": "",
+                      "textalign": "right",
+                      "font": {
+                        "size": 12
+                      },
+                      "constraints": {
+                        "size": {
+                          "width": 63
+                        }
+                      }
+                    },
+                    {
+                      "id": "rowMemoryIcon",
+                      "type": "imageview",
+                      "image": {
+                        "type": "symbol",
+                        "src": "memorychip",
+                        "size": {
+                          "width": 14,
+                          "height": 14
+                        }
+                      },
+                      "contenttintcolour": "secondaryLabelColor",
+                      "constraints": {
+                        "size": {
+                          "width": 14,
+                          "height": 14
+                        }
+                      }
+                    },
+                    {
+                      "id": "rowMemory",
+                      "type": "label",
+                      "text": "",
+                      "textalign": "right",
+                      "font": {
+                        "size": 12
+                      },
+                      "constraints": {
+                        "size": {
+                          "width": 85
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "view",
+          "layout": "stack",
+          "constraints": {
+            "region": "bottom"
+          },
+          "components": [
+            {
+              "type": "view",
+              "layout": "border",
+              "spacing": 9,
+              "padding": 14,
+              "components": [
+                {
+                  "id": "statusLabel",
+                  "type": "label",
+                  "text": "Live CPU and RAM usage",
+                  "colour": "secondaryLabelColor",
+                  "font": {
+                    "size": 11
+                  },
+                  "linebreak": "truncatetail",
+                  "constraints": {
+                    "region": "top",
+                    "size": {
+                      "height": 17
+                    }
+                  }
+                },
+                {
+                  "type": "view",
+                  "layout": "inline",
+                  "spacing": 20,
+                  "constraints": {
+                    "region": "left",
+                    "position": "centre"
+                  },
+                  "components": [
+                    {
+                      "type": "view",
+                      "layout": "inline",
+                      "spacing": 7,
+                      "components": [
+                        {
+                          "id": "ramIcon",
+                          "type": "imageview",
+                          "image": {
+                            "type": "symbol",
+                            "src": "memorychip",
+                            "size": {
+                              "width": 14,
+                              "height": 14
+                            }
+                          },
+                          "contenttintcolour": "secondaryLabelColor",
+                          "constraints": {
+                            "size": {
+                              "width": 14,
+                              "height": 14
+                            }
+                          }
+                        },
+                        {
+                          "id": "ramValue",
+                          "type": "label",
+                          "text": "RAM —",
+                          "font": {
+                            "size": 11.5
+                          },
+                          "colour": "secondaryLabelColor",
+                          "constraints": {
+                            "size": {
+                              "width": 74
+                            }
+                          }
+                        },
+                        {
+                          "id": "ramBar",
+                          "type": "progress",
+                          "style": "linear",
+                          "progress": 0,
+                          "thickness": 7,
+                          "colour": "systemBlueColor",
+                          "constraints": {
+                            "size": {
+                              "width": 78,
+                              "height": 8
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "view",
+                      "layout": "inline",
+                      "spacing": 7,
+                      "components": [
+                        {
+                          "id": "cpuIcon",
+                          "type": "imageview",
+                          "image": {
+                            "type": "symbol",
+                            "src": "cpu",
+                            "size": {
+                              "width": 14,
+                              "height": 14
+                            }
+                          },
+                          "contenttintcolour": "secondaryLabelColor",
+                          "constraints": {
+                            "size": {
+                              "width": 14,
+                              "height": 14
+                            }
+                          }
+                        },
+                        {
+                          "id": "cpuValue",
+                          "type": "label",
+                          "text": "CPU —",
+                          "font": {
+                            "size": 11.5
+                          },
+                          "colour": "secondaryLabelColor",
+                          "constraints": {
+                            "size": {
+                              "width": 74
+                            }
+                          }
+                        },
+                        {
+                          "id": "cpuBar",
+                          "type": "progress",
+                          "style": "linear",
+                          "progress": 0,
+                          "thickness": 7,
+                          "colour": "systemPurpleColor",
+                          "constraints": {
+                            "size": {
+                              "width": 78,
+                              "height": 8
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "view",
+                  "layout": "inline",
+                  "spacing": 12,
+                  "constraints": {
+                    "region": "right",
+                    "position": "centre"
+                  },
+                  "components": [
+                    {
+                      "id": "footerBack",
+                      "type": "button",
+                      "text": "Back  {var:back_shortcut}",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "json",
+                            "src": {
+                              "finish": {
+                                "variables": {
+                                  "kp_out": "back"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ],
+                      "shortcut": "{var:back_shortcut}"
+                    },
+                    {
+                      "id": "killButton",
+                      "type": "button",
+                      "text": "Kill  ↩",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/kproc",
+                            "args": [
+                              "action",
+                              "{var:kp_session}",
+                              "terminate",
+                              "{value:items.selected.uid}"
+                            ],
+                            "async": true
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "actionsButton",
+                      "type": "button",
+                      "text": "Actions  {var:actions_shortcut}",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/kproc",
+                            "args": [
+                              "action",
+                              "{var:kp_session}",
+                              "menu",
+                              "{value:items.selected.uid}"
+                            ],
+                            "async": true
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "forceKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/kproc",
+                    "args": [
+                      "action",
+                      "{var:kp_session}",
+                      "force",
+                      "{value:items.selected.uid}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "shortcut": "⌘↩",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "restartKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/kproc",
+                    "args": [
+                      "action",
+                      "{var:kp_session}",
+                      "restart",
+                      "{value:items.selected.uid}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "shortcut": "⌥⌘R",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "forceRestartKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/kproc",
+                    "args": [
+                      "action",
+                      "{var:kp_session}",
+                      "force-restart",
+                      "{value:items.selected.uid}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "shortcut": "⌥⇧⌘R",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "allKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/kproc",
+                    "args": [
+                      "action",
+                      "{var:kp_session}",
+                      "terminate-all",
+                      "{value:items.selected.uid}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "shortcut": "⌥↩",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "forceAllKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/kproc",
+                    "args": [
+                      "action",
+                      "{var:kp_session}",
+                      "force-all",
+                      "{value:items.selected.uid}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "shortcut": "⌥⇧↩",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "copyPathKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/kproc",
+                    "args": [
+                      "action",
+                      "{var:kp_session}",
+                      "copy-path",
+                      "{value:items.selected.uid}"
+                    ],
+                    "async": true
+                  }
+                }
+              ],
+              "shortcut": "⌥⌘C",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

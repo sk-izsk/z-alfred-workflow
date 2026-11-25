@@ -2,7 +2,7 @@ name: Release workflow
 
 on:
   push:
-    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*", "z-brew/v*", "z-speedtest/v*", "z-github/v*"]
+    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*", "z-brew/v*", "z-speedtest/v*", "z-github/v*", "z-kill-process/v*"]
 
 permissions:
   contents: read
@@ -27,6 +27,7 @@ jobs:
             z-vscode/v*) workflow=z-vscode; artifact='VS Code.alfredworkflow' ;;
             z-github/v*) workflow=z-github; artifact=GitHub.alfredworkflow ;;
             z-speedtest/v*) workflow=z-speedtest; artifact='Speed Test.alfredworkflow' ;;
+            z-kill-process/v*) workflow=z-kill-process; artifact='Kill Process.alfredworkflow' ;;
             z-brew/v*) workflow=z-brew; artifact=Brew.alfredworkflow ;;
             z-cald/v*) workflow=z-cald; artifact=Calendar.alfredworkflow ;;
             *) echo 'Unknown workflow tag' >&2; exit 1 ;;

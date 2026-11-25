@@ -24,6 +24,8 @@ jobs:
             artifact: GitHub.alfredworkflow
           - workflow: z-speedtest
             artifact: Speed Test.alfredworkflow
+          - workflow: z-kill-process
+            artifact: Kill Process.alfredworkflow
           - workflow: z-brew
             artifact: Brew.alfredworkflow
           - workflow: z-cald

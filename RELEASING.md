@@ -10,6 +10,7 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-brew` | `z-brew/vX.Y.Z` | `Brew.alfredworkflow` |
 | `workflows/z-speedtest` | `z-speedtest/vX.Y.Z` | `Speed Test.alfredworkflow` |
 | `workflows/z-github` | `z-github/vX.Y.Z` | `GitHub.alfredworkflow` |
+| `workflows/z-kill-process` | `z-kill-process/vX.Y.Z` | `Kill Process.alfredworkflow` |
 
 1. Bump `version` in the selected workflow's `package.json`.
 2. In that folder, run `bun install --frozen-lockfile`, `bun run check` and `bun run package`.
