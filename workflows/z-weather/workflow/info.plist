@@ -95,8 +95,8 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>availableviaurlscheme</key>
-				<true/>
+				<key>availableviaurlhandler</key>
+				<false/>
 				<key>triggerid</key>
 				<string>open</string>
 			</dict>
@@ -178,7 +178,7 @@ The icon and inspiration come from Raycast Weather by tonka3000 and contributors
 		<key>KEYWORD</key>
 		<dict>
 			<key>xpos</key>
-			<integer>0</integer>
+			<integer>30</integer>
 			<key>ypos</key>
 			<integer>40</integer>
 		</dict>
@@ -213,6 +213,55 @@ The icon and inspiration come from Raycast Weather by tonka3000 and contributors
 	</dict>
 	<key>userconfigurationconfig</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>10</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>1–10080 minutes. Manual Refresh bypasses cached results; provider publication frequency is independent.</string>
+			<key>label</key>
+			<string>Weather cache / refresh minutes</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>cache_minutes</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>15</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>1–10080 minutes. Manual Refresh bypasses cached results; provider publication frequency is independent.</string>
+			<key>label</key>
+			<string>AQI cache / refresh minutes</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>aqi_cache_minutes</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Refresh expired data while this window is open</string>
+			</dict>
+			<key>label</key>
+			<string>Refresh while open</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>auto_refresh</string>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>

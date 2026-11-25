@@ -32,7 +32,7 @@ export const infoPlist = {
       uid: "TRIGGER",
       type: "alfred.workflow.trigger.external",
       version: 1,
-      config: { triggerid: "open", availableviaurlscheme: true },
+      config: { triggerid: "open", availableviaurlhandler: false },
     },
     {
       uid: "MODE",
@@ -75,10 +75,33 @@ export const infoPlist = {
   uidata: Object.fromEntries(
     ["KEYWORD", "TRIGGER", "MODE", "UI", "POST"].map((id, i) => [
       id,
-      { xpos: i * 190, ypos: id === "TRIGGER" ? 180 : 40 },
+      { xpos: id === "KEYWORD" ? 30 : i * 190, ypos: id === "TRIGGER" ? 180 : 40 },
     ]),
   ),
   userconfigurationconfig: [
+    {
+      type: "textfield",
+      variable: "cache_minutes",
+      label: "Weather cache / refresh minutes",
+      description:
+        "1–10080 minutes. Manual Refresh bypasses cached results; provider publication frequency is independent.",
+      config: { default: "10", required: false },
+    },
+    {
+      type: "textfield",
+      variable: "aqi_cache_minutes",
+      label: "AQI cache / refresh minutes",
+      description:
+        "1–10080 minutes. Manual Refresh bypasses cached results; provider publication frequency is independent.",
+      config: { default: "15", required: false },
+    },
+    {
+      type: "checkbox",
+      variable: "auto_refresh",
+      label: "Refresh while open",
+      config: { default: true, text: "Refresh expired data while this window is open" },
+    },
+
     text("kw_main", "Weather keyword", "weather", "Open saved cities; append a city for its weather report."),
     text(
       "cities",

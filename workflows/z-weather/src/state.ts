@@ -11,6 +11,9 @@ export type State = {
   query: string;
   selected: string;
   city: string;
+  lastAttempt?: number;
+  listChecks?: Record<string, number>;
+  listErrors?: Record<string, string>;
   day: number;
   imperial: boolean;
   report?: Report;

@@ -1767,6 +1767,40 @@ The Brew icon and feature inspiration are from Raycast Brew by nhojb and contrib
 			<key>config</key>
 			<dict>
 				<key>default</key>
+				<string>360</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Manual Refresh bypasses cached results. Provider update frequency is independent.</string>
+			<key>label</key>
+			<string>Catalog cache minutes</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>catalog_cache_minutes</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>15</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Manual Refresh bypasses cached results. Provider update frequency is independent.</string>
+			<key>label</key>
+			<string>Details cache minutes</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>detail_cache_minutes</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
 				<string>brew</string>
 				<key>placeholder</key>
 				<string>brew</string>
@@ -2102,7 +2136,7 @@ The Brew icon and feature inspiration are from Raycast Brew by nhojb and contrib
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.1.2</string>
+	<string>0.1.3</string>
 	<key>webaddress</key>
 	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-brew</string>
 </dict>

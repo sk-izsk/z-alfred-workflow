@@ -74,3 +74,11 @@ Built with help from AI tools. Review before use and report issues on the
 When opened from Swiss, the root Back returns to the same launcher search/selection. Child screens
 and sheets still go back one level first. Direct launches keep their normal Back behavior. Install
 Swiss separately; it is optional and does not run this tool until selected.
+
+## Data refresh controls
+
+Calendar cache minutes is configurable (default 1440). Manual Refresh bypasses the cache; provider-calculated prayer times and original dates remain visible when cached.
+
+## Ramadan timetable
+
+Open Ramadan from the footer or Actions. Choose a Hijri year to see the provider’s complete 29/30-day calendar, with Gregorian dates, Imsak, Fajr and Maghrib/Iftar in the configured city timezone. Copy Timetable exports the table. Imsak is shown separately as the provider’s precautionary time; confirm local practice with your mosque. Back closes the table to the prayer calendar.

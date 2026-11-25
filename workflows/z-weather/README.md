@@ -102,3 +102,7 @@ This workflow was built with the help of AI tools. Review it before use and repo
 When opened from Swiss, the root Back returns to the same launcher search/selection. Child screens
 and sheets still go back one level first. Direct launches keep their normal Back behavior. Install
 Swiss separately; it is optional and does not run this tool until selected.
+
+## Data refresh controls
+
+Configure Weather cache / refresh minutes (default 10), AQI cache / refresh minutes (15), and Refresh while open. Saved cities fetch conditions automatically in small batches. Row labels distinguish fetched data from stale cache; failed requests retain their original fetch time. Manual Refresh bypasses the cache. No polling runs after the window closes.

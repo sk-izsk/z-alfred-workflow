@@ -122,3 +122,7 @@ This workflow was built with the help of AI tools. Review the code before use, a
 workflow; please report anything that does not work.
 
 Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.
+
+## Data refresh controls
+
+REST API cache seconds is configurable (default 30). Refresh bypasses this cache. GraphQL requests are live, and mutations are never cached. No background refresh service runs while closed.

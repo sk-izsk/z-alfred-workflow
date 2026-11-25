@@ -213,6 +213,38 @@ Requires Alfred 6 Powerpack, macOS, Node.js 22+ or Bun. Icon/catalog/reference: 
 			<key>config</key>
 			<dict>
 				<key>default</key>
+				<string>60</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>1–10080 minutes. Manual Refresh bypasses cached results; provider publication frequency is independent.</string>
+			<key>label</key>
+			<string>Rates cache / refresh minutes</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>cache_minutes</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Refresh expired data while this window is open</string>
+			</dict>
+			<key>label</key>
+			<string>Refresh while open</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>auto_refresh</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
 				<string>currency</string>
 				<key>placeholder</key>
 				<string>currency</string>

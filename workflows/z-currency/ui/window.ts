@@ -188,6 +188,9 @@ export const components = (s: State): Json[] => [
           : `${s.rates?.provider || "Rates"} · Reference rates`,
         {
           font: { size: 11 },
+          tooltip: s.rates
+            ? `Fetched ${new Date(s.rates.fetched).toISOString()} · Provider timestamp ${s.rates.asof}`
+            : "",
           colour: s.rates?.stale ? "systemOrangeColor" : "secondaryLabelColor",
           linebreak: "truncatetail",
           constraints: { region: "centre", stretch: "horizontal" },

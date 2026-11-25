@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { join } from "node:path";
-import { cacheDir, readJson, writeJson, str } from "./env.ts";
+import { cacheDir, readJson, writeJson, str, cacheMinutes } from "./env.ts";
 export type Provider = "open-er" | "allratestoday" | "exchangerate-api" | "unirate";
 export type Rates = {
   provider: Provider;
@@ -95,7 +95,7 @@ export const loadRates = async (date = "", fresh = false): Promise<Rates> => {
   const identity = createHash("sha256").update(`${p}:${key}:${date}`).digest("hex").slice(0, 24),
     path = join(cacheDir(), `rates-${identity}.json`),
     old = readJson<Rates | null>(path, null);
-  if (old && !fresh && Date.now() - old.fetched < 3600000) return old;
+  if (old && !fresh && Date.now() - old.fetched < cacheMinutes("cache_minutes", 60) * 60000) return old;
   try {
     let url =
       p === "open-er"

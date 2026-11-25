@@ -87,3 +87,7 @@ Built with help from AI tools; review before use and report issues on the projec
 When opened from Swiss, the root Back returns to the same launcher search/selection. Child screens
 and sheets still go back one level first. Direct launches keep their normal Back behavior. Install
 Swiss separately; it is optional and does not run this tool until selected.
+
+## Data refresh controls
+
+Configure Rates cache / refresh minutes (default 60) and Refresh while open. Expired data refreshes without rebuilding the search field. Hover the status for fetch/provider timestamps. A shorter interval does not change the provider’s publication schedule; open-access rates update daily.

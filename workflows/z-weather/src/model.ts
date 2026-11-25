@@ -2,6 +2,7 @@ import { airCategory, airForDate, type AirQuality } from "./air-quality.ts";
 export type Json = Record<string, any>;
 export type Report = {
   air?: AirQuality | null;
+  refreshFailedAt?: number;
   city: string;
   region: string;
   country: string;
@@ -66,8 +67,16 @@ export const temperature = (data: Json, imperial: boolean, current = false): str
     data[current ? (imperial ? "temp_F" : "temp_C") : imperial ? "tempF" : "tempC"],
     imperial ? "°F" : "°C",
   );
-export const condition = (code: unknown): { icon: string; colour: string } => {
-  const n = Number(code);
+export const condition = (code: unknown, description = ""): { icon: string; colour: string } => {
+  const n = Number(code),
+    text = description.toLowerCase();
+  if (/smoke|haze|smog|dust|ash|sand/.test(text) || [711, 721, 731, 751, 761, 762].includes(n))
+    return { icon: "cloud.fog.fill", colour: "systemOrangeColor" };
+  if (/tornado/.test(text) || n === 781) return { icon: "tornado", colour: "systemGrayColor" };
+  if (n === 800) return { icon: "sun.max.fill", colour: "systemOrangeColor" };
+  if ([801, 802].includes(n)) return { icon: "cloud.sun.fill", colour: "systemOrangeColor" };
+  if ([803, 804].includes(n)) return { icon: "cloud.fill", colour: "systemGrayColor" };
+
   if (n === 113) return { icon: "sun.max.fill", colour: "systemOrangeColor" };
   if (n === 116) return { icon: "cloud.sun.fill", colour: "systemOrangeColor" };
   if ([200, 386, 389, 392, 395].includes(n))
@@ -83,7 +92,13 @@ export const condition = (code: unknown): { icon: string; colour: string } => {
     return { icon: "cloud.rain.fill", colour: "systemBlueColor" };
   if ([143, 248, 260].includes(n)) return { icon: "cloud.fog.fill", colour: "secondaryLabelColor" };
   if ([119, 122].includes(n)) return { icon: "cloud.fill", colour: "systemGrayColor" };
-  return { icon: "questionmark.circle", colour: "secondaryLabelColor" };
+  if (/thunder|lightning/.test(text)) return { icon: "cloud.bolt.rain.fill", colour: "systemPurpleColor" };
+  if (/snow|sleet|ice|blizzard/.test(text)) return { icon: "cloud.snow.fill", colour: "systemCyanColor" };
+  if (/rain|drizzle|shower/.test(text)) return { icon: "cloud.rain.fill", colour: "systemBlueColor" };
+  if (/fog|mist/.test(text)) return { icon: "cloud.fog.fill", colour: "systemGrayColor" };
+  if (/clear|sunny/.test(text)) return { icon: "sun.max.fill", colour: "systemOrangeColor" };
+  if (/cloud|overcast/.test(text)) return { icon: "cloud.fill", colour: "systemGrayColor" };
+  return { icon: description ? "cloud.fill" : "questionmark.circle", colour: "secondaryLabelColor" };
 };
 export const hourLabel = (time: unknown): string => {
   const n = Number(time);
@@ -104,7 +119,7 @@ export const summary = (r: Report, dayIndex: number, imperial: boolean) => {
     title: `${r.city}${r.region ? ", " + r.region : ""}, ${r.country}`,
     description: first(data.weatherDesc) || "Conditions unavailable",
     temperature: temperature(data, imperial, current),
-    ...condition(data.weatherCode),
+    ...condition(data.weatherCode, first(data.weatherDesc)),
   };
 };
 const detailRow = (title: string, result: string, icon: string, colour = "systemBlueColor") => ({

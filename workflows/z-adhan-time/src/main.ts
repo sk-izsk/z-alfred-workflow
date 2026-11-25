@@ -1,3 +1,4 @@
+import { ramadan, ramadanText, ramadanSheet, ramadanContent } from "./ramadan.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { randomUUID } from "node:crypto";
 import { calendar, validate, type Settings } from "./api.ts";
@@ -158,6 +159,27 @@ const main = async (): Promise<Action | void> => {
   }
   const s = read(id);
   if (command === "back") return finish(backVariables("adhan_out", process.env.adhan_query));
+  if (command === "ramadan-back") {
+    s.ramadanRequest = "";
+    save(s);
+    return { sheet: { close: "ramadanSheet" } };
+  }
+  if (command === "ramadan" || command === "copy-ramadan") {
+    const sample = s.month?.days.find((d) => d.date === s.date) || s.month?.days[0];
+    const year = Number(args[0] || sample?.hijriYear || sample?.hijri.match(/\d{4}/)?.[0] || "1448"),
+      ticket = randomUUID();
+    s.ramadanRequest = ticket;
+    s.ramadanYear = year;
+    save(s);
+    const month = await ramadan(s.settings, year),
+      latest = read(id);
+    if (latest.ramadanRequest !== ticket) return {};
+    return command === "copy-ramadan"
+      ? copy(ramadanText(s.settings, year, month))
+      : args[1] === "update"
+        ? { replace: { ids: { ramadanContent: ramadanContent(s.settings, year, month) } } }
+        : ramadanSheet(s.settings, year, month);
+  }
   if (command === "settings") return settingsSheet(s);
   if (command === "save-settings") {
     try {
@@ -201,6 +223,7 @@ const main = async (): Promise<Action | void> => {
   }
   if (command === "menu")
     return popup("actionsButton", [
+      menuItem("Ramadan Timetable", ["ramadan", id]),
       menuItem("Today", ["today", id]),
       menuItem("Previous Day", ["date", id, "-1"], "←"),
       menuItem("Next Day", ["date", id, "1"], "→"),

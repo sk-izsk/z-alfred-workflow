@@ -213,6 +213,23 @@ Icon/reference: Raycast Adhan Time by mzaien and contributors, MIT. See THIRD_PA
 			<key>config</key>
 			<dict>
 				<key>default</key>
+				<string>1440</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>1–10080 minutes. Manual Refresh bypasses cached results; provider publication frequency is independent.</string>
+			<key>label</key>
+			<string>Calendar cache minutes</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>cache_minutes</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
 				<string>adhan</string>
 				<key>placeholder</key>
 				<string>adhan</string>

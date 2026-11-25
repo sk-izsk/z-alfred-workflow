@@ -80,6 +80,15 @@ export const infoPlist = {
     ]),
   ),
   userconfigurationconfig: [
+    {
+      type: "textfield",
+      variable: "cache_minutes",
+      label: "Calendar cache minutes",
+      description:
+        "1–10080 minutes. Manual Refresh bypasses cached results; provider publication frequency is independent.",
+      config: { default: "1440", required: false },
+    },
+
     text("kw_main", "Adhan Time keyword", "adhan", "View prayer times; optionally append City, Country."),
     text("city", "City", "", "City whose prayer times you want; can also be set in the window."),
     text("country", "Country", "", "Country for city disambiguation."),

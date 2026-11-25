@@ -13,6 +13,7 @@ export type State = {
   rates?: Rates;
   request: string;
   at: number;
+  lastAttempt?: number;
 };
 const file = (id: string) => {
   if (!/^[a-f0-9-]{36}$/.test(id)) throw new Error("Reopen Currency Exchange.");

@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { join } from "node:path";
-import { cacheDir, readJson, writeJson } from "./env.ts";
+import { cacheDir, readJson, writeJson, cacheMinutes } from "./env.ts";
 export type AirQuality = {
   fetched: number;
   stale: boolean;
@@ -76,7 +76,7 @@ export const loadAirQuality = async (
   const name = createHash("sha256").update(`${latitude},${longitude}`).digest("hex").slice(0, 24),
     path = join(cacheDir(), `air-${name}.json`),
     old = readJson<AirQuality | null>(path, null);
-  if (old && !fresh && Date.now() - old.fetched < 15 * 60000) return old;
+  if (old && !fresh && Date.now() - old.fetched < cacheMinutes("aqi_cache_minutes", 15) * 60000) return old;
   try {
     const url = new URL("https://air-quality-api.open-meteo.com/v1/air-quality");
     url.search = new URLSearchParams({

@@ -200,6 +200,7 @@ export const components = (s: State): Json[] => {
             button("back", "Back  {var:back_shortcut}", run("back", [], false), {
               shortcut: "{var:back_shortcut}",
             }),
+            button("ramadan", "Ramadan", run("ramadan")),
             button("settings", "Settings", run("settings")),
             button("actionsButton", "Actions  {var:actions_shortcut}", run("menu")),
           ],

@@ -359,3 +359,45 @@ describe("air quality", () => {
     }
   });
 });
+
+test("smoke, haze and unfamiliar provider codes have meaningful icons", () => {
+  expect(condition(711, "Smoke").icon).toBe("cloud.fog.fill");
+  expect(condition(999, "Haze").icon).toBe("cloud.fog.fill");
+  expect(condition(999, "Light rain").icon).toBe("cloud.rain.fill");
+  const r = parsed();
+  r.days[0]!.hourly = [{ ...hour, weatherCode: "711", weatherDesc: [{ value: "Smoke" }] }];
+  expect(forecastCards(r, 0, false, "hourly")[0]?.emoji).toBe("🌫️");
+});
+test("cache lifetime is configurable and failure metadata never makes data fresh", async () => {
+  const oldFetch = globalThis.fetch,
+    oldMinutes = process.env.cache_minutes;
+  try {
+    let calls = 0;
+    globalThis.fetch = (async () => {
+      calls++;
+      return new Response(JSON.stringify(raw));
+    }) as unknown as typeof fetch;
+    const query = "TTL Example City";
+    await report(query);
+    const path = join(root, "cache", `report-${key(query)}.json`);
+    const stored = JSON.parse(await Bun.file(path).text());
+    stored.fetched = Date.now() - 120000;
+    await Bun.write(path, JSON.stringify(stored));
+    process.env.cache_minutes = "10";
+    await report(query);
+    expect(calls).toBe(1);
+    process.env.cache_minutes = "1";
+    await report(query);
+    expect(calls).toBe(2);
+    globalThis.fetch = (async () => {
+      throw new Error("offline");
+    }) as unknown as typeof fetch;
+    const failed = await report(query, true);
+    expect(failed.stale).toBe(true);
+    expect((await report(query)).stale).toBe(true);
+  } finally {
+    globalThis.fetch = oldFetch;
+    if (oldMinutes === undefined) delete process.env.cache_minutes;
+    else process.env.cache_minutes = oldMinutes;
+  }
+});

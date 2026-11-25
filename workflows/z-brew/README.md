@@ -78,3 +78,7 @@ Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Bac
 Screenshots use illustrative data.
 
 Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.
+
+## Data refresh controls
+
+Catalog cache minutes (default 360) and Details cache minutes (15) are configurable. Manual Refresh bypasses cached data. These settings control data reuse when browsing; they do not run background Homebrew updates.

@@ -1,3 +1,4 @@
+import { bool, cacheMinutes } from "./env.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { randomUUID } from "node:crypto";
 import { create, read, save, pin, pinned, type State } from "./state.ts";
@@ -20,12 +21,22 @@ import {
 } from "./ui.ts";
 const populate = (s: State): Action => {
   const data = rows(s);
-  return update({
-    items: {
-      data: { src: data },
-      select: s.selected && data.some((r) => r.uid === s.selected) ? s.selected : data[0]?.uid || "",
+  return merge(
+    update({
+      items: {
+        data: { src: data },
+        select: s.selected && data.some((r) => r.uid === s.selected) ? s.selected : data[0]?.uid || "",
+      },
+    }),
+    {
+      pulse: {
+        src: "../bin/fx",
+        args: ["tick", s.id],
+        interval: bool("auto_refresh", true) ? 60 : 0,
+        now: false,
+      },
     },
-  });
+  );
 };
 const render = (s: State): Action =>
   merge(vars({ fx_session: s.id }), update({ root: { components: components(s) } }, true), {
@@ -36,8 +47,15 @@ const load = async (s: State, fresh = false, initial = true): Promise<Action> =>
   const requested = parsed.date || s.date,
     ticket = randomUUID();
   s.request = ticket;
+  s.lastAttempt = Date.now();
   save(s);
-  const rates = s.rates && !fresh && s.rates.date === requested ? s.rates : await loadRates(requested, fresh);
+  const rates =
+    s.rates &&
+    !fresh &&
+    s.rates.date === requested &&
+    Date.now() - s.rates.fetched < cacheMinutes("cache_minutes", 60) * 60000
+      ? s.rates
+      : await loadRates(requested, fresh);
   const latest = read(s.id);
   if (latest.request !== ticket) return {};
   latest.amount = parsed.amount;
@@ -58,6 +76,7 @@ const load = async (s: State, fresh = false, initial = true): Promise<Action> =>
             ? "Cached rates · provider stale or refresh failed"
             : `${rates.provider} · Reference rates`,
           colour: rates.stale ? "systemOrangeColor" : "secondaryLabelColor",
+          tooltip: `Fetched ${new Date(rates.fetched).toISOString()} · Provider timestamp ${rates.asof}`,
         },
       },
       true,
@@ -78,6 +97,15 @@ const main = async (): Promise<Action | void> => {
   const s = read(id),
     code = args[0] || s.selected;
   if (command === "back") return finish(backVariables("fx_out", process.env.fx_query));
+  if (command === "tick") {
+    if (
+      !bool("auto_refresh", true) ||
+      !s.rates ||
+      Date.now() - Math.max(s.rates.fetched, s.lastAttempt || 0) < cacheMinutes("cache_minutes", 60) * 60000
+    )
+      return {};
+    return load(s, false, false);
+  }
   if (command === "populate") return populate(s);
   if (command === "select") {
     s.selected = code || "";

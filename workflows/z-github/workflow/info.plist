@@ -498,6 +498,23 @@ Adapted from Raycast GitHub and Git Repos under MIT; source icons used with perm
 			<key>config</key>
 			<dict>
 				<key>default</key>
+				<string>30</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Manual Refresh bypasses cached results. Provider update frequency is independent.</string>
+			<key>label</key>
+			<string>REST API cache seconds</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>api_cache_seconds</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
 				<string>github</string>
 				<key>placeholder</key>
 				<string>github</string>
@@ -817,7 +834,7 @@ Finder</string>
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.1.1</string>
+	<string>0.1.2</string>
 	<key>webaddress</key>
 	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-github</string>
 </dict>

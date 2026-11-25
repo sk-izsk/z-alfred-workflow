@@ -171,6 +171,21 @@ const aliases: Record<string, string> = {
   maintenance: "brewm",
 };
 const userconfigurationconfig: Obj[] = [
+  {
+    type: "textfield",
+    variable: "catalog_cache_minutes",
+    label: "Catalog cache minutes",
+    description: "Manual Refresh bypasses cached results. Provider update frequency is independent.",
+    config: { default: "360", required: false },
+  },
+  {
+    type: "textfield",
+    variable: "detail_cache_minutes",
+    label: "Details cache minutes",
+    description: "Manual Refresh bypasses cached results. Provider update frequency is independent.",
+    config: { default: "15", required: false },
+  },
+
   text("kw_main", "Homebrew menu", "brew", "Search all Homebrew commands."),
   ...targets.map((target) =>
     text(

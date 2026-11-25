@@ -1,3 +1,4 @@
+import { bool, cacheMinutes } from "./env.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { forecastCards } from "./forecast.ts";
 import { loadAirQuality, airForDate, airCategory } from "./air-quality.ts";
@@ -42,8 +43,8 @@ const cityRows = (s: State): Action[] => {
       uid: c.id,
       "cityTitle.text": c.query,
       "cityDesc.text": h
-        ? `${h.description} · Cached ${new Date(old!.fetched).toLocaleTimeString()}`
-        : "Saved city · Open weather report",
+        ? `${h.description} · ${old!.refreshFailedAt || Date.now() - old!.fetched > cacheMinutes("cache_minutes", 10) * 60000 ? "Stale cache" : "Fetched"} ${new Date(old!.fetched).toLocaleTimeString()}`
+        : s.listErrors?.[c.query] || "Loading conditions…",
       "cityTemp.text": h?.temperature || "",
       "cityIcon.image.src": h?.icon || "cloud.sun.fill",
       "cityIcon.contenttintcolour": h?.colour || "systemOrangeColor",
@@ -67,12 +68,17 @@ const render = (s: State): Action =>
   );
 const populate = (s: State): Action =>
   s.mode === "cities"
-    ? update({ items: { data: { src: cityRows(s) }, select: s.selected || cityRows(s)[0]?.uid || "" } })
+    ? merge(
+        update({ items: { data: { src: cityRows(s) }, select: s.selected || cityRows(s)[0]?.uid || "" } }),
+        { pulse: { src: "../bin/wthr", args: ["list-refresh", s.id], interval: 0, now: true } },
+      )
     : merge(
         update({ details: { components: detailPane(s) } }, true),
         s.report?.air === undefined
           ? { pulse: { src: "../bin/wthr", args: ["air-quality", s.id], interval: 0, now: true } }
-          : {},
+          : bool("auto_refresh", true)
+            ? { pulse: { src: "../bin/wthr", args: ["tick", s.id], interval: 60, now: false } }
+            : {},
       );
 const screen = (s: State): Action => {
   const action = render(s);
@@ -81,6 +87,7 @@ const screen = (s: State): Action => {
 const openWeather = async (s: State, query: string, fresh = false): Promise<Action> => {
   const ticket = randomUUID();
   s.request = ticket;
+  s.lastAttempt = Date.now();
   save(s);
   const result = await report(query, fresh),
     latest = read(s.id);
@@ -90,11 +97,12 @@ const openWeather = async (s: State, query: string, fresh = false): Promise<Acti
     latest.forecastOffset = 0;
     latest.detailOffset = 0;
   }
+  const sameCity = latest.city === query;
   latest.city = query;
   latest.report = result.report;
   latest.stale = result.stale;
   latest.mode = "details";
-  latest.day = fresh ? Math.min(latest.day, result.report.days.length - 1) : 0;
+  latest.day = sameCity ? Math.min(latest.day, result.report.days.length - 1) : 0;
   save(latest);
   return screen(latest);
 };
@@ -151,8 +159,8 @@ const hourly = (s: State): Action => {
             "hourTime.text": hourLabel(h.time),
             "hourCondition.text": `${temperature(h, s.imperial)} · ${first(h.weatherDesc)}`,
             "hourRain.text": `Rain ${h.chanceofrain || "—"}%`,
-            "hourIcon.image.src": condition(h.weatherCode).icon,
-            "hourIcon.contenttintcolour": condition(h.weatherCode).colour,
+            "hourIcon.image.src": condition(h.weatherCode, first(h.weatherDesc)).icon,
+            "hourIcon.contenttintcolour": condition(h.weatherCode, first(h.weatherDesc)).colour,
           })),
         },
         constraints: { region: "centre", size: { width: 740, height: 360 } },
@@ -238,6 +246,55 @@ const main = async (): Promise<Action | void> => {
     return screen(s);
   }
   const s = read(id);
+  if (command === "list-refresh") {
+    if (s.mode !== "cities") return {};
+    const now = Date.now(),
+      minutes = cacheMinutes("cache_minutes", 10),
+      all = cities(),
+      due = all.filter((c) => now - (s.listChecks?.[c.query] || 0) >= minutes * 60000);
+    const batch = due.slice(0, 2);
+    s.listChecks ||= {};
+    for (const c of batch) s.listChecks[c.query] = now;
+    save(s);
+    const results = await Promise.allSettled(batch.map((c) => report(c.query)));
+    const latest = read(id);
+    if (latest.mode !== "cities") return {};
+    latest.listErrors ||= {};
+    results.forEach((r, i) => {
+      const q = batch[i]!.query;
+      if (r.status === "rejected") latest.listErrors![q] = "Weather unavailable · Refresh to retry";
+      else delete latest.listErrors![q];
+    });
+    save(latest);
+    return merge(
+      update({
+        items: { data: { src: cityRows(latest) }, select: latest.selected || cityRows(latest)[0]?.uid || "" },
+      }),
+      {
+        pulse: {
+          src: "../bin/wthr",
+          args: ["list-refresh", id],
+          interval: due.length > batch.length ? 1 : bool("auto_refresh", true) ? 60 : 0,
+          now: false,
+        },
+      },
+    );
+  }
+  if (command === "tick") {
+    if (s.mode === "cities") return populate(s);
+    if (!bool("auto_refresh", true)) return {};
+    if (
+      s.report &&
+      Date.now() - Math.max(s.report.fetched, s.lastAttempt || 0) >= cacheMinutes("cache_minutes", 10) * 60000
+    )
+      return openWeather(s, s.city);
+    if (s.report?.air && Date.now() - s.report.air.fetched >= cacheMinutes("aqi_cache_minutes", 15) * 60000) {
+      s.report.air = undefined;
+      save(s);
+      return populate(s);
+    }
+    return {};
+  }
   if (command === "air-quality") {
     if (s.mode !== "details" || !s.report) return {};
     const request = s.request,
@@ -320,7 +377,17 @@ const main = async (): Promise<Action | void> => {
     save(s);
     return screen(s);
   }
-  if (command === "refresh") return s.mode === "details" ? openWeather(s, s.city, true) : screen(s);
+  if (command === "refresh") {
+    if (s.mode === "details") return openWeather(s, s.city, true);
+    s.listChecks = {};
+    save(s);
+    await Promise.allSettled(
+      cities()
+        .slice(0, 2)
+        .map((c) => report(c.query, true)),
+    );
+    return screen(s);
+  }
   if (command === "add-city") return addSheet();
   if (command === "save-city" || command === "save-current") {
     addCity(args[0] || "");

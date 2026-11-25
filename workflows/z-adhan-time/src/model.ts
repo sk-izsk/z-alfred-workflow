@@ -3,6 +3,9 @@ export const displayed = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"] 
 export type Day = {
   date: string;
   hijri: string;
+  hijriYear?: number;
+  hijriMonth?: number;
+  hijriDay?: number;
   timezone: string;
   method: string;
   school: string;
@@ -46,12 +49,17 @@ export const parseMonth = (raw: unknown): Day[] => {
     const date = `${g.year}-${String(g.month?.number).padStart(2, "0")}-${String(g.day).padStart(2, "0")}`;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || localDate(Date.parse(`${date}T12:00:00Z`), "UTC") !== date)
       throw new Error("Invalid calendar date.");
-    const times = Object.fromEntries(displayed.map((name) => [name, clock(item.timings?.[name])]));
+    const times = Object.fromEntries(
+      ["Imsak", ...displayed].map((name) => [name, clock(item.timings?.[name])]),
+    );
     if (prayers.every((name) => times[name] === "—"))
       throw new Error("No prayer times available for this location/date.");
     const h = item.date.hijri;
     return {
       date,
+      hijriYear: h ? Number(h.year) : undefined,
+      hijriMonth: h ? Number(h.month?.number) : undefined,
+      hijriDay: h ? Number(h.day) : undefined,
       timezone,
       times,
       hijri: h ? `${h.day} ${h.month?.en || ""} ${h.year} AH` : "",

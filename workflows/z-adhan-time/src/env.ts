@@ -84,3 +84,8 @@ export const readJson = <T>(path: string, fallback: T): T => {
     return fallback;
   }
 };
+
+export const cacheMinutes = (key: string, fallback: number): number => {
+  const n = Number(str(key, String(fallback)));
+  return Number.isFinite(n) && n >= 1 && n <= 10080 ? n : fallback;
+};

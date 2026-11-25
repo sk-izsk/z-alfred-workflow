@@ -79,6 +79,21 @@ export const infoPlist = {
     ]),
   ),
   userconfigurationconfig: [
+    {
+      type: "textfield",
+      variable: "cache_minutes",
+      label: "Rates cache / refresh minutes",
+      description:
+        "1–10080 minutes. Manual Refresh bypasses cached results; provider publication frequency is independent.",
+      config: { default: "60", required: false },
+    },
+    {
+      type: "checkbox",
+      variable: "auto_refresh",
+      label: "Refresh while open",
+      config: { default: true, text: "Refresh expired data while this window is open" },
+    },
+
     text(
       "kw_main",
       "Currency Exchange keyword",

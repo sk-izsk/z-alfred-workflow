@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { join } from "node:path";
-import { cacheDir, readJson, writeJson } from "./env.ts";
+import { cacheDir, readJson, writeJson, cacheMinutes } from "./env.ts";
 import { parseMonth, type Day } from "./model.ts";
 import { methods } from "./methods.ts";
 export type Settings = { city: string; country: string; method: string; school: string; twelve: boolean };
@@ -25,7 +25,7 @@ export const calendar = async (settings: Settings, date: string, fresh = false):
       .slice(0, 24),
     path = join(cacheDir(), `calendar-${key}.json`),
     old = readJson<Month | null>(path, null);
-  if (old && !fresh && Date.now() - old.fetched < 24 * 3600000) return old;
+  if (old && !fresh && Date.now() - old.fetched < cacheMinutes("cache_minutes", 1440) * 60000) return old;
   try {
     const url = new URL(`https://api.aladhan.com/v1/calendarByCity/${year}/${Number(month)}`);
     url.search = new URLSearchParams({

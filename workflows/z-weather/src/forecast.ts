@@ -23,7 +23,7 @@ const emoji = (hour: Json, day: Json): string => {
     sunset = clock(day.astronomy?.[0]?.sunset),
     minutes = (Number(hour.time) / 100) * 60;
   const night = sunrise !== null && sunset !== null && (minutes < sunrise || minutes >= sunset),
-    icon = condition(hour.weatherCode).icon;
+    icon = condition(hour.weatherCode, first(hour.weatherDesc)).icon;
   if (icon.includes("bolt")) return "⛈️";
   if (icon.includes("snow")) return "🌨️";
   if (icon.includes("rain")) return "🌧️";

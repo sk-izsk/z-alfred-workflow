@@ -148,3 +148,29 @@ describe("calendar cache and UI", () => {
     );
   });
 });
+
+test("Ramadan keeps actual Hijri month length, dates and Imsak separate from Fajr", async () => {
+  const { parseRamadan, ramadanText } = await import("../src/ramadan.ts");
+  const data = Array.from({ length: 29 }, (_, i) => {
+    const date = new Date(Date.UTC(2027, 1, 8 + i));
+    return {
+      ...raw.data[0],
+      date: {
+        gregorian: {
+          year: String(date.getUTCFullYear()),
+          month: { number: date.getUTCMonth() + 1 },
+          day: String(date.getUTCDate()),
+        },
+        hijri: { year: "1448", month: { number: 9, en: "Ramadan" }, day: String(i + 1) },
+      },
+      timings: { ...raw.data[0]!.timings, Imsak: "05:50 (EST)" },
+    };
+  });
+  const days = parseRamadan({ code: 200, data }, 1448);
+  expect(days).toHaveLength(29);
+  expect(days[0]?.times.Imsak).toBe("05:50");
+  expect(days.at(-1)?.date).toBe("2027-03-08");
+  expect(() => parseRamadan({ code: 200, data: data.slice(0, 28) }, 1448)).toThrow();
+  expect(() => parseRamadan({ code: 200, data }, 1449)).toThrow();
+  expect(ramadanText(config, 1448, { days, fetched: 1, stale: false })).toContain("Fajr (fast begins)");
+});

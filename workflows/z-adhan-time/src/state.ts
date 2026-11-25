@@ -10,6 +10,8 @@ export type State = {
   nextMonth?: Month;
   liveMonth?: Month;
   request?: string;
+  ramadanRequest?: string;
+  ramadanYear?: number;
   at: number;
 };
 export const settings = (): Settings =>
