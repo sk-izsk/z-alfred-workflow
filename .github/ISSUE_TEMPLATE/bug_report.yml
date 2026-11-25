@@ -5,7 +5,7 @@ body:
     id: workflow
     attributes:
       label: Workflow
-      options: [Bitwarden, VS Code, Calendar, Brew, Speed Test, GitHub, Kill Process, Weather, Adhan Time, Currency Exchange, Calculate Anything, Swiss, Repository infrastructure]
+      options: [Bitwarden, VS Code, Calendar, Brew, Speed Test, GitHub, Kill Process, Weather, Adhan Time, Currency Exchange, Calculate Anything, Swiss, World Clock, Repository infrastructure]
     validations:
       required: true
   - type: textarea

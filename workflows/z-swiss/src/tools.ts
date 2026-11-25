@@ -13,6 +13,15 @@ export type Tool = {
 };
 export const tools: Tool[] = [
   {
+    id: "world-clock",
+    name: "World Clock",
+    description: "Search timezones, star locations and compare world times",
+    bundle: "com.izsk.world-clock",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "wclock",
+  },
+  {
     id: "speedtest",
     name: "Speed Test",
     description: "Measure download, upload and latency",
