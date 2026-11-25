@@ -12,7 +12,7 @@ import { rowMenu } from "../src/actions.ts";
 import { mutate } from "../src/operations.ts";
 import { remoteURL, scan, removalCheck } from "../src/local.ts";
 import { create, save, read, beginRequest, current } from "../src/store.ts";
-import { formSheet } from "../ui/window.ts";
+import { formSheet, detailSheet, githubWindow, listComponents } from "../ui/window.ts";
 const root = mkdtempSync(join(tmpdir(), "github-tests-")),
   log = join(root, "requests.jsonl"),
   fake = join(root, "gh.mjs");
@@ -95,6 +95,7 @@ const invoke = (cmd: string, id: string, ...args: string[]) =>
         HOME: process.env.HOME!,
         PATH: "/usr/bin:/bin",
         gh_path: fake,
+        ...(process.env.kw_main ? { kw_main: process.env.kw_main } : {}),
         alfred_workflow_cache: process.env.alfred_workflow_cache!,
         alfred_workflow_data: process.env.alfred_workflow_data!,
       },
@@ -218,11 +219,33 @@ test("merge pins the reviewed head and never requests an admin bypass", async ()
   expect(JSON.parse(request.body)).toEqual({ merge_method: "squash", sha: "abc123" });
   expect(request.args).not.toContain("--admin");
 });
-test("Back exits to Alfred search from any repository view", () => {
-  const s = create("my-prs");
-  s.view = newView("repos", "example/dashboard");
+test("Back restores the loaded parent repository list and invalidates pending child requests", () => {
+  const s = create("repos");
+  s.view.query = "needle";
+  s.view.status = "all";
+  s.view.page = 3;
+  s.view.selected = "1";
+  s.view.rows = [{ ...prRow, id: "1", kind: "repo", raw: repo }];
   save(s);
-  expect(invoke("back", s.id).finish.variables.github_out).toBe("back");
+  invoke("action", s.id, "repo-my-prs", "1");
+  const child = read(s.id),
+    ticket = child.revision;
+  const parent = invoke("back", s.id);
+  expect(parent).not.toHaveProperty("finish");
+  expect(read(s.id).view).toEqual(s.view);
+  expect(current(child, ticket)).toBe(false);
+  expect(invoke("back", s.id).finish.variables).toEqual({ github_out: "back", github_query: "github " });
+});
+test("Back goes to the previous form page, then closes the sheet without exiting the list", async () => {
+  const s = create("repos");
+  s.form = await buildForm("create-pr");
+  s.form.values.formPage = "1";
+  save(s);
+  expect(invoke("form-back", s.id)).toHaveProperty("update");
+  expect(read(s.id).form?.values.formPage).toBe("0");
+  const closed = invoke("form-back", s.id);
+  expect(closed).toEqual({ sheet: { close: "formSheet" } });
+  expect(JSON.stringify(detailSheet("Example", "Body"))).not.toContain('"finish"');
 });
 test("stale requests cannot replace newer navigation", () => {
   const s = create("repos");
@@ -271,4 +294,46 @@ test("archive downloads never replace or remove an existing destination", async 
   writeFileSync(target, "original");
   await expect(downloadAPI("example", target, "github.com")).rejects.toThrow();
   expect(readFileSync(target, "utf8")).toBe("original");
+});
+
+test("Back has one shortcut binding in the loaded list and no parent shortcut competing with sheets", () => {
+  const s = create("repos");
+  const bindings: Record<string, unknown>[] = [];
+  const walk = (value: unknown): void => {
+    if (!value || typeof value !== "object") return;
+    if (Array.isArray(value)) {
+      value.forEach(walk);
+      return;
+    }
+    const node = value as Record<string, unknown>;
+    if (node.shortcut === "{var:back_shortcut}") bindings.push(node);
+    Object.values(node).forEach(walk);
+  };
+  walk(listComponents(s));
+  expect(bindings).toHaveLength(1);
+  expect(bindings[0]?.id).toBe("footerBack");
+  expect(githubWindow.window.root.shortcuts.some((key) => key.shortcut === "{var:back_shortcut}")).toBe(
+    false,
+  );
+});
+test("stale selection events cannot replace the restored parent selection", () => {
+  const s = create("repos");
+  s.view.rows = [{ ...prRow, id: "parent" }];
+  s.view.selected = "parent";
+  save(s);
+  invoke("selected", s.id, "child");
+  expect(read(s.id).view.selected).toBe("parent");
+});
+
+test("My Pull Requests returns to the GitHub command menu, including a customized keyword", () => {
+  const s = create("my-prs");
+  expect(invoke("back", s.id).finish.variables.github_query).toBe("github ");
+  const oldKeyword = process.env.kw_main;
+  try {
+    process.env.kw_main = "ghub";
+    expect(invoke("back", s.id).finish.variables.github_query).toBe("ghub ");
+  } finally {
+    if (oldKeyword === undefined) delete process.env.kw_main;
+    else process.env.kw_main = oldKeyword;
+  }
 });

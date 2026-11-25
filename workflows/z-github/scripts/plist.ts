@@ -231,7 +231,7 @@ export const infoPlist = {
       "back_shortcut",
       "Back shortcut",
       "⌘[",
-      "Return to the main Alfred search from every view and sheet.",
+      "Return to the previous screen; from its first list, return to the GitHub command menu.",
     ),
     {
       type: "popupbutton",
@@ -249,7 +249,7 @@ export const infoPlist = {
   ],
   variablesdontexport: [],
   readme: `## Usage
-Search commands via the github keyword. Use myprs for your pull requests and gitrepos for local repositories. Command-K opens actions. Command-[ returns to the main Alfred search; configure both shortcuts in Workflow’s Configuration. Command-R refreshes and Load More fetches the next page. My PRs includes all statuses, authored or involved filters, and a repository selector. A repository’s actions include My Pull Requests.
+Search commands via the github keyword. Use myprs for your pull requests and gitrepos for local repositories. Command-K opens actions. Command-[ goes back one level; the first list returns to the GitHub command menu; configure both shortcuts in Workflow’s Configuration. Command-R refreshes and Load More fetches the next page. My PRs includes all statuses, authored or involved filters, and a repository selector. A repository’s actions include My Pull Requests.
 
 Requires Alfred 6 Powerpack and Node.js or Bun. Online features require an existing GitHub CLI installation and gh auth login. Configure scan folders for local repositories. Tokens remain in GitHub CLI/Keychain; this workflow does not store a token. Projects require project scope; notifications and packages require their relevant scopes. Permission failures are shown rather than requesting broad scopes automatically.
 

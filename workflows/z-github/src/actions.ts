@@ -247,7 +247,6 @@ export const confirmSheet = (row: Row, op: string): Json => ({
               triggers: "actioned",
               action: json({
                 sheet: { close: "confirmSheet" },
-                finish: { variables: { github_out: "back" } },
               }),
             },
           ],

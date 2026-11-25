@@ -27,6 +27,9 @@ import { listComponents, formSheet, updateForm, detailSheet } from "../ui/window
 const output = (value: unknown): void => {
   if (value) console.log(JSON.stringify(value));
 };
+const menuBack = (): Json => ({
+  finish: { variables: { github_out: "back", github_query: `${str("kw_main", "github")} ` } },
+});
 const notice = (message: string): Json => ({ update: { ids: { statusLabel: { text: message } } } });
 const selected = (s: Session, id = ""): Row => {
   const row = s.view.rows.find((r) => r.id === (id || s.view.selected)) || s.view.rows[0];
@@ -34,7 +37,9 @@ const selected = (s: Session, id = ""): Row => {
   return row;
 };
 const render = async (s: Session): Promise<Json> => {
+  const revision = s.revision;
   const options = s.view.mode === "local" ? [] : await repoOptions().catch(() => []);
+  if (!current(s, revision)) return {};
   if (s.view.repo && !options.some((o) => o.value === s.view.repo))
     options.unshift({ text: s.view.repo, value: s.view.repo });
   return {
@@ -61,10 +66,12 @@ const navigate = async (
   repo = "",
   patch: Partial<Session["view"]> = {},
 ): Promise<Json> => {
+  s.history = [...(s.history || []).slice(-49), structuredClone(s.view)];
   s.view = { ...newView(mode, repo), ...patch };
   return load(s);
 };
 const showForm = async (s: Session, action: string, row?: Row): Promise<Json> => {
+  s.formFromMenu = false;
   s.form = await buildForm(action, row);
   save(s);
   return formSheet(s.form);
@@ -225,6 +232,7 @@ const launch = async (): Promise<Json> => {
   s.view.query = str("g_query");
   if (str("g_form")) {
     const result = await render(s);
+    s.formFromMenu = true;
     s.form = await buildForm(str("g_form"));
     save(s);
     return { ...result, ...formSheet(s.form) };
@@ -238,7 +246,9 @@ const main = async (): Promise<unknown> => {
   if (cmd === "root") return rootItems(id);
   if (cmd === "post") {
     if (str("github_out") === "back")
-      await apple('tell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)', [""]);
+      await apple('tell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)', [
+        process.env.github_query ?? `${str("kw_main", "github")} `,
+      ]);
     return;
   }
   if (cmd === "open-local") {
@@ -246,10 +256,11 @@ const main = async (): Promise<unknown> => {
     return;
   }
   if (cmd === "launch") return launch();
-  if (cmd === "back") return { finish: { variables: { github_out: "back" } } };
+  if (cmd === "back" && !id) return menuBack();
   const s = read(id);
   switch (cmd) {
     case "selected":
+      if (!s.view.rows.some((row) => row.id === args[0])) return {};
       s.view.selected = args[0] || "";
       save(s);
       return {};
@@ -273,8 +284,13 @@ const main = async (): Promise<unknown> => {
       s.view.repo = args[0] ? repoName(args[0]) : "";
       s.view.page = 1;
       return load(s);
-    case "back":
-      return { finish: { variables: { github_out: "back" } } };
+    case "back": {
+      const previous = s.history?.pop();
+      if (!previous) return menuBack();
+      s.view = previous;
+      beginRequest(s); // Invalidate any load still running for the child screen.
+      return render(s);
+    }
     case "action":
       return doAction(s, args[0] || "", args[1] || "", args.slice(2));
     case "confirm":
@@ -288,8 +304,20 @@ const main = async (): Promise<unknown> => {
       s.form = undefined;
       save(s);
       return { sheet: { close: "formSheet" } };
-    case "form-back":
-      return { sheet: { close: "formSheet" }, finish: { variables: { github_out: "back" } } };
+    case "form-back": {
+      if (!s.form || Number(s.form.values.formPage || 0) === 0) {
+        s.form = undefined;
+        save(s);
+        return {
+          sheet: { close: "formSheet" },
+          ...(s.formFromMenu ? menuBack() : {}),
+        };
+      }
+      s.form.values = formValues(s.form, args);
+      s.form.values.formPage = String(Number(s.form.values.formPage || 0) - 1);
+      save(s);
+      return updateForm(s.form);
+    }
     case "form-page": {
       if (!s.form) throw new Error("Form expired.");
       s.form.values = formValues(s.form, args.slice(1));

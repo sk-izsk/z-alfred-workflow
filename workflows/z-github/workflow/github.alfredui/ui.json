@@ -101,18 +101,6 @@
           }
         },
         {
-          "shortcut": "{var:back_shortcut}",
-          "action": {
-            "type": "script",
-            "src": "../bin/gith",
-            "args": [
-              "back",
-              "{var:g_session}"
-            ],
-            "async": true
-          }
-        },
-        {
           "shortcut": "↓",
           "action": {
             "type": "function",
@@ -158,7 +146,6 @@
                   }
                 }
               ],
-              "shortcut": "{var:back_shortcut}",
               "font": {
                 "size": 26
               },

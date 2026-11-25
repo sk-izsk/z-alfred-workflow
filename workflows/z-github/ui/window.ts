@@ -58,7 +58,7 @@ export const listComponents = (s: Session, repos: { text: string; value: string 
       spacing: 12,
       constraints: { region: "top" },
       components: [
-        button("backButton", "‹", run("back"), {
+        button("backButton", "‹", run("back", [], false), {
           font: { size: 28 },
           tooltip: "Back {var:back_shortcut}",
           constraints: { region: "left", position: "centre" },
@@ -243,12 +243,9 @@ export const listComponents = (s: Session, repos: { text: string; value: string 
               spacing: 12,
               constraints: { region: "right" },
               components: [
-                button(
-                  "footerBack",
-                  "Back  {var:back_shortcut}",
-                  json({ finish: { variables: { github_out: "back" } } }),
-                  { shortcut: "{var:back_shortcut}" },
-                ),
+                button("footerBack", "Back  {var:back_shortcut}", run("back", [], false), {
+                  shortcut: "{var:back_shortcut}",
+                }),
                 ...(v.more ? [button("moreButton", "Load More", run("more"))] : []),
                 button(
                   "primaryButton",
@@ -263,7 +260,6 @@ export const listComponents = (s: Session, repos: { text: string; value: string 
         },
         hidden("copyKey", "⌘C", act("copy-url")),
         hidden("detailKey", "⌘D", act("detail")),
-        hidden("backKey", "{var:back_shortcut}", run("back")),
       ],
     },
   ];
@@ -354,15 +350,10 @@ export const formSheet = (form: FormState): Json => {
                 font: { size: 12 },
                 constraints: { region: "top" },
               }),
-              button(
-                "formCancel",
-                "Back  {var:back_shortcut}",
-                json({ sheet: { close: "formSheet" }, finish: { variables: { github_out: "back" } } }),
-                {
-                  shortcut: "{var:back_shortcut}",
-                  constraints: { region: "left" },
-                },
-              ),
+              button("formCancel", "Back  {var:back_shortcut}", run("form-back", formArgs(form), false), {
+                shortcut: "{var:back_shortcut}",
+                constraints: { region: "left" },
+              }),
               {
                 type: "view",
                 layout: "inline",
@@ -413,15 +404,10 @@ export const detailSheet = (title: string, markdown: string): Json => ({
           text: markdown,
           constraints: { region: "centre", size: { width: 800, height: 460 } },
         },
-        button(
-          "detailClose",
-          "Back  {var:back_shortcut}",
-          json({ sheet: { close: "detailSheet" }, finish: { variables: { github_out: "back" } } }),
-          {
-            shortcut: "{var:back_shortcut}",
-            constraints: { region: "bottom" },
-          },
-        ),
+        button("detailClose", "Back  {var:back_shortcut}", json({ sheet: { close: "detailSheet" } }), {
+          shortcut: "{var:back_shortcut}",
+          constraints: { region: "bottom" },
+        }),
       ],
     },
   },
@@ -449,7 +435,6 @@ export const githubWindow = {
       shortcuts: [
         { shortcut: "{var:actions_shortcut}", action: act("menu") },
         { shortcut: "⌘R", action: run("refresh") },
-        { shortcut: "{var:back_shortcut}", action: run("back") },
         { shortcut: "↓", action: { type: "function", src: "items", args: "selectnext" } },
         { shortcut: "↑", action: { type: "function", src: "items", args: "selectprevious" } },
       ],
@@ -461,7 +446,6 @@ export const githubWindow = {
           constraints: { region: "top" },
           components: [
             button("initialBack", "‹", json({ finish: { variables: { github_out: "back" } } }), {
-              shortcut: "{var:back_shortcut}",
               font: { size: 26 },
               tooltip: "Back to Alfred Search",
               constraints: { region: "left", position: "centre" },
