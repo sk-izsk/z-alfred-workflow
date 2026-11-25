@@ -51,7 +51,7 @@ Search, autofill and manage your [Bitwarden](https://bitwarden.com) vault from [
 - **Short sessions.** The vault locks after your idle time, and also when the screen locks or the Mac sleeps or restarts. The background agent enforces this within 30 seconds, not only the next time you open the workflow.
 - **Say what is not covered.** See [what it does not protect against](#what-it-does-not-protect-against).
 
-Several of these choices follow the [Raycast Bitwarden extension](https://github.com/raycast/extensions/tree/main/extensions/bitwarden) (an explicit child environment, locking on sleep, encrypted cached metadata, quiet error logs). Others differ: this workflow keeps the session in the macOS Keychain, sends create and Send payloads on stdin instead of arguments, and hashes the re-prompt check with scrypt and a random salt per hash (Raycast uses PBKDF2 with a fixed salt).
+Several of these choices follow the [Raycast Bitwarden extension](https://github.com/raycast/extensions/tree/main/extensions/bitwarden) (an explicit child environment, locking on sleep, encrypted cached metadata, quiet error logs). Others differ: Raycast keeps the session in its own encrypted app storage, while this workflow keeps it in the macOS Keychain sealed with a separate key file (Alfred has no secure storage for workflows). This workflow also logs in with two-step login, enforces the locks while closed, sends create and Send payloads on stdin instead of arguments, and hashes the re-prompt check with scrypt and a random salt per hash (Raycast uses PBKDF2 with a fixed salt).
 
 ### Designs we chose not to use
 
@@ -63,7 +63,7 @@ Several of these choices follow the [Raycast Bitwarden extension](https://github
 | What | Where | When it goes away |
 |---|---|---|
 | Master password | Not stored (Quick Unlock off) | Never written |
-| Session key | Login Keychain (`com.izsk.bitwarden`) | Lock, idle timeout, Mac sleep or restart |
+| Session key | Login Keychain (`com.izsk.bitwarden`), **encrypted** (AES-256-GCM) with a key kept in a separate private file (`keychain.key` in the workflow data folder) | Lock, idle timeout, screen lock, Mac sleep or restart |
 | Re-prompt hash of your master password | Workflow data folder (scrypt, 128 MiB cost, random salt per hash) | Lock |
 | Full vault cache (`vault.enc`) | Disk, AES-256-GCM, key derived from the session | Lock |
 | Item names, usernames, URLs, flags | Disk, AES-256-GCM, with a random key kept in your login Keychain | Logout removes the file and the key. It stays while locked so the list can open instantly. |
@@ -86,14 +86,14 @@ Several of these choices follow the [Raycast Bitwarden extension](https://github
 | Re-prompt Grace | Ask every time | 5 minutes | 5 minutes or more |
 | **What you give up** | More typing. Passwords with non-ASCII characters are refused in clipboard-free mode. | Passwords touch the clipboard briefly. | A saved master password sits in the Keychain, and the vault stays open longer. |
 
-**Quick Unlock is a convenience, not protection.** Touch ID or the PIN is checked by this workflow, not enforced by macOS. Your master password is stored in the login Keychain, so anything that can read your Keychain can skip the check. Leave it off if you want the strongest setup. **Lock After = 0 means never lock. Don't.**
+**Quick Unlock is a convenience, not protection.** Touch ID or the PIN is checked by this workflow, not enforced by macOS. Your master password is stored in the login Keychain (sealed with the separate key file), so anything that can read both can skip the check. Leave it off if you want the strongest setup. **Lock After = 0 means never lock. Don't.**
 
 **Website icons** are fetched from Bitwarden's icon server (`icons.bitwarden.net`). That tells the server which sites you have logins for. Turn *Icons* off if that matters to you.
 
 ### What it does *not* protect against
 
 - **Malware or a hostile app running as your user while the vault is unlocked.** It can likely read the session key from your Keychain and read your vault. A short *Lock After* only shortens that window.
-- **Anything that can read your login Keychain.** That includes the session key, the cache key and, if you opt in to Quick Unlock, the saved master password.
+- **Malware aimed at this workflow.** The session key and any saved master password are sealed in the Keychain with a key from a separate file, so a generic Keychain dump or a one-line `security` read gets only ciphertext. Something that reads both the Keychain and that file (or edits the workflow's own code) still gets them. The item-name cache key is in the Keychain unsealed.
 - **Memory.** Secrets exist in memory while a window is open or while the CLI works.
 - **The clipboard.** Concealment is advisory, other apps can still read it, and the TOTP code is still copied after an autofill unless you turn that off.
 - **The CLI itself.** How `bw` stores its login tokens is outside this workflow's control.
