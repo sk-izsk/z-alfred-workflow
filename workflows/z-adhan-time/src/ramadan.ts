@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { cacheDir, cacheMinutes, readJson, writeJson } from "./env.ts";
-import { parseMonth, formatTime, type Day } from "./model.ts";
+import { parseMonth, formatTime, localDate, type Day } from "./model.ts";
 import { validate, type Settings, type Month } from "./api.ts";
 import { sheet, type Action } from "./ui.ts";
 import { label, button, run } from "../ui/window.ts";
@@ -47,6 +47,22 @@ export const ramadan = async (settings: Settings, year: number, fresh = false): 
 };
 export const ramadanText = (settings: Settings, year: number, month: Month): string =>
   `Ramadan ${year} · ${settings.city}, ${settings.country}\nDay\tDate\tImsak (provider)\tFajr (fast begins)\tMaghrib (Iftar)\n${month.days.map((d) => `${d.hijriDay}\t${d.date}\t${formatTime(d.times.Imsak || "—", settings.twelve)}\t${formatTime(d.times.Fajr || "—", settings.twelve)}\t${formatTime(d.times.Maghrib || "—", settings.twelve)}`).join("\n")}\n${month.days[0]!.method} · ${month.days[0]!.school} Asr · ${month.days[0]!.timezone}\nCalculated by Aladhan · Fetched ${new Date(month.fetched).toISOString()}${month.stale ? " · Cached after failed refresh" : ""}\nImsak is the provider's precautionary time; confirm your local mosque's timetable.`;
+export const ramadanRows = (settings: Settings, month: Month, now = Date.now()): Action[] =>
+  month.days.map((d) => {
+    const today = d.date === localDate(now, d.timezone);
+    return {
+      uid: d.date,
+      "ramadanDate.text": `${today ? "Today · " : ""}${String(d.hijriDay).padStart(2, "0")} · ${d.date}`,
+      "ramadanImsak.text": formatTime(d.times.Imsak || "—", settings.twelve),
+      "ramadanFajr.text": formatTime(d.times.Fajr || "—", settings.twelve),
+      "ramadanIftar.text": formatTime(d.times.Maghrib || "—", settings.twelve),
+      "ramadanRow.background": today ? "alfredSelectedResultBackgroundColor" : null,
+      "ramadanDate.colour": today ? "alfredSelectedResultTextColor" : "labelColor",
+      "ramadanImsak.colour": today ? "alfredSelectedResultTextColor" : "labelColor",
+      "ramadanFajr.colour": today ? "alfredSelectedResultTextColor" : "labelColor",
+      "ramadanIftar.colour": today ? "alfredSelectedResultTextColor" : "systemTealColor",
+    };
+  });
 export const ramadanContent = (settings: Settings, year: number, month: Month): Action => ({
   id: "ramadanContent",
   type: "view",
@@ -105,22 +121,21 @@ export const ramadanContent = (settings: Settings, year: number, month: Month): 
           ),
         },
         {
+          id: "ramadanDays",
           type: "dataview",
+          select: month.days.find((d) => d.date === localDate(Date.now(), d.timezone))?.date || "",
           data: {
             type: "basic",
-            src: month.days.map((d) => ({
-              uid: d.date,
-              "ramadanDate.text": `${String(d.hijriDay).padStart(2, "0")} · ${d.date}`,
-              "ramadanImsak.text": formatTime(d.times.Imsak || "—", settings.twelve),
-              "ramadanFajr.text": formatTime(d.times.Fajr || "—", settings.twelve),
-              "ramadanIftar.text": formatTime(d.times.Maghrib || "—", settings.twelve),
-            })),
+            src: ramadanRows(settings, month),
           },
           constraints: { region: "centre" },
           cell: {
             height: 39,
+            init: { "ramadanRow.background": null },
             root: {
+              id: "ramadanRow",
               type: "view",
+              cornerradius: 6,
               layout: "grid",
               rows: 1,
               cols: 4,

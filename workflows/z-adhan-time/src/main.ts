@@ -1,4 +1,11 @@
-import { ramadan, ramadanForGregorian, ramadanText, ramadanSheet, ramadanContent } from "./ramadan.ts";
+import {
+  ramadan,
+  ramadanForGregorian,
+  ramadanText,
+  ramadanSheet,
+  ramadanContent,
+  ramadanRows,
+} from "./ramadan.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { randomUUID } from "node:crypto";
 import { calendar, validate, type Settings } from "./api.ts";
@@ -180,6 +187,9 @@ const main = async (): Promise<Action | void> => {
     const month = await ramadanForGregorian(s.settings, year, command !== "copy-ramadan"),
       latest = read(id);
     if (latest.ramadanRequest !== ticket) return {};
+    latest.ramadanTable = month;
+    latest.ramadanToday = localDate(Date.now(), month.days[0]!.timezone);
+    save(latest);
     return command === "copy-ramadan"
       ? copy(ramadanText(s.settings, year, month))
       : args[1] === "update"
@@ -218,7 +228,25 @@ const main = async (): Promise<Action | void> => {
     const timezone = s.month.days[0]!.timezone,
       today = localDate(Date.now(), timezone);
     if (!next(s) || !(s.liveMonth || s.month).days.some((d) => d.date === today)) return load(s);
-    return screen(s);
+    const action = screen(s);
+    if (
+      s.ramadanTable &&
+      s.ramadanRequest &&
+      s.ramadanToday !== localDate(Date.now(), s.ramadanTable.days[0]!.timezone)
+    ) {
+      s.ramadanToday = localDate(Date.now(), s.ramadanTable.days[0]!.timezone);
+      save(s);
+      return merge(
+        action,
+        update({
+          ramadanDays: {
+            data: { src: ramadanRows(s.settings, s.ramadanTable) },
+            select: s.ramadanTable.days.some((d) => d.date === s.ramadanToday) ? s.ramadanToday : "",
+          },
+        }),
+      );
+    }
+    return action;
   }
   if (command === "today" || command === "refresh")
     return load(s, command === "refresh" ? s.date : "", command === "refresh");

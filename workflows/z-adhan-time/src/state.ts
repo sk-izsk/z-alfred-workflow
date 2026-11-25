@@ -12,6 +12,8 @@ export type State = {
   request?: string;
   ramadanRequest?: string;
   ramadanYear?: number;
+  ramadanTable?: Month;
+  ramadanToday?: string;
   at: number;
 };
 export const settings = (): Settings =>

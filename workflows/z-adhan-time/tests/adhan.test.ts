@@ -229,3 +229,19 @@ test("Gregorian Ramadan selection uses API mapping, supports two starts and mark
     globalThis.fetch = prior;
   }
 });
+
+test("Ramadan Today marker follows the city's date and survives selection styling", async () => {
+  const { ramadanRows } = await import("../src/ramadan.ts");
+  const days = parseMonth(raw);
+  days.push({ ...days[0]!, date: shiftDate(days[0]!.date, 1) });
+  const table = { days, fetched: Date.now(), stale: false };
+  // 00:30 UTC is still the previous date in Toronto.
+  const now = Date.parse(`${shiftDate(days[0]!.date, 1)}T00:30:00Z`);
+  const rows = ramadanRows(config, table, now);
+  expect(rows[0]!["ramadanDate.text"]).toContain("Today");
+  expect(rows[0]!["ramadanRow.background"]).toBe("alfredSelectedResultBackgroundColor");
+  expect(rows[1]!["ramadanDate.text"]).not.toContain("Today");
+  expect(rows[1]!["ramadanRow.background"]).toBe(null);
+  const later = ramadanRows(config, table, now + 8 * 3600000);
+  expect(later[1]!["ramadanDate.text"]).toContain("Today");
+});
