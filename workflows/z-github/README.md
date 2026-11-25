@@ -43,14 +43,14 @@ filter. The All Pull Requests in This Repository action displays everyone’s PR
 | --- | --- |
 | <kbd>↩</kbd> | Open the selected item in its browser or default local application |
 | <kbd>⌘</kbd><kbd>K</kbd> | Open actions for the selected item |
-| <kbd>⌘</kbd><kbd>[</kbd> | Return to the main Alfred search from every view or sheet |
+| <kbd>⌘</kbd><kbd>[</kbd> | Return to the previous screen; return to the GitHub command menu from its first list |
 | <kbd>⌘</kbd><kbd>R</kbd> | Refresh from GitHub or rescan local folders |
 | <kbd>⌘</kbd><kbd>C</kbd> | Copy the selected URL |
 | <kbd>⌘</kbd><kbd>D</kbd> | Show details |
 | <kbd>⌘</kbd><kbd>↩</kbd> | Continue or submit a form |
 
-Back and Actions shortcuts are configurable. Every Back action closes the workflow UI and returns
-to the main Alfred search. Escape remains Alfred’s own dismiss action.
+Back and Actions shortcuts are configurable. Back returns to the previous screen and restores its state; from its first list it returns
+to the GitHub command menu. Escape remains Alfred’s own dismiss action.
 
 The menu provides repository search, latest/starred repositories, PR and issue search, My Issues,
 notifications, workflow runs and dispatch, discussions, projects, packages and versions. Repository

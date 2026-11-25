@@ -6,7 +6,7 @@ move a real repository to Trash, or change any real checkout.
 
 Coverage includes full-history My PR queries, repository/relation/status filters, API cache behavior,
 list pagination, all creation forms, per-repository My PR actions, merge head-SHA matching, Back
-exit routing, stale-request protection, remote normalization, local scanning and guarded
+parent-screen restoration, stale-request protection, remote normalization, local scanning and guarded
 removal. Source icons and runtime files are included by `bun run package`.
 
 Additional checks:
@@ -27,7 +27,7 @@ Before release, check in Alfred:
 - Main menu, myprs/gitrepos aliases, configured keywords and optional hotkey.
 - Search, repository/relation/status filters, Load More and refresh.
 - ⌘K → My Pull Requests on remote and local GitHub repositories.
-- Use Back from lists, form pages and sheets; return to the main Alfred search.
+- Use Back from nested lists, form pages and sheets; restore the parent screen and its state. Back from My Pull Requests or the repository list returns to the GitHub command menu, not empty Alfred search.
 - PR/issue detail, diff/commits and metadata actions with appropriate account permissions.
 - Creation forms and advanced pages; create disposable test objects only when intended.
 - Workflow dispatch inputs and rerun/cancel/delete on disposable runs.

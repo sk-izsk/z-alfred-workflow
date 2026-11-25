@@ -65,9 +65,11 @@ export type View = {
 export type Session = {
   id: string;
   view: View;
+  history?: View[];
   revision: string;
   preview: boolean;
   form?: FormState;
+  formFromMenu?: boolean;
 };
 export type Field = {
   name: string;
