@@ -205,6 +205,42 @@ export const login = async (clientId: string, clientSecret: string, serverUrl = 
   rememberAccount(after.userEmail ?? "", server);
 };
 
+/** Two-step methods the CLI accepts on `--method`. Empty = none, or the account's only one. */
+export const TWO_STEP_METHODS = { "": "", authenticator: "0", email: "1", yubikey: "3" } as const;
+export type TwoStepMethod = keyof typeof TWO_STEP_METHODS;
+
+/**
+ * Email + master password, with a two-step or new-device code when Bitwarden asks for one.
+ * Unlike the API key, this keeps two-step login in force. The password goes through env.
+ * A two-step code for a chosen method goes on `--code`: it is used once, within seconds, and
+ * passing it any other way would make bw email a fresh code first. A new-device code has no
+ * flag, so it is answered on bw's own prompt through stdin.
+ * Without a code, bw stops at "Code is required." after Bitwarden has emailed one if needed.
+ */
+export const loginWithPassword = async (
+  email: string,
+  password: string,
+  method: TwoStepMethod = "",
+  code = "",
+  serverUrl = "",
+): Promise<void> => {
+  const trimmed = code.replace(/\s+/g, "");
+  if (trimmed && !/^[A-Za-z0-9]{4,64}$/.test(trimmed)) throw new Error("That code doesn't look right");
+  const current = await bwJson<{ status: Status; serverUrl?: string | null }>(["status"]);
+  if (current.status !== "unauthenticated") await bw(["logout"]).catch(() => undefined);
+  const server = serverUrl.trim() || "https://vault.bitwarden.com";
+  if ((current.serverUrl ?? "https://vault.bitwarden.com") !== server) await bw(["config", "server", server]);
+  const flag = TWO_STEP_METHODS[method] ?? "";
+  const args = ["login", email.trim(), "--passwordenv", "BW_PASSWORD", ...(flag ? ["--method", flag] : [])];
+  const env = { BW_PASSWORD: password };
+  if (!trimmed) await bw(args, { env });
+  else if (flag) await bw([...args, "--code", trimmed], { env });
+  else await bw(args, { env, interactive: true, input: `${trimmed}\n` });
+  const after = await bwJson<{ userEmail?: string }>(["status"]);
+  writeState({ loggedIn: true, email: after.userEmail });
+  rememberAccount(after.userEmail ?? "", server);
+};
+
 /** Unlock with the master password (through env, never argv). */
 export const unlock = async (password: string): Promise<string> => {
   const session = await bw(["unlock", "--passwordenv", "BW_PASSWORD", "--raw"], {
@@ -220,6 +256,8 @@ export const unlock = async (password: string): Promise<string> => {
     pinFails: 0,
     sessionId: randomBytes(8).toString("hex"),
   });
+  // Enforces the locks while the workflow is closed. Logs its own failures; never blocks an unlock.
+  await (await import("./agent.ts")).ensureAgent();
   return session;
 };
 
@@ -326,6 +364,7 @@ export const logout = async (): Promise<void> => {
       if (existsSync(file)) rmSync(file);
   });
   await attempt(forgetAccount);
+  if (!allAccounts().length) await attempt(async () => (await import("./agent.ts")).removeAgent());
   if (failure) throw failure;
 };
 

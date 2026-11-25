@@ -18,6 +18,9 @@ Search, autofill and manage your [Bitwarden](https://bitwarden.com) vault from [
 - **Authenticator** view, **Bitwarden Send** (create, copy link, receive, delete), **new login / secure note**, **new folder**.
 - **Multiple accounts:** switch between them, each with its own unlock.
 - **Optional Touch ID or PIN** (off by default) to unlock again after the vault locks, and the **master-password re-prompt** for protected items.
+- **Log in with email, master password and two-step login** (authenticator, email or YubiKey OTP), or with an API key.
+- **Locks even while closed:** a small background agent locks the vault on the idle timer, sleep or screen lock, and syncs while unlocked so opening needs no wait.
+- **Firefox and its forks** (Zen, Floorp, LibreWolf, Waterfox…) open on the current site too.
 - **Self-hosted and EU servers**, including self-signed certificates.
 
 ## Use at your own risk: how your passwords are handled
@@ -27,7 +30,7 @@ Search, autofill and manage your [Bitwarden](https://bitwarden.com) vault from [
 ### The short version
 
 - Your **master password is not saved** by default. You type it, it unlocks the vault once, and it is discarded.
-- After unlocking, a temporary **session key** stays in your login Keychain until you lock, the idle timer runs out, or the Mac sleeps or restarts.
+- After unlocking, a temporary **session key** stays in your login Keychain until you lock, the idle timer runs out, the screen locks, or the Mac sleeps or restarts. A background agent checks every 30 seconds, so this happens even when you don't open the workflow again.
 - While the vault is unlocked, **software running as you may be able to read it**. No launcher can fully prevent that, so keep the timeouts short.
 - Every convenience (Touch ID or PIN, long timeouts, copying to the clipboard) trades some protection for speed. The [table below](#choose-your-trade-off) shows the safest setup and what it costs you.
 - Try it with a **test account** first.
@@ -45,24 +48,30 @@ Search, autofill and manage your [Bitwarden](https://bitwarden.com) vault from [
 - **Let the official CLI do the cryptography, and store as little as possible.** No master password at rest by default, and the full vault cache is deleted on lock.
 - **Be explicit, not implicit.** Helper processes receive an allow-list of environment variables, not a copy of everything. Secrets travel through stdin or environment variables, never arguments.
 - **Fail closed.** If the Keychain refuses to delete the session, the vault still counts as locked. If the cache key is unavailable there is no cache, never a plain-text one. A modified cache is ignored. A window opened before a lock can't autofill, copy or show codes afterwards.
-- **Short sessions.** The vault locks after your idle time, and also when the Mac sleeps or restarts.
+- **Short sessions.** The vault locks after your idle time, and also when the screen locks or the Mac sleeps or restarts. The background agent enforces this within 30 seconds, not only the next time you open the workflow.
 - **Say what is not covered.** See [what it does not protect against](#what-it-does-not-protect-against).
 
-Several of these choices follow the [Raycast Bitwarden extension](https://github.com/raycast/extensions/tree/main/extensions/bitwarden) (an explicit child environment, locking on sleep, encrypted cached metadata, quiet error logs). Others differ: this workflow keeps the session in the macOS Keychain, sends create and Send payloads on stdin instead of arguments, and hashes the re-prompt check with scrypt and a random salt per hash (Raycast uses PBKDF2 with a fixed salt).
+Several of these choices follow the [Raycast Bitwarden extension](https://github.com/raycast/extensions/tree/main/extensions/bitwarden) (an explicit child environment, locking on sleep, encrypted cached metadata, quiet error logs). Others differ: Raycast keeps the session in its own encrypted app storage, while this workflow keeps it in the macOS Keychain sealed with a separate key file (Alfred has no secure storage for workflows). This workflow also logs in with two-step login, enforces the locks while closed, sends create and Send payloads on stdin instead of arguments, and hashes the re-prompt check with scrypt and a random salt per hash (Raycast uses PBKDF2 with a fixed salt).
+
+### Designs we chose not to use
+
+- **Touch ID through `sudo`** (editing `/etc/pam.d/sudo_local` and `sudoers`, keeping the master password in a root-only file). Touch ID would then be enforced by macOS, but it changes system-wide sudo settings, a global sudo ticket lets any process running as you become root for a few minutes after each unlock, and the password sits on disk unencrypted. We keep Quick Unlock opt-in and say plainly that it is a convenience.
+- **`bw serve`** (a local HTTP API kept unlocked). It is faster, but it has no authentication: any process on the Mac, including other macOS users, can read the unlocked vault through it.
 
 ### Where things live
 
 | What | Where | When it goes away |
 |---|---|---|
 | Master password | Not stored (Quick Unlock off) | Never written |
-| Session key | Login Keychain (`com.izsk.bitwarden`) | Lock, idle timeout, Mac sleep or restart |
+| Session key | Login Keychain (`com.izsk.bitwarden`), **encrypted** (AES-256-GCM) with a key kept in a separate private file (`keychain.key` in the workflow data folder) | Lock, idle timeout, screen lock, Mac sleep or restart |
 | Re-prompt hash of your master password | Workflow data folder (scrypt, 128 MiB cost, random salt per hash) | Lock |
 | Full vault cache (`vault.enc`) | Disk, AES-256-GCM, key derived from the session | Lock |
 | Item names, usernames, URLs, flags | Disk, AES-256-GCM, with a random key kept in your login Keychain | Logout removes the file and the key. It stays while locked so the list can open instantly. |
 | Logins and TOTP seeds of an open window | Alfred's memory | The window closing or a lock |
 | Copied secrets | Clipboard, marked concealed | Cleared after your chosen time, if you haven't copied something else |
 | Debug log | With Debug off: command name and error type only. With Debug on: messages, with tokens and emails masked. | **Clear Debug Log** |
-| API key (`client_secret`) | The workflow's own `bw` data folder, **possibly in plain form** (upstream CLI behaviour; not verified here) | Logging out may not remove it. Revoke the key in the web vault if you stop using the workflow. |
+| API key (`client_secret`) | Not kept: with `bw` 2026.11 the CLI stores it as empty after logging in (checked in its data file). Email + password login never uses one. | Revoke the key in the web vault if you stop using it. |
+| Background agent | `~/Library/LaunchAgents/com.izsk.bitwarden.agent.plist`; runs the workflow every 30 s. It holds no secrets. | Turn *Background Agent* off, or delete the workflow (it removes itself) |
 
 ### Choose your trade-off
 
@@ -77,17 +86,17 @@ Several of these choices follow the [Raycast Bitwarden extension](https://github
 | Re-prompt Grace | Ask every time | 5 minutes | 5 minutes or more |
 | **What you give up** | More typing. Passwords with non-ASCII characters are refused in clipboard-free mode. | Passwords touch the clipboard briefly. | A saved master password sits in the Keychain, and the vault stays open longer. |
 
-**Quick Unlock is a convenience, not protection.** Touch ID or the PIN is checked by this workflow, not enforced by macOS. Your master password is stored in the login Keychain, so anything that can read your Keychain can skip the check. Leave it off if you want the strongest setup. **Lock After = 0 means never lock. Don't.**
+**Quick Unlock is a convenience, not protection.** Touch ID or the PIN is checked by this workflow, not enforced by macOS. Your master password is stored in the login Keychain (sealed with the separate key file), so anything that can read both can skip the check. Leave it off if you want the strongest setup. **Lock After = 0 means never lock. Don't.**
 
 **Website icons** are fetched from Bitwarden's icon server (`icons.bitwarden.net`). That tells the server which sites you have logins for. Turn *Icons* off if that matters to you.
 
 ### What it does *not* protect against
 
 - **Malware or a hostile app running as your user while the vault is unlocked.** It can likely read the session key from your Keychain and read your vault. A short *Lock After* only shortens that window.
-- **Anything that can read your login Keychain.** That includes the session key, the cache key and, if you opt in to Quick Unlock, the saved master password.
+- **Malware aimed at this workflow.** The session key and any saved master password are sealed in the Keychain with a key from a separate file, so a generic Keychain dump or a one-line `security` read gets only ciphertext. Something that reads both the Keychain and that file (or edits the workflow's own code) still gets them. The item-name cache key is in the Keychain unsealed.
 - **Memory.** Secrets exist in memory while a window is open or while the CLI works.
 - **The clipboard.** Concealment is advisory, other apps can still read it, and the TOTP code is still copied after an autofill unless you turn that off.
-- **The CLI itself.** Upstream behaviour such as `client_secret` storage is outside this workflow's control.
+- **The CLI itself.** How `bw` stores its login tokens is outside this workflow's control.
 - **Highest-value secrets.** For bank logins, recovery codes and crypto seeds, use the official Bitwarden app. Turn on **FileVault** for the whole disk.
 
 ### Other protections that are in place
@@ -114,7 +123,7 @@ Screenshots use a demo vault with the account email hidden.
 | Alfred 6 + [Powerpack](https://www.alfredapp.com/powerpack/) | Alfred UI windows need Alfred 6 |
 | [Bitwarden CLI](https://bitwarden.com/help/cli/) (`bw`) | `npm install -g @bitwarden/cli` (recommended) or `brew install bitwarden-cli` |
 | [Node.js](https://nodejs.org) 18 or newer | Already there if you installed `bw` with npm |
-| Your Bitwarden **personal API key** | Web vault → **Settings → Security → Keys → View API key** |
+| Your Bitwarden **email and master password**, or a **personal API key** | API key: web vault → **Settings → Security → Keys → View API key** |
 
 ## Install
 
@@ -122,7 +131,8 @@ Screenshots use a demo vault with the account email hidden.
 2. Type **`bw`** in Alfred and choose **Search Vault**.
 3. The **Log in** sheet opens:
    - **Server URL:** leave blank for bitwarden.com. EU accounts use `https://vault.bitwarden.eu`; self-hosted users enter their own URL.
-   - **client_id** and **client_secret:** paste from *View API key*.
+   - **Email** and **master password**. If you use two-step login, pick its method, click **Log In**, then enter the code and click **Log In** again. For the email method, Bitwarden sends the code after the first click. If you don't use two-step login, Bitwarden may email a *new-device* code: enter it the same way.
+   - Or click **Use API Key** and paste **client_id** and **client_secret** from *View API key*. An API key skips two-step login, so the email login is the safer choice.
    - Click **Log In**.
 4. Unlock with your **master password**. Your items appear.
 5. When macOS asks, allow Alfred to:
@@ -131,7 +141,7 @@ Screenshots use a demo vault with the account email hidden.
 
 ### Adding another account
 
-`bw` → **Switch Account…** → **Add Account…**, then repeat steps 3–4 with that account's API key. Switch any time with `bw` → **Switch Account…**. Each account has its own login, unlock and cache.
+`bw` → **Switch Account…** → **Add Account…**, then repeat steps 3–4 for that account. Switch any time with `bw` → **Switch Account…**. Each account has its own login, unlock and cache.
 
 ## Everyday use
 
@@ -183,6 +193,9 @@ Alfred Preferences → Workflows → **Bitwarden** → **Configure Workflow**.
 | Passwords on the clipboard | Allowed | Tick *Never put passwords on the clipboard* to type them instead (plain ASCII only). A TOTP is still copied after an autofill. |
 | Clear Clipboard | 1 minute | 15 s … 5 min, or never |
 | Lock After | 15 | Minutes idle before locking (0 = never) |
+| Lock on screen lock | On | "Also lock when the screen locks". Checked by the background agent every 30 seconds |
+| Background Agent | On | A LaunchAgent that enforces the locks while the workflow is closed. Off = locks happen only when you next open the workflow |
+| Background Sync | On | Sync every 5 minutes while unlocked, so the vault opens without waiting for `bw sync`. It never extends the idle timer |
 | Lock on sleep | On | The checkbox under Lock After, "Also lock when the Mac sleeps or restarts". The next use after a sleep or restart asks you to unlock again: for the master password, or, if you enabled Quick Unlock, for Touch ID or your PIN (which is weaker than the master password) |
 | Quick Unlock | Off | Off, or opt in to Touch ID (or Mac password / Apple Watch) or PIN |
 | Re-prompt Grace | 5 minutes | How long a confirmed master password counts for protected items |
@@ -228,14 +241,16 @@ osascript 191ms          ← browser tab lookup
 |---|---|
 | "Node.js not found" | Set **Node.js** in the configuration (`which node`) |
 | Autofill does nothing | System Settings → Privacy & Security → **Accessibility** → enable Alfred |
-| Doesn't open on the current site | System Settings → Privacy & Security → **Automation** → Alfred → enable your browser. Firefox can't share its tab URL. |
+| Doesn't open on the current site | System Settings → Privacy & Security → **Automation** → Alfred → enable your browser. Firefox and its forks are read through **Accessibility** (the same permission autofill uses). |
 | "client_id or client_secret is incorrect" | Copy the API key again. EU / self-hosted accounts need the Server URL. |
 
 ## Limitations
 
 - **Passkeys:** browsers send passkey requests only to registered credential providers (the Bitwarden extension or app). Neither Alfred nor the `bw` CLI can sign passkey logins. Items with a passkey get a badge, so you know to use the browser.
 - **Fonts:** Alfred UI has no font-family option, so windows use the system font rather than a custom Alfred theme font. Colours and selection follow your theme.
-- **Login:** uses the personal API key. Organisations that only allow SSO or "trusted devices" can't use the Bitwarden CLI.
+- **Login:** email + master password (with two-step login) or the personal API key. Organisations that only allow SSO or "trusted devices" can't use the Bitwarden CLI. FIDO2/WebAuthn and Duo two-step methods aren't supported by the CLI.
+- **Two-step code on the command line:** for a chosen two-step method, the one-time code goes to `bw` as `--code`, because `bw` has no other way to take it without emailing a fresh code. It is used within seconds and is useless afterwards. Your master password still goes through the environment, and a new-device code through `bw`'s own prompt.
+- **Screen lock:** checked every 30 seconds, so a screen locked and unlocked again within that time isn't noticed.
 - **File Sends with a password** can't be created here: `bw send` would put the password in the process arguments, so the workflow refuses and asks you to use Bitwarden. Text Sends with a password work.
 
 ## Development
