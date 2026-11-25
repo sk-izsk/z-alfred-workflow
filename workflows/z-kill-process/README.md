@@ -18,7 +18,7 @@ with a tooltip. App processes use their Finder icons; other processes use a term
 
 | Shortcut | Action |
 | --- | --- |
-| Return | Review Kill (SIGTERM) |
+| Return | Kill immediately (SIGTERM) |
 | ⌘K | Actions for the selected process |
 | ⌘Return | Force Kill (SIGKILL) |
 | ⌥⌘R | Restart app |
@@ -55,11 +55,12 @@ Unavailable metrics show a dash. Hover over meters for definitions and used/tota
 ## Process actions
 
 Normal Kill requests termination with SIGTERM; Force Kill sends SIGKILL immediately and can lose
-unsaved work. All actions show a review sheet by default. You can disable confirmation for a single
-normal Kill; force, group and restart actions always require review.
+unsaved work. Actions execute immediately by default, without a warning dialog. Enable **Confirm process actions**
+in Workflow Configuration if you want review sheets before actions.
 
 **Kill All** means the exact executable path of the selected process, not everything matching your
-search. The review lists all target PIDs; newly started processes are never added after confirmation.
+search. With optional confirmation enabled, the review lists all target PIDs. Newly started processes are
+never silently added to an action’s captured targets.
 A plan expires after one minute and is single-use. PID, start time, owner and executable identity
 are checked again before signaling. macOS does not offer an atomic signal-by-PID-and-start-time API,
 so a very small race remains between the final identity check and sending the signal.

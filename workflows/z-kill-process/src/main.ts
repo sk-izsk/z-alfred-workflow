@@ -214,7 +214,7 @@ const action = async (s: State, verb: string, id: string): Promise<Action> => {
   if (!current) throw new Error("This process has exited or changed. Refresh the list.");
   const plan = makePlan(verb, current, latest, uid(), ancestors(latest));
   writeJson(planFile(s.id), plan);
-  if (verb === "terminate" && !bool("confirm_termination", true)) return execute(s);
+  if (!bool("confirm_termination", false)) return execute(s);
   return review(plan);
 };
 const main = async (): Promise<Action | void> => {

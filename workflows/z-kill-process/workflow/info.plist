@@ -164,9 +164,9 @@
 	<key>readme</key>
 	<string>Type kill to browse processes; add a name or PID to filter. Sort by CPU or memory. The footer shows sampled system CPU and active+wired+compressed physical RAM usage. These are different measurements from per-process CPU and RSS.
 
-Arrow keys navigate, Return reviews Kill, Command-K opens actions, Command-R reloads and Command-[ goes Back one level. Back stays visible in every footer, including sheets. Force Kill, Restart, Force Restart, Kill All, Force Kill All and Copy Path are in Actions; restart is available only for app processes.
+Arrow keys navigate, Return kills immediately, Command-K opens actions, Command-R reloads and Command-[ goes Back one level. Back stays visible in every footer, including sheets. Force Kill, Restart, Force Restart, Kill All, Force Kill All and Copy Path are in Actions; restart is available only for app processes.
 
-Kill requests termination with SIGTERM; Force Kill uses SIGKILL and may lose unsaved work. Kill All matches the exact executable path, not a text search. App restart targets processes in the app bundle and reopens only after they exit. Processes owned by other users, key macOS services and this workflow’s ancestors are protected. No sudo, shell command reconstruction or privilege escalation is used. Group targets are reviewed and PID identities rechecked before signaling.
+Kill requests termination with SIGTERM; Force Kill uses SIGKILL and may lose unsaved work. Kill All matches the exact executable path, not a text search. App restart targets processes in the app bundle and reopens only after they exit. Processes owned by other users, key macOS services and this workflow’s ancestors are protected. No sudo, shell command reconstruction or privilege escalation is used. PID identities are rechecked before signaling. Enable optional confirmation in Workflow Configuration if desired.
 
 Requires macOS, Alfred 6 Powerpack and Node.js 22+ or Bun. All tools and metrics are local; no service or network is used. See the README and TESTING.md in the repository for details.
 
@@ -296,14 +296,14 @@ The icon and action inspiration are from Raycast Kill Process by rolandleth and 
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<true/>
+				<false/>
 				<key>text</key>
-				<string>Review before sending SIGTERM</string>
+				<string>Ask before Kill, Force Kill, group actions and restarts</string>
 			</dict>
 			<key>description</key>
-			<string>Force kill, group actions and restarts always require confirmation.</string>
+			<string>Optional review dialog before process actions. Disabled by default.</string>
 			<key>label</key>
-			<string>Confirm normal Kill</string>
+			<string>Confirm process actions</string>
 			<key>type</key>
 			<string>checkbox</string>
 			<key>variable</key>

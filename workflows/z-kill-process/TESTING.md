@@ -12,8 +12,8 @@ restart after exit, permission failures, ancestor loops, native meters and Back 
 Read-only live sampling ran through `workflow/bin/kproc` from the UI folder with a minimal PATH
 and temporary cache/data directories. Process rows, CPU/RAM values and Actions JSON were checked.
 SIGTERM and SIGKILL were then exercised against disposable `/bin/sleep` children created specifically
-for testing, by exact PID/start identity. They were alive before confirmation, exited with the
-expected signal, and a second execute was rejected. No existing user process was terminated.
+for testing, by exact PID/start identity. Immediate mode and optional confirmation mode both exited with the expected signals. In review
+mode, children stayed alive until execution, and a second execute was rejected. No existing user process was terminated.
 
 The workflow was linked and opened in Alfred. Targeted captures verified live meters, app icons,
 path truncation, process count and sort-picker spacing. The README capture is filtered to Safari
