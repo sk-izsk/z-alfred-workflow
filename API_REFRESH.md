@@ -7,6 +7,7 @@ Cache expiry controls when the workflow may request data again. It does not chan
 | Weather | 10 minutes | `cache_minutes`; saved-city rows load conditions without opening details. `auto_refresh` checks while the UI is open. |
 | Weather AQI | 15 minutes | `aqi_cache_minutes`; AQI is independent of weather observations and displays its observation time. |
 | Currency | 60 minutes | `cache_minutes`; `auto_refresh` checks while open. Provider publication dates remain visible; the default open-access provider publishes daily. |
+| Translation | No response cache | `cache_minutes` defaults to 0; translates on invocation/input pause, with forced Translate Again. Clipboard is read once per empty invocation. |
 | Adhan and Ramadan | 24 hours | `cache_minutes`; requests on opening a calendar, with manual Refresh for prayer times. Calculated dates and city timezone come from Aladhan. |
 | Brew catalog | 6 hours | `catalog_cache_minutes`; installed packages come from the local Homebrew CLI. |
 | Brew details | 15 minutes | `detail_cache_minutes`; Check for Updates bypasses relevant caches. |
@@ -17,4 +18,4 @@ Cache expiry controls when the workflow may request data again. It does not chan
 | Calendar | Local EventKit | Reads macOS Calendar; account synchronization is managed by macOS. |
 | World Clock | Offline | Uses system IANA timezone rules and the current clock; no API requests. |
 
-Minute settings accept 1–10080; invalid settings fall back to the documented default. GitHub accepts 1–604800 seconds. Automatic refresh stops with the UI; it does not run a background service. A more frequent fetch cannot make a daily provider publish hourly data.
+Minute settings accept 1–10080 (Translation also accepts 0 to disable caching); invalid settings fall back to the documented default. GitHub accepts 1–604800 seconds. Automatic refresh stops with the UI; it does not run a background service. A more frequent fetch cannot make a daily provider publish hourly data.

@@ -1,0 +1,142 @@
+{
+  "bundleid": "com.izsk.translate",
+  "variablesconfig": {
+    "swiss_return": {
+      "default": ""
+    },
+    "trns_session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "trns_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌘["
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    }
+  },
+  "window": {
+    "title": "Translate",
+    "size": {
+      "width": 940,
+      "height": 560
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "shortcuts": [
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/trns",
+            "args": [
+              "menu",
+              "{var:trns_session}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/trns",
+            "args": [
+              "refresh",
+              "{var:trns_session}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘L",
+          "action": {
+            "type": "script",
+            "src": "../bin/trns",
+            "args": [
+              "swap",
+              "{var:trns_session}"
+            ],
+            "async": true
+          }
+        }
+      ],
+      "events": [
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/trns",
+              "args": [
+                "prepare-origin",
+                "{var:trns_session}"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/trns",
+              "args": [
+                "launch",
+                "{var:trns_session}"
+              ],
+              "async": true
+            }
+          ]
+        }
+      ],
+      "components": [
+        {
+          "id": "statusLabel",
+          "type": "label",
+          "text": "Loading Translate…",
+          "constraints": {
+            "region": "centre",
+            "position": "centre"
+          }
+        },
+        {
+          "id": "initialBack",
+          "type": "button",
+          "text": "Back  {var:back_shortcut}",
+          "bordered": false,
+          "events": [
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "json",
+                "src": {
+                  "finish": {
+                    "variables": {
+                      "trns_out": "back",
+                      "swiss_return": "{var:swiss_return}"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "shortcut": "{var:back_shortcut}",
+          "constraints": {
+            "region": "bottom",
+            "position": "left",
+            "insets": {
+              "left": 16,
+              "bottom": 16
+            }
+          }
+        }
+      ]
+    }
+  }
+}

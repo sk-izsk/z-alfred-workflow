@@ -1,0 +1,5 @@
+# Verification
+
+Automated coverage: explicit text versus a single clipboard read, clipboard opt-out, language validation including Bengali, multi-sentence parsing, pronunciation/detected-language separation, POST bodies, optional caching, forced refresh, rate limits, input bounds, split-pane IDs, language controls, typing without rebuilding the editor, stale request rejection, copy/swap behavior and Swiss Back handoff.
+
+Manual checks: typing two consecutive punctuation characters across completed API responses retained both edits without selecting/replacing the input. French → English public phrase translated in the native split view. A live 6,760-character French sample completed through two sequential provider requests. The actual Google endpoint also returned Bengali text/pronunciation for a public English sample. Run the Alfred UI checker and a bare-environment launch before packaging. Clipboard content is not overwritten for test setup; actual pasting into a user application is not exercised automatically.

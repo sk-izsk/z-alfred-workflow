@@ -34,6 +34,8 @@ jobs:
             artifact: Swiss.alfredworkflow
           - workflow: z-workflow-manager
             artifact: Workflow Manager.alfredworkflow
+          - workflow: z-translate
+            artifact: Translate.alfredworkflow
           - workflow: z-world-clock
             artifact: World Clock.alfredworkflow
           - workflow: z-weather

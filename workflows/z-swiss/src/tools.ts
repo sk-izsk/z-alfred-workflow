@@ -13,6 +13,16 @@ export type Tool = {
 };
 export const tools: Tool[] = [
   {
+    id: "translate",
+    name: "Translate",
+    description: "Clipboard and text translation with native split panes",
+    bundle: "com.izsk.translate",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "translate",
+  },
+
+  {
     id: "workflow-manager",
     name: "Workflow Manager",
     description: "Installed workflows, Gallery, updates and configuration",

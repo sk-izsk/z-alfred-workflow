@@ -17,6 +17,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Currency Exchange](workflows/z-currency) | Arithmetic, cross-rates, pinned targets and provider-based history | Initial release pending |
 | [Calculate Anything](workflows/z-calculate-anything) | Native results using your installed unit/conversion engine | Initial release pending |
 | [Workflow Manager](workflows/z-workflow-manager) | Installed workflows, Gallery, updates and configuration | Initial release pending |
+| [Translate](workflows/z-translate) | Clipboard and text translation with native split panes | Initial release pending |
 | [World Clock](workflows/z-world-clock) | Offline timezones, starred locations and native analog grid | Initial release pending |
 | [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | Initial release pending |
 | [Weather](workflows/z-weather) | Saved cities, colorful conditions and detailed weather forecasts | Initial release pending |

@@ -82,5 +82,11 @@
     "bundle": "com.izsk.workflow-manager",
     "name": "Workflow Manager",
     "description": "Manage installed and available Alfred workflows"
+  },
+  {
+    "slug": "z-translate",
+    "bundle": "com.izsk.translate",
+    "name": "Translate",
+    "description": "Clipboard and text translation with native split panes"
   }
 ]

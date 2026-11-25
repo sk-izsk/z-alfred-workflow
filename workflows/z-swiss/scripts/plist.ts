@@ -98,7 +98,7 @@ export const infoPlist = {
     text("node_path", "Node.js executable", "", "Optional absolute path if automatic discovery fails."),
   ],
   variablesdontexport: [],
-  readme: `Type swiss to search Workflow Manager, World Clock, Speed Test, Kill Process, Weather, Adhan Time, Currency Exchange and Calculate Anything. Each tool stays a separate installed workflow and keeps its direct keyword. Swiss does no polling, network requests or camera/process work in the launcher. Camera is deferred.
+  readme: `Type swiss to search Translate, Workflow Manager, World Clock, Speed Test, Kill Process, Weather, Adhan Time, Currency Exchange and Calculate Anything. Each tool stays a separate installed workflow and keeps its direct keyword. Swiss does no polling, network requests or camera/process work in the launcher. Camera is deferred.
 
 Return opens a tool. Back from that tool returns to the same Swiss query and selection, after its own child screens. Direct tool launches keep their original Back behavior. Swiss Back (configurable Command-[) returns to Alfred search; Back is visible outside Actions.
 

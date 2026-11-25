@@ -247,3 +247,5 @@ assets/zones.json is derived from macOS /usr/share/zoneinfo/zone.tab.
 The source tzdb timezone descriptions are public domain, clarified by Arthur David Olson
 on 2009-05-17. Country/timezone descriptions are used for search; active timezone/DST
 rules come from the installed runtime’s Intl database.
+
+Translate icon: Raycast Google Translate extension, MIT, Copyright (c) 2021 Raycast, pinned e38232e713cc42a58cac81b8d3af9261fd1624e5. Google Translate is a Google trademark. The MIT license above applies to this asset as well.
