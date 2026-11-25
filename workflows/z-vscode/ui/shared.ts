@@ -52,9 +52,10 @@ export const pill = (id: string, components: Json[], tint = "#8080801f"): Json =
 
 const backAction = json({ finish: { variables: { vsc_out: "back" } } });
 
-/** "‹" before the search field: back to the `code` menu, like Raycast's back arrow. */
+/** "‹" before the search field: back to the main Alfred search, like Raycast's back arrow. */
 const backArrow: Json = {
   id: "backButton",
+  shortcut: "{var:back_shortcut}",
   type: "button",
   text: "‹",
   bordered: false,

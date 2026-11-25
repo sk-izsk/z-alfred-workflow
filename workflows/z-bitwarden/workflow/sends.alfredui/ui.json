@@ -115,6 +115,24 @@
               "sheet": {
                 "id": "newSendSheet",
                 "root": {
+                  "shortcuts": [
+                    {
+                      "shortcut": "{var:back_shortcut}",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "sheet": {
+                            "close": "newSendSheet"
+                          },
+                          "finish": {
+                            "variables": {
+                              "bw_out": "back"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
                   "type": "view",
                   "layout": "inline",
                   "direction": "vertical",
@@ -335,7 +353,7 @@
                       "components": [
                         {
                           "type": "button",
-                          "text": "Cancel",
+                          "text": "Back  {var:back_shortcut}",
                           "events": [
                             {
                               "triggers": "actioned",
@@ -344,6 +362,11 @@
                                 "src": {
                                   "sheet": {
                                     "close": "newSendSheet"
+                                  },
+                                  "finish": {
+                                    "variables": {
+                                      "bw_out": "back"
+                                    }
                                   }
                                 }
                               }
@@ -399,6 +422,24 @@
               "sheet": {
                 "id": "receiveSheet",
                 "root": {
+                  "shortcuts": [
+                    {
+                      "shortcut": "{var:back_shortcut}",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "sheet": {
+                            "close": "receiveSheet"
+                          },
+                          "finish": {
+                            "variables": {
+                              "bw_out": "back"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
                   "type": "view",
                   "layout": "inline",
                   "direction": "vertical",
@@ -498,7 +539,7 @@
                       "components": [
                         {
                           "type": "button",
-                          "text": "Close",
+                          "text": "Back  {var:back_shortcut}",
                           "events": [
                             {
                               "triggers": "actioned",
@@ -507,6 +548,11 @@
                                 "src": {
                                   "sheet": {
                                     "close": "receiveSheet"
+                                  },
+                                  "finish": {
+                                    "variables": {
+                                      "bw_out": "back"
+                                    }
                                   }
                                 }
                               }
@@ -524,8 +570,11 @@
                                 "src": {
                                   "copy": {
                                     "type": "text",
-                                    "src": "{value:receivedText.text}"
+                                    "src": "{var:received_copy}"
                                   }
+                                },
+                                "variables": {
+                                  "received_copy": "{value:receivedText.text}"
                                 }
                               }
                             }
@@ -819,6 +868,7 @@
                       }
                     }
                   ],
+                  "shortcut": "{var:back_shortcut}",
                   "constraints": {
                     "position": "centre"
                   }
@@ -841,6 +891,24 @@
                           "sheet": {
                             "id": "receiveSheet",
                             "root": {
+                              "shortcuts": [
+                                {
+                                  "shortcut": "{var:back_shortcut}",
+                                  "action": {
+                                    "type": "json",
+                                    "src": {
+                                      "sheet": {
+                                        "close": "receiveSheet"
+                                      },
+                                      "finish": {
+                                        "variables": {
+                                          "bw_out": "back"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ],
                               "type": "view",
                               "layout": "inline",
                               "direction": "vertical",
@@ -940,7 +1008,7 @@
                                   "components": [
                                     {
                                       "type": "button",
-                                      "text": "Close",
+                                      "text": "Back  {var:back_shortcut}",
                                       "events": [
                                         {
                                           "triggers": "actioned",
@@ -949,6 +1017,11 @@
                                             "src": {
                                               "sheet": {
                                                 "close": "receiveSheet"
+                                              },
+                                              "finish": {
+                                                "variables": {
+                                                  "bw_out": "back"
+                                                }
                                               }
                                             }
                                           }
@@ -966,8 +1039,11 @@
                                             "src": {
                                               "copy": {
                                                 "type": "text",
-                                                "src": "{value:receivedText.text}"
+                                                "src": "{var:received_copy}"
                                               }
+                                            },
+                                            "variables": {
+                                              "received_copy": "{value:receivedText.text}"
                                             }
                                           }
                                         }
@@ -1030,6 +1106,24 @@
                           "sheet": {
                             "id": "newSendSheet",
                             "root": {
+                              "shortcuts": [
+                                {
+                                  "shortcut": "{var:back_shortcut}",
+                                  "action": {
+                                    "type": "json",
+                                    "src": {
+                                      "sheet": {
+                                        "close": "newSendSheet"
+                                      },
+                                      "finish": {
+                                        "variables": {
+                                          "bw_out": "back"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ],
                               "type": "view",
                               "layout": "inline",
                               "direction": "vertical",
@@ -1250,7 +1344,7 @@
                                   "components": [
                                     {
                                       "type": "button",
-                                      "text": "Cancel",
+                                      "text": "Back  {var:back_shortcut}",
                                       "events": [
                                         {
                                           "triggers": "actioned",
@@ -1259,6 +1353,11 @@
                                             "src": {
                                               "sheet": {
                                                 "close": "newSendSheet"
+                                              },
+                                              "finish": {
+                                                "variables": {
+                                                  "bw_out": "back"
+                                                }
                                               }
                                             }
                                           }

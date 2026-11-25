@@ -84,13 +84,9 @@ const paste = async (): Promise<string> => {
   return "";
 };
 
-/** Back shortcut (default ⌘[) in a window: reopen the `bw` menu. */
+/** Back shortcut (default ⌘[) in a window: return to the main Alfred search. */
 const back = async (): Promise<string> => {
-  const keyword = str("kw_search", "bw").replaceAll('"', "");
-  await run("/usr/bin/osascript", [
-    "-e",
-    `tell application id "com.runningwithcrayons.Alfred" to search "${keyword} "`,
-  ]);
+  await run("/usr/bin/osascript", ["-e", 'tell application id "com.runningwithcrayons.Alfred" to search ""']);
   return "";
 };
 

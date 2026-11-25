@@ -34,6 +34,9 @@ use Clear CLI Cache to remove them.
 
 ## Usage
 
+![Speed Test dashboard in Alfred with illustrative data](images/dashboard.png)
+
+
 Test your connection via the `speedtest` keyword. A test starts immediately. The workflow remembers
 your last meter/list choice. Configure the Hotkey to launch the same window.
 
@@ -51,7 +54,8 @@ your last meter/list choice. Configure the Hotkey to launch the same window.
 | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>V</kbd> | Close the window and paste meter PNG into the previous app |
 | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>D</kbd> | Save meter PNG to Downloads without overwriting |
 | <kbd>⌃</kbd><kbd>X</kbd> | Confirm Clear CLI Cache |
-| <kbd>⎋</kbd> or back button | Close the window and cancel its test |
+| <kbd>⌘</kbd><kbd>[</kbd> or back button | Return to the main Alfred search |
+| <kbd>⎋</kbd> | Close the window and cancel its test |
 
 ISP, server, ping, download, upload, voice calls, video calls, streaming and result sections include
 raw metadata and charts where appropriate. Quality thresholds match the source; they estimate
@@ -66,6 +70,8 @@ downloaded CLI, which this workflow does not maintain.
 Chart appearance can be Automatic, Light or Dark in Workflow’s Configuration. Automatic uses Alfred’s
 theme background; select an explicit appearance if the theme cannot be detected. Keyword, action
 shortcut, executable paths and window mode are configurable there too.
+
+![Ping details in Alfred with illustrative data](images/ping-details.png)
 
 ## Development
 
@@ -93,3 +99,6 @@ Raycast’s AI tool API is host-specific and is not part of the Alfred workflow.
 This workflow was built with the help of AI tools. Review the code before use, as you would any
 workflow; please report anything that does not work. Automated checks do not replace trying the
 window in Alfred.
+
+Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Every Back button and shortcut, including sheets, closes the workflow UI and returns to the main Alfred search.
+Screenshots use illustrative data.

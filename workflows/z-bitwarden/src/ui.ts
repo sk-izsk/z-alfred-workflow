@@ -32,9 +32,36 @@ export const update = (ids: Record<string, Action>, relayout = false): Action =>
 });
 export const fn = (ids: Record<string, string | string[]>): Action => ({ functions: { ids } });
 export const vars = (variables: Record<string, unknown>): Action => ({ variables });
-export const sheet = (id: string, root: Action, closeOnEscape = true): Action => ({
-  sheet: { id, closeonescape: closeOnEscape, root },
-});
+export const sheet = (id: string, root: Action, closeOnEscape = true): Action => {
+  const back: Action = {
+    type: "json",
+    src: { sheet: { close: id }, finish: { variables: { bw_out: "back" } } },
+  };
+  return {
+    sheet: {
+      id,
+      closeonescape: closeOnEscape,
+      root: {
+        type: "view",
+        layout: "border",
+        spacing: 4,
+        shortcuts: [{ shortcut: "{var:back_shortcut}", action: back }],
+        components: [
+          { ...root, constraints: { ...(root.constraints as Action | undefined), region: "centre" } },
+          {
+            id: `${id}Back`,
+            type: "button",
+            text: "Back  {var:back_shortcut}",
+            bordered: false,
+            shortcut: "{var:back_shortcut}",
+            constraints: { region: "bottom", position: "left", insets: { left: 16, bottom: 12 } },
+            events: [{ triggers: "actioned", action: back }],
+          },
+        ],
+      },
+    },
+  };
+};
 export const closeSheet = (id: string): Action => ({ sheet: { close: id } });
 export const finish = (variables: Record<string, string> = {}, args = ""): Action => ({
   finish: { args, variables },

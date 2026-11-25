@@ -138,10 +138,11 @@
                   }
                 }
               ],
+              "shortcut": "{var:back_shortcut}",
               "font": {
                 "size": 26
               },
-              "tooltip": "Back to Brew menu ⌘[",
+              "tooltip": "Back {var:back_shortcut}",
               "constraints": {
                 "region": "left",
                 "position": "centre"

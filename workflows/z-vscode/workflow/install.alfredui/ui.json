@@ -144,6 +144,7 @@
           "components": [
             {
               "id": "backButton",
+              "shortcut": "{var:back_shortcut}",
               "type": "button",
               "text": "‹",
               "bordered": false,

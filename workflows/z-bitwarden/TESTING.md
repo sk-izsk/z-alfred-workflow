@@ -26,7 +26,7 @@ Legend: ✅ already verified on the dev Mac · 🔲 still needs a human (Touch I
 - 🔲 ⌘↩ paste password · ⌘C copy password · ⌘U username · ⌘T TOTP · ⌘O open site · ⌘Y details.
 - 🔲 Clipboard history (Alfred / Raycast / Maccy) does **not** record copied passwords; the clipboard clears after the set time.
 - 🔲 ⌘K actions menu: every item action works; Add TOTP Key, favorite toggle.
-- ✅ ⌘[ (Back) → returns to the `bw` menu. Change *Back Shortcut* in the configuration → the new shortcut and the footer hint both update.
+- ✅ ⌘[ (Back) → returns to the main Alfred search. Change *Back Shortcut* in the configuration → the new shortcut and the footer hint both update.
 - 🔲 ⌘P folder picker filters; ⌘R sync; ⌘L lock.
 - 🔲 TOTP Codes = Footer / Hidden behave as described.
 

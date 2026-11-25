@@ -147,6 +147,7 @@ export const backHint = (): Json =>
     "backButton",
     "Back  {var:back_shortcut}",
     json({ finish: { variables: { bw_out: "back" } } }),
+    { shortcut: "{var:back_shortcut}" },
   );
 
 export const window = (root: Json, extra: Json = {}): Json => ({

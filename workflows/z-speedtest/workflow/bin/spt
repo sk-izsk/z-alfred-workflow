@@ -6,7 +6,7 @@ here=${0:A:h}
 [[ -z $node_path ]] && node_path=$(/usr/bin/plutil -extract node_path raw -o - "$here/../prefs.plist" 2>/dev/null)
 candidates=(
   "$node_path"
-  /opt/homespeedtest/bin/node
+  /opt/homebrew/bin/node
   /usr/local/bin/node
   $HOME/.volta/bin/node
   $HOME/.local/bin/node

@@ -1,6 +1,6 @@
 import { previewCleanup, previewJoin, previewLoad, scrollTitle } from "./commands/preview.ts";
 import { CalendarAccessError } from "./calendar.ts";
-import { BUNDLE_ID, str } from "./env.ts";
+import { BUNDLE_ID } from "./env.ts";
 import { exec, osascript } from "./proc.ts";
 import { type Action, errorStatus, merge, print, update } from "./ui.ts";
 import { agendaFilter, agendaLoad, agendaPickers, authorize, eventAction } from "./commands/agenda.ts";
@@ -36,10 +36,7 @@ const post = async (): Promise<void> => {
   const out = process.env.cal_out ?? "";
   const day = process.env.cal_day || "";
   if (out === "back")
-    await osascript(
-      'tell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)',
-      `${str("kw_main", "cal")} `,
-    );
+    await osascript('tell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)', "");
   if (out === "agenda" || out === "create")
     await osascript(
       'tell application id "com.runningwithcrayons.Alfred" to run trigger (item 1 of argv) in workflow (item 2 of argv) with argument (item 3 of argv)',

@@ -183,10 +183,11 @@
                   }
                 }
               ],
+              "shortcut": "{var:back_shortcut}",
               "font": {
                 "size": 26
               },
-              "tooltip": "Back to Calendar menu ⌘[",
+              "tooltip": "Back {var:back_shortcut}",
               "constraints": {
                 "region": "left",
                 "position": "centre"
@@ -723,6 +724,31 @@
                 }
               ],
               "shortcut": "⇧⌘R",
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "closeWindowKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "finish": {}
+                    }
+                  }
+                }
+              ],
+              "shortcut": "⌘W",
               "opacity": 0,
               "constraints": {
                 "size": {

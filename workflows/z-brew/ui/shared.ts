@@ -87,8 +87,9 @@ export const header = (title: Json, right?: Json): Json => ({
   constraints: { region: "top" },
   components: [
     button("backButton", "‹", back, {
+      shortcut: "{var:back_shortcut}",
       font: { size: 26 },
-      tooltip: "Back to Brew menu ⌘[",
+      tooltip: "Back {var:back_shortcut}",
       constraints: { region: "left", position: "centre" },
     }),
     { ...title, constraints: { region: "centre", position: "centre", stretch: "horizontal" } },
