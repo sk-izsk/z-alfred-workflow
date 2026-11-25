@@ -534,6 +534,35 @@
               "spacing": 10,
               "components": [
                 {
+                  "id": "footerBack",
+                  "type": "button",
+                  "text": "Back  {var:back_shortcut}",
+                  "bordered": false,
+                  "font": {
+                    "size": 12.5,
+                    "weight": "medium"
+                  },
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "finish": {
+                            "variables": {
+                              "vsc_out": "back"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "shortcut": "{var:back_shortcut}",
+                  "constraints": {
+                    "position": "centre"
+                  }
+                },
+                {
                   "id": "primaryButton",
                   "type": "button",
                   "text": "Open in Code  ↩",

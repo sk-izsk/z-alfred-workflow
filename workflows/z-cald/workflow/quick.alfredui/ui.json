@@ -517,6 +517,28 @@
                   },
                   "components": [
                     {
+                      "id": "footerBack",
+                      "type": "button",
+                      "text": "Back  {var:back_shortcut}",
+                      "bordered": false,
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "json",
+                            "src": {
+                              "finish": {
+                                "variables": {
+                                  "cal_out": "back"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ],
+                      "shortcut": "{var:back_shortcut}"
+                    },
+                    {
                       "id": "primaryButton",
                       "type": "button",
                       "text": "Current Month  ↩",

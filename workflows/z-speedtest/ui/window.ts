@@ -250,6 +250,12 @@ export const speedtestWindow = {
                   spacing: 16,
                   constraints: { region: "right" },
                   components: [
+                    button(
+                      "footerBack",
+                      "Back  {var:back_shortcut}",
+                      json({ finish: { variables: { speedtest_out: "back" } } }),
+                      "{var:back_shortcut}",
+                    ),
                     button("primaryButton", "Show Detailed List  ↩", run("primary"), "↩"),
                     button("actionsButton", "Actions  ⌘K", run("actions")),
                   ],

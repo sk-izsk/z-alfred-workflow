@@ -149,7 +149,12 @@ export const footer = (right: Json[]): Json => ({
       type: "view",
       layout: "inline",
       spacing: 10,
-      components: right,
+      components: [
+        footerButton("footerBack", "Back  {var:back_shortcut}", backAction, {
+          shortcut: "{var:back_shortcut}",
+        }),
+        ...right,
+      ],
     },
   ],
 });

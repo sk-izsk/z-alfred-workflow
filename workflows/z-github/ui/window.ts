@@ -243,6 +243,12 @@ export const listComponents = (s: Session, repos: { text: string; value: string 
               spacing: 12,
               constraints: { region: "right" },
               components: [
+                button(
+                  "footerBack",
+                  "Back  {var:back_shortcut}",
+                  json({ finish: { variables: { github_out: "back" } } }),
+                  { shortcut: "{var:back_shortcut}" },
+                ),
                 ...(v.more ? [button("moreButton", "Load More", run("more"))] : []),
                 button(
                   "primaryButton",
@@ -492,6 +498,12 @@ export const githubWindow = {
           padding: 16,
           constraints: { region: "bottom" },
           components: [
+            button(
+              "loadingBack",
+              "Back  {var:back_shortcut}",
+              json({ finish: { variables: { github_out: "back" } } }),
+              { shortcut: "{var:back_shortcut}", constraints: { region: "right" } },
+            ),
             label("loadingHint", "Connecting with GitHub CLI", {
               colour: "secondaryLabelColor",
               font: { size: 12 },

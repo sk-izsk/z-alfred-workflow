@@ -196,6 +196,7 @@ test("repository actions include My Pull Requests without replacing the existing
   expect(entries.map((entry) => entry.text)).toContain("My Pull Requests in This Repository");
   expect(entries.map((entry) => entry.text)).toContain("All Pull Requests in This Repository");
   const menu = JSON.stringify(entries);
+  expect(entries.some((entry) => String(entry.text).startsWith("Back"))).toBe(false);
   expect(menu).toContain("repo-my-prs");
   expect(menu).toContain("All Pull Requests in This Repository");
   expect(menu).toContain("My Pull Requests in This Repository");

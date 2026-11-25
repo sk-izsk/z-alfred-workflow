@@ -306,3 +306,5 @@ This project is an independent Alfred implementation. It is not affiliated with 
 [MIT](LICENSE). Third-party assets are covered by [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Bitwarden is a trademark of Bitwarden Inc.
 
 Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Every Back button and shortcut, including sheets, closes the workflow UI and returns to the main Alfred search.
+
+Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.

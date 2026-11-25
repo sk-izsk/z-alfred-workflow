@@ -120,3 +120,5 @@ not apply Raycast’s icon tinting. MIT notices are included in [THIRD_PARTY_NOT
 
 This workflow was built with the help of AI tools. Review the code before use, as you would any
 workflow; please report anything that does not work.
+
+Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.

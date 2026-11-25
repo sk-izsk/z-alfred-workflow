@@ -9,5 +9,5 @@
 - Use feature branches and PRs into `dev`; use namespaced tags as described in RELEASING.md.
 
 - Every workflow must expose a configurable Back shortcut, default `⌘[`, and a visible Back action
-  at every UI level, including sheets. Follow the VS Code/Bitwarden finish → post pattern: close
+  in every footer at every UI level, including sheets. Never put Back inside the Actions / ⌘K menu. Follow the VS Code/Bitwarden finish → post pattern: close
   the current workflow UI and reopen Alfred's main search. Keep Back behavior consistent.

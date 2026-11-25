@@ -70,7 +70,10 @@ export const footer = (buttons: Json[], showIcon = false): Json => {
             layout: "inline",
             spacing: 10,
             constraints: { region: "right", position: "centre" },
-            components: visible,
+            components: [
+              button("footerBack", "Back  {var:back_shortcut}", back, { shortcut: "{var:back_shortcut}" }),
+              ...visible,
+            ],
           },
         ],
       },

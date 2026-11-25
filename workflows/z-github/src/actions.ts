@@ -203,11 +203,7 @@ export const rowMenu = async (row: Row): Promise<Json[]> => {
       item("Copy Install Command", "package-install"),
     );
   if (row.kind === "version") items.push(item("Copy Version", "copy-title"));
-  items.push(
-    { type: "separator" },
-    { text: "Refresh  ⌘R", action: run("refresh") },
-    { text: "Back  {var:back_shortcut}", action: run("back") },
-  );
+  items.push({ type: "separator" }, { text: "Refresh  ⌘R", action: run("refresh") });
   return items;
 };
 export const confirmSheet = (row: Row, op: string): Json => ({

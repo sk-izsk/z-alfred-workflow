@@ -304,6 +304,28 @@
                   },
                   "components": [
                     {
+                      "id": "footerBack",
+                      "type": "button",
+                      "text": "Back  {var:back_shortcut}",
+                      "bordered": false,
+                      "shortcut": "{var:back_shortcut}",
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "json",
+                            "src": {
+                              "finish": {
+                                "variables": {
+                                  "speedtest_out": "back"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
                       "id": "primaryButton",
                       "type": "button",
                       "text": "Show Detailed List  ↩",

@@ -236,6 +236,31 @@
           },
           "components": [
             {
+              "id": "loadingBack",
+              "type": "button",
+              "text": "Back  {var:back_shortcut}",
+              "bordered": false,
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "finish": {
+                        "variables": {
+                          "github_out": "back"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "shortcut": "{var:back_shortcut}",
+              "constraints": {
+                "region": "right"
+              }
+            },
+            {
               "id": "loadingHint",
               "type": "label",
               "text": "Connecting with GitHub CLI",

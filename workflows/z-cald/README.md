@@ -167,3 +167,5 @@ before use, as you would any workflow; please report anything that doesn't work.
 [MIT](LICENSE), with the Raycast notice included in every exported workflow.
 
 Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Every Back button and shortcut, including sheets, closes the workflow UI and returns to the main Alfred search.
+
+Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.
