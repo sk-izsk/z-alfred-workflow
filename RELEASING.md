@@ -11,6 +11,7 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-speedtest` | `z-speedtest/vX.Y.Z` | `Speed Test.alfredworkflow` |
 | `workflows/z-github` | `z-github/vX.Y.Z` | `GitHub.alfredworkflow` |
 | `workflows/z-kill-process` | `z-kill-process/vX.Y.Z` | `Kill Process.alfredworkflow` |
+| `workflows/z-adhan-time` | `z-adhan-time/vX.Y.Z` | `Adhan Time.alfredworkflow` |
 | `workflows/z-weather` | `z-weather/vX.Y.Z` | `Weather.alfredworkflow` |
 
 1. Bump `version` in the selected workflow's `package.json`.

@@ -24,6 +24,8 @@ jobs:
             artifact: GitHub.alfredworkflow
           - workflow: z-speedtest
             artifact: Speed Test.alfredworkflow
+          - workflow: z-adhan-time
+            artifact: Adhan Time.alfredworkflow
           - workflow: z-weather
             artifact: Weather.alfredworkflow
           - workflow: z-kill-process
