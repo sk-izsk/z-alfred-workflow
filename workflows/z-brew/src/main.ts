@@ -11,7 +11,10 @@ import { errorStatus, print, type Action } from "./ui.ts";
 const post = async (): Promise<void> => {
   const out = process.env.brew_out;
   if (out === "back")
-    await osascript('tell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)', "");
+    await osascript(
+      'tell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)',
+      `${str("kw_main", "brew")} `,
+    );
   if (out === "execute") {
     const command = terminalCommand(executable(), JSON.parse(process.env.brew_execution || "null") as Plan);
     if (str("terminal_app", "Terminal") === "iTerm")

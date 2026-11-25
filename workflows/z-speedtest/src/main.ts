@@ -3,10 +3,11 @@ import { existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { body, run } from "../ui/window.ts";
-import { cacheDir, str, writeJson } from "./env.ts";
+import { cacheDir, str, writeJson, readJson } from "./env.ts";
 import { emptyState, type State } from "./model.ts";
 import { dashboardHTML, detailHTML, entries, rows, section, summary } from "./presentation.ts";
 import { cancel, sessionDir, snapshot, worker } from "./runner.ts";
+import { updateMeter } from "./meter.ts";
 import { imageAction } from "./image.ts";
 
 type Json = Record<string, unknown>;
@@ -14,32 +15,79 @@ const mode = () => str("mode", "meter");
 const details = () => str("details", "1") === "1";
 const selection = () => str("selection", "ping");
 const busy = (s: State) => s.phase !== "done" && s.phase !== "error";
-const render = (s: State, full = false, view = mode(), show = details(), selected = selection()): Json => ({
-  variables: { last_phase: s.phase, mode: view, details: show ? "1" : "0", selection: selected },
-  pulse: { interval: busy(s) ? 0.25 : 0 },
-  ...(view === "list" && s.phase !== "error" ? { functions: { ids: { results: "filterdata" } } } : {}),
-  update: {
-    relayout: full,
-    ids: {
-      ...(full
-        ? { body: { components: body(s, view, show, selected) } }
-        : s.phase === "error" || view !== "list"
-          ? { dashboard: { text: dashboardHTML(s) } }
-          : {
-              results: { data: { src: rows(s) } },
-              ...(show ? { detail: { text: detailHTML(s, selected) } } : {}),
-            }),
-      primaryButton: {
-        text:
-          s.phase === "error"
-            ? "Restart  ↩"
-            : view === "list"
-              ? `${show ? "Hide" : "Show"} Details  ↩`
-              : "Show Detailed List  ↩",
+const render = (
+  s: State,
+  full = false,
+  view = mode(),
+  show = details(),
+  selected = selection(),
+  session = process.argv[3] || "",
+): Json => {
+  const meterPath =
+    session && view !== "list" && s.phase !== "error" ? updateMeter(session, s, full) : undefined;
+  return {
+    variables: { last_phase: s.phase, mode: view, details: show ? "1" : "0", selection: selected },
+    pulse: { interval: busy(s) ? 0.25 : 0 },
+    ...(view === "list" && s.phase !== "error" ? { functions: { ids: { results: "filterdata" } } } : {}),
+    update: {
+      relayout: full,
+      ids: {
+        ...(full
+          ? { body: { components: body(s, view, show, selected, meterPath) } }
+          : s.phase === "error" || view !== "list"
+            ? meterPath
+              ? {}
+              : { dashboard: { text: dashboardHTML(s) } }
+            : {
+                results: { data: { src: rows(s) } },
+                ...(show ? { detail: { text: detailHTML(s, selected) } } : {}),
+              }),
+        primaryButton: {
+          text:
+            s.phase === "error"
+              ? "Restart  ↩"
+              : view === "list"
+                ? `${show ? "Hide" : "Show"} Details  ↩`
+                : "Show Detailed List  ↩",
+        },
       },
     },
-  },
+  };
+};
+type Screen = { mode: string; details: boolean; selection: string; query: string };
+const historyFile = (session: string) => join(sessionDir(session), "navigation.json");
+const screen = (): Screen => ({
+  mode: mode(),
+  details: details(),
+  selection: selection(),
+  query: str("speed_query"),
 });
+const restore = (s: State, target: Screen): Json => {
+  const result = render(s, true, target.mode, target.details, target.selection);
+  return {
+    ...result,
+    variables: { ...(result.variables as Json), speed_query: target.query },
+    update: {
+      ...(result.update as Json),
+      ids: { ...((result.update as Json).ids as Json), searchField: { text: target.query } },
+    },
+  };
+};
+const navigate = (session: string, s: State, view: string, show = details()): Json => {
+  const previous = screen();
+  if (previous.mode !== view || previous.details !== show) {
+    const history = readJson<Screen[]>(historyFile(session), []);
+    writeJson(historyFile(session), [...history.slice(-49), previous]);
+  }
+  return restore(s, { ...previous, mode: view, details: show });
+};
+const back = (session: string): Json => {
+  const history = session ? readJson<Screen[]>(historyFile(session), []) : [];
+  const previous = history.pop();
+  if (!previous) return { finish: { variables: { speedtest_out: "back" } } };
+  writeJson(historyFile(session), history);
+  return restore(snapshot(session), previous);
+};
 const begin = (previous: string): Json => {
   cancel(previous);
   const id = randomUUID(),
@@ -47,6 +95,7 @@ const begin = (previous: string): Json => {
     state = emptyState();
   mkdirSync(dir, { recursive: true, mode: 0o700 });
   writeJson(join(dir, "state.json"), state);
+  writeJson(historyFile(id), []);
   const child = spawn(process.execPath, [process.argv[1]!, "worker", id], {
     detached: true,
     stdio: "ignore",
@@ -59,8 +108,16 @@ const begin = (previous: string): Json => {
   });
   child.unref();
   const initial = str("launch_view");
-  const result = render(state, true, ["meter", "list"].includes(initial) ? initial : mode());
-  result.variables = { ...(result.variables as Json), session: id };
+  const result = render(
+    state,
+    true,
+    ["meter", "list"].includes(initial) ? initial : "meter",
+    details(),
+    selection(),
+    id,
+  );
+  result.variables = { ...(result.variables as Json), session: id, speed_query: "" };
+  ((result.update as Json).ids as Json).searchField = { text: "" };
   return result;
 };
 const clearConfirmation = (): Json => ({
@@ -69,15 +126,6 @@ const clearConfirmation = (): Json => ({
     closeonescape: true,
     root: {
       type: "view",
-      shortcuts: [
-        {
-          shortcut: "{var:back_shortcut}",
-          action: {
-            type: "json",
-            src: { sheet: { close: "clearSheet" }, finish: { variables: { speedtest_out: "back" } } },
-          },
-        },
-      ],
       layout: "inline",
       direction: "vertical",
       padding: 24,
@@ -103,7 +151,7 @@ const clearConfirmation = (): Json => ({
               triggers: "actioned",
               action: {
                 type: "json",
-                src: { sheet: { close: "clearSheet" }, finish: { variables: { speedtest_out: "back" } } },
+                src: { sheet: { close: "clearSheet" } },
               },
             },
           ],
@@ -163,24 +211,22 @@ const main = async (): Promise<Json | undefined> => {
     return;
   }
   if (command === "start") return begin(session);
-  if (command === "back") return { finish: { variables: { speedtest_out: "back" } } };
+  if (command === "back") return back(session);
   if (!session) return {};
   const s = snapshot(session);
   if (command === "primary" && str("last_phase") === "cleared") return begin(session);
   switch (command) {
-    case "back":
-      return { finish: { variables: { speedtest_out: "back" } } };
     case "restart":
       return busy(s) ? {} : begin(session);
     case "poll":
       return render(s, s.phase === "error" && str("last_phase") !== "error");
     case "primary":
       if (s.phase === "error") return begin(session);
-      return mode() === "list" ? render(s, true, "list", !details()) : render(s, true, "list");
+      return navigate(session, s, "list", mode() === "list" ? !details() : details());
     case "view":
-      return render(s, true, mode() === "list" ? "meter" : "list");
+      return navigate(session, s, mode() === "list" ? "meter" : "list");
     case "details":
-      return render(s, true, "list", !details());
+      return navigate(session, s, "list", !details());
     case "filter":
       return mode() === "list" && s.phase !== "error"
         ? { functions: { ids: { results: "filterdata" } } }

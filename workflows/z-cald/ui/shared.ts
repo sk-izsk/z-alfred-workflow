@@ -26,7 +26,7 @@ export const button = (id: string, text: string, action: Json | Json[], extra: J
 });
 export const hiddenKey = (id: string, shortcut: string, action: Json | Json[]): Json =>
   button(id, "", action, { shortcut, opacity: 0, constraints: { size: { width: 0, height: 0 } } });
-export const back = json({ finish: { variables: { cal_out: "back" } } });
+export const back = run(["back"]);
 
 /** Invisible shortcut controls live in an overlay, so inline spacing cannot add phantom margins. */
 export const footer = (buttons: Json[], showIcon = false): Json => {
@@ -91,7 +91,6 @@ export const header = (title: Json, right?: Json): Json => ({
   constraints: { region: "top" },
   components: [
     button("backButton", "‹", back, {
-      shortcut: "{var:back_shortcut}",
       font: { size: 26 },
       tooltip: "Back {var:back_shortcut}",
       constraints: { region: "left", position: "centre" },
@@ -125,6 +124,9 @@ export const window = (
   variablesconfig: {
     cal_query: { src: "args[0]", default: "", scriptenv: true },
     cal_day: { default: "", scriptenv: true },
+    cal_navigation: { default: "[]", scriptenv: true },
+    cal_search: { default: "", scriptenv: true },
+    cal_item: { default: "", scriptenv: true },
     actions_shortcut: { src: "variable", default: "⌘K" },
     back_shortcut: { src: "variable", default: "⌘[" },
     ...variables,
@@ -141,7 +143,7 @@ export const window = (
         ...((root.events as Json[] | undefined) || []),
         on("preload", json({ window: { resize: { width: size.width ?? 800 } } })),
       ],
-      shortcuts: [...((root.shortcuts as Json[] | undefined) || []), key("{var:back_shortcut}", back)],
+      shortcuts: (root.shortcuts as Json[] | undefined) || [],
     },
   },
 });

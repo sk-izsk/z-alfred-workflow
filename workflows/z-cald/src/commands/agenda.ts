@@ -1,3 +1,4 @@
+import { forward } from "../navigation.ts";
 import { bridge, cachedSnapshot, loadSnapshot } from "../calendar.ts";
 import { agendaRange, dateKey, dayHeading } from "../dates.ts";
 import { str } from "../env.ts";
@@ -84,7 +85,7 @@ export const agendaRows = (
 const render = (snapshot: Snapshot, filter: string, mode = view()): Action => {
   const src = agendaRows(snapshot, filter, range().now, Date.now(), mode);
   return merge(
-    fn({ items: ["filterdata", "selectfirst"] }),
+    fn({ items: process.env.cal_item ? ["filterdata"] : ["filterdata", "selectfirst"] }),
     status(
       src.length
         ? `${src.length} ${mode === "meetings" ? "meetings" : "events"} · ${day() || "Upcoming"} · ⌘R refresh`
@@ -94,9 +95,15 @@ const render = (snapshot: Snapshot, filter: string, mode = view()): Action => {
     ),
     update({
       primaryButton: { text: "Join / Open  ↩" },
-      searchField: { placeholder: mode === "meetings" ? "Search meetings…" : "Search events…" },
+      searchField: {
+        placeholder: mode === "meetings" ? "Search meetings…" : "Search events…",
+        text:
+          process.env.cal_search ||
+          (/^\d{4}-\d{2}-\d{2}$/.test(process.env.cal_query || "") ? "" : process.env.cal_query || ""),
+      },
       items: {
         data: { src },
+        ...(process.env.cal_item ? { select: process.env.cal_item } : {}),
         placeholder:
           mode === "meetings"
             ? "No meetings with a supported link. Choose Timed events for in-person meetings, or All events to include holidays."
@@ -158,7 +165,7 @@ const joinMenu = (event: CalendarEvent, action: "join" | "copy-link"): Action =>
   );
 
 export const eventAction = async ([action = "", uid = "", index = ""]: string[]): Promise<Action> => {
-  if (action === "create") return finish({ cal_out: "create", cal_day: day() });
+  if (action === "create") return forward("agenda", "create", day());
   if (action === "selected" && !uid) return {};
   let selection: { event: CalendarEvent; snapshot: Snapshot };
   try {
@@ -170,6 +177,7 @@ export const eventAction = async ([action = "", uid = "", index = ""]: string[])
   const { event, snapshot } = selection;
   if (action === "selected")
     return merge(
+      vars({ cal_item: uid }),
       status(
         `${event.title} · ${event.allDay ? "All day" : new Date(event.start).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}`,
       ),

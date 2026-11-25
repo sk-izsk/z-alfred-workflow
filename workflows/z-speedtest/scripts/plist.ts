@@ -113,7 +113,7 @@ export const infoPlist = {
       "back_shortcut",
       "Back shortcut",
       "⌘[",
-      "Return to the main Alfred search from every view and sheet.",
+      "Return to the previous screen; from the first screen, return to Alfred search.",
     ),
     text("actions_shortcut", "Actions shortcut", "⌘K", "Open the action menu."),
     {

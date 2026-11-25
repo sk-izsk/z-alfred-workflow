@@ -138,19 +138,6 @@
               }
             }
           }
-        },
-        {
-          "shortcut": "{var:back_shortcut}",
-          "action": {
-            "type": "json",
-            "src": {
-              "finish": {
-                "variables": {
-                  "brew_out": "back"
-                }
-              }
-            }
-          }
         }
       ],
       "components": [
@@ -183,7 +170,6 @@
                   }
                 }
               ],
-              "shortcut": "{var:back_shortcut}",
               "font": {
                 "size": 26
               },

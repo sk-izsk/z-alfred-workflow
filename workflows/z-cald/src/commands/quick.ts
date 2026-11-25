@@ -1,7 +1,8 @@
+import { forward } from "../navigation.ts";
 import { randomUUID } from "node:crypto";
 import { addDays, dateKey, isoWeek, parseDate, shiftMonth } from "../dates.ts";
 import { bool, str } from "../env.ts";
-import { type Action, copy, finish, menuItem, merge, popup, script, separator, update, vars } from "../ui.ts";
+import { type Action, copy, menuItem, merge, popup, script, separator, update, vars } from "../ui.ts";
 import { compactDays, dayId, quickTable } from "../../ui/quick-table.ts";
 
 export const calendarMarkdown = (
@@ -42,7 +43,7 @@ export const quick = async ([action = "init", value = ""]: string[]): Promise<Ac
   const weekStart: 0 | 1 = str("week_start", "1") === "0" ? 0 : 1;
   const showWeeks = bool("show_weeks", true);
   let month = process.env.cal_month ? parseDate(process.env.cal_month) : shiftMonth(new Date(), 0);
-  if (action === "init" && /^\d{4}-\d{2}(-\d{2})?$/.test(value))
+  if (action === "init" && !process.env.cal_month && /^\d{4}-\d{2}(-\d{2})?$/.test(value))
     month = shiftMonth(parseDate(value.length === 7 ? `${value}-01` : value), 0);
   const initial = dateKey(new Date()).startsWith(dateKey(month).slice(0, 7))
     ? dateKey(new Date())
@@ -59,7 +60,9 @@ export const quick = async ([action = "init", value = ""]: string[]): Promise<Ac
     selected = dateKey(new Date());
   }
   if (action === "init")
-    selected = value.length === 10 && /^\d{4}-\d{2}-\d{2}$/.test(value) ? dateKey(parseDate(value)) : initial;
+    selected =
+      process.env.cal_selected ||
+      (value.length === 10 && /^\d{4}-\d{2}-\d{2}$/.test(value) ? dateKey(parseDate(value)) : initial);
   if (action === "menu")
     return popup("actionsButton", [
       { text: "Current Month\tC / ↩", action: navigate(["quick", "today"]) },
@@ -84,7 +87,7 @@ export const quick = async ([action = "init", value = ""]: string[]): Promise<Ac
   if (["agenda", "create", "copy"].includes(action)) {
     const day = dateKey(parseDate(value || selected));
     if (action === "copy") return copy(day);
-    return finish({ cal_out: action, cal_day: day });
+    return forward("quick", action as "agenda" | "create", day);
   }
   if (action === "move" || action === "pick") {
     const previous = selected;

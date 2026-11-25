@@ -460,7 +460,7 @@ const userconfigurationconfig = [
     "back_shortcut",
     "Back Shortcut",
     "⌘[",
-    "Closes the workflow UI and returns to the main Alfred search. ⎋ can't do this: Alfred closes its windows on ⎋ itself.",
+    "Returns one screen; from the first screen, returns to the VS Code command menu. ⎋ can't do this: Alfred closes its windows on ⎋ itself.",
   ),
   file("node_path", "Node.js", "Only if `node` isn't found automatically."),
 ];
@@ -474,7 +474,7 @@ Type \`code\` to open the menu, then pick a command, or keep typing:
 * \`code https://github.com/owner/repo\` clones a repository (you choose where), then opens it.
 * \`code ~/some/path\` opens that path.
 
-In a list: <kbd>↩</kbd> opens, <kbd>⌘</kbd><kbd>K</kbd> shows every action, <kbd>⌘</kbd><kbd>[</kbd> returns to the main Alfred search.
+In a list: <kbd>↩</kbd> opens, <kbd>⌘</kbd><kbd>K</kbd> shows every action, <kbd>⌘</kbd><kbd>[</kbd> returns to the VS Code command menu.
 
 Recent projects: <kbd>⇧</kbd><kbd>⌘</kbd><kbd>↩</kbd> open and close other windows · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>F</kbd> show in Finder · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>T</kbd> open in Terminal · <kbd>⌘</kbd><kbd>O</kbd> open with… · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>C</kbd> copy name · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>P</kbd> pin · <kbd>⌘</kbd><kbd>P</kbd> filter by type.
 

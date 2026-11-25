@@ -76,31 +76,28 @@ export const gaugeBody = (opts: GaugeOptions): string => {
             <text x="${tx.toFixed(1)}" y="${(ty + 4).toFixed(1)}" text-anchor="middle" ${FONT} font-size="11" fill="${theme.muted}">${mbps}</text>`;
   }).join("");
 
-  const filled =
-    fraction > 0
-      ? `<path d="${arcPath(cx, cy, r, GAUGE_START_DEG, knobDeg)}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round"/>`
-      : "";
+  const filled = `<path data-gauge-fill d="${arcPath(cx, cy, r, GAUGE_START_DEG, endDeg)}" pathLength="1" stroke-dasharray="${fraction} 1" opacity="${fraction > 0 ? 1 : 0}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round"/>`;
 
   const running = progress !== undefined && progress < 1;
   const progressArc = running
-    ? `<path d="${arcPath(cx, cy, r - 18, GAUGE_START_DEG, GAUGE_START_DEG + GAUGE_SWEEP_DEG * Math.max(progress, 0.005))}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" opacity="0.45"/>`
+    ? `<path data-gauge-progress d="${arcPath(cx, cy, r - 18, GAUGE_START_DEG, GAUGE_START_DEG + GAUGE_SWEEP_DEG * Math.max(progress, 0.005))}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" opacity="0.45"/>`
     : "";
 
   // A knob riding on the arc instead of a center needle: it never crosses the
   // number in the middle, whatever the speed.
   const [kx, ky] = polar(cx, cy, r, knobDeg);
-  const knob = `<circle cx="${kx.toFixed(1)}" cy="${ky.toFixed(1)}" r="10" fill="${theme.text}" stroke="${color}" stroke-width="3"/>`;
+  const knob = `<circle data-gauge-knob cx="${kx.toFixed(1)}" cy="${ky.toFixed(1)}" r="10" fill="${theme.text}" stroke="${color}" stroke-width="3"/>`;
 
   const status = opts.status ?? (running ? `${Math.round(progress * 100)}% · ${label}` : label);
 
-  return `<path d="${arcPath(cx, cy, r, GAUGE_START_DEG, endDeg)}" fill="none" stroke="${theme.track}" stroke-width="${stroke}" stroke-linecap="round"/>
+  return `<g data-gauge data-fraction="${fraction}" data-bandwidth="${bandwidth}"><path d="${arcPath(cx, cy, r, GAUGE_START_DEG, endDeg)}" fill="none" stroke="${theme.track}" stroke-width="${stroke}" stroke-linecap="round"/>
      ${filled}
      ${progressArc}
      ${ticks}
      ${knob}
-     <text x="${cx}" y="${cy + 4}" text-anchor="middle" ${FONT} font-size="38" font-weight="700" fill="${theme.text}">${xml(value)}</text>
-     <text x="${cx}" y="${cy + 28}" text-anchor="middle" ${FONT} font-size="14" fill="${theme.muted}">${xml(unit)}</text>
-     <text x="${cx}" y="${GAUGE_H - 8}" text-anchor="middle" ${FONT} font-size="13" font-weight="600" fill="${opts.statusColor ?? color}">${xml(status)}</text>`;
+     <text data-gauge-value x="${cx}" y="${cy + 4}" text-anchor="middle" ${FONT} font-size="38" font-weight="700" fill="${theme.text}">${xml(value)}</text>
+     <text data-gauge-unit x="${cx}" y="${cy + 28}" text-anchor="middle" ${FONT} font-size="14" fill="${theme.muted}">${xml(unit)}</text>
+     <text data-gauge-status x="${cx}" y="${GAUGE_H - 8}" text-anchor="middle" ${FONT} font-size="13" font-weight="600" fill="${opts.statusColor ?? color}">${xml(status)}</text></g>`;
 };
 
 export const speedGaugeSvg = (opts: GaugeOptions): string => {

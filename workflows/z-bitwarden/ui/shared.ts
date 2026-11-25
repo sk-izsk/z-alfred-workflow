@@ -139,7 +139,6 @@ export const arrows = (list: string): Json[] => [
  * ⌘[ closes the window and reopens the `bw` menu (post.ts). Alfred closes UI windows on ⎋
  * itself, before any script runs, so ⎋ can't be used for "back".
  */
-const back = key("{var:back_shortcut}", json({ finish: { variables: { bw_out: "back" } } }));
 
 /** Footer hint for the back shortcut (every window shows it). */
 export const backHint = (): Json =>
@@ -165,7 +164,7 @@ export const window = (root: Json, extra: Json = {}): Json => ({
     title: "Bitwarden",
     root: {
       ...root,
-      shortcuts: [...((root.shortcuts as Json[] | undefined) ?? []), back],
+      shortcuts: (root.shortcuts as Json[] | undefined) ?? [],
       // A fixed width in ui.json stops the window opening inside Alfred; resizing after launch works.
       events: [
         ...((root.events as Json[] | undefined) ?? []),

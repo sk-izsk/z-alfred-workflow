@@ -1,6 +1,6 @@
 {
   "name": "alfred-bitwarden",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Bitwarden for Alfred 6, built on Alfred UI",
   "author": "izsk",

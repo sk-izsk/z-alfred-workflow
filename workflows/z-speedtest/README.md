@@ -54,7 +54,7 @@ your last meter/list choice. Configure the Hotkey to launch the same window.
 | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>V</kbd> | Close the window and paste meter PNG into the previous app |
 | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>D</kbd> | Save meter PNG to Downloads without overwriting |
 | <kbd>⌃</kbd><kbd>X</kbd> | Confirm Clear CLI Cache |
-| <kbd>⌘</kbd><kbd>[</kbd> or back button | Return to the main Alfred search |
+| <kbd>⌘</kbd><kbd>[</kbd> or back button | Return to the previous screen; exit from the first screen |
 | <kbd>⎋</kbd> | Close the window and cancel its test |
 
 ISP, server, ping, download, upload, voice calls, video calls, streaming and result sections include
@@ -100,7 +100,9 @@ This workflow was built with the help of AI tools. Review the code before use, a
 workflow; please report anything that does not work. Automated checks do not replace trying the
 window in Alfred.
 
-Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Every Back button and shortcut, including sheets, closes the workflow UI and returns to the main Alfred search.
+Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Back returns one screen at a time. Sheets close to their parent view; Back from the first screen returns to the main Alfred search.
 Screenshots use illustrative data.
 
 Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.
+
+The workflow starts with the speed meter. Enter opens the detailed list; Back restores the meter without restarting the test. Live dials animate between CLI samples in a persistent local WebKit page, with reduced-motion support. No local web server is used.

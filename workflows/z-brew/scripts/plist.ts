@@ -207,7 +207,12 @@ const userconfigurationconfig: Obj[] = [
     },
   },
   text("actions_shortcut", "Actions shortcut", "⌘K", "Open the selected entry’s action menu."),
-  text("back_shortcut", "Back shortcut", "⌘[", "Return to the main Alfred search from every view and sheet."),
+  text(
+    "back_shortcut",
+    "Back shortcut",
+    "⌘[",
+    "Return to the previous screen; from the first screen, return to the Brew command menu.",
+  ),
   {
     type: "popupbutton",
     variable: "launch_external",

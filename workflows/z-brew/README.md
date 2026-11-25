@@ -24,7 +24,7 @@ Type `brew` for the searchable command menu. All keywords can be changed in Work
 | `brewm` | Update Homebrew, clean up, or clear this workflow’s catalog cache |
 
 Arrow keys navigate lists, Return shows details (or previews adoption / reviews selected upgrades),
-Command-K opens actions, Command-R refreshes and Command-[ returns to the menu. Command-F focuses
+Command-K opens actions, Command-R refreshes and Command-[ returns to the previous screen, or the Brew command menu from the first screen. Command-F focuses
 search. Shift-Command-X toggles an upgrade selection, Shift-Command-U reviews an individual upgrade,
 Option-Command-I previews it, and Command-period pins/unpins an installed package.
 
@@ -74,7 +74,7 @@ The Alfred implementation is independent and uses native Alfred UI controls. See
 This workflow was built with the help of AI tools. Review it before use and report issues on the
 [project issue tracker](https://github.com/sk-izsk/z-alfred-workflow/issues).
 
-Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Every Back button and shortcut, including sheets, closes the workflow UI and returns to the main Alfred search.
+Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Back returns one screen at a time. Sheets close to their parent view; Back from the first screen returns to the Brew command menu.
 Screenshots use illustrative data.
 
 Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.

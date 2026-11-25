@@ -55,7 +55,6 @@ const backAction = json({ finish: { variables: { vsc_out: "back" } } });
 /** "‹" before the search field: back to the main Alfred search, like Raycast's back arrow. */
 const backArrow: Json = {
   id: "backButton",
-  shortcut: "{var:back_shortcut}",
   type: "button",
   text: "‹",
   bordered: false,
@@ -281,7 +280,6 @@ export const arrows = (listId: string): Json[] => [
 ];
 
 /** ⌘[ (configurable) closes the window and reopens the `code` menu; ⎋ is Alfred's own close. */
-const back = key("{var:back_shortcut}", backAction);
 
 export const window = (title: string, root: Json, extra: Json = {}): Json => ({
   bundleid: BUNDLE_ID,
@@ -299,7 +297,7 @@ export const window = (title: string, root: Json, extra: Json = {}): Json => ({
     title,
     root: {
       ...root,
-      shortcuts: [...((root.shortcuts as Json[] | undefined) ?? []), back],
+      shortcuts: (root.shortcuts as Json[] | undefined) ?? [],
       // A fixed width in ui.json stops the window opening inside Alfred; resizing after launch works.
       events: [
         ...((root.events as Json[] | undefined) ?? []),

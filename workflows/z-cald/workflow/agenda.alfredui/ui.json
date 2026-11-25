@@ -14,6 +14,18 @@
       "default": "",
       "scriptenv": true
     },
+    "cal_navigation": {
+      "default": "[]",
+      "scriptenv": true
+    },
+    "cal_search": {
+      "default": "",
+      "scriptenv": true
+    },
+    "cal_item": {
+      "default": "",
+      "scriptenv": true
+    },
     "actions_shortcut": {
       "src": "variable",
       "default": "⌘K"
@@ -163,19 +175,6 @@
               }
             }
           }
-        },
-        {
-          "shortcut": "{var:back_shortcut}",
-          "action": {
-            "type": "json",
-            "src": {
-              "finish": {
-                "variables": {
-                  "cal_out": "back"
-                }
-              }
-            }
-          }
         }
       ],
       "components": [
@@ -197,18 +196,14 @@
                 {
                   "triggers": "actioned",
                   "action": {
-                    "type": "json",
-                    "src": {
-                      "finish": {
-                        "variables": {
-                          "cal_out": "back"
-                        }
-                      }
-                    }
+                    "type": "script",
+                    "src": "../bin/cald",
+                    "args": [
+                      "back"
+                    ]
                   }
                 }
               ],
-              "shortcut": "{var:back_shortcut}",
               "font": {
                 "size": 26
               },
@@ -238,11 +233,21 @@
               "events": [
                 {
                   "triggers": "changed",
-                  "action": {
-                    "type": "function",
-                    "src": "items",
-                    "args": "filterdata"
-                  }
+                  "action": [
+                    {
+                      "type": "json",
+                      "src": {
+                        "variables": {
+                          "cal_search": "{value:searchField.text}"
+                        }
+                      }
+                    },
+                    {
+                      "type": "function",
+                      "src": "items",
+                      "args": "filterdata"
+                    }
+                  ]
                 },
                 {
                   "triggers": "actioned",
@@ -631,14 +636,11 @@
                         {
                           "triggers": "actioned",
                           "action": {
-                            "type": "json",
-                            "src": {
-                              "finish": {
-                                "variables": {
-                                  "cal_out": "back"
-                                }
-                              }
-                            }
+                            "type": "script",
+                            "src": "../bin/cald",
+                            "args": [
+                              "back"
+                            ]
                           }
                         }
                       ],

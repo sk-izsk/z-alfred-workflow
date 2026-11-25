@@ -9,6 +9,10 @@
       "default": "",
       "scriptenv": true
     },
+    "speed_query": {
+      "default": "",
+      "scriptenv": true
+    },
     "launch_view": {
       "src": "args[0]",
       "default": "",
@@ -20,7 +24,6 @@
     },
     "mode": {
       "default": "meter",
-      "persist": true,
       "scriptenv": true
     },
     "details": {
@@ -136,18 +139,6 @@
           }
         },
         {
-          "shortcut": "{var:back_shortcut}",
-          "action": {
-            "type": "script",
-            "src": "../bin/spt",
-            "args": [
-              "back",
-              "{var:session}"
-            ],
-            "async": false
-          }
-        },
-        {
           "shortcut": "⌘L",
           "action": {
             "type": "script",
@@ -191,7 +182,6 @@
               "type": "button",
               "text": "‹",
               "bordered": false,
-              "shortcut": "{var:back_shortcut}",
               "events": [
                 {
                   "triggers": "actioned",
@@ -230,15 +220,25 @@
               "events": [
                 {
                   "triggers": "changed",
-                  "action": {
-                    "type": "script",
-                    "src": "../bin/spt",
-                    "args": [
-                      "filter",
-                      "{var:session}"
-                    ],
-                    "async": false
-                  }
+                  "action": [
+                    {
+                      "type": "json",
+                      "src": {
+                        "variables": {
+                          "speed_query": "{value:searchField.text}"
+                        }
+                      }
+                    },
+                    {
+                      "type": "script",
+                      "src": "../bin/spt",
+                      "args": [
+                        "filter",
+                        "{var:session}"
+                      ],
+                      "async": false
+                    }
+                  ]
                 },
                 {
                   "triggers": "actioned",
@@ -313,14 +313,13 @@
                         {
                           "triggers": "actioned",
                           "action": {
-                            "type": "json",
-                            "src": {
-                              "finish": {
-                                "variables": {
-                                  "speedtest_out": "back"
-                                }
-                              }
-                            }
+                            "type": "script",
+                            "src": "../bin/spt",
+                            "args": [
+                              "back",
+                              "{var:session}"
+                            ],
+                            "async": false
                           }
                         }
                       ]

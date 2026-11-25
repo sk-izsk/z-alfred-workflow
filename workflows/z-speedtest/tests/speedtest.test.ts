@@ -1,13 +1,13 @@
 import { afterAll, describe, expect, test } from "bun:test";
 import { execFileSync } from "node:child_process";
-import { chmodSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { applyEvent, describeFailure, emptyState, lineReader } from "../src/model.ts";
 import { dashboardHTML, detailHTML, rows } from "../src/presentation.ts";
 import { dashboardSvg } from "../src/charts.ts";
 import { qualities, speedToString } from "../src/utils.ts";
-import { body } from "../ui/window.ts";
+import { body, speedtestWindow } from "../ui/window.ts";
 
 const root = mkdtempSync(join(tmpdir(), "speedtest-tests-"));
 afterAll(() => rmSync(root, { recursive: true, force: true }));
@@ -189,11 +189,108 @@ test("closing cancels the CLI and releases the single-test lock", async () => {
   expect(existsSync(marker)).toBe(false);
 }, 10000);
 
-test("Back exits to Alfred search from both speed-test views", () => {
-  for (const mode of ["meter", "list"]) {
-    expect(
-      command({ ...envFor(join(root, "back-cache"), "/missing"), mode }, "back", "").finish.variables
-        .speedtest_out,
-    ).toBe("back");
+test("Back restores meter, detail visibility and selection without restarting the test", async () => {
+  const cli = cliScript("navigation", `console.log(${JSON.stringify(JSON.stringify(finalEvent()))});`);
+  const cache = join(root, "navigation-cache"),
+    base = envFor(cache, cli);
+  const started = command({ ...base, launch_view: "meter" }, "start", "");
+  const id = started.variables.session;
+  await awaitState(cache, id, "done");
+  const stateFile = join(cache, "sessions", id, "state.json");
+  const before = readFileSync(stateFile, "utf8");
+  let env = { ...base, ...started.variables, speed_query: "ping", selection: "ping" };
+  const step = (name: string) => {
+    const result = command(env, name, id);
+    env = { ...env, ...result.variables };
+    return result;
+  };
+  expect(step("primary").variables.mode).toBe("list");
+  expect(step("primary").variables.details).toBe("0");
+  const details = step("back");
+  expect(details).not.toHaveProperty("finish");
+  expect(details.variables.mode).toBe("list");
+  expect(details.variables.details).toBe("1");
+  env.speed_query = "download";
+  const meter = step("back");
+  expect(meter).not.toHaveProperty("finish");
+  expect(meter.variables.mode).toBe("meter");
+  expect(meter.variables.selection).toBe("ping");
+  expect(meter.update.ids.searchField.text).toBe("ping");
+  expect(env.session).toBe(id);
+  expect(readFileSync(stateFile, "utf8")).toBe(before);
+  expect(step("back").finish.variables.speedtest_out).toBe("back");
+  // Reopening a direct list starts a fresh history rather than inheriting the old window.
+  const reopened = command({ ...base, launch_view: "list" }, "start", id);
+  await awaitState(cache, reopened.variables.session, "done");
+  expect(command({ ...base, ...reopened.variables }, "back", reopened.variables.session)).toHaveProperty(
+    "finish",
+  );
+});
+test("footer Back shares the history route, and a cache sheet returns to its parent", () => {
+  const encoded = JSON.stringify(speedtestWindow);
+  const bindings = encoded.match(/"shortcut":"\{var:back_shortcut\}"/g) || [];
+  expect(bindings).toHaveLength(1);
+  const find = (value: any, id: string): any => {
+    if (!value || typeof value !== "object") return;
+    if (value.id === id) return value;
+    for (const child of Object.values(value)) {
+      if (Array.isArray(child)) {
+        for (const item of child) {
+          const found = find(item, id);
+          if (found) return found;
+        }
+      } else {
+        const found = find(child, id);
+        if (found) return found;
+      }
+    }
+  };
+  expect(find(JSON.parse(encoded), "footerBack").events[0].action.args[0]).toBe("back");
+  const cache = join(root, "sheet-cache"),
+    id = "11111111-1111-1111-1111-111111111111";
+  const dir = join(cache, "sessions", id);
+  mkdirSync(dir, { recursive: true });
+  const s = emptyState();
+  s.phase = "done";
+  writeFileSync(join(dir, "state.json"), JSON.stringify(s));
+  const sheet = command(envFor(cache, "/missing"), "clear-confirm", id);
+  expect(JSON.stringify(sheet)).not.toContain('"finish"');
+  expect(JSON.stringify(sheet)).toContain('"close":"clearSheet"');
+});
+
+test("meter updates a private local frame without reloading the animated document", async () => {
+  const { meterDocument, updateMeter, meterClient } = await import("../src/meter.ts");
+  const { Script } = await import("node:vm");
+  expect(() => new Script(meterClient)).not.toThrow();
+  const cache = join(root, "animation-cache"),
+    id = "22222222-2222-2222-2222-222222222222";
+  const saved = process.env.alfred_workflow_cache;
+  process.env.alfred_workflow_cache = cache;
+  try {
+    mkdirSync(join(cache, "sessions", id), { recursive: true });
+    const s = emptyState();
+    s.phase = "download";
+    s.result.download.bandwidth = 1250000;
+    const path = updateMeter(id, s, true),
+      document = readFileSync(path, "utf8");
+    expect(document).toContain("requestAnimationFrame");
+    expect(document).toContain("prefers-reduced-motion");
+    expect(document).toContain("script-src 'nonce-");
+    s.result.download.bandwidth = 62500000;
+    s.result.isp = "</script><script>untrusted()</script>";
+    updateMeter(id, s, false);
+    expect(readFileSync(path, "utf8")).toBe(document);
+    const frame = readFileSync(join(cache, "sessions", id, "meter-frame.js"), "utf8");
+    expect(frame).not.toContain("<script>");
+    const payload = JSON.parse(frame.slice("window.speedtestUpdate(".length, -2));
+    expect(payload.running).toBe(true);
+    expect(payload.html).toContain("500.00");
+    s.phase = "done";
+    updateMeter(id, s, false);
+    expect(readFileSync(join(cache, "sessions", id, "meter-frame.js"), "utf8")).toContain('"running":false');
+    expect(meterDocument(s)).toContain('data-running="0"');
+  } finally {
+    if (saved === undefined) delete process.env.alfred_workflow_cache;
+    else process.env.alfred_workflow_cache = saved;
   }
 });

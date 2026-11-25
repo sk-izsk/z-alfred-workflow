@@ -35,7 +35,6 @@ export const quick = window(
         constraints: { region: "top", size: { height: 42 } },
         components: [
           button("backButton", "‹", back, {
-            shortcut: "{var:back_shortcut}",
             tooltip: "Back {var:back_shortcut}",
             font: { size: 20 },
             constraints: {

@@ -64,7 +64,7 @@ for any file or folder: Open and Close Other Windows, Open in Another Editor…,
 Open in Terminal, Open on GitHub. There's also an
 **Open in Code Editor** File Action, and **Open with …** for the Finder selection.
 
-⌘[ returns to the main Alfred search from any window. Shortcut keywords: `codep`, `codee`, `codei`, `codec`,
+⌘[ returns to the previous screen, or the VS Code command menu from the first screen. Shortcut keywords: `codep`, `codee`, `codei`, `codec`,
 `codef`, `codet`, `coden`; all of them can be changed in the Workflow's Configuration, where you also pick the
 editor, the clone folder, the terminal app and a hotkey.
 
@@ -162,6 +162,6 @@ before use, as you would any workflow; please report anything that doesn't work.
 
 MIT. Parts are adapted from the MIT-licensed Raycast extension; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Every Back button and shortcut, including sheets, closes the workflow UI and returns to the main Alfred search.
+Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Back returns one screen at a time. Sheets close to their parent view; Back from the first screen returns to the VS Code command menu.
 
 Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.

@@ -2045,7 +2045,7 @@ The Brew icon and feature inspiration are from Raycast Brew by nhojb and contrib
 				<false/>
 			</dict>
 			<key>description</key>
-			<string>Return to the main Alfred search from every view and sheet.</string>
+			<string>Return to the previous screen; from the first screen, return to the Brew command menu.</string>
 			<key>label</key>
 			<string>Back shortcut</string>
 			<key>type</key>
@@ -2102,7 +2102,7 @@ The Brew icon and feature inspiration are from Raycast Brew by nhojb and contrib
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.1.1</string>
+	<string>0.1.2</string>
 	<key>webaddress</key>
 	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-brew</string>
 </dict>
