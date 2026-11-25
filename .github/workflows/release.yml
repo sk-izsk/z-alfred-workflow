@@ -2,7 +2,7 @@ name: Release workflow
 
 on:
   push:
-    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*", "z-brew/v*", "z-speedtest/v*", "z-github/v*", "z-kill-process/v*", "z-weather/v*", "z-adhan-time/v*", "z-currency/v*", "z-calculate-anything/v*", "z-swiss/v*", "z-world-clock/v*"]
+    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*", "z-brew/v*", "z-speedtest/v*", "z-github/v*", "z-kill-process/v*", "z-weather/v*", "z-adhan-time/v*", "z-currency/v*", "z-calculate-anything/v*", "z-swiss/v*", "z-world-clock/v*", "z-workflow-manager/v*"]
 
 permissions:
   contents: read
@@ -31,6 +31,7 @@ jobs:
             z-currency/v*) workflow=z-currency; artifact='Currency Exchange.alfredworkflow' ;;
             z-calculate-anything/v*) workflow=z-calculate-anything; artifact='Calculate Anything.alfredworkflow' ;;
             z-swiss/v*) workflow=z-swiss; artifact=Swiss.alfredworkflow ;;
+            z-workflow-manager/v*) workflow=z-workflow-manager; artifact='Workflow Manager.alfredworkflow' ;;
             z-world-clock/v*) workflow=z-world-clock; artifact='World Clock.alfredworkflow' ;;
             z-weather/v*) workflow=z-weather; artifact=Weather.alfredworkflow ;;
             z-kill-process/v*) workflow=z-kill-process; artifact='Kill Process.alfredworkflow' ;;

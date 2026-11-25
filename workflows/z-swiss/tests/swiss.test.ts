@@ -21,7 +21,7 @@ const invoke = (cmd: string, id: string, ...args: string[]) =>
     }),
   );
 test("registry is unique and requires Speed Test return-navigation version", () => {
-  expect(new Set(tools.map((t) => t.id)).size).toBe(7);
+  expect(new Set(tools.map((t) => t.id)).size).toBe(tools.length);
   const speed = tools.find((t) => t.id === "speedtest")!;
   expect(available(speed, [{ bundle: speed.bundle, version: "0.1.2" }])).toBe(false);
   expect(available(speed, [{ bundle: speed.bundle, version: "0.1.3" }])).toBe(true);

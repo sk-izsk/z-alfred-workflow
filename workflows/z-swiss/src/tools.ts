@@ -13,6 +13,15 @@ export type Tool = {
 };
 export const tools: Tool[] = [
   {
+    id: "workflow-manager",
+    name: "Workflow Manager",
+    description: "Installed workflows, Gallery, updates and configuration",
+    bundle: "com.izsk.workflow-manager",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "wfman",
+  },
+  {
     id: "world-clock",
     name: "World Clock",
     description: "Search timezones, star locations and compare world times",

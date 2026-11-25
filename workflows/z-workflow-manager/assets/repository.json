@@ -1,0 +1,86 @@
+[
+  {
+    "slug": "z-kill-process",
+    "bundle": "com.izsk.kill-process",
+    "name": "Kill Process",
+    "description": "Live process CPU and memory monitor with termination and app restart actions for Alfred 6"
+  },
+  {
+    "slug": "z-brew",
+    "bundle": "com.izsk.brew",
+    "name": "Brew",
+    "description": "Search and manage Homebrew packages, upgrades, apps, services and taps"
+  },
+  {
+    "slug": "z-weather",
+    "bundle": "com.izsk.weather",
+    "name": "Weather",
+    "description": "Saved cities and detailed current weather and forecasts in Alfred 6"
+  },
+  {
+    "slug": "z-bitwarden",
+    "bundle": "com.izsk.bitwarden",
+    "name": "Bitwarden",
+    "description": "Search, autofill and manage your Bitwarden vault"
+  },
+  {
+    "slug": "z-world-clock",
+    "bundle": "com.izsk.world-clock",
+    "name": "World Clock",
+    "description": "Offline searchable world clocks with starred locations, list and analog grid"
+  },
+  {
+    "slug": "z-currency",
+    "bundle": "com.izsk.currency",
+    "name": "Currency Exchange",
+    "description": "Currency conversion, arithmetic, favorites and historical rates in Alfred"
+  },
+  {
+    "slug": "z-swiss",
+    "bundle": "com.izsk.swiss",
+    "name": "Swiss",
+    "description": "A lightweight searchable launcher for independent Alfred tools"
+  },
+  {
+    "slug": "z-github",
+    "bundle": "com.izsk.github",
+    "name": "GitHub",
+    "description": "GitHub activity and local Git repositories"
+  },
+  {
+    "slug": "z-adhan-time",
+    "bundle": "com.izsk.adhan-time",
+    "name": "Adhan Time",
+    "description": "Prayer times, next prayer and city-local countdown in Alfred"
+  },
+  {
+    "slug": "z-calculate-anything",
+    "bundle": "com.izsk.calculate-anything",
+    "name": "Calculate Anything",
+    "description": "A native Alfred window for the installed Calculate Anything engine"
+  },
+  {
+    "slug": "z-speedtest",
+    "bundle": "com.izsk.speedtest",
+    "name": "Speed Test",
+    "description": "Live Ookla download and upload meters, ping, jitter and connection quality"
+  },
+  {
+    "slug": "z-cald",
+    "bundle": "com.izsk.calendar",
+    "name": "Calendar",
+    "description": "Quick calendar, upcoming meetings and event creation using macOS Calendar"
+  },
+  {
+    "slug": "z-vscode",
+    "bundle": "com.izsk.vscode",
+    "name": "VS Code",
+    "description": "Recent projects, extensions and git clone for VS Code, Cursor, Zed and friends"
+  },
+  {
+    "slug": "z-workflow-manager",
+    "bundle": "com.izsk.workflow-manager",
+    "name": "Workflow Manager",
+    "description": "Manage installed and available Alfred workflows"
+  }
+]
