@@ -33,14 +33,14 @@ export const components = (s: State): Json[] => [
     layout: "grid",
     rows: 1,
     cols: 2,
-    padding: 20,
-    spacing: 24,
+    padding: 14,
+    spacing: 16,
     constraints: { region: "centre" },
     components: [
       {
         type: "view",
         layout: "border",
-        spacing: 16,
+        spacing: 10,
         components: [
           {
             type: "view",
@@ -64,7 +64,7 @@ export const components = (s: State): Json[] => [
             font: { size: 20 },
             disableallsubstitutions: true,
             textinsets: { horizontal: 0, vertical: 8 },
-            constraints: { region: "centre", size: { width: 350, height: 340 } },
+            constraints: { region: "centre", size: { width: 350, height: 64 } },
             events: [
               {
                 triggers: "changed",
@@ -76,20 +76,20 @@ export const components = (s: State): Json[] => [
           label("sourceInfo", `${characterCount(s.query)} / 50,000 characters`, {
             font: { size: 12 },
             colour: "secondaryLabelColor",
-            constraints: { region: "bottom", size: { height: 55 } },
+            constraints: { region: "bottom", size: { height: 18 } },
           }),
         ],
       },
       {
         type: "view",
         layout: "border",
-        spacing: 20,
+        spacing: 14,
         components: [
           { type: "view", background: "separatorColor", constraints: { region: "left", size: { width: 1 } } },
           {
             type: "view",
             layout: "border",
-            spacing: 16,
+            spacing: 10,
             constraints: { region: "centre" },
             components: [
               {
@@ -112,13 +112,13 @@ export const components = (s: State): Json[] => [
                 bordertype: "none",
                 font: { size: 20 },
                 textinsets: { horizontal: 0, vertical: 8 },
-                constraints: { region: "centre", size: { width: 350, height: 340 } },
+                constraints: { region: "centre", size: { width: 350, height: 64 } },
               },
               label("pronunciation", s.result?.pronunciation || "", {
                 font: { size: 13 },
                 colour: "secondaryLabelColor",
-                linebreak: "wordwrap",
-                constraints: { region: "bottom", size: { height: 55 } },
+                linebreak: "truncatetail",
+                constraints: { region: "bottom", size: { height: 18 } },
               }),
             ],
           },
@@ -129,7 +129,7 @@ export const components = (s: State): Json[] => [
   {
     type: "view",
     layout: "border",
-    padding: 16,
+    padding: 12,
     spacing: 12,
     constraints: { region: "bottom" },
     components: [
@@ -166,7 +166,7 @@ export const toolWindow = {
   },
   window: {
     title: "Translate",
-    size: { width: 940, height: 560 },
+    size: { width: 940, height: 500 },
     root: {
       id: "root",
       type: "view",

@@ -33,7 +33,7 @@ const resultAction = (s: State): Action =>
       sourceInfo: {
         text: `${characterCount(s.query)} / 50,000 characters${s.result ? ` · ${s.from === "auto" ? "Detected" : "Source"} ${languageName(s.result.from)}` : ""}`,
       },
-      pronunciation: { text: s.result?.pronunciation || "" },
+      pronunciation: { text: s.result?.pronunciation || "", tooltip: s.result?.pronunciation || "" },
       statusLabel: {
         text: s.status,
         tooltip: s.status,
