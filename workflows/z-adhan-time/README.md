@@ -81,4 +81,6 @@ Calendar cache minutes is configurable (default 1440). Manual Refresh bypasses t
 
 ## Ramadan timetable
 
-Open Ramadan from the footer or Actions. Choose a Hijri year to see the provider’s complete 29/30-day calendar, with Gregorian dates, Imsak, Fajr and Maghrib/Iftar in the configured city timezone. Copy Timetable exports the table. Imsak is shown separately as the provider’s precautionary time; confirm local practice with your mosque. Back closes the table to the prayer calendar.
+Open Ramadan from the footer or Actions. Choose a Gregorian year to see the provider’s complete 29/30-day calendar, with Gregorian dates, Imsak, Fajr and Maghrib/Iftar in the configured city timezone. Copy Timetable exports the table. Imsak is shown separately as the provider’s precautionary time; confirm local practice with your mosque. Back closes the table to the prayer calendar.
+
+The Ramadan picker uses Gregorian years (for example, 2027); the heading also shows the Hijri year. It asks Aladhan for the actual Gregorian-to-Hijri mapping and loads each complete Ramadan beginning in that year, including two Ramadans in a Gregorian year. Opening the timetable or changing years requests fresh data. **Refresh** bypasses the cache; Copy reuses the fetched table. The footer shows fetch time or a stale warning. These are calculated dates: local moon-sighting announcements can differ.

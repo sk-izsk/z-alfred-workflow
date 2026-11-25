@@ -1,4 +1,4 @@
-import { ramadan, ramadanText, ramadanSheet, ramadanContent } from "./ramadan.ts";
+import { ramadan, ramadanForGregorian, ramadanText, ramadanSheet, ramadanContent } from "./ramadan.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { randomUUID } from "node:crypto";
 import { calendar, validate, type Settings } from "./api.ts";
@@ -165,13 +165,19 @@ const main = async (): Promise<Action | void> => {
     return { sheet: { close: "ramadanSheet" } };
   }
   if (command === "ramadan" || command === "copy-ramadan") {
-    const sample = s.month?.days.find((d) => d.date === s.date) || s.month?.days[0];
-    const year = Number(args[0] || sample?.hijriYear || sample?.hijri.match(/\d{4}/)?.[0] || "1448"),
-      ticket = randomUUID();
+    let year = Number(args[0] || new Date().getFullYear());
+    if (!args[0]) {
+      const sample = s.month?.days.find((d) => d.date === s.date) || s.month?.days[0];
+      if (sample?.hijriYear) {
+        const upcoming = await ramadan(s.settings, sample.hijriYear, true);
+        year = Number(upcoming.days[0]!.date.slice(0, 4));
+      }
+    }
+    const ticket = randomUUID();
     s.ramadanRequest = ticket;
     s.ramadanYear = year;
     save(s);
-    const month = await ramadan(s.settings, year),
+    const month = await ramadanForGregorian(s.settings, year, command !== "copy-ramadan"),
       latest = read(id);
     if (latest.ramadanRequest !== ticket) return {};
     return command === "copy-ramadan"

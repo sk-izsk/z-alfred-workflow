@@ -174,3 +174,58 @@ test("Ramadan keeps actual Hijri month length, dates and Imsak separate from Faj
   expect(() => parseRamadan({ code: 200, data }, 1449)).toThrow();
   expect(ramadanText(config, 1448, { days, fetched: 1, stale: false })).toContain("Fajr (fast begins)");
 });
+
+test("Gregorian Ramadan selection uses API mapping, supports two starts and marks failed refresh", async () => {
+  const { ramadanForGregorian, ramadanContent } = await import("../src/ramadan.ts");
+  const prior = globalThis.fetch;
+  let calls = 0;
+  const month = (h: number, start: number) =>
+    Array.from({ length: 29 }, (_, i) => {
+      const d = new Date(Date.UTC(2030, 0, start + i));
+      return {
+        ...raw.data[0],
+        date: {
+          gregorian: {
+            year: String(d.getUTCFullYear()),
+            month: { number: d.getUTCMonth() + 1 },
+            day: String(d.getUTCDate()),
+          },
+          hijri: { year: String(h), month: { number: 9, en: "Ramadan" }, day: String(i + 1) },
+        },
+      };
+    });
+  const first = month(1451, 5),
+    second = month(1452, 360);
+  try {
+    globalThis.fetch = (async (input: RequestInfo | URL) => {
+      calls++;
+      const url = String(input);
+      return new Response(
+        JSON.stringify(
+          url.includes("hijriCalendar")
+            ? { code: 200, data: url.includes("1451") ? first : second }
+            : { code: 200, data: { "1": [first[0]], "12": [second[0]] } },
+        ),
+        { status: 200 },
+      );
+    }) as typeof fetch;
+    const result = await ramadanForGregorian(config, 2030, true);
+    expect(result.days).toHaveLength(58);
+    expect(result.days.at(-1)!.date.startsWith("2031")).toBe(true);
+    expect(calls).toBe(3);
+    await ramadanForGregorian(config, 2030);
+    expect(calls).toBe(3);
+    const ui = JSON.stringify(ramadanContent(config, 2030, result));
+    expect(ui).toContain('"selected":"2030"');
+    expect(ui).toContain('"text":"Refresh"');
+    expect(ui).toContain("local moon sighting may differ");
+    globalThis.fetch = (async () => {
+      throw new Error("offline");
+    }) as unknown as typeof fetch;
+    const stale = await ramadanForGregorian(config, 2030, true);
+    expect(stale.stale).toBe(true);
+    expect(stale.fetched).toBe(result.fetched);
+  } finally {
+    globalThis.fetch = prior;
+  }
+});

@@ -46,7 +46,7 @@ export const ramadan = async (settings: Settings, year: number, fresh = false): 
   }
 };
 export const ramadanText = (settings: Settings, year: number, month: Month): string =>
-  `Ramadan ${year} AH · ${settings.city}, ${settings.country}\nDay\tDate\tImsak (provider)\tFajr (fast begins)\tMaghrib (Iftar)\n${month.days.map((d) => `${d.hijriDay}\t${d.date}\t${formatTime(d.times.Imsak || "—", settings.twelve)}\t${formatTime(d.times.Fajr || "—", settings.twelve)}\t${formatTime(d.times.Maghrib || "—", settings.twelve)}`).join("\n")}\n${month.days[0]!.method} · ${month.days[0]!.school} Asr · ${month.days[0]!.timezone}\nCalculated by Aladhan · Fetched ${new Date(month.fetched).toISOString()}${month.stale ? " · Cached after failed refresh" : ""}\nImsak is the provider's precautionary time; confirm your local mosque's timetable.`;
+  `Ramadan ${year} · ${settings.city}, ${settings.country}\nDay\tDate\tImsak (provider)\tFajr (fast begins)\tMaghrib (Iftar)\n${month.days.map((d) => `${d.hijriDay}\t${d.date}\t${formatTime(d.times.Imsak || "—", settings.twelve)}\t${formatTime(d.times.Fajr || "—", settings.twelve)}\t${formatTime(d.times.Maghrib || "—", settings.twelve)}`).join("\n")}\n${month.days[0]!.method} · ${month.days[0]!.school} Asr · ${month.days[0]!.timezone}\nCalculated by Aladhan · Fetched ${new Date(month.fetched).toISOString()}${month.stale ? " · Cached after failed refresh" : ""}\nImsak is the provider's precautionary time; confirm your local mosque's timetable.`;
 export const ramadanContent = (settings: Settings, year: number, month: Month): Action => ({
   id: "ramadanContent",
   type: "view",
@@ -60,15 +60,19 @@ export const ramadanContent = (settings: Settings, year: number, month: Month): 
       spacing: 12,
       constraints: { region: "top" },
       components: [
-        label("ramadanTitle", `Ramadan ${year} AH · ${settings.city}`, {
-          font: { size: 20, weight: "semibold" },
-          constraints: { region: "centre" },
-        }),
+        label(
+          "ramadanTitle",
+          `Ramadan ${year} · ${settings.city} (${[...new Set(month.days.map((d) => d.hijriYear))].join(" / ")} AH)`,
+          {
+            font: { size: 20, weight: "semibold" },
+            constraints: { region: "centre" },
+          },
+        ),
         {
           id: "ramadanYearPicker",
           type: "picker",
           items: Array.from({ length: 5 }, (_, i) => ({
-            text: `${year + i - 2} AH`,
+            text: String(year + i - 2),
             value: String(year + i - 2),
           })),
           selected: String(year),
@@ -145,7 +149,7 @@ export const ramadanContent = (settings: Settings, year: number, month: Month): 
       components: [
         label(
           "ramadanNote",
-          `${month.days.length} days · ${month.days[0]!.timezone} · ${month.stale ? "Cached · refresh failed" : "Aladhan"}\nImsak is precautionary; Fajr is listed separately. Confirm local practice.`,
+          `${month.days[0]!.timezone} · ${month.stale ? "STALE · refresh failed" : "Fetched " + new Date(month.fetched).toLocaleString()}\nCalculated dates; local moon sighting may differ. Imsak is precautionary.`,
           {
             font: { size: 11 },
             colour: month.stale ? "systemOrangeColor" : "secondaryLabelColor",
@@ -153,12 +157,72 @@ export const ramadanContent = (settings: Settings, year: number, month: Month): 
             constraints: { region: "centre", size: { width: 540 } },
           },
         ),
-        button("copyRamadan", "Copy Timetable", run("copy-ramadan", [String(year)]), {
+        {
+          type: "view",
+          layout: "inline",
+          spacing: 12,
+          components: [
+            button("refreshRamadan", "Refresh", run("ramadan", [String(year), "update", "fresh"])),
+            button("copyRamadan", "Copy", run("copy-ramadan", [String(year)])),
+          ],
           constraints: { region: "right" },
-        }),
+        },
       ],
     },
   ],
 });
 export const ramadanSheet = (settings: Settings, year: number, month: Month): Action =>
   sheet("ramadanSheet", ramadanContent(settings, year, month), true, run("ramadan-back", [], false));
+
+/** Gregorian selection uses the provider's actual calendar mapping, including two Ramadans in one year. */
+export const ramadanForGregorian = async (
+  settings: Settings,
+  year: number,
+  fresh = false,
+): Promise<Month> => {
+  validate(settings);
+  if (!Number.isInteger(year) || year < 1900 || year > 2150)
+    throw new Error("Choose a Gregorian year between 1900 and 2150.");
+  const hash = createHash("sha256")
+      .update(JSON.stringify([settings, year]))
+      .digest("hex")
+      .slice(0, 24),
+    path = join(cacheDir(), `ramadan-gregorian-${hash}.json`),
+    old = readJson<Month | null>(path, null);
+  if (old && !fresh && Date.now() - old.fetched < cacheMinutes("cache_minutes", 1440) * 60000) return old;
+  try {
+    const url = new URL(`https://api.aladhan.com/v1/calendarByCity/${year}`);
+    url.search = new URLSearchParams({
+      city: settings.city,
+      country: settings.country,
+      method: settings.method,
+      school: settings.school,
+      annual: "true",
+    }).toString();
+    const response = await fetch(url, { signal: AbortSignal.timeout(15000) });
+    if (!response.ok) throw new Error(`Gregorian calendar HTTP ${response.status}.`);
+    const text = await response.text();
+    if (text.length > 4e6) throw new Error("Calendar too large.");
+    const raw = JSON.parse(text);
+    if (raw.code !== 200 || !raw.data || Array.isArray(raw.data) || typeof raw.data !== "object")
+      throw new Error("Provider returned an invalid annual calendar.");
+    const yearDays = parseMonth({ code: 200, data: Object.values(raw.data).flat() });
+    const starts = yearDays.filter(
+      (d) => d.hijriMonth === 9 && d.hijriDay === 1 && d.date.startsWith(`${year}-`),
+    );
+    if (!starts.length || starts.length > 2)
+      throw new Error("Provider did not identify Ramadan in this Gregorian year.");
+    const calendars: Month[] = [];
+    for (const start of starts) calendars.push(await ramadan(settings, start.hijriYear!, fresh));
+    const value = {
+      days: calendars.flatMap((m) => m.days),
+      fetched: Math.min(...calendars.map((m) => m.fetched)),
+      stale: calendars.some((m) => m.stale),
+    };
+    writeJson(path, value);
+    return value;
+  } catch (error) {
+    if (old) return { ...old, stale: true };
+    throw error;
+  }
+};
