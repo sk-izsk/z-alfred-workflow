@@ -106,7 +106,8 @@ const baseRows = (s: State, query = "") =>
     "baseFavorite.contenttintcolour": quickBases(s).includes(code)
       ? "systemYellowColor"
       : "secondaryLabelColor",
-    "baseCode.text": `${flag(code)} ${code}`,
+    "baseFlag.text": flag(code),
+    "baseCode.text": code,
     "baseDescription.text": `${names[code] || code} · ${countries[code] || ""}`,
   }));
 const chooseBaseSheet = (s: State): Action =>
@@ -161,7 +162,7 @@ const chooseBaseSheet = (s: State): Action =>
                   type: "view",
                   layout: "inline",
                   spacing: 4,
-                  constraints: { region: "left" },
+                  constraints: { region: "left", position: "centre", size: { width: 124, height: 26 } },
                   components: [
                     button(
                       "baseFavorite",
@@ -169,15 +170,19 @@ const chooseBaseSheet = (s: State): Action =>
                       run("base-favorite", ["{data:code}", "{value:baseSearch.text}"], false),
                       {
                         font: { size: 19 },
-                        constraints: { size: { width: 26 } },
+                        constraints: { position: "centre", size: { width: 26, height: 26 } },
                       },
                     ),
+                    label("baseFlag", "", {
+                      font: { size: 14 },
+                      constraints: { position: "centre", size: { width: 22, height: 20 } },
+                    }),
                     {
                       id: "baseCode",
                       type: "label",
                       text: "",
                       font: { size: 14, weight: "medium" },
-                      constraints: { size: { width: 80 } },
+                      constraints: { position: "centre", size: { width: 44, height: 20 } },
                     },
                   ],
                 },
@@ -188,7 +193,12 @@ const chooseBaseSheet = (s: State): Action =>
                   font: { size: 11 },
                   colour: "secondaryLabelColor",
                   linebreak: "truncatetail",
-                  constraints: { region: "centre", position: "centre", stretch: "horizontal" },
+                  constraints: {
+                    region: "centre",
+                    position: "centre",
+                    stretch: "horizontal",
+                    size: { height: 20 },
+                  },
                 },
               ],
             },
