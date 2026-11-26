@@ -95,7 +95,7 @@ export const projects = window(
       footer([
         footerButton("primaryButton", "Open in Code  ↩", act("open")),
         divider,
-        footerButton("actionsButton", "Actions  {var:actions_shortcut}", act("menu")),
+        footerButton("actionsButton", "Actions  {var:actions_label}", act("menu")),
         hiddenKey("closeOthersKey", "⇧⌘↩", act("open-close")),
         hiddenKey("finderKey", "⇧⌘F", act("reveal")),
         hiddenKey("terminalKey", "⇧⌘T", act("terminal")),

@@ -86,7 +86,7 @@ export const sheet = (id: string, root: Action, closeOnEscape = true): Action =>
           {
             id: `${id}Back`,
             type: "button",
-            text: "Back  {var:back_shortcut}",
+            text: "Back  {var:back_label}",
             bordered: false,
             shortcut: "{var:back_shortcut}",
             constraints: { region: "bottom", position: "left", insets: { left: 16, bottom: 12 } },

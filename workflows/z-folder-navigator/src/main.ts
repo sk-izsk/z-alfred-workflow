@@ -1,3 +1,5 @@
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import { profileAction } from "../../../shared/ui-profile.ts";
 import { str, bool } from "./env.ts";
 import { execFileSync } from "node:child_process";

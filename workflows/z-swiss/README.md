@@ -36,7 +36,7 @@ Direct keywords remain configurable in each workflow. **Copy Default Shortcut** 
 default, which can differ if you customized that workflow.
 
 ↑/↓ select. **⌘K Actions** contains Open Tool, Copy Default Shortcut, Refresh Installed Tools and
-Download Workflows. ⌘R refreshes installation status. **Back (⌘[)** is configurable and always visible
+Download Workflows. ⌘R refreshes installation status. **Back (Hyper+B)** is configurable and always visible
 in the footer, outside Actions.
 
 A tool opened from Swiss returns to the same launcher search and selected row when its own root
@@ -69,3 +69,5 @@ See [TESTING.md](TESTING.md). No user settings or caches are included in Git/pac
 
 Swiss icon is original, rendered from Apple SF Symbols. Tool icons retain their MIT credits; see
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Built with help from AI tools.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

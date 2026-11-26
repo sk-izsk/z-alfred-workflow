@@ -1,3 +1,5 @@
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import { windowWidth } from "../../../shared/ui-profile.ts";
 import { bool, cacheMinutes } from "./env.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";

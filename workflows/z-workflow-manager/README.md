@@ -23,7 +23,7 @@ Update All queues verified Gallery and repository updates, excluding development
 
 Removal moves the installed folder to Trash. Development symlinks are moved as directory entries, without following their targets. Repository files are preserved. Data/cache folders outside the workflow are retained. Remove Workflow Manager itself from Alfred Preferences.
 
-Back is visible outside Actions on every screen and sheet; its configurable default is **⌘[**. A Swiss launch returns to the saved Swiss search/selection. Direct launches return to Alfred search.
+Back is visible outside Actions on every screen and sheet; its configurable default is **Hyper+B**. A Swiss launch returns to the saved Swiss search/selection. Direct launches return to Alfred search.
 
 ## Update accuracy and refresh
 
@@ -47,3 +47,5 @@ Tests use temporary metadata/symlink fixtures and mocked network responses; they
 ## Credits
 
 Inspired by the installed [Alfred Gallery workflow](https://github.com/alfredapp/alfred-gallery-workflow/) and its official catalog. Installation routes remain owned by Alfred. Independent implementation; no upstream workflow code or artwork is bundled. Swiss family icon and scaffold: izsk, MIT. Built with help from AI tools.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

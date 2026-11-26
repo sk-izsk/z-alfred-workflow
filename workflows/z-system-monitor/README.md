@@ -22,3 +22,5 @@ bun run link
 ```
 
 References: [Raycast System Monitor](https://github.com/raycast/extensions/tree/86a5e3dc08b9e9c30a9ef9c78228701ef375f3d6/extensions/system-monitor/) and the locally installed atop workflow. No source or artwork was copied. MIT. Built with help from AI tools.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

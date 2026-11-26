@@ -15,7 +15,13 @@
     },
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     },
     "actions_shortcut": {
       "src": "variable",
@@ -25,10 +31,11 @@
   "window": {
     "title": "Currency Exchange",
     "size": {
-      "height": 600
+      "height": 600,
+      "width": 780
     },
     "minsize": {
-      "width": 850,
+      "width": 560,
       "height": 550
     },
     "root": {
@@ -43,7 +50,7 @@
             "src": {
               "window": {
                 "resize": {
-                  "width": 900
+                  "width": 780
                 }
               }
             }
@@ -52,6 +59,15 @@
         {
           "triggers": "launched",
           "action": [
+            {
+              "type": "script",
+              "src": "../bin/fx",
+              "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
             {
               "type": "script",
               "src": "../bin/fx",
@@ -129,7 +145,7 @@
         {
           "id": "initialBack",
           "type": "button",
-          "text": "Back  {var:back_shortcut}",
+          "text": "Back  {var:back_label}",
           "bordered": false,
           "events": [
             {

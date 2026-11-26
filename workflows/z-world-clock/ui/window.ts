@@ -201,11 +201,11 @@ const contents = (s: State): Json[] => [
         spacing: 12,
         constraints: { region: "right" },
         components: [
-          button("back", "Back  {var:back_shortcut}", run("back", [], false), {
+          button("back", "Back  {var:back_label}", run("back", [], false), {
             shortcut: "{var:back_shortcut}",
           }),
           button("copyButton", "Copy Time  ↩", run("copy", [selected])),
-          button("actionsButton", "Actions  {var:actions_shortcut}", run("menu", [selected])),
+          button("actionsButton", "Actions  {var:actions_label}", run("menu", [selected])),
         ],
       },
     ],
@@ -243,7 +243,9 @@ export const clockWindow = {
     swiss_return: { default: "" },
     clock_session: { default: "", scriptenv: true },
     clock_query: { src: "args[0]", default: "", scriptenv: true },
-    back_shortcut: { src: "variable", default: "⌘[" },
+    back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
+    back_label: { default: "Hyper+B" },
+    actions_label: { default: "⌘K" },
     actions_shortcut: { src: "variable", default: "⌘K" },
   },
   window: {
@@ -265,7 +267,7 @@ export const clockWindow = {
         }),
         button(
           "initialBack",
-          "Back  {var:back_shortcut}",
+          "Back  {var:back_label}",
           {
             type: "json",
             src: { finish: { variables: { clock_out: "back", swiss_return: "{var:swiss_return}" } } },

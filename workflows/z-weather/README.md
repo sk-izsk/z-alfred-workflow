@@ -108,3 +108,5 @@ Swiss separately; it is optional and does not run this tool until selected.
 ## Data refresh controls
 
 Configure Weather cache / refresh minutes (default 10), AQI cache / refresh minutes (15), and Refresh while open. Saved cities fetch conditions automatically in small batches. Row labels distinguish fetched data from stale cache; failed requests retain their original fetch time. Manual Refresh bypasses the cache. No polling runs after the window closes.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

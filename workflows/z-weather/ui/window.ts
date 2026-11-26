@@ -78,7 +78,7 @@ const footer = (s: State): Json => ({
       spacing: 12,
       constraints: { region: "right" },
       components: [
-        button("footerBack", "Back  {var:back_shortcut}", run("back", [], false), {
+        button("footerBack", "Back  {var:back_label}", run("back", [], false), {
           shortcut: "{var:back_shortcut}",
         }),
         ...(s.mode === "cities"
@@ -86,7 +86,7 @@ const footer = (s: State): Json => ({
           : [button("hourlyButton", "Hourly Forecast", run("hourly"))]),
         button(
           "actionsButton",
-          "Actions  {var:actions_shortcut}",
+          "Actions  {var:actions_label}",
           run("menu", [s.mode === "cities" ? selected : ""]),
         ),
       ],
@@ -563,7 +563,9 @@ export const weatherWindow = {
     weather_session: { default: "", scriptenv: true },
     weather_query: { src: "args[0]", default: "", scriptenv: true },
     actions_shortcut: { src: "variable", default: "⌘K" },
-    back_shortcut: { src: "variable", default: "⌘[" },
+    back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
+    back_label: { default: "Hyper+B" },
+    actions_label: { default: "⌘K" },
   },
   window: {
     title: "Weather",
@@ -594,7 +596,7 @@ export const weatherWindow = {
         }),
         button(
           "initialBack",
-          "Back  {var:back_shortcut}",
+          "Back  {var:back_label}",
           {
             type: "json",
             src: { finish: { variables: { weather_out: "back", swiss_return: "{var:swiss_return}" } } },

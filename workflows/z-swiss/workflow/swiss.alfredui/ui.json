@@ -12,7 +12,13 @@
     },
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     },
     "actions_shortcut": {
       "src": "variable",
@@ -22,7 +28,8 @@
   "window": {
     "title": "Swiss",
     "size": {
-      "height": 580
+      "height": 580,
+      "width": 780
     },
     "root": {
       "id": "root",
@@ -31,15 +38,26 @@
       "events": [
         {
           "triggers": "launched",
-          "action": {
-            "type": "script",
-            "src": "../bin/swiss",
-            "args": [
-              "launch",
-              "{var:swiss_session}"
-            ],
-            "async": true
-          }
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/swiss",
+              "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/swiss",
+              "args": [
+                "launch",
+                "{var:swiss_session}"
+              ],
+              "async": true
+            }
+          ]
         }
       ],
       "shortcuts": [
@@ -89,7 +107,7 @@
         {
           "id": "statusLabel",
           "type": "label",
-          "text": "Loading calculator…",
+          "text": "Loading Swiss…",
           "constraints": {
             "region": "centre",
             "position": "centre"
@@ -98,7 +116,7 @@
         {
           "id": "initialBack",
           "type": "button",
-          "text": "Back  {var:back_shortcut}",
+          "text": "Back  {var:back_label}",
           "bordered": false,
           "shortcut": "{var:back_shortcut}",
           "constraints": {

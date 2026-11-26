@@ -24,3 +24,5 @@ Tests validate response parsing, input limits, argument construction and preset-
 Reference: installed Lunar-fred workflow and the installed Lunar CLI's own help. No proprietary binaries, reference code or artwork are redistributed. Original workflow/icon MIT. Built with help from AI tools.
 
 The slider/selector panel runs locally inside Alfred’s embedded WebKit view; it makes no remote page requests. Back and Actions shortcuts are also handled when this panel has keyboard focus.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

@@ -25,3 +25,5 @@ bun run link
 Tests verify command allowlisting, dry-run flags, shell quoting and response parsing. The installed CLI's read-only status and demo-folder analysis were checked; actual cleanup/optimization execution is not tested against the user's system.
 
 Behavioral reference: [Raycast Mole](https://github.com/raycast/extensions/tree/459326f4f557692a79246dba2d013746f56d724b/extensions/mole/). No reference code or artwork was copied. MIT. Built with help from AI tools.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

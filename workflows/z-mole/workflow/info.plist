@@ -79,7 +79,7 @@
 				<key>keyword</key>
 				<string>{var:kw_main}</string>
 				<key>subtext</key>
-				<string>Units, percentages, time, data storage and arithmetic</string>
+				<string>Preview cleanup and optimization, inspect status and browse disk usage</string>
 				<key>text</key>
 				<string>Mole</string>
 				<key>withspace</key>

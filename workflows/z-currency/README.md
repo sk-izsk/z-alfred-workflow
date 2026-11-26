@@ -23,7 +23,7 @@ are fractions, so `(100+20)*50%` is 60. Queries never execute JavaScript.
 
 **⌘K Actions:** Copy to Clipboard, Copy Full Conversion, Pin/Unpin Currency, Set Currency Date,
 Use Latest Rates, Refresh Rates, and Rate Provider / API Documentation. ↑/↓ navigate results.
-⌘R refreshes. Configurable Back (⌘[) stays visible in every footer, outside Actions; the date sheet
+⌘R refreshes. Configurable Back (Hyper+B) stays visible in every footer, outside Actions; the date sheet
 returns to the conversion and the root returns to Alfred search.
 
 ## Providers and API keys
@@ -91,3 +91,5 @@ Swiss separately; it is optional and does not run this tool until selected.
 ## Data refresh controls
 
 Configure Rates cache / refresh minutes (default 60) and Refresh while open. Expired data refreshes without rebuilding the search field. Hover the status for fetch/provider timestamps. A shorter interval does not change the provider’s publication schedule; open-access rates update daily.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

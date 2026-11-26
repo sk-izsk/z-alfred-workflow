@@ -120,7 +120,7 @@ test("native split panes have both pickers, editable original and selectable out
   expect(ids).toContain("originalText");
   expect(ids).toContain("resultText");
   expect(JSON.stringify(tree)).toContain('"editable":false');
-  expect(JSON.stringify(toolWindow)).toContain("Back  {var:back_shortcut}");
+  expect(JSON.stringify(toolWindow)).toContain("Back  {var:back_label}");
 });
 test("typing clears the old result and queues translation without replacing or refocusing the editor", () => {
   const s = create("Old text");

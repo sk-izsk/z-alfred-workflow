@@ -61,7 +61,9 @@ export const processWindow = {
     swiss_return: { default: "" },
     kp_session: { default: "", scriptenv: true },
     kp_query: { src: "args[0]", default: "", scriptenv: true },
-    back_shortcut: { src: "variable", default: "⌘[" },
+    back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
+    back_label: { default: "Hyper+B" },
+    actions_label: { default: "⌘K" },
     actions_shortcut: { src: "variable", default: "⌘K" },
   },
   pulse: { src: "../bin/kproc", args: ["poll", "{var:kp_session}"], interval: 0, intervalmode: "delay" },
@@ -101,7 +103,7 @@ export const processWindow = {
               },
               {
                 font: { size: 27 },
-                tooltip: "Back {var:back_shortcut}",
+                tooltip: "Back {var:back_label}",
                 constraints: { region: "left", position: "centre" },
               },
             ),
@@ -274,7 +276,7 @@ export const processWindow = {
                   components: [
                     button(
                       "footerBack",
-                      "Back  {var:back_shortcut}",
+                      "Back  {var:back_label}",
                       [
                         run("initial-back", [], false),
                         {
@@ -289,7 +291,7 @@ export const processWindow = {
                       },
                     ),
                     button("killButton", "Kill  ↩", act("terminate")),
-                    button("actionsButton", "Actions  {var:actions_shortcut}", act("menu")),
+                    button("actionsButton", "Actions  {var:actions_label}", act("menu")),
                   ],
                 },
               ],

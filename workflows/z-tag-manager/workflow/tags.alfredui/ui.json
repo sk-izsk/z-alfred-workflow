@@ -54,6 +54,15 @@
               "type": "script",
               "src": "../bin/tags",
               "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/tags",
+              "args": [
                 "prepare-origin",
                 "{var:tags_session}",
                 "{var:tags_level}"

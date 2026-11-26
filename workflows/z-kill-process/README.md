@@ -101,3 +101,5 @@ This workflow was built with the help of AI tools. Review it before use and repo
 When opened from Swiss, the root Back returns to the same launcher search/selection. Child screens
 and sheets still go back one level first. Direct launches keep their normal Back behavior. Install
 Swiss separately; it is optional and does not run this tool until selected.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

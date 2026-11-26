@@ -99,7 +99,7 @@ export const install = window(
       footer([
         footerButton("primaryButton", "Install Extension  ↩", installNow),
         divider,
-        footerButton("actionsButton", "Actions  {var:actions_shortcut}", act("menu")),
+        footerButton("actionsButton", "Actions  {var:actions_label}", act("menu")),
         hiddenKey("previewKey", "⌘Y", act("preview")),
         hiddenKey("tryKey", "⌘T", [
           json({ update: { ids: { statusLabel: { text: "Installing theme to try it…" } } } }),

@@ -1,3 +1,5 @@
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import { characterCount, splitText, combineParts } from "./chunks.ts";
 import { clipboard, launchText } from "./input.ts";
 import { execFileSync } from "node:child_process";

@@ -50,6 +50,15 @@
               "type": "script",
               "src": "../bin/moleui",
               "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/moleui",
+              "args": [
                 "prepare-origin",
                 "{var:moleui_session}"
               ],

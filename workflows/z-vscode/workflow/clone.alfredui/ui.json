@@ -11,7 +11,13 @@
     },
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     },
     "actions_shortcut": {
       "src": "variable",
@@ -23,10 +29,11 @@
   },
   "window": {
     "size": {
-      "height": 520
+      "height": 520,
+      "width": 780
     },
     "minsize": {
-      "width": 620,
+      "width": 560,
       "height": 360
     },
     "title": "Clone Repository",
@@ -36,14 +43,25 @@
       "events": [
         {
           "triggers": "launched",
-          "action": {
-            "type": "script",
-            "src": "../bin/vsc",
-            "args": [
-              "clone-init",
-              "{var:query}"
-            ]
-          }
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "ui-profile",
+                "footerBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "clone-init",
+                "{var:query}"
+              ]
+            }
+          ]
         },
         {
           "triggers": "preload",
@@ -52,7 +70,7 @@
             "src": {
               "window": {
                 "resize": {
-                  "width": 760
+                  "width": 780
                 }
               }
             }
@@ -421,7 +439,7 @@
                 {
                   "id": "footerBack",
                   "type": "button",
-                  "text": "Back  {var:back_shortcut}",
+                  "text": "Back  {var:back_label}",
                   "bordered": false,
                   "font": {
                     "size": 12.5,

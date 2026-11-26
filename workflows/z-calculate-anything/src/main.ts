@@ -1,3 +1,5 @@
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { randomUUID } from "node:crypto";
 import { results } from "./engine.ts";

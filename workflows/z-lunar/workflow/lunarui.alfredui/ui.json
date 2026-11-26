@@ -53,6 +53,15 @@
               "type": "script",
               "src": "../bin/lunarui",
               "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/lunarui",
+              "args": [
                 "prepare-origin",
                 "{var:lunarui_session}"
               ],

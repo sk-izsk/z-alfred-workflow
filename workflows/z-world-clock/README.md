@@ -43,7 +43,7 @@ override those initial defaults. Avatar paths are optional PNG/JPEG/GIF/HEIC/TIF
 restores the analog icon in the list. Grid cells retain the analog clock. The detail sheet shows a
 current snapshot; reopen it for a later snapshot.
 
-**Back (⌘[)** is configurable and visible in every footer, outside Actions. Edit, detail and preference
+**Back (Hyper+B)** is configurable and visible in every footer, outside Actions. Edit, detail and preference
 sheets return to the clock list/grid. Launch through **Swiss → World Clock** and root Back restores
 the same Swiss search and selection. A direct `wclock` launch returns to Alfred search.
 
@@ -82,3 +82,5 @@ MIT. Analog PNG renderer is original. IANA timezone descriptions are public doma
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and [LICENSE](LICENSE).
 
 Built with help from AI tools. Review before use and report issues on the project tracker.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

@@ -121,8 +121,10 @@ not apply Raycast’s icon tinting. MIT notices are included in [THIRD_PARTY_NOT
 This workflow was built with the help of AI tools. Review the code before use, as you would any
 workflow; please report anything that does not work.
 
-Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.
+Back is always available directly in the footer as **Back Hyper+B** (configurable), including sheets. It is not inside the ⌘K actions menu.
 
 ## Data refresh controls
 
 REST API cache seconds is configurable (default 30). Refresh bypasses this cache. GraphQL requests are live, and mutations are never cached. No background refresh service runs while closed.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

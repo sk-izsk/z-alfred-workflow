@@ -1,3 +1,5 @@
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { profileAction } from "../../../shared/ui-profile.ts";

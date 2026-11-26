@@ -1,3 +1,5 @@
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import { rowIcon, loadIcons } from "./icons.ts";
 import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";

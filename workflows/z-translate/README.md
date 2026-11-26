@@ -18,7 +18,7 @@ The split window keeps a large editing area with compact metadata and footer spa
 
 **⌘K** includes Copy Translation, Paste Translation, Copy Pronunciation, Copy Original Text, Use Clipboard, Swap Languages, Continue Translation, Translate Again (⌘R), Open in Google Translate, language defaults/configuration, and Clear Cached Translations. Paste closes the UI, copies the result and uses macOS Accessibility to paste into the previously focused app; the OS may request permission when first used.
 
-Back is visible outside Actions, with a configurable default of **⌘[**. A Swiss launch returns to its saved query/selection. Direct launches return to Alfred search.
+Back is visible outside Actions, with a configurable default of **Hyper+B**. A Swiss launch returns to its saved query/selection. Direct launches return to Alfred search.
 
 ## Provider, refresh and local data
 
@@ -42,3 +42,5 @@ The build generates the UI and `info.plist` from TypeScript. Tests use fake clip
 ## Credits
 
 [Raycast Google Translate](https://github.com/raycast/extensions/tree/e38232e713cc42a58cac81b8d3af9261fd1624e5/extensions/google-translate/) supplies the pinned icon/language catalog and reference behavior. Request/response handling adapts the vendored [TRACTION google-translate](https://github.com/iamtraction/google-translate) transport using standard fetch. MIT notices are bundled in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Google Translate is a Google trademark. Built with help from AI tools.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

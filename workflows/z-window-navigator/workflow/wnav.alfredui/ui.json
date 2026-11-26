@@ -50,6 +50,15 @@
               "type": "script",
               "src": "../bin/wnav",
               "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/wnav",
+              "args": [
                 "prepare-origin",
                 "{var:wnav_session}"
               ],

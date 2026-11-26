@@ -35,7 +35,7 @@ export const quick = window(
         constraints: { region: "top", size: { height: 42 } },
         components: [
           button("backButton", "‹", back, {
-            tooltip: "Back {var:back_shortcut}",
+            tooltip: "Back {var:back_label}",
             font: { size: 20 },
             constraints: {
               region: "left",
@@ -80,7 +80,7 @@ export const quick = window(
       footer(
         [
           button("primaryButton", "Current Month  ↩", today),
-          button("actionsButton", "Actions  {var:actions_shortcut}", act("menu")),
+          button("actionsButton", "Actions  {var:actions_label}", act("menu")),
           hiddenKey("previousYearKey", "⇧←", shift(-12)),
           hiddenKey("nextYearKey", "⇧→", shift(12)),
           hiddenKey("previousMonthKey", "⌘←", shift(-1)),

@@ -42,3 +42,5 @@ Tests change tags only on disposable temporary files and verify native binary-pl
 ## References and license
 
 Inspired by [Raycast App Tag Manager](https://github.com/raycast/extensions/tree/e38232e713cc42a58cac81b8d3af9261fd1624e5/extensions/app-tag-manager/) and the installed Tag Finder workflow. The former uses custom app tags; this implementation uses macOS Finder metadata to cover all file types. No reference code or artwork was copied. MIT; built with help from AI tools.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

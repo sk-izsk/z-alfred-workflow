@@ -15,7 +15,13 @@
     },
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     },
     "actions_shortcut": {
       "src": "variable",
@@ -25,7 +31,7 @@
   "window": {
     "title": "Workflow Manager",
     "size": {
-      "width": 880,
+      "width": 780,
       "height": 600
     },
     "root": {
@@ -36,6 +42,15 @@
         {
           "triggers": "launched",
           "action": [
+            {
+              "type": "script",
+              "src": "../bin/wfman",
+              "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
             {
               "type": "script",
               "src": "../bin/wfman",
@@ -113,7 +128,7 @@
         {
           "id": "initialBack",
           "type": "button",
-          "text": "Back  {var:back_shortcut}",
+          "text": "Back  {var:back_label}",
           "bordered": false,
           "shortcut": "{var:back_shortcut}",
           "constraints": {

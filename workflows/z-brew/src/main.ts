@@ -1,3 +1,5 @@
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import { existsSync } from "node:fs";
 import * as actions from "./commands.ts";
 import { executable, readBrew } from "./brew.ts";

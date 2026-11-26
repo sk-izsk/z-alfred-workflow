@@ -1,3 +1,5 @@
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import { create, read, save, type State } from "./state.ts";
 import { tools, installed, available, envelope } from "./tools.ts";
 import { components } from "../ui/window.ts";

@@ -32,7 +32,13 @@
     },
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     },
     "cal_title": {
       "default": "",
@@ -78,10 +84,11 @@
   "window": {
     "title": "Create Event",
     "size": {
-      "height": 560
+      "height": 560,
+      "width": 780
     },
     "minsize": {
-      "width": 620,
+      "width": 560,
       "height": 480
     },
     "root": {
@@ -91,6 +98,15 @@
         {
           "triggers": "launched",
           "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "ui-profile",
+                "footerBack"
+              ],
+              "async": false
+            },
             {
               "type": "script",
               "src": "../bin/cald",
@@ -123,7 +139,7 @@
             "src": {
               "window": {
                 "resize": {
-                  "width": 800
+                  "width": 780
                 }
               }
             }
@@ -182,7 +198,7 @@
               "font": {
                 "size": 26
               },
-              "tooltip": "Back {var:back_shortcut}",
+              "tooltip": "Back {var:back_label}",
               "constraints": {
                 "region": "left",
                 "position": "centre"
@@ -585,7 +601,7 @@
                     {
                       "id": "footerBack",
                       "type": "button",
-                      "text": "Back  {var:back_shortcut}",
+                      "text": "Back  {var:back_label}",
                       "bordered": false,
                       "events": [
                         {

@@ -24,7 +24,7 @@ export const infoPlist = {
       config: {
         keyword: "{var:kw_main}",
         text: "Tag Manager",
-        subtext: "Units, percentages, time, data storage and arithmetic",
+        subtext: pkg.description,
         argumenttype: 1,
         withspace: true,
       },

@@ -197,12 +197,12 @@ export const components = (s: State): Json[] => {
           spacing: 12,
           constraints: { region: "right" },
           components: [
-            button("back", "Back  {var:back_shortcut}", run("back", [], false), {
+            button("back", "Back  {var:back_label}", run("back", [], false), {
               shortcut: "{var:back_shortcut}",
             }),
             button("ramadan", "Ramadan", run("ramadan")),
             button("settings", "Settings", run("settings")),
-            button("actionsButton", "Actions  {var:actions_shortcut}", run("menu")),
+            button("actionsButton", "Actions  {var:actions_label}", run("menu")),
           ],
         },
       ],
@@ -215,7 +215,9 @@ export const adhanWindow = {
     swiss_return: { default: "" },
     adhan_session: { default: "", scriptenv: true },
     adhan_query: { src: "args[0]", default: "", scriptenv: true },
-    back_shortcut: { src: "variable", default: "⌘[" },
+    back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
+    back_label: { default: "Hyper+B" },
+    actions_label: { default: "⌘K" },
     actions_shortcut: { src: "variable", default: "⌘K" },
   },
   window: {
@@ -239,7 +241,7 @@ export const adhanWindow = {
         }),
         button(
           "initialBack",
-          "Back  {var:back_shortcut}",
+          "Back  {var:back_label}",
           {
             type: "json",
             src: { finish: { variables: { adhan_out: "back", swiss_return: "{var:swiss_return}" } } },

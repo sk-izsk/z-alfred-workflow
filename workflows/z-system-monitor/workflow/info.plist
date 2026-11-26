@@ -79,7 +79,7 @@
 				<key>keyword</key>
 				<string>{var:kw_main}</string>
 				<key>subtext</key>
-				<string>Units, percentages, time, data storage and arithmetic</string>
+				<string>Live system, CPU, memory, disk, power and network information</string>
 				<key>text</key>
 				<string>System Monitor</string>
 				<key>withspace</key>

@@ -1,4 +1,4 @@
-import { dashboard } from "../../../shared/dashboard.ts";
+import { dashboard, type Json } from "../../../shared/dashboard.ts";
 const ui = dashboard({
   bundle: "com.izsk.system-monitor",
   cli: "sysmon",
@@ -8,4 +8,13 @@ const ui = dashboard({
   primary: "Activity Monitor  ↩",
 });
 export const toolWindow = ui.window;
-export const components = ui.components;
+export const components = (query = ""): Json[] => {
+  const values = ui.components(query),
+    list = values[1]!.components[0];
+  list.events = list.events.map((event: Json) =>
+    event.triggers === "actioned"
+      ? { ...event, action: ui.run("select", ["{value:self.selected.uid}"]) }
+      : event,
+  );
+  return values;
+};

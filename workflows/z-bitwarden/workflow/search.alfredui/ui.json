@@ -7,7 +7,13 @@
   "variablesconfig": {
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     },
     "query": {
       "src": "args[0]",
@@ -69,10 +75,11 @@
   },
   "window": {
     "size": {
-      "height": 540
+      "height": 540,
+      "width": 780
     },
     "minsize": {
-      "width": 620,
+      "width": 560,
       "height": 380
     },
     "title": "Bitwarden",
@@ -93,6 +100,15 @@
         {
           "triggers": "launched",
           "action": [
+            {
+              "type": "script",
+              "src": "../bin/bwa",
+              "args": [
+                "ui-profile",
+                "backButton"
+              ],
+              "async": false
+            },
             {
               "type": "script",
               "src": "../bin/bwa",
@@ -766,7 +782,7 @@
                 {
                   "id": "backButton",
                   "type": "button",
-                  "text": "Back  {var:back_shortcut}",
+                  "text": "Back  {var:back_label}",
                   "bordered": false,
                   "font": {
                     "size": 13,
@@ -822,7 +838,7 @@
                 {
                   "id": "actionsButton",
                   "type": "button",
-                  "text": "Actions  {var:actions_shortcut}",
+                  "text": "Actions  {var:actions_label}",
                   "bordered": false,
                   "font": {
                     "size": 13,

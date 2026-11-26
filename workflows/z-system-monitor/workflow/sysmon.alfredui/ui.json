@@ -50,6 +50,15 @@
               "type": "script",
               "src": "../bin/sysmon",
               "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/sysmon",
+              "args": [
                 "prepare-origin",
                 "{var:sysmon_session}"
               ],

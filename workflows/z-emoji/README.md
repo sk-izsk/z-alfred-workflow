@@ -22,3 +22,5 @@ bun run link
 Tests cover catalog coverage, joined/tone sequences, shortcode search, persistent favorite/recent ordering and exact Back restoration. No real user clipboard is changed by the tests.
 
 Data: [Unicode emoji-test 17.0](https://www.unicode.org/Public/17.0.0/emoji/emoji-test.txt), redistributed under the included Unicode license. Behavior inspired by [Raycast Emoji](https://github.com/raycast/extensions/tree/e38232e713cc42a58cac81b8d3af9261fd1624e5/extensions/emoji/); no reference code or artwork copied. Workflow/icon MIT. Built with help from AI tools.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

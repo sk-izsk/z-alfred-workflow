@@ -202,13 +202,13 @@ export const components = (s: State): Json[] => [
         spacing: 12,
         constraints: { region: "right" },
         components: [
-          button("back", "Back  {var:back_shortcut}", run("back", [], false), {
+          button("back", "Back  {var:back_label}", run("back", [], false), {
             shortcut: "{var:back_shortcut}",
           }),
           button("copyButton", "Copy  ↩", run("copy", ["{value:items.selected.uid}"])),
           button(
             "actionsButton",
-            "Actions  {var:actions_shortcut}",
+            "Actions  {var:actions_label}",
             run("menu", ["{value:items.selected.uid}"]),
           ),
         ],
@@ -222,7 +222,9 @@ export const currencyWindow = {
     swiss_return: { default: "" },
     fx_session: { default: "", scriptenv: true },
     fx_query: { src: "args[0]", default: "", scriptenv: true },
-    back_shortcut: { src: "variable", default: "⌘[" },
+    back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
+    back_label: { default: "Hyper+B" },
+    actions_label: { default: "⌘K" },
     actions_shortcut: { src: "variable", default: "⌘K" },
   },
   window: {
@@ -247,7 +249,7 @@ export const currencyWindow = {
         label("statusLabel", "Loading rates…", { constraints: { region: "centre", position: "centre" } }),
         button(
           "initialBack",
-          "Back  {var:back_shortcut}",
+          "Back  {var:back_label}",
           {
             type: "json",
             src: { finish: { variables: { fx_out: "back", swiss_return: "{var:swiss_return}" } } },

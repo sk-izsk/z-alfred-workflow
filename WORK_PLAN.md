@@ -23,7 +23,7 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 
 - [x] Weather city high/low values and standard 780 width, native list/details verified.
 - [x] Folder Navigator: configurable Hyper+B, modifier checkboxes, compact footer labels and screen-aware 780 width; shared helper and UI_CONVENTIONS.md available for each new workflow.
-- [ ] After feature phases: migrate all existing workflows to the same width/Hyper convention, preserving user choices.
+- [x] Migrated all 22 workflows / 40 windows to the shared width/Hyper convention, preserving explicit legacy shortcuts. Checks/package and bare-environment profiles passed; native Weather and Calendar widths/footers verified.
 
 ## Remaining Swiss work, in order
 
@@ -34,6 +34,9 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 - [x] Lunar Controls: installed Lunar-fred/CLI verified; brightness/contrast/volume sliders with live labels, percentage shortcuts, modern input/adaptive/preset selectors, global adaptive modes, saved presets and reviewed power actions. Display-row clicks select controls instead of opening Lunar. Read-only native UI verified; physical settings were not changed for testing.
 - [x] Window Navigator: global/active/current-desktop scopes, native search and app icons, focus/close/quit actions, revalidation and Swiss Back. Native list verified; disposable TextEdit raise/close verified.
 - [x] Consolidated Window Switcher into Window Navigator per user request. `wins` opens Current Desktop mode in the same workflow; the separate project/Swiss entry is removed. Stage Manager visibility matches app/title as well as full-size geometry, with a count-checked fallback for stale thumbnail titles; real enumeration improved from one to six windows.
+- [ ] Emoji: selectable list/grid layout, preserving search/category/selection.
+- [ ] GIF Search: pinned provider verification, standalone workflow under Swiss, list/grid layout and contextual actions.
+
 ## Dev launcher phase (after Swiss)
 
 - [ ] Dev launcher: separate searchable launcher using the same independent-tool and Back protocol as Swiss. These utilities belong only to Dev.
@@ -61,3 +64,5 @@ Camera is deferred. Last Changed Files is canceled. Menubar features are exclude
 - Toothpick Bluetooth reference: `c4e0f79975a011e16032382f2d1263f712f8b43c`.
 - Password Generator: `480c8790efdca370fda96f8f95bc914604e362d5`.
 - Dynamic File Search: https://github.com/alfredapp/dynamic-file-search-workflow/
+
+- GIF Search reference: `dccfc8877dd0e658295cb4b6d29b4a0a1b79baf8`.

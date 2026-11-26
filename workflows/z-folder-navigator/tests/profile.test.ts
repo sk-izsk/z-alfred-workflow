@@ -26,3 +26,55 @@ test("standard width fits smaller displays without expanding on larger ones", ()
   expect(fittedWidth(720)).toBe(680);
   expect(fittedWidth(NaN)).toBe(780);
 });
+
+import { profileInfo, profileWindow } from "../../../shared/ui-profile.ts";
+test("explicit legacy shortcuts survive until Hyper configuration is chosen", () => {
+  const base = settings({});
+  expect(backBinding({ ...base, saved: (key) => (key === "back_shortcut" ? "⌘J" : undefined) })).toEqual({
+    shortcut: "⌘J",
+    label: "⌘J",
+  });
+  expect(
+    backBinding({
+      ...base,
+      saved: (key) => (key === "hyper_enabled" ? "true" : key === "back_shortcut" ? "⌘J" : undefined),
+    }).label,
+  ).toBe("Hyper+B");
+});
+test("shared generation preserves identifiers and injects configuration/profile before launch", () => {
+  const info = profileInfo({
+    bundleid: "example",
+    userconfigurationconfig: [{ variable: "back_shortcut", config: { default: "⌘[" } }],
+  });
+  expect(info.bundleid).toBe("example");
+  expect(info.userconfigurationconfig.some((c) => c.variable === "hyper_enabled")).toBe(true);
+  const value = profileWindow(
+    {
+      bundleid: "example",
+      variablesconfig: {},
+      window: {
+        size: { width: 1100 },
+        minsize: { width: 900 },
+        root: {
+          type: "view",
+          components: [
+            {
+              type: "button",
+              id: "footerBack",
+              text: "Back  {var:back_shortcut}",
+              shortcut: "{var:back_shortcut}",
+            },
+          ],
+          events: [{ triggers: "launched", action: { type: "script", args: ["launch"] } }],
+        },
+      },
+    },
+    "example",
+  );
+  expect(value.window.size.width).toBe(780);
+  expect(value.window.minsize.width).toBe(560);
+  expect(value.window.root.events[0]!.action).toMatchObject([
+    { args: ["ui-profile", "footerBack"] },
+    { args: ["launch"] },
+  ]);
+});

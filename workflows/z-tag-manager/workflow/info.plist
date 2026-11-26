@@ -79,7 +79,7 @@
 				<key>keyword</key>
 				<string>{var:kw_main}</string>
 				<key>subtext</key>
-				<string>Units, percentages, time, data storage and arithmetic</string>
+				<string>Search and manage Finder tags on files, folders and apps</string>
 				<key>text</key>
 				<string>Tag Manager</string>
 				<key>withspace</key>

@@ -240,7 +240,7 @@ export const confirmSheet = (row: Row, op: string): Json => ({
         },
         {
           type: "button",
-          text: "Back  {var:back_shortcut}",
+          text: "Back  {var:back_label}",
           shortcut: "{var:back_shortcut}",
           events: [
             {

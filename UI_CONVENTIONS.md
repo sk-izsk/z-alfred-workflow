@@ -11,3 +11,5 @@ The footer shows **Back Hyper+B**, not all four modifier symbols. Use `shortcutL
 Apply this convention to Folder Navigator and each new workflow now. After the requested feature phases, migrate existing workflows together. Preserve explicit user preferences; a changed default must not silently replace a user's chosen shortcut. Generate UI JSON and plist from TypeScript, then check/package and verify the actual footer and key binding in Alfred.
 
 Window property reference: [Alfred UI window documentation](https://www.alfredapp.com/help/alfredui/window/). Alfred's embedded width otherwise follows the theme; use the documented window resize action to apply the shared width on launch.
+
+Generation uses `profileWindow(ui, cli)` and `profileInfo(infoPlist)`. CLI entry points call `await profileCommand(() => import("./env.ts"))` before dispatch. The launch profile updates only component IDs present in the initial view. Runtime views resolve `backBinding()` and `shortcutLabel()` from the same settings. Existing custom Back shortcuts remain active until the user explicitly configures Hyper. All 22 existing workflow projects have been migrated and checked.

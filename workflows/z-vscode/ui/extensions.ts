@@ -64,7 +64,7 @@ export const extensions = window(
       footer([
         footerButton("primaryButton", "Open in Code  ↩", act("open")),
         divider,
-        footerButton("actionsButton", "Actions  {var:actions_shortcut}", act("menu")),
+        footerButton("actionsButton", "Actions  {var:actions_label}", act("menu")),
         hiddenKey("previewKey", "⌘Y", act("preview")),
         hiddenKey("browserKey", "⇧⌘O", act("browser")),
         hiddenKey("finderKey", "⇧⌘F", act("reveal")),

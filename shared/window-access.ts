@@ -1,21 +1,58 @@
-import {execFile} from "node:child_process";
-export type WindowItem={id:string;pid:number;bundle:string;app:string;title:string;index:number;position:number[];size:number[];minimized:boolean;onscreen:boolean;appPath:string};
-export type Scope="all"|"active"|"desktop";
-export type VisibleWindow={kCGWindowOwnerPID:number;kCGWindowLayer:number;kCGWindowName?:string;kCGWindowBounds:{X:number;Y:number;Width:number;Height:number}};
-export function visibleWindow(target:Pick<WindowItem,"pid"|"title"|"position"|"size">,windows:VisibleWindow[],axWindowCount=0):boolean {
- var matches=windows.some(function(cg){
-  if(cg.kCGWindowOwnerPID!==target.pid||cg.kCGWindowLayer!==0)return false;
-  var b=cg.kCGWindowBounds;
-  var title=typeof cg.kCGWindowName==="string"&&cg.kCGWindowName.length>0&&cg.kCGWindowName===target.title;
-  var geometry=Math.abs(b.X-target.position[0]!)<5&&Math.abs(b.Y-target.position[1]!)<5&&Math.abs(b.Width-target.size[0]!)<5&&Math.abs(b.Height-target.size[1]!)<5;
-  return title||geometry;
- });
- if(matches)return true;
- // Stage Manager can retain a thumbnail title briefly after an app changes its window title.
- var candidates=windows.filter(function(cg){return cg.kCGWindowOwnerPID===target.pid&&cg.kCGWindowLayer===0;});
- return axWindowCount>0&&candidates.length===axWindowCount&&candidates.every(function(cg){var b=cg.kCGWindowBounds;return b.Width>=40&&b.Width<=350&&b.Height>=40&&b.Height<=350;});
+import { execFile } from "node:child_process";
+export type WindowItem = {
+  id: string;
+  pid: number;
+  bundle: string;
+  app: string;
+  title: string;
+  index: number;
+  position: number[];
+  size: number[];
+  minimized: boolean;
+  onscreen: boolean;
+  appPath: string;
+};
+export type Scope = "all" | "active" | "desktop";
+export type VisibleWindow = {
+  kCGWindowOwnerPID: number;
+  kCGWindowLayer: number;
+  kCGWindowName?: string;
+  kCGWindowBounds: { X: number; Y: number; Width: number; Height: number };
+};
+export function visibleWindow(
+  target: Pick<WindowItem, "pid" | "title" | "position" | "size">,
+  windows: VisibleWindow[],
+  axWindowCount = 0,
+): boolean {
+  var matches = windows.some(function (cg) {
+    if (cg.kCGWindowOwnerPID !== target.pid || cg.kCGWindowLayer !== 0) return false;
+    var b = cg.kCGWindowBounds;
+    var title =
+      typeof cg.kCGWindowName === "string" &&
+      cg.kCGWindowName.length > 0 &&
+      cg.kCGWindowName === target.title;
+    var geometry =
+      Math.abs(b.X - target.position[0]!) < 5 &&
+      Math.abs(b.Y - target.position[1]!) < 5 &&
+      Math.abs(b.Width - target.size[0]!) < 5 &&
+      Math.abs(b.Height - target.size[1]!) < 5;
+    return title || geometry;
+  });
+  if (matches) return true;
+  // Stage Manager can retain a thumbnail title briefly after an app changes its window title.
+  var candidates = windows.filter(function (cg) {
+    return cg.kCGWindowOwnerPID === target.pid && cg.kCGWindowLayer === 0;
+  });
+  return (
+    axWindowCount > 0 &&
+    candidates.length === axWindowCount &&
+    candidates.every(function (cg) {
+      var b = cg.kCGWindowBounds;
+      return b.Width >= 40 && b.Width <= 350 && b.Height >= 40 && b.Height <= 350;
+    })
+  );
 }
-const script=`var visibleWindow = (${visibleWindow.toString()});
+const script = `var visibleWindow = (${visibleWindow.toString()});
 ObjC.import('Foundation');ObjC.import('AppKit');ObjC.import('CoreGraphics');
 function run(argv){
  var input=JSON.parse(ObjC.unwrap($.NSString.alloc.initWithDataEncoding($.NSFileHandle.fileHandleWithStandardInput.readDataToEndOfFile,$.NSUTF8StringEncoding)));
@@ -74,17 +111,45 @@ function run(argv){
   return JSON.stringify({ok:true});
  }catch(e){return JSON.stringify({error:String(e.message||e)});}
 }`;
-const run=(input:Record<string,unknown>):Promise<any>=>new Promise((resolve,reject)=>{
- const child=execFile("/usr/bin/osascript",["-l","JavaScript","-e",script],{timeout:12000,maxBuffer:3000000},(error,stdout)=>{
-  if(error){reject(new Error("Window access failed. Grant Alfred Accessibility and Automation access to System Events.",{cause:error}));return;}
-  try{const value=JSON.parse(stdout);if(value.error)throw new Error(value.error);resolve(value);}catch(error){reject(error);}
- });child.stdin?.on("error",()=>{});child.stdin?.end(JSON.stringify(input));
-});
-export const listWindows=async(scope:Scope,minimized=true):Promise<WindowItem[]>=>{
- const data=await run({command:"list",scope,minimized});
- if(!Array.isArray(data.items))throw new Error("Unsupported window response.");return data.items;
+const run = (input: Record<string, unknown>): Promise<any> =>
+  new Promise((resolve, reject) => {
+    const child = execFile(
+      "/usr/bin/osascript",
+      ["-l", "JavaScript", "-e", script],
+      { timeout: 12000, maxBuffer: 3000000 },
+      (error, stdout) => {
+        if (error) {
+          reject(
+            new Error(
+              "Window access failed. Grant Alfred Accessibility and Automation access to System Events.",
+              { cause: error },
+            ),
+          );
+          return;
+        }
+        try {
+          const value = JSON.parse(stdout);
+          if (value.error) throw new Error(value.error);
+          resolve(value);
+        } catch (error) {
+          reject(error);
+        }
+      },
+    );
+    child.stdin?.on("error", () => {});
+    child.stdin?.end(JSON.stringify(input));
+  });
+export const listWindows = async (scope: Scope, minimized = true): Promise<WindowItem[]> => {
+  const data = await run({ command: "list", scope, minimized });
+  if (!Array.isArray(data.items)) throw new Error("Unsupported window response.");
+  return data.items;
 };
-export const actOnWindow=async(command:string,target:WindowItem):Promise<void>=>{
- if(!["raise","close","quit"].includes(command))throw new Error("Unsupported window action.");await run({command,target});
+export const actOnWindow = async (command: string, target: WindowItem): Promise<void> => {
+  if (!["raise", "close", "quit"].includes(command)) throw new Error("Unsupported window action.");
+  await run({ command, target });
 };
-export const matchesWindow=(w:WindowItem,query:string):boolean=>query.toLowerCase().split(/\s+/).every((word)=>`${w.title} ${w.app}`.toLowerCase().includes(word));
+export const matchesWindow = (w: WindowItem, query: string): boolean =>
+  query
+    .toLowerCase()
+    .split(/\s+/)
+    .every((word) => `${w.title} ${w.app}`.toLowerCase().includes(word));

@@ -166,6 +166,8 @@ before use, as you would any workflow; please report anything that doesn't work.
 
 [MIT](LICENSE), with the Raycast notice included in every exported workflow.
 
-Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Back returns one screen at a time. Sheets close to their parent view; Back from the first screen returns to the Calendar command menu.
+Back is configurable in Workflow’s Configuration and defaults to **Hyper+B**. Back returns one screen at a time. Sheets close to their parent view; Back from the first screen returns to the Calendar command menu.
 
-Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.
+Back is always available directly in the footer as **Back Hyper+B** (configurable), including sheets. It is not inside the ⌘K actions menu.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

@@ -24,7 +24,7 @@ parser. A percentage expression goes through the original engine, so `100 + 16%`
 
 Return copies the selected result. **⌘K** offers Copy Result, Copy Without Formatting, Copy Alternate
 Result, Recalculate and Documentation. Raw/alternate copies follow the original engine's ⌘/⌥ copy
-variants, which differ by conversion type. ↑/↓ navigate. Configurable **Back (⌘[)** stays in the footer,
+variants, which differ by conversion type. ↑/↓ navigate. Configurable **Back (Hyper+B)** stays in the footer,
 outside Actions. The `open` external trigger accepts a query for Swiss integration.
 
 ## Engine discovery and privacy
@@ -62,3 +62,5 @@ See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Built with help from AI to
 When opened from Swiss, the root Back returns to the same launcher search/selection. Child screens
 and sheets still go back one level first. Direct launches keep their normal Back behavior. Install
 Swiss separately; it is optional and does not run this tool until selected.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

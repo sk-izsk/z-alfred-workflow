@@ -11,7 +11,13 @@
     },
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     },
     "actions_shortcut": {
       "src": "variable",
@@ -25,10 +31,11 @@
   },
   "window": {
     "size": {
-      "height": 520
+      "height": 520,
+      "width": 780
     },
     "minsize": {
-      "width": 620,
+      "width": 560,
       "height": 360
     },
     "title": "Search Recent Projects",
@@ -39,6 +46,15 @@
         {
           "triggers": "launched",
           "action": [
+            {
+              "type": "script",
+              "src": "../bin/vsc",
+              "args": [
+                "ui-profile",
+                "footerBack"
+              ],
+              "async": false
+            },
             {
               "type": "script",
               "src": "../bin/vsc",
@@ -78,7 +94,7 @@
             "src": {
               "window": {
                 "resize": {
-                  "width": 760
+                  "width": 780
                 }
               }
             }
@@ -172,7 +188,7 @@
               "type": "button",
               "text": "‹",
               "bordered": false,
-              "tooltip": "Back {var:back_shortcut}",
+              "tooltip": "Back {var:back_label}",
               "font": {
                 "size": 26,
                 "weight": "light"
@@ -598,7 +614,7 @@
                 {
                   "id": "footerBack",
                   "type": "button",
-                  "text": "Back  {var:back_shortcut}",
+                  "text": "Back  {var:back_label}",
                   "bordered": false,
                   "font": {
                     "size": 12.5,
@@ -665,7 +681,7 @@
                 {
                   "id": "actionsButton",
                   "type": "button",
-                  "text": "Actions  {var:actions_shortcut}",
+                  "text": "Actions  {var:actions_label}",
                   "bordered": false,
                   "font": {
                     "size": 12.5,

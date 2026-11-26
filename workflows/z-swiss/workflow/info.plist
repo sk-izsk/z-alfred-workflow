@@ -251,16 +251,112 @@ Requires Alfred 6 Powerpack, Node.js 22+ or Bun. Original Swiss icon uses SF Sym
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>⌘[</string>
+				<true/>
+				<key>text</key>
+				<string>Enable Hyper key configuration</string>
+			</dict>
+			<key>description</key>
+			<string>Use the modifier checkboxes and Back key below. Disable to use the custom Back shortcut.</string>
+			<key>label</key>
+			<string>Hyper shortcuts</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_enabled</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Control</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Control</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_control</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Option</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Option</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_option</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Shift</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Shift</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_shift</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Command</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Command</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_command</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>B</string>
 				<key>placeholder</key>
-				<string>⌘[</string>
+				<string>B</string>
 				<key>required</key>
 				<false/>
 			</dict>
 			<key>description</key>
-			<string>Back to Alfred search or the Swiss launcher.</string>
+			<string>One letter, number or punctuation key, combined with the enabled Hyper modifiers.</string>
 			<key>label</key>
-			<string>Back shortcut</string>
+			<string>Back key</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>back_key</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>⌃⌥⇧⌘B</string>
+				<key>placeholder</key>
+				<string>⌃⌥⇧⌘B</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Used when Hyper shortcuts are disabled. For example ⌘[.</string>
+			<key>label</key>
+			<string>Custom Back shortcut</string>
 			<key>type</key>
 			<string>textfield</string>
 			<key>variable</key>

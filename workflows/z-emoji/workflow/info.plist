@@ -79,7 +79,7 @@
 				<key>keyword</key>
 				<string>{var:kw_main}</string>
 				<key>subtext</key>
-				<string>Units, percentages, time, data storage and arithmetic</string>
+				<string>Offline emoji search, favorites, recents and variants</string>
 				<key>text</key>
 				<string>Emoji Picker</string>
 				<key>withspace</key>

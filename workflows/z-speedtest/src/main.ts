@@ -1,3 +1,5 @@
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { spawn, execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
@@ -150,7 +152,7 @@ const clearConfirmation = (): Json => ({
         },
         {
           type: "button",
-          text: "Back  {var:back_shortcut}",
+          text: "Back  {var:back_label}",
           shortcut: "{var:back_shortcut}",
           events: [
             {

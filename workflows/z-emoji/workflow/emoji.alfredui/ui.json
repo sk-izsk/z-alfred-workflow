@@ -50,6 +50,15 @@
               "type": "script",
               "src": "../bin/emoji",
               "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/emoji",
+              "args": [
                 "prepare-origin",
                 "{var:emoji_session}"
               ],

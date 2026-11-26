@@ -54,6 +54,15 @@
               "type": "script",
               "src": "../bin/folders",
               "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/folders",
+              "args": [
                 "prepare-origin",
                 "{var:folders_session}",
                 "{var:folders_level}"

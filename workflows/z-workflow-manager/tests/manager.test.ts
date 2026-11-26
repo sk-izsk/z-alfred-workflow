@@ -141,7 +141,7 @@ test("native UI exposes filters and visible Back, keeps typing state and IDs uni
   expect(ids.length).toBe(new Set(ids).size);
   expect(JSON.stringify(tree)).toContain("Not installed");
   expect(JSON.stringify(components(s))).toContain('"text":"demo"');
-  expect(JSON.stringify(tree)).toContain("Back  {var:back_shortcut}");
+  expect(JSON.stringify(tree)).toContain("Back  {var:back_label}");
 });
 
 test("command actions preserve query/filter and offer native removal review before changes", async () => {
@@ -164,7 +164,7 @@ test("command actions preserve query/filter and offer native removal review befo
   expect(menu.popupmenu.menu.some((m: any) => (m.text || "").startsWith("Open Configuration"))).toBe(true);
   const review = invoke("remove-review", s.selected);
   expect(review.sheet.id).toBe("removeSheet");
-  expect(JSON.stringify(review)).toContain("Back  {var:back_shortcut}");
+  expect(JSON.stringify(review)).toContain("Back  {var:back_label}");
   const q = invoke("query", "new query");
   expect(q.update.ids.root).toBeUndefined();
   expect(read(s.id).query).toBe("new query");

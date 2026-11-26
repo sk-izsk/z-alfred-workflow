@@ -48,3 +48,5 @@ The folder icon comes from Alfred’s Dynamic File Search workflow, BSD-3-Clause
 ![Browse a folder](assets/screenshots/browse.png)
 
 ![Back restores the previous folder search](assets/screenshots/back.png)
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

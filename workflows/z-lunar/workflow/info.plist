@@ -79,7 +79,7 @@
 				<key>keyword</key>
 				<string>{var:kw_main}</string>
 				<key>subtext</key>
-				<string>Units, percentages, time, data storage and arithmetic</string>
+				<string>Native display controls for the installed Lunar app</string>
 				<key>text</key>
 				<string>Lunar Controls</string>
 				<key>withspace</key>

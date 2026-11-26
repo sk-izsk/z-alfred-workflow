@@ -23,13 +23,20 @@
     },
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     }
   },
   "window": {
     "title": "Weather",
     "size": {
-      "height": 800
+      "height": 800,
+      "width": 780
     },
     "minsize": {
       "width": 560,
@@ -56,6 +63,15 @@
         {
           "triggers": "launched",
           "action": [
+            {
+              "type": "script",
+              "src": "../bin/wthr",
+              "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
             {
               "type": "script",
               "src": "../bin/wthr",
@@ -165,7 +181,7 @@
         {
           "id": "initialBack",
           "type": "button",
-          "text": "Back  {var:back_shortcut}",
+          "text": "Back  {var:back_label}",
           "bordered": false,
           "events": [
             {

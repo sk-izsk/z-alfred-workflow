@@ -122,7 +122,7 @@ export const components = (s: State): Json[] => [
           {
             id: "back",
             type: "button",
-            text: "Back  {var:back_shortcut}",
+            text: "Back  {var:back_label}",
             bordered: false,
             shortcut: "{var:back_shortcut}",
             events: [{ triggers: "actioned", action: run("back", [], false) }],
@@ -137,7 +137,7 @@ export const components = (s: State): Json[] => [
           {
             id: "actionsButton",
             type: "button",
-            text: "Actions  {var:actions_shortcut}",
+            text: "Actions  {var:actions_label}",
             bordered: false,
             events: [{ triggers: "actioned", action: run("menu", ["{value:items.selected.uid}"]) }],
           },
@@ -151,7 +151,9 @@ export const swissWindow = {
   variablesconfig: {
     swiss_session: { default: "", scriptenv: true },
     swiss_query: { src: "args[0]", default: "", scriptenv: true },
-    back_shortcut: { src: "variable", default: "⌘[" },
+    back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
+    back_label: { default: "Hyper+B" },
+    actions_label: { default: "⌘K" },
     actions_shortcut: { src: "variable", default: "⌘K" },
   },
   window: {
@@ -172,13 +174,13 @@ export const swissWindow = {
         {
           id: "statusLabel",
           type: "label",
-          text: "Loading calculator…",
+          text: "Loading Swiss…",
           constraints: { region: "centre", position: "centre" },
         },
         {
           id: "initialBack",
           type: "button",
-          text: "Back  {var:back_shortcut}",
+          text: "Back  {var:back_label}",
           bordered: false,
           shortcut: "{var:back_shortcut}",
           constraints: { region: "bottom", position: "left", insets: { left: 16, bottom: 16 } },

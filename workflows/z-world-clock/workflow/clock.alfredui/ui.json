@@ -15,7 +15,13 @@
     },
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     },
     "actions_shortcut": {
       "src": "variable",
@@ -25,10 +31,11 @@
   "window": {
     "title": "World Clock",
     "size": {
-      "height": 650
+      "height": 650,
+      "width": 780
     },
     "minsize": {
-      "width": 900,
+      "width": 560,
       "height": 600
     },
     "root": {
@@ -114,7 +121,7 @@
             "src": {
               "window": {
                 "resize": {
-                  "width": 1000
+                  "width": 780
                 }
               }
             }
@@ -123,6 +130,15 @@
         {
           "triggers": "launched",
           "action": [
+            {
+              "type": "script",
+              "src": "../bin/wclock",
+              "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
             {
               "type": "script",
               "src": "../bin/wclock",
@@ -157,7 +173,7 @@
         {
           "id": "initialBack",
           "type": "button",
-          "text": "Back  {var:back_shortcut}",
+          "text": "Back  {var:back_label}",
           "bordered": false,
           "events": [
             {

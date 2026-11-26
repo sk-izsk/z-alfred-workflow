@@ -22,3 +22,5 @@ bun run link
 Tests cover search, selection, stable typing, action handoffs and menus. Read-only enumeration was checked against actual apps; raise and close were verified only on a newly created disposable TextEdit document. Quitting user applications was not tested.
 
 References: installed [Window Navigator](https://github.com/zeitlings/alfred-workflows) and [Window Switcher](https://github.com/alfredapp/window-switcher-workflow/). No reference source, artwork or binaries copied. Original implementation/icon MIT. Built with help from AI tools.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

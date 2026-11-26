@@ -24,7 +24,7 @@ export const infoPlist = {
       config: {
         keyword: "{var:kw_main}",
         text: "Emoji Picker",
-        subtext: "Units, percentages, time, data storage and arithmetic",
+        subtext: pkg.description,
         argumenttype: 1,
         withspace: true,
       },
