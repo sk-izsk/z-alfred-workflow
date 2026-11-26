@@ -46,6 +46,8 @@ jobs:
             artifact: Mole.alfredworkflow
           - workflow: z-emoji
             artifact: Emoji Picker.alfredworkflow
+          - workflow: z-lunar
+            artifact: Lunar Controls.alfredworkflow
           - workflow: z-world-clock
             artifact: World Clock.alfredworkflow
           - workflow: z-weather

@@ -118,5 +118,11 @@
     "bundle": "com.izsk.emoji",
     "name": "Emoji Picker",
     "description": "Offline emoji search, favorites, recents and skin-tone variants"
+  },
+  {
+    "slug": "z-lunar",
+    "bundle": "com.izsk.lunar",
+    "name": "Lunar Controls",
+    "description": "Display brightness, contrast, volume, inputs and Lunar presets"
   }
 ]

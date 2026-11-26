@@ -13,6 +13,16 @@ export type Tool = {
 };
 export const tools: Tool[] = [
   {
+    id: "lunar",
+    name: "Lunar Controls",
+    description: "Display brightness, contrast, volume, inputs and Lunar presets",
+    bundle: "com.izsk.lunar",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "lunarui",
+  },
+
+  {
     id: "emoji",
     name: "Emoji Picker",
     description: "Offline emoji search, favorites, recents and skin-tone variants",
