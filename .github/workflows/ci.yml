@@ -44,6 +44,8 @@ jobs:
             artifact: System Monitor.alfredworkflow
           - workflow: z-mole
             artifact: Mole.alfredworkflow
+          - workflow: z-gif-search
+            artifact: GIF Search.alfredworkflow
           - workflow: z-emoji
             artifact: Emoji Picker.alfredworkflow
           - workflow: z-lunar

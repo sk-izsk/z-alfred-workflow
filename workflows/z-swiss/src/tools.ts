@@ -13,6 +13,15 @@ export type Tool = {
 };
 export const tools: Tool[] = [
   {
+    id: "gif-search",
+    name: "GIF Search",
+    description: "GIF search, favorites and recents in list or grid views",
+    bundle: "com.izsk.gif-search",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "gifsearch",
+  },
+  {
     id: "window-navigator",
     name: "Window Navigator",
     description: "Find windows across desktops, active app or current desktop · wins shortcut",

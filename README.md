@@ -22,6 +22,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Tag Manager](workflows/z-tag-manager) | Find and manage Finder tags on files, folders and apps | Initial release pending |
 | [System Monitor](workflows/z-system-monitor) | Live CPU, memory, disks, power and network details | Initial release pending |
 | [Mole](workflows/z-mole) | Mole health, disk browsing and reviewed cleanup/optimization previews | Initial release pending |
+| [GIF Search](workflows/z-gif-search) | GIF search, favorites and recents; list/grid layouts | Initial release pending |
 | [Emoji Picker](workflows/z-emoji) | Offline emoji search, favorites, recents and skin-tone variants | Initial release pending |
 | [Lunar Controls](workflows/z-lunar) | Display brightness, contrast, volume, inputs and Lunar presets | Initial release pending |
 | [Window Navigator](workflows/z-window-navigator) | Search and focus windows on all desktops, the active app or the current desktop | Initial release pending |

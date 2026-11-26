@@ -130,5 +130,11 @@
     "bundle": "com.izsk.window-navigator",
     "name": "Window Navigator",
     "description": "Search and focus windows on all desktops, the active app or the current desktop"
+  },
+  {
+    "slug": "z-gif-search",
+    "bundle": "com.izsk.gif-search",
+    "name": "GIF Search",
+    "description": "GIF search, favorites and recents in list or grid views"
   }
 ]

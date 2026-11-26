@@ -35,7 +35,7 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 - [x] Window Navigator: global/active/current-desktop scopes, native search and app icons, focus/close/quit actions, revalidation and Swiss Back. Native list verified; disposable TextEdit raise/close verified.
 - [x] Consolidated Window Switcher into Window Navigator per user request. `wins` opens Current Desktop mode in the same workflow; the separate project/Swiss entry is removed. Stage Manager visibility matches app/title as well as full-size geometry, with a count-checked fallback for stale thumbnail titles; real enumeration improved from one to six windows.
 - [x] Emoji: selectable list/grid layout, preserving search/category/selection; four tests and check/package pass.
-- [ ] GIF Search: pinned provider verification, standalone workflow under Swiss, list/grid layout and contextual actions.
+- [x] GIF Search: pinned providers checked; standalone `gifsearch` under Swiss, remembered list/grid, side-by-side selectors, favorites/recents and contextual actions. Live GIPHY search/previews and compact native grid verified; direct key optional.
 
 ## Dev launcher phase (after Swiss)
 
