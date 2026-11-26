@@ -24,6 +24,8 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-dev-servers` | `z-dev-servers/vX.Y.Z` | `Dev Servers.alfredworkflow` |
 | `workflows/z-bluetooth` | `z-bluetooth/vX.Y.Z` | `Bluetooth.alfredworkflow` |
 | `workflows/z-wifi` | `z-wifi/vX.Y.Z` | `Wi-Fi.alfredworkflow` |
+| `workflows/z-dev-cache-cleaner` | `z-dev-cache-cleaner/vX.Y.Z` | `Dev Cache Cleaner.alfredworkflow` |
+| `workflows/z-dev-utils` | `z-dev-utils/vX.Y.Z` | `Dev Utils.alfredworkflow` |
 | `workflows/z-gif-search` | `z-gif-search/vX.Y.Z` | `GIF Search.alfredworkflow` |
 | `workflows/z-emoji` | `z-emoji/vX.Y.Z` | `Emoji Picker.alfredworkflow` |
 | `workflows/z-lunar` | `z-lunar/vX.Y.Z` | `Lunar Controls.alfredworkflow` |

@@ -43,8 +43,8 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 - [x] Dev Servers: independent keyword and Dev return protocol; checked/packaged, disposable server detection/stop verified. Implemented scope: project grouping, tool filter, open/copy URL, stop/restart, Terminal/Finder actions, project/all-server stopping. Verify process identity before stopping; never stop real servers merely for testing.
 - [x] Bluetooth: independent workflow installed; native metadata verified (12 paired), check/package passed; connection changes left untested on user devices. Implemented scope: connect/disconnect, device type/battery/details and actions; verify macOS API/permission support first.
 - [x] Wi-Fi: native report/status and saved networks, privacy-aware current row; checked/packaged and installed. No live connection/power changed. Implemented scope: analogous network controls/details; verify current macOS scanning/permission restrictions before implementation.
-- [ ] Dev Cache Cleaner: scan sizes, categories and risk filters; split details view, individual cleanup and safe-cache cleanup review. Never perform a cleanup just to verify the UI.
-- [ ] Dev Utils: pinned Raycast devutils plus installed Textformer reference; integrate supported text/developer transformations.
+- [x] Dev Cache Cleaner: checked/packaged; scope/identity tests and live read-only scan passed; no real cache removed. Implemented scope: scan sizes, categories and risk filters; split details view, individual cleanup and safe-cache cleanup review. Never perform a cleanup just to verify the UI.
+- [x] Dev Utils: local transformations, clipboard input, split editors, no text persistence and optional DevUtils app handoff; checked/packaged. Implemented scope: pinned Raycast devutils plus installed Textformer reference; integrate supported text/developer transformations.
 
 - [x] Canceled standalone Password Generator at user request; use the existing Bitwarden generator. Original scope: pinned Raycast reference plus existing Bitwarden generator; local cryptographic generation, length/character controls, copy/regenerate actions, no password cache persistence.
 
@@ -66,3 +66,8 @@ Camera is deferred. Last Changed Files is canceled. Menubar features are exclude
 - Dynamic File Search: https://github.com/alfredapp/dynamic-file-search-workflow/
 
 - GIF Search reference: `dccfc8877dd0e658295cb4b6d29b4a0a1b79baf8`.
+
+## Screenshot fidelity correction
+
+- [ ] Mole: match supplied status split dashboard, grouped cleanup/optimization summaries and full-width disk browser with size badges. Native comparison required.
+- [ ] Review supplied screenshots when verifying each affected workflow; do not substitute a generic layout. Rule recorded in UI_CONVENTIONS.md.

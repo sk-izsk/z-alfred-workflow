@@ -24,7 +24,7 @@ export const infoPlist = {
       config: {
         keyword: "{var:kw_main}",
         text: "Dev",
-        subtext: "Speed Test, processes, weather, Adhan, currency and calculations",
+        subtext: "Dev servers, Bluetooth, Wi-Fi, cache cleanup and developer utilities",
         argumenttype: 1,
         withspace: true,
       },
@@ -103,7 +103,7 @@ export const infoPlist = {
 
 Return opens a tool. Back from that tool returns to the same Dev query and selection, after its own child screens. Direct tool launches keep their original Back behavior. Dev Back (configurable Hyper+B) returns to Alfred search; Back is visible outside Actions.
 
-Command-K: Open Tool, Copy Default Shortcut, Refresh Installed Tools and Download Workflows. Install the matching tools separately; Speed Test 0.1.3+ is required for return navigation. No workflows are downloaded or installed automatically.
+Command-K: Open Tool, Copy Default Shortcut, Refresh Installed Tools and Download Workflows. Install the matching Dev tools separately. No workflows are downloaded or installed automatically.
 
 Requires Alfred 6 Powerpack, Node.js 22+ or Bun. Original Dev icon uses SF Symbols; tool icon notices are included. Built with help from AI tools.`,
 };

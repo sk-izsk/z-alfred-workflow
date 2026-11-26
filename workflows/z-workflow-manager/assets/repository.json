@@ -160,5 +160,17 @@
     "name": "Wi-Fi",
     "bundle": "com.izsk.wifi",
     "description": "Wi-Fi networks, status and native connection controls"
+  },
+  {
+    "slug": "z-dev-cache-cleaner",
+    "name": "Dev Cache Cleaner",
+    "bundle": "com.izsk.dev-cache-cleaner",
+    "description": "Inspect developer caches and review individual or safe bulk cleanup"
+  },
+  {
+    "slug": "z-dev-utils",
+    "name": "Dev Utils",
+    "bundle": "com.izsk.dev-utils",
+    "description": "Local developer and text transformations with clipboard input"
   }
 ]

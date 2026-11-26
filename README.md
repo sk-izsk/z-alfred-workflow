@@ -26,6 +26,8 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Dev Servers](workflows/z-dev-servers) | Inspect local servers and stop or restart by project | Initial release pending |
 | [Bluetooth](workflows/z-bluetooth) | Paired Bluetooth devices, connection controls and battery details | Initial release pending |
 | [Wi-Fi](workflows/z-wifi) | Wi-Fi networks, status and native connection controls | Initial release pending |
+| [Dev Cache Cleaner](workflows/z-dev-cache-cleaner) | Inspect developer caches and review individual or safe bulk cleanup | Initial release pending |
+| [Dev Utils](workflows/z-dev-utils) | Local developer and text transformations with clipboard input | Initial release pending |
 | [GIF Search](workflows/z-gif-search) | GIF search, favorites and recents; list/grid layouts | Initial release pending |
 | [Emoji Picker](workflows/z-emoji) | Offline emoji search, favorites, recents and skin-tone variants | Initial release pending |
 | [Lunar Controls](workflows/z-lunar) | Display brightness, contrast, volume, inputs and Lunar presets | Initial release pending |

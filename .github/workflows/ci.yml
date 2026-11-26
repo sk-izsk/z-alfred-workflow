@@ -52,6 +52,10 @@ jobs:
             artifact: Bluetooth.alfredworkflow
           - workflow: z-wifi
             artifact: Wi-Fi.alfredworkflow
+          - workflow: z-dev-cache-cleaner
+            artifact: Dev Cache Cleaner.alfredworkflow
+          - workflow: z-dev-utils
+            artifact: Dev Utils.alfredworkflow
           - workflow: z-gif-search
             artifact: GIF Search.alfredworkflow
           - workflow: z-emoji

@@ -13,3 +13,7 @@ Apply this convention to Folder Navigator and each new workflow now. After the r
 Window property reference: [Alfred UI window documentation](https://www.alfredapp.com/help/alfredui/window/). Alfred's embedded width otherwise follows the theme; use the documented window resize action to apply the shared width on launch.
 
 Generation uses `profileWindow(ui, cli)` and `profileInfo(infoPlist)`. CLI entry points call `await profileCommand(() => import("./env.ts"))` before dispatch. The launch profile updates only component IDs present in the initial view. Runtime views resolve `backBinding()` and `shortcutLabel()` from the same settings. Existing custom Back shortcuts remain active until the user explicitly configures Hyper. All 22 existing workflow projects have been migrated and checked.
+
+## Screenshot fidelity
+
+User-provided screenshots define the required layout and interactions for every workflow: preserve hierarchy, section grouping, summary rows, list versus split-detail arrangement, controls, density and Actions items. Do not replace a supplied design with a generic dashboard. Adapt only Alfred theme, documented platform constraints and the shared width/Back conventions. Check the actual native window against its reference before calling the UI complete; record any unverified differences.
