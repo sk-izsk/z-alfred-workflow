@@ -1,8 +1,9 @@
 import { execFileSync } from "node:child_process";
-import { profileAction } from "../../../shared/ui-profile.ts";
+import { profileAction, backBinding } from "../../../shared/ui-profile.ts";
 import { str, bool } from "./env.ts";
 import { create, read, save, type State } from "./state.ts";
 import { fetchState, run, setArgs, modes, presetName } from "./lunar.ts";
+import { sliderHTML, sliderChange, selectorChange } from "./sliders.ts";
 import { components } from "../ui/window.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { merge, vars, update, finish, popup, menuItem, sheet, errorStatus, type Action } from "./ui.ts";
@@ -14,28 +15,11 @@ const controls = (s: State): Action => {
     update(
       {
         displayTitle: { text: d?.name || "No displays" },
-        brightness: { text: d?.brightness === null ? "" : String(d?.brightness ?? "") },
-        contrast: { text: d?.contrast === null ? "" : String(d?.contrast ?? "") },
-        volume: { text: d?.volume === null ? "" : String(d?.volume ?? "") },
-        inputPicker: {
-          items: [
-            { text: "Video input…", value: "" },
-            ...(d?.inputs || []).map((name) => ({ text: name, value: name })),
-          ],
-          selected: "",
-        },
-        modePicker: { selected: s.adaptive },
-        presetPicker: {
-          items: [
-            { text: "Apply saved preset…", value: "" },
-            ...s.presets.map((name) => ({ text: name, value: name })),
-          ],
-          selected: "",
-        },
-        controlInfo: {
-          text: d
-            ? `${d.controlMethod} · ${d.hasDDC ? "DDC available" : "DDC unavailable"} · ${d.active ? "Active" : "Inactive"}`
-            : "Lunar must be running and reachable.",
+        sliders: {
+          text: sliderHTML(d, backBinding({ str, bool }).shortcut, str("actions_shortcut", "⌘K"), {
+            adaptive: s.adaptive,
+            presets: s.presets,
+          }),
         },
         statusLabel: { text: s.status },
       },
@@ -77,7 +61,7 @@ const refresh = async (s: State): Promise<Action> => {
   return render(latest);
 };
 const main = async (): Promise<Action | void> => {
-  const [cmd = "", id = "", ...args] = process.argv.slice(2),
+  let [cmd = "", id = "", ...args] = process.argv.slice(2),
     value = args[0] || "";
   if (cmd === "prepare-origin")
     return merge(vars(backVariables("lunarui_out", process.env.lunarui_query)), profileAction({ str, bool }));
@@ -107,6 +91,37 @@ const main = async (): Promise<Action | void> => {
     s.selected = value;
     save(s);
     return controls(s);
+  }
+  if (cmd === "slider-change") {
+    if (value === "about:blank#action=back") return finish({ lunarui_out: "back", swiss_return: s.returnTo });
+    if (value === "about:blank#action=menu") cmd = "menu";
+    else {
+      const selector = selectorChange(value);
+      if (selector) {
+        if (selector.display !== s.selected || !selectedDisplay(s)) return {};
+        if (selector.action === "input") {
+          if (!selectedDisplay(s)!.inputs.includes(selector.value))
+            throw new Error("Choose an available video input.");
+          await run(["set", "-d", s.selected, "-i", selector.value]);
+        } else if (selector.action === "adaptive") {
+          if (!modes.includes(selector.value)) throw new Error("Unsupported adaptive mode.");
+          if (selector.value === s.adaptive) return {};
+          await run(["adaptive", selector.value]);
+        } else {
+          if (!s.presets.includes(selector.value)) throw new Error("Choose an existing preset.");
+          await run(["preset", "apply", selector.value]);
+        }
+        return refresh(s);
+      }
+      const change = sliderChange(value);
+      if (!change) return {};
+      if (change.display !== s.selected || !selectedDisplay(s)) return {};
+      const d = selectedDisplay(s)!;
+      if (d[change.property as "brightness" | "contrast" | "volume"] === Number(change.value))
+        return update({ statusLabel: { text: `${change.property}: ${change.value}%` } }, true);
+      await run(setArgs(change.display, change.property, change.value));
+      return refresh(s);
+    }
   }
   if (cmd === "set") {
     if (args[2] !== s.selected || !selectedDisplay(s))

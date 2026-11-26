@@ -33,3 +33,36 @@ test("controls validate percentages and command arguments never enter a shell", 
     presetNames("Work: full-state preset [light]\n\tExample: nested detail\nMovie: preset [light]"),
   ).toEqual(["Work", "Movie"]);
 });
+
+import { sliderChange, sliderHTML, selectorChange } from "../src/sliders.ts";
+import { components } from "../ui/window.ts";
+test("slider bridge validates local events and includes keyboard-accessible ranges", () => {
+  expect(sliderChange("https://remote.example/#display=2&property=brightness&value=50")).toBeNull();
+  expect(sliderChange("about:blank#display=2&property=brightness&value=101")).toBeNull();
+  expect(sliderChange("about:blank#display=2&property=brightness&value=50")).toEqual({
+    display: "2",
+    property: "brightness",
+    value: "50",
+  });
+  expect(sliderHTML()).toContain('type="range"');
+  expect(sliderHTML()).toContain('aria-label="Brightness"');
+});
+test("clicking a display selects its controls instead of opening the Lunar app", () => {
+  const values = components();
+  const list = values[1]!.components[0];
+  expect(list.events.find((e: any) => e.triggers === "actioned").action.args[0]).toBe("select");
+});
+
+test("styled selectors route only local, supported actions and escape names", () => {
+  expect(selectorChange("about:blank#action=adaptive&display=2&value=synced")).toEqual({
+    action: "adaptive",
+    display: "2",
+    value: "synced",
+  });
+  expect(selectorChange("https://example.org/#action=adaptive&display=2&value=synced")).toBeNull();
+  expect(selectorChange("about:blank#action=execute&display=2&value=anything")).toBeNull();
+  const html = sliderHTML(undefined, "⌘[", "⌘K", { adaptive: "off", presets: ["<script>unsafe</script>"] });
+  expect(html).toContain("&lt;script&gt;unsafe&lt;/script&gt;");
+  expect(html).not.toContain("<script>unsafe");
+  expect(html).toContain("border-radius:13px");
+});

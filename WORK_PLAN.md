@@ -31,7 +31,7 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 - [x] System Monitor: native live overview/CPU/memory/disks/power/network dashboard, per-core and per-process rates, shared UI profile, checked/packaged and native overview verified. Sensors without a supported provider are explicitly unavailable.
 - [x] Mole: actual installed CLI status, disk analysis, cleanup/optimization dry-run previews, explicit review and Terminal execution for real changes. Native status verified; no cleanup was performed.
 - [x] Emoji Picker: bundled Unicode 17 data (3,944 sequences), native search/categories, favorites/recents, variants, copy/paste actions; tests and native search verified.
-- [x] Lunar Controls: installed Lunar-fred/CLI verified; native brightness/contrast/volume fields and steps, percentage shortcuts, inputs, global adaptive modes, saved presets and reviewed power actions. Read-only native UI verified; physical settings were not changed for testing.
+- [x] Lunar Controls: installed Lunar-fred/CLI verified; brightness/contrast/volume sliders with live labels, percentage shortcuts, modern input/adaptive/preset selectors, global adaptive modes, saved presets and reviewed power actions. Display-row clicks select controls instead of opening Lunar. Read-only native UI verified; physical settings were not changed for testing.
 - [ ] Window Navigator: inspect installed workflow and integrate.
 - [ ] Window Switcher: inspect installed workflow and integrate separately.
 ## Dev launcher phase (after Swiss)
