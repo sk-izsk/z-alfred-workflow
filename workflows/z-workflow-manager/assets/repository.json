@@ -148,5 +148,11 @@
     "name": "Dev Servers",
     "bundle": "com.izsk.dev-servers",
     "description": "Inspect local servers and stop or restart by project"
+  },
+  {
+    "slug": "z-bluetooth",
+    "name": "Bluetooth",
+    "bundle": "com.izsk.bluetooth",
+    "description": "Paired Bluetooth devices, connection controls and battery details"
   }
 ]
