@@ -9,9 +9,9 @@ import { modeAt, type Place } from "./model.ts";
 import { pruneCache, readCache } from "./net.ts";
 import type { Ctx } from "./open.ts";
 import { clean, expandAlias, looksLikeAddress, MAX_STOPS, parseQuery } from "./parse.ts";
-import { type Entry, ensureRoutes, resolvePlace, routeKey } from "./routes.ts";
+import { coordinates, type Entry, ensureRoutes, resolvePlace, routeKey, suggestPlaces } from "./routes.ts";
 import {
-  hereKeyMissing,
+  keyMissing,
   loadSettings,
   type OpenIn,
   regionName,
@@ -20,7 +20,7 @@ import {
   writeFavourites,
 } from "./settings.ts";
 import { type Action, merge, popup, separator, sheet, update } from "./ui.ts";
-import { hint, inputsKey, loadState, render, saveState, type State } from "./view.ts";
+import { hint, inputsKey, loadState, render, saveState, type State, type Suggestion } from "./view.ts";
 
 const [command = "", ...args] = process.argv.slice(2);
 const settings: Settings = loadSettings();
@@ -34,6 +34,7 @@ const readFields = (s: State) => {
   s.via = s.via.map((_, i) => clean(args[2 + i]));
 };
 const extra = () => clean(args[5]);
+const FIELD_IDS = ["von", "nach", "via0", "via1", "via2"];
 
 const stopFields = (s: State): Action =>
   merge(
@@ -57,18 +58,14 @@ const quickRow = (): Json[] => {
   if (!settings.showQuick) return [];
   const { home, work, favourites } = settings.saved;
   const fixed = [
-    ...(home
-      ? [quickButton("quickHome", t(lang, "home"), "house.fill", act("dest", [t(lang, "home")]))]
-      : []),
-    ...(work
-      ? [quickButton("quickWork", t(lang, "work"), "briefcase.fill", act("dest", [t(lang, "work")]))]
-      : []),
+    ...(home ? [quickButton("quickHome", `⌂ ${t(lang, "home")}`, act("dest", [t(lang, "home")]))] : []),
+    ...(work ? [quickButton("quickWork", t(lang, "work"), act("dest", [t(lang, "work")]))] : []),
   ];
   return [
     ...fixed,
     ...favourites
       .slice(0, 4 - fixed.length)
-      .map((f, i) => quickButton(`quickFav${i}`, f.label, "star.fill", act("dest", [f.label]))),
+      .map((f, i) => quickButton(`quickFav${i}`, `★ ${f.label}`, act("dest", [f.label]))),
   ];
 };
 // `replace` runs after `update` in Alfred's fixed order, so the new sidebar starts blank;
@@ -106,7 +103,7 @@ const chosenProvider = (): OpenIn => {
 
 /** Place search is biased to the configured region, or the city of the Mac's time zone. */
 const context = async (): Promise<Ctx> => {
-  const base: Ctx = { ua: settings.ua, lang, hereKey: settings.hereKey };
+  const base: Ctx = { ua: settings.ua, lang, hereKey: settings.hereKey, googleKey: settings.googleKey };
   const region = regionName(settings.startRegion);
   if (!region) return base;
   try {
@@ -163,6 +160,8 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
       alt: 0,
       places: undefined,
       placesFor: undefined,
+      suggest: undefined,
+      pins: undefined,
     });
     bump(s, Boolean(query.to));
     const size = settings.fonts.fields;
@@ -170,8 +169,8 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
       update({
         von: { text: s.from, placeholder: t(lang, "from"), font: { size } },
         nach: { text: s.to, placeholder: t(lang, "to"), font: { size } },
-        statusLabel: hereKeyMissing()
-          ? { text: t(lang, "hereKey"), colour: "systemOrangeColor" }
+        statusLabel: keyMissing()
+          ? { text: t(lang, "keyMissing", { provider: keyMissing() ?? "" }), colour: "systemOrangeColor" }
           : { text: s.to ? t(lang, "routing") : hint(settings), colour: MUTED },
       }),
       stopFields(s),
@@ -183,6 +182,9 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
   enter: (s) => {
     const before = inputsKey(s);
     readFields(s);
+    if (extra().startsWith("sg") && s.suggest) return choose(s, extra());
+    const hadSuggestions = Boolean(s.suggest);
+    s.suggest = undefined;
     if (!s.to && !s.from) return status(t(lang, "needsTo"), "systemOrangeColor");
     if (!s.to) [s.to, s.from] = [s.from, ""];
     if (inputsKey(s) === before && s.placesFor === before && !s.error) {
@@ -191,7 +193,76 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
     }
     s.alt = 0;
     bump(s);
-    return merge(update({ von: { text: s.from }, nach: { text: s.to } }), routing());
+    return merge(
+      update({ von: { text: s.from }, nach: { text: s.to } }),
+      hadSuggestions ? update({ steps: { data: { src: [] } } }) : {},
+      routing(),
+    );
+  },
+
+  /** Async after a typing pause: saved places that match, then the provider's places. */
+  suggest: async (s) => {
+    const field = extra();
+    const index = FIELD_IDS.indexOf(field);
+    const text = clean(args[index]);
+    const started = Date.now();
+    const token = s.token;
+    s.suggestStarted = started;
+    saveState(s);
+    const items: Suggestion[] = [];
+    if (index >= 0 && text.length >= 2 && !coordinates(text)) {
+      const needle = text.toLowerCase();
+      const { home, work, favourites } = settings.saved;
+      const saved = [
+        ...(home ? [{ label: t(lang, "home"), address: home }] : []),
+        ...(work ? [{ label: t(lang, "work"), address: work }] : []),
+        ...favourites,
+      ];
+      for (const f of saved)
+        if (`${f.label} ${f.address}`.toLowerCase().includes(needle))
+          items.push({ label: f.label, detail: f.address, saved: true });
+      try {
+        // Like routing: other fields search near the start once it's known.
+        const ctx = await context();
+        const start = field === "von" ? undefined : (s.pins?.[s.from] ?? s.places?.[0]);
+        const near = start ? { ...ctx, bias: { lat: start.lat, lon: start.lon } } : ctx;
+        const places = await suggestPlaces(text, settings.provider, near);
+        for (const place of places) items.push({ label: place.label, detail: place.detail, place });
+      } catch {
+        // Offline or rejected key: saved places still show; routing will report the error.
+      }
+    }
+    // Typing went on (a newer pause runs its own search) or ↩ already routed: drop this answer.
+    const now = loadState(settings.defaultMode);
+    if (index < 0 || now.suggestStarted !== started || now.token !== token) return {};
+    if (!items.length) {
+      if (!now.suggest) return {};
+      now.suggest = undefined;
+      saveState(now);
+      return render(now, settings, cachedEntry(now), false);
+    }
+    now.suggest = { field, items: items.slice(0, 8) };
+    saveState(now);
+    return update({
+      steps: {
+        data: {
+          src: now.suggest.items.map((item, i) => ({
+            uid: `sg${i}`,
+            "stime.text": item.saved ? "★" : "",
+            "stime.colour": "systemYellowColor",
+            "stext.text": item.detail ? `${item.label}  ·  ${item.detail}` : item.label,
+          })),
+        },
+        select: "",
+      },
+      statusLabel: { text: t(lang, "suggestHint"), colour: MUTED },
+    });
+  },
+
+  /** A click on a suggestion. */
+  choose: (s) => {
+    readFields(s);
+    return choose(s, extra());
   },
 
   mode: (s) => {
@@ -199,7 +270,7 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
     s.mode = modeAt(Number(extra()));
     s.alt = 0;
     const entry = cachedEntry(s);
-    const complete = entry && (settings.provider === "here" || entry.full.includes(s.mode));
+    const complete = entry && (settings.provider !== "open" || entry.full.includes(s.mode));
     bump(s, !complete);
     return entry ? render(s, settings, entry) : routing();
   },
@@ -217,14 +288,14 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
     );
   },
 
-  /** Quick buttons: Home, Work and saved places become the destination. */
+  /** Quick buttons fill From while it's empty, otherwise To; with both filled, route. */
   dest: (s) => {
     readFields(s);
-    s.to = extra();
-    if (!s.from && settings.saved.home && s.to !== t(lang, "home")) s.from = t(lang, "home");
+    if (!s.from) s.from = extra();
+    else s.to = extra();
     s.alt = 0;
-    bump(s);
-    return merge(update({ von: { text: s.from }, nach: { text: s.to } }), routing());
+    bump(s, Boolean(s.from && s.to));
+    return merge(update({ von: { text: s.from }, nach: { text: s.to } }), s.to ? routing() : {});
   },
 
   "add-stop": (s) => {
@@ -396,8 +467,8 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
       let places = s.placesFor === key ? s.places : undefined;
       if (!places) {
         // The start is biased to the region; the other places to the start, as in "Hauptbahnhof".
-        const resolve = (text: string, bias: Ctx) =>
-          resolvePlace(expandAlias(text, settings.saved), settings.provider, bias);
+        const resolve = async (text: string, bias: Ctx) =>
+          s.pins?.[text] ?? resolvePlace(expandAlias(text, settings.saved), settings.provider, bias);
         const [first, ...others] = texts;
         const start = first === undefined ? undefined : await resolve(first, ctx);
         const near = start ? { ...ctx, bias: { lat: start.lat, lon: start.lon } } : ctx;
@@ -410,7 +481,7 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
         places.length > 1 ? await ensureRoutes(settings.provider, places, s.mode, ctx) : undefined;
       const now = latest();
       if (!now) return {};
-      Object.assign(now, { places, placesFor: key, error: undefined, needsRoute: false });
+      Object.assign(now, { places, placesFor: key, error: undefined, needsRoute: false, suggest: undefined });
       const action = render(now, settings, entry);
       saveState(now);
       return action;
@@ -439,6 +510,26 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
   },
 };
 
+/** Puts a suggestion into its field, pins its exact place, and routes once From and To are set. */
+function choose(s: State, uid: string): Action {
+  const item = s.suggest?.items[Number(uid.slice(2))];
+  const field = s.suggest?.field ?? "";
+  s.suggest = undefined;
+  if (!item) return {};
+  if (item.place)
+    s.pins = { ...Object.fromEntries(Object.entries(s.pins ?? {}).slice(-19)), [item.label]: item.place };
+  if (field === "von") s.from = item.label;
+  else if (field === "nach") s.to = item.label;
+  else s.via[Number(field.slice(3))] = item.label;
+  const ready = Boolean(s.to);
+  s.alt = 0;
+  bump(s, ready);
+  return merge(
+    update({ [field]: { text: item.label }, steps: { data: { src: [] }, select: "" } }),
+    ready ? routing() : status(hint(settings)),
+  );
+}
+
 function removeStop(s: State): Action {
   const removed = s.via.pop();
   if (removed) bump(s);
@@ -454,7 +545,7 @@ const main = async (): Promise<void> => {
   if (!handler) throw new Error(`Unknown command: ${command}`);
   const s = loadState(settings.defaultMode);
   const action = await handler(s);
-  if (!["route", "post", "ui-profile"].includes(command)) saveState(s);
+  if (!["route", "suggest", "post", "ui-profile"].includes(command)) saveState(s);
   await emit(action);
 };
 

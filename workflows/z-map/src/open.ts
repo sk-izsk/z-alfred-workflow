@@ -6,7 +6,13 @@ import type { Leg, Mode, Option, Place, Stop } from "./model.ts";
 import { getJson, sleep } from "./net.ts";
 import { decodePolyline } from "./polyline.ts";
 
-export type Ctx = { ua: string; lang: Lang; bias?: { lat: number; lon: number }; hereKey?: string };
+export type Ctx = {
+  ua: string;
+  lang: Lang;
+  bias?: { lat: number; lon: number };
+  hereKey?: string;
+  googleKey?: string;
+};
 const TRANSITOUS = "https://api.transitous.org/api";
 
 type GeoHit = {
@@ -18,7 +24,14 @@ type GeoHit = {
 };
 type PhotonHit = {
   geometry: { coordinates: [number, number] };
-  properties: { name?: string; street?: string; housenumber?: string; city?: string };
+  properties: {
+    name?: string;
+    street?: string;
+    housenumber?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+  };
 };
 
 /** Street addresses get their city; stops and places keep their own name (no "München, Munich"). */
@@ -27,29 +40,46 @@ const label = (hit: GeoHit): string => {
   return hit.type === "ADDRESS" && area ? `${hit.name}, ${area}` : hit.name;
 };
 
-export const geocode = async (query: string, ctx: Ctx): Promise<Place | undefined> => {
-  const params = new URLSearchParams({ text: query, language: ctx.lang, numResults: "1" });
+const areas = (hit: GeoHit) =>
+  [...new Set((hit.areas ?? []).filter((a) => a.default || a.name !== hit.name).map((a) => a.name))]
+    .filter((name) => !label(hit).includes(name))
+    .slice(-3)
+    .toReversed()
+    .join(", ");
+
+/** Best matches first; Transitous, then Photon when Transitous fails or finds nothing. */
+export const search = async (query: string, ctx: Ctx, limit = 1): Promise<Place[]> => {
+  const params = new URLSearchParams({ text: query, language: ctx.lang, numResults: String(limit) });
   if (ctx.bias) params.set("place", `${ctx.bias.lat},${ctx.bias.lon}`);
   try {
     const hits = await getJson<GeoHit[]>(`${TRANSITOUS}/v1/geocode?${params}`, ctx.ua);
-    const hit = hits[0];
-    if (hit) return { query, label: label(hit), lat: hit.lat, lon: hit.lon };
+    if (hits.length)
+      return hits
+        .slice(0, limit)
+        .map((hit) => ({ query, label: label(hit), detail: areas(hit), lat: hit.lat, lon: hit.lon }));
   } catch {
     // fall through to Photon
   }
-  const photon = new URLSearchParams({ q: query, lang: ctx.lang, limit: "1" });
+  const photon = new URLSearchParams({ q: query, lang: ctx.lang, limit: String(limit) });
   if (ctx.bias) {
     photon.set("lat", String(ctx.bias.lat));
     photon.set("lon", String(ctx.bias.lon));
   }
   const result = await getJson<{ features: PhotonHit[] }>(`https://photon.komoot.io/api/?${photon}`, ctx.ua);
-  const hit = result.features[0];
-  if (!hit) return undefined;
-  const p = hit.properties;
-  const name = p.name ?? [p.street, p.housenumber].filter(Boolean).join(" ");
-  const [lon, lat] = hit.geometry.coordinates;
-  return { query, label: [name, p.city].filter(Boolean).join(", ") || query, lat, lon };
+  return result.features.slice(0, limit).map((hit) => {
+    const p = hit.properties;
+    const name = p.name ?? [p.street, p.housenumber].filter(Boolean).join(" ");
+    const [lon, lat] = hit.geometry.coordinates;
+    return {
+      query,
+      label: [name, p.city].filter(Boolean).join(", ") || query,
+      detail: [p.state, p.country].filter(Boolean).join(", "),
+      lat,
+      lon,
+    };
+  });
 };
+export const geocode = async (query: string, ctx: Ctx) => (await search(query, ctx))[0];
 
 type TStop = {
   name: string;

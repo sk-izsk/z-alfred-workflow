@@ -35,7 +35,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [World Clock](workflows/z-world-clock) | Offline timezones, starred locations and native analog grid | Initial release pending |
 | [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | Initial release pending |
 | [Weather](workflows/z-weather) | Saved cities, colorful conditions and detailed weather forecasts | Initial release pending |
-| [Maps](workflows/z-map) | Routes and places on a live map: car, transit, bike, walk, stops, open data or HERE | Initial release pending |
+| [Maps](workflows/z-map) | Routes and places on a live map: car, transit, bike, walk, stops, suggestions; open data, Google or HERE | Initial release pending |
 
 Download a `.alfredworkflow` asset and double-click it to install. These workflows require macOS,
 Alfred 6 with the Powerpack and Node.js; see each workflow's README for its other requirements.

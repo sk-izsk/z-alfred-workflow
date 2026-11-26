@@ -10,14 +10,34 @@ export const setFetcher = (next: Fetcher): void => {
   fetcher = next;
 };
 
-export const getJson = async <T>(url: string, userAgent: string): Promise<T> => {
-  const response = await fetcher(url, {
-    headers: { "User-Agent": userAgent, Accept: "application/json" },
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!response.ok) throw new Error(`HTTP ${response.status} from ${new URL(url).host}`);
+const send = async <T>(url: string, init: RequestInit): Promise<T> => {
+  const response = await fetcher(url, { ...init, signal: AbortSignal.timeout(15_000) });
+  if (!response.ok) {
+    // Google explains rejected keys in the body; show that instead of a bare status.
+    const detail = await response
+      .json()
+      .then((body: { error?: { message?: string } }) => body.error?.message)
+      .catch(() => undefined);
+    throw new Error(`HTTP ${response.status} from ${new URL(url).host}${detail ? `: ${detail}` : ""}`);
+  }
   return (await response.json()) as T;
 };
+
+export const getJson = <T>(url: string, userAgent: string): Promise<T> =>
+  send<T>(url, { headers: { "User-Agent": userAgent, Accept: "application/json" } });
+
+/** POST with a JSON body; secrets go in headers, never in the URL. */
+export const postJson = <T>(
+  url: string,
+  body: unknown,
+  userAgent: string,
+  headers: Record<string, string>,
+): Promise<T> =>
+  send<T>(url, {
+    method: "POST",
+    headers: { "User-Agent": userAgent, "Content-Type": "application/json", ...headers },
+    body: JSON.stringify(body),
+  });
 
 export const MINUTE = 60_000;
 export const TTL = { route: 10 * MINUTE, error: MINUTE, place: 7 * 24 * 60 * MINUTE };

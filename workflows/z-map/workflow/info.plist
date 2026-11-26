@@ -138,11 +138,13 @@
 	<key>readme</key>
 	<string>Type maps and a place (maps Eiffel Tower) or a route: A &gt; B, A &gt; B &gt; C, from A via B to C, or von A über B nach C. With nothing typed, a copied address becomes the destination. home and work use the addresses from Workflow Configuration; saved places work by their label.
 
+While you type, suggestions appear under the modes (saved places first): Down/Up and Return, or a click, pick one. The Home, Work and saved-place buttons fill From while it is empty, otherwise To. Any field also takes coordinates like 45.4995, -73.5665.
+
 Keys: Return routes; Return again or Command-O opens the route in Google Maps (or the app chosen in Configuration). Command-1 to Command-4 switch car, transit, bike and walk. Command-T swaps From and To. Command-U adds a stop (up to three); Shift-Command-U removes the last one. Command-K opens Actions: other map apps, copy link, save the destination as a place, clear. Back (Hyper+B by default) returns to Alfred’s search.
 
 The map shows the route, stops and alternatives in light blue with their travel times; click one to choose it. Transit shows lines, platforms, transfers and delays.
 
-Data: open data by default, no key: Transitous (transit, places), FOSSGIS OSRM (car, bike and walk alternatives, one request per second), Photon (place fallback) and OpenFreeMap with MapLibre GL. Optional HERE with your own API key. Places and routes are sent to these services. Results are cached (routes 10 minutes, places 7 days).
+Data: open data by default, no key: Transitous (transit, places), FOSSGIS OSRM (car, bike and walk alternatives, one request per second), Photon (place fallback) and OpenFreeMap with MapLibre GL. Optional Google (Places, Routes with live traffic, Google map) or HERE with your own API key. Places and routes are sent to these services. Results are cached (routes 10 minutes, places 7 days).
 
 Requires Alfred 6 Powerpack, macOS, Node.js 22+ or Bun, and an internet connection. This workflow was built with the help of AI tools. Review it before use and report issues on the project page.</string>
 	<key>uidata</key>
@@ -205,23 +207,80 @@ Requires Alfred 6 Powerpack, macOS, Node.js 22+ or Bun, and an internet connecti
 				<key>pairs</key>
 				<array>
 					<array>
-						<string>Open data (Transitous, OSRM, OpenFreeMap), no key</string>
+						<string>Open data (Transitous, OSRM), no key</string>
 						<string>open</string>
 					</array>
 					<array>
-						<string>HERE (needs the API key below)</string>
+						<string>Google (needs the Google key below)</string>
+						<string>google</string>
+					</array>
+					<array>
+						<string>HERE (needs the HERE key below)</string>
 						<string>here</string>
 					</array>
 				</array>
 			</dict>
 			<key>description</key>
-			<string>HERE adds traffic-aware car times and HERE map tiles. Without a key, open data is used.</string>
+			<string>Google and HERE give car times with live traffic. Without the key, open data is used.</string>
 			<key>label</key>
-			<string>Routes and map</string>
+			<string>Routes and places</string>
 			<key>type</key>
 			<string>popupbutton</string>
 			<key>variable</key>
 			<string>provider</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>auto</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Automatic (matches Routes and places)</string>
+						<string>auto</string>
+					</array>
+					<array>
+						<string>OpenFreeMap, no key</string>
+						<string>openfreemap</string>
+					</array>
+					<array>
+						<string>Google Maps (needs the Google key)</string>
+						<string>google</string>
+					</array>
+					<array>
+						<string>HERE (needs the HERE key)</string>
+						<string>here</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>The map behind the routes. Each redraw of a Google map counts as one Google map load.</string>
+			<key>label</key>
+			<string>Map</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>map_view</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string>optional</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>From console.cloud.google.com with billing on. Enable Maps JavaScript API, Routes API and Places API (New); restrict the key to those APIs (not to websites: the map is a local page). Never exported.</string>
+			<key>label</key>
+			<string>Google API key</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>google_api_key</string>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -786,6 +845,7 @@ Requires Alfred 6 Powerpack, macOS, Node.js 22+ or Bun, and an internet connecti
 	</array>
 	<key>variablesdontexport</key>
 	<array>
+		<string>google_api_key</string>
 		<string>here_api_key</string>
 		<string>home_address</string>
 		<string>work_address</string>

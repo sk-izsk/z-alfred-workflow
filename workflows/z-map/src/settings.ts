@@ -9,9 +9,13 @@ import type { Provider } from "./routes.ts";
 
 export type OpenIn = "google" | "apple" | "osm" | "here";
 export type Style = "auto" | "dark" | "light";
+export type Tiles = "openfreemap" | "here" | "google";
 export type Settings = {
   provider: Provider;
+  /** Which map draws the routes; independent of where the routes come from. */
+  tiles: Tiles;
   hereKey: string;
+  googleKey: string;
   loc: Locale;
   lang: Lang;
   defaultMode: Mode;
@@ -80,6 +84,13 @@ export const loadSettings = (): Settings => {
   const sys = systemLocale();
   const lang = pickLang(str("language", "auto"), sys.locale);
   const hereKey = str("here_api_key");
+  const googleKey = str("google_api_key");
+  const keys: Record<Provider, string> = { open: "-", here: hereKey, google: googleKey };
+  const wanted = oneOf("provider", ["open", "here", "google"] as const, "open");
+  const provider: Provider = keys[wanted] ? wanted : "open";
+  const view = oneOf("map_view", ["auto", "openfreemap", "here", "google"] as const, "auto");
+  const chosenTiles: Tiles = view === "auto" ? (provider === "open" ? "openfreemap" : provider) : view;
+  const tiles: Tiles = chosenTiles === "openfreemap" || keys[chosenTiles] ? chosenTiles : "openfreemap";
   const contact = str("contact");
   const fromConfig = parseFavourites(str("saved_places"));
   const fromData = savedFavourites().filter(
@@ -87,8 +98,10 @@ export const loadSettings = (): Settings => {
   );
   const mode = str("default_mode", "transit");
   return {
-    provider: str("provider") === "here" && hereKey ? "here" : "open",
+    provider,
+    tiles,
     hereKey,
+    googleKey,
     loc: { ...sys, lang },
     lang,
     defaultMode: isMode(mode) ? mode : "transit",
@@ -116,7 +129,13 @@ export const loadSettings = (): Settings => {
 };
 
 /** HERE was chosen but no key was entered. */
-export const hereKeyMissing = (): boolean => str("provider") === "here" && !str("here_api_key");
+/** The provider or map that was chosen but has no key, so open data is used instead. */
+export const keyMissing = (): string | undefined => {
+  const need = (choice: string) =>
+    (choice === "here" && !str("here_api_key")) || (choice === "google" && !str("google_api_key"));
+  const choice = [str("provider", "open"), str("map_view", "auto")].find(need);
+  return choice === "here" ? "HERE" : choice === "google" ? "Google" : undefined;
+};
 
 /** `Europe/Berlin` → `Berlin`: the region place search is biased to when none is configured. */
 export const regionName = (setting: string): string =>

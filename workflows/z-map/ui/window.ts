@@ -20,6 +20,7 @@ export const FIELDS = [
   "{value:via1.text}",
   "{value:via2.text}",
 ];
+const SELECTED = "{value:steps.selected.uid}";
 export const run = (command: string, extra: string[] = []): Json => ({
   type: "script",
   src: CLI,
@@ -57,7 +58,11 @@ export const field = (id: string, placeholder: string, size: number, extra: Json
   textinsets: { horizontal: 10, vertical: 8 },
   font: { size },
   constraints: { size: { width: 277 } },
-  events: [on("actioned", act("enter"))],
+  events: [
+    // ↩ takes the highlighted suggestion if there is one, otherwise routes.
+    on("actioned", act("enter", [SELECTED])),
+    on("typingstopped", { type: "script", src: CLI, args: ["suggest", ...FIELDS, id], async: true }),
+  ],
   ...extra,
 });
 const divider = (id: string): Json => ({
@@ -178,11 +183,11 @@ export const rest = (quick: Json[], fonts: { duration: number; info: number }): 
   };
 };
 
-export const quickButton = (id: string, text: string, symbol: string, action: Json[]): Json => ({
+/** Text only: an SF Symbol next to the text overlapped it in a capsule button. */
+export const quickButton = (id: string, text: string, action: Json[]): Json => ({
   id,
   type: "button",
   text,
-  image: { type: "symbol", src: symbol, size: { width: 13, height: 13 } },
   bordershape: "capsule",
   font: { size: 12.5 },
   events: [on("actioned", action)],
@@ -199,17 +204,24 @@ const steps: Json = {
   cell: {
     height: 21,
     init: {
+      "stepRow.background": null,
       "bar.background": null,
       "dots.text": "",
       "stime.colour": "labelColor",
       "stext.colour": "labelColor",
     },
-    selected: {},
+    // Only suggestions get selected (↓/↑ or a click); itinerary rows are never selected.
+    selected: {
+      "stepRow.background": "alfredSelectedResultBackgroundColor",
+      "stext.colour": "alfredSelectedResultTextColor",
+    },
     root: {
       id: "stepRow",
       type: "view",
       layout: "border",
       spacing: 8,
+      cornerradius: 5,
+      events: [on("clicked", act("choose", ["{data:uid}"]))],
       components: [
         {
           id: "stepLead",
@@ -309,6 +321,8 @@ export const mapWindow = {
         { shortcut: "⌘O", action: run("open") },
         { shortcut: "⌘T", action: act("swap") },
         { shortcut: "⌘U", action: run("add-stop") },
+        { shortcut: "↓", action: { type: "function", src: "steps", args: "selectnext" } },
+        { shortcut: "↑", action: { type: "function", src: "steps", args: "selectprevious" } },
       ],
       components: [
         {

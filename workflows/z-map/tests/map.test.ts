@@ -280,7 +280,7 @@ describe("window", () => {
 
   test("map page escapes its data", () => {
     const html = mapPage({
-      provider: "open",
+      tiles: "openfreemap",
       style: "auto",
       lang: "en",
       scale: 1,
@@ -292,5 +292,142 @@ describe("window", () => {
     });
     expect(html).not.toContain("</script><b>");
     expect(html).toContain("maplibre-gl@5");
+  });
+});
+
+describe("Google", () => {
+  test("transit route: merged walks, rides with times, departure before the first walk", async () => {
+    const { transitOption } = await import("../src/google.ts");
+    const at = (latitude: number, longitude: number) => ({ latLng: { latitude, longitude } });
+    const walk = (seconds: number, metres: number) => ({
+      travelMode: "WALK",
+      staticDuration: `${seconds}s`,
+      distanceMeters: metres,
+      polyline: { encodedPolyline: "_p~iF~ps|U" },
+      startLocation: at(1, 1),
+      endLocation: at(2, 2),
+    });
+    const option = transitOption(
+      {
+        duration: "1500s",
+        distanceMeters: 9000,
+        legs: [
+          {
+            steps: [
+              walk(60, 50),
+              walk(120, 100),
+              {
+                travelMode: "TRANSIT",
+                staticDuration: "900s",
+                startLocation: at(2, 2),
+                endLocation: at(3, 3),
+                transitDetails: {
+                  stopDetails: {
+                    departureStop: { name: "North" },
+                    arrivalStop: { name: "South" },
+                    departureTime: "2026-01-01T10:03:00Z",
+                    arrivalTime: "2026-01-01T10:18:00Z",
+                  },
+                  headsign: "Terminus",
+                  stopCount: 4,
+                  transitLine: {
+                    nameShort: "U2",
+                    color: "#da421e",
+                    textColor: "#ffffff",
+                    vehicle: { type: "SUBWAY" },
+                  },
+                },
+              },
+              walk(300, 200),
+            ],
+          },
+        ],
+      },
+      [place("Old Town", 1, 1), place("Harbour", 3, 3)],
+    );
+    expect(option.legs.map((l) => `${l.mode}:${l.duration}`)).toEqual(["WALK:180", "SUBWAY:900", "WALK:300"]);
+    expect(option.legs[0]?.distance).toBe(150);
+    expect(option.legs[1]).toMatchObject({ line: "U2", color: "#da421e", stops: 4, headsign: "Terminus" });
+    expect(option.dep).toBe(Date.parse("2026-01-01T10:00:00Z"));
+    expect(option.duration).toBe(1500);
+    expect(option.transfers).toBe(0);
+  });
+
+  test("Routes API request: key in a header, traffic for car, stops as intermediates", async () => {
+    const google = await import("../src/google.ts");
+    let url = "";
+    let init: RequestInit = {};
+    setFetcher(async (u, i) => {
+      url = u;
+      init = i;
+      return new Response(JSON.stringify({ routes: [{ duration: "600s", distanceMeters: 5000 }] }));
+    });
+    const ctx = { ua: "test", lang: "en" as const, googleKey: "test-key" };
+    const [car] = await google.route("car", [place("A", 1, 1), place("B", 2, 2), place("C", 3, 3)], ctx);
+    const body = JSON.parse(String(init.body));
+    expect(url).not.toContain("test-key");
+    expect((init.headers as Record<string, string>)["X-Goog-Api-Key"]).toBe("test-key");
+    expect(body).toMatchObject({
+      travelMode: "DRIVE",
+      routingPreference: "TRAFFIC_AWARE",
+      computeAlternativeRoutes: false,
+    });
+    expect(body.intermediates).toHaveLength(1);
+    expect(car?.duration).toBe(600);
+  });
+
+  test("Google map page keeps the key out of the inline data", () => {
+    const html = mapPage({
+      tiles: "google",
+      tilesKey: "test-key",
+      style: "auto",
+      lang: "de",
+      scale: 1,
+      stopNames: true,
+      chosen: 0,
+      options: [],
+      points: [],
+      attribution: "Routes: Google",
+    });
+    expect(html).toContain("maps.googleapis.com/maps/api/js?key=test-key&language=de");
+    expect(html.match(/test-key/g)).toHaveLength(1);
+    expect(html).not.toContain("maplibre-gl");
+  });
+
+  test("keys decide the provider and the map", async () => {
+    const { loadSettings, keyMissing } = await import("../src/settings.ts");
+    Object.assign(process.env, {
+      provider: "google",
+      map_view: "auto",
+      google_api_key: "",
+      here_api_key: "",
+    });
+    expect([loadSettings().provider, loadSettings().tiles, keyMissing()]).toEqual([
+      "open",
+      "openfreemap",
+      "Google",
+    ]);
+    process.env.google_api_key = "k";
+    expect([loadSettings().provider, loadSettings().tiles, keyMissing()]).toEqual([
+      "google",
+      "google",
+      undefined,
+    ]);
+    Object.assign(process.env, { provider: "open", map_view: "here" });
+    expect([loadSettings().provider, loadSettings().tiles, keyMissing()]).toEqual([
+      "open",
+      "openfreemap",
+      "HERE",
+    ]);
+  });
+});
+
+describe("exact places", () => {
+  test("typed or copied coordinates skip the search", async () => {
+    const { coordinates } = await import("../src/routes.ts");
+    expect(coordinates("45.4995, -73.5665")).toMatchObject({ lat: 45.4995, lon: -73.5665 });
+    expect(coordinates("52.52;13.405")).toMatchObject({ lat: 52.52, lon: 13.405 });
+    expect(coordinates("4003 Example Street, Springfield")).toBeUndefined();
+    expect(coordinates("95, 10")).toBeUndefined();
   });
 });

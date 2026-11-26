@@ -98,13 +98,33 @@ export const infoPlist = {
     ),
     popup(
       "provider",
-      "Routes and map",
+      "Routes and places",
       "open",
       [
-        ["Open data (Transitous, OSRM, OpenFreeMap), no key", "open"],
-        ["HERE (needs the API key below)", "here"],
+        ["Open data (Transitous, OSRM), no key", "open"],
+        ["Google (needs the Google key below)", "google"],
+        ["HERE (needs the HERE key below)", "here"],
       ],
-      "HERE adds traffic-aware car times and HERE map tiles. Without a key, open data is used.",
+      "Google and HERE give car times with live traffic. Without the key, open data is used.",
+    ),
+    popup(
+      "map_view",
+      "Map",
+      "auto",
+      [
+        ["Automatic (matches Routes and places)", "auto"],
+        ["OpenFreeMap, no key", "openfreemap"],
+        ["Google Maps (needs the Google key)", "google"],
+        ["HERE (needs the HERE key)", "here"],
+      ],
+      "The map behind the routes. Each redraw of a Google map counts as one Google map load.",
+    ),
+    text(
+      "google_api_key",
+      "Google API key",
+      "",
+      "From console.cloud.google.com with billing on. Enable Maps JavaScript API, Routes API and Places API (New); restrict the key to those APIs (not to websites: the map is a local page). Never exported.",
+      "optional",
     ),
     text(
       "here_api_key",
@@ -196,14 +216,23 @@ export const infoPlist = {
     text("back_shortcut", "Back shortcut", "⌃⌥⇧⌘B", "Closes the map and returns to Alfred’s search."),
     text("node_path", "Node.js executable", "", "Optional absolute path if automatic discovery fails."),
   ],
-  variablesdontexport: ["here_api_key", "home_address", "work_address", "saved_places", "contact"],
+  variablesdontexport: [
+    "google_api_key",
+    "here_api_key",
+    "home_address",
+    "work_address",
+    "saved_places",
+    "contact",
+  ],
   readme: `Type maps and a place (maps Eiffel Tower) or a route: A > B, A > B > C, from A via B to C, or von A über B nach C. With nothing typed, a copied address becomes the destination. home and work use the addresses from Workflow Configuration; saved places work by their label.
+
+While you type, suggestions appear under the modes (saved places first): Down/Up and Return, or a click, pick one. The Home, Work and saved-place buttons fill From while it is empty, otherwise To. Any field also takes coordinates like 45.4995, -73.5665.
 
 Keys: Return routes; Return again or Command-O opens the route in Google Maps (or the app chosen in Configuration). Command-1 to Command-4 switch car, transit, bike and walk. Command-T swaps From and To. Command-U adds a stop (up to three); Shift-Command-U removes the last one. Command-K opens Actions: other map apps, copy link, save the destination as a place, clear. Back (Hyper+B by default) returns to Alfred’s search.
 
 The map shows the route, stops and alternatives in light blue with their travel times; click one to choose it. Transit shows lines, platforms, transfers and delays.
 
-Data: open data by default, no key: Transitous (transit, places), FOSSGIS OSRM (car, bike and walk alternatives, one request per second), Photon (place fallback) and OpenFreeMap with MapLibre GL. Optional HERE with your own API key. Places and routes are sent to these services. Results are cached (routes 10 minutes, places 7 days).
+Data: open data by default, no key: Transitous (transit, places), FOSSGIS OSRM (car, bike and walk alternatives, one request per second), Photon (place fallback) and OpenFreeMap with MapLibre GL. Optional Google (Places, Routes with live traffic, Google map) or HERE with your own API key. Places and routes are sent to these services. Results are cached (routes 10 minutes, places 7 days).
 
 Requires Alfred 6 Powerpack, macOS, Node.js 22+ or Bun, and an internet connection. This workflow was built with the help of AI tools. Review it before use and report issues on the project page.`,
 };

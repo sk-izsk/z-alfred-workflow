@@ -44,8 +44,9 @@ const I18N = {
     saveName: "Name",
     save: "Save",
     saved: "Saved “{label}”",
-    hereKey: "HERE needs an API key in Workflow Configuration; using open data.",
+    keyMissing: "{provider} needs an API key in Workflow Configuration; using open data.",
     copied: "Link copied",
+    suggestHint: "↓ ↑ choose · ↩ or click to use",
   },
   de: {
     from: "Von",
@@ -89,8 +90,10 @@ const I18N = {
     saveName: "Name",
     save: "Speichern",
     saved: "„{label}“ gespeichert",
-    hereKey: "HERE braucht einen API-Schlüssel in der Workflow-Konfiguration; offene Daten werden genutzt.",
+    keyMissing:
+      "{provider} braucht einen API-Schlüssel in der Workflow-Konfiguration; offene Daten werden genutzt.",
     copied: "Link kopiert",
+    suggestHint: "↓ ↑ wählen · ↩ oder Klick übernimmt",
   },
 } satisfies Record<Lang, Record<string, string>>;
 export type Key = keyof typeof I18N.en;

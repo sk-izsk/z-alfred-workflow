@@ -31,15 +31,25 @@ type HSection = {
 };
 type HRoutes = { routes?: { sections: HSection[] }[] };
 
-export const geocode = async (query: string, ctx: Ctx): Promise<Place | undefined> => {
-  const params = new URLSearchParams({ q: query, lang: ctx.lang, limit: "1", apiKey: key(ctx) });
+export const search = async (query: string, ctx: Ctx, limit = 1): Promise<Place[]> => {
+  const params = new URLSearchParams({ q: query, lang: ctx.lang, limit: String(limit), apiKey: key(ctx) });
   if (ctx.bias) params.set("at", `${ctx.bias.lat},${ctx.bias.lon}`);
   const data = await getJson<{
-    items?: { title: string; position: { lat: number; lng: number } }[];
+    items?: {
+      title: string;
+      address?: { city?: string; countryName?: string };
+      position: { lat: number; lng: number };
+    }[];
   }>(`https://geocode.search.hereapi.com/v1/geocode?${params}`, ctx.ua);
-  const hit = data.items?.[0];
-  return hit && { query, label: hit.title, lat: hit.position.lat, lon: hit.position.lng };
+  return (data.items ?? []).map((hit) => ({
+    query,
+    label: hit.title,
+    detail: [hit.address?.city, hit.address?.countryName].filter(Boolean).join(", "),
+    lat: hit.position.lat,
+    lon: hit.position.lng,
+  }));
 };
+export const geocode = async (query: string, ctx: Ctx) => (await search(query, ctx))[0];
 
 const ms = (iso?: string) => (iso ? Date.parse(iso) : undefined);
 const stopOf = (p: HPoint, fallback: string) => ({

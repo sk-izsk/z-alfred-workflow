@@ -2,7 +2,14 @@ export const MODES = ["car", "transit", "bike", "walk"] as const;
 export type Mode = (typeof MODES)[number];
 export type LngLat = [number, number];
 
-export type Place = { query: string; label: string; lat: number; lon: number };
+export type Place = {
+  query: string;
+  label: string;
+  lat: number;
+  lon: number;
+  /** Second line in suggestions: city, region or full address. */
+  detail?: string;
+};
 export type Stop = {
   name: string;
   lat: number;

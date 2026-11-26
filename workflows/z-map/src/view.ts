@@ -9,6 +9,7 @@ import type { Entry } from "./routes.ts";
 import type { Settings } from "./settings.ts";
 import { type Action, update } from "./ui.ts";
 
+export type Suggestion = { label: string; detail?: string; saved?: boolean; place?: Place };
 export type State = {
   from: string;
   to: string;
@@ -22,6 +23,12 @@ export type State = {
   error?: string;
   /** Set by visible actions that need network work; the async `route` run clears it. */
   needsRoute?: boolean;
+  /** Suggestions shown in the list while typing in one field (`von`, `nach`, `via0`…). */
+  suggest?: { field: string; items: Suggestion[] };
+  /** Exact places picked from suggestions, by the text they put in a field. */
+  pins?: Record<string, Place>;
+  /** Start of the latest suggestion run; older runs drop their answer. */
+  suggestStarted?: number;
   page: number;
   picks: string[];
 };
@@ -146,8 +153,10 @@ const writeMap = (s: State, settings: Settings, entry: Entry | undefined): strin
   writeFileSync(
     path,
     mapPage({
-      provider: settings.provider,
-      hereKey: settings.provider === "here" ? settings.hereKey : undefined,
+      tiles: settings.tiles,
+      tilesKey: { openfreemap: undefined, here: settings.hereKey, google: settings.googleKey }[
+        settings.tiles
+      ],
       style: settings.style,
       lang: settings.lang,
       scale: settings.scale,
@@ -155,8 +164,11 @@ const writeMap = (s: State, settings: Settings, entry: Entry | undefined): strin
       chosen: Math.min(s.alt, Math.max(0, options.length - 1)),
       options: options.map((o) => pageOption(o, chipLabel(o, s.mode, settings.loc))),
       points: points(s.places ?? []),
-      attribution:
-        settings.provider === "here" ? "© HERE" : `Routes: Transitous${usesOsrm ? " · FOSSGIS OSRM" : ""}`,
+      attribution: {
+        open: `Routes: Transitous${usesOsrm ? " · FOSSGIS OSRM" : ""}`,
+        here: "Routes: HERE",
+        google: "Routes: Google",
+      }[settings.provider],
     }),
   );
   return path;
@@ -194,6 +206,7 @@ export const render = (s: State, settings: Settings, entry: Entry | undefined, m
   };
   ids.steps = {
     data: { src: option && s.mode === "transit" ? stepRows(option, settings.loc) : [] },
+    select: "",
   };
   ids.statusLabel = s.error
     ? { text: s.error, colour: "systemRedColor" }

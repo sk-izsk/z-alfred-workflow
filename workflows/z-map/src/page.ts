@@ -1,8 +1,7 @@
 // The map: a self-contained HTML file per render, loaded by the webkitview through `src`.
 import type { Lang } from "./i18n.ts";
 import type { LngLat, Option } from "./model.ts";
-import type { Provider } from "./routes.ts";
-import type { Style } from "./settings.ts";
+import type { Style, Tiles } from "./settings.ts";
 
 export type PageLeg = {
   coords: LngLat[];
@@ -19,8 +18,9 @@ export type PagePoint = {
 };
 export type PageOption = { legs: PageLeg[]; label: string; transfers: PagePoint[] };
 export type PageData = {
-  provider: Provider;
-  hereKey?: string;
+  tiles: Tiles;
+  /** HERE tile key (in the data) or Google Maps key (only in the script URL). */
+  tilesKey?: string;
   style: Style;
   lang: Lang;
   scale: number;
@@ -52,7 +52,6 @@ export const pageOption = (option: Option, label: string): PageOption => ({
 /** Runs in the web view; must not reference anything outside its own body. */
 function mapScript(D: PageData): void {
   const W = window as any;
-  const gl = W.maplibregl;
   const query = new URLSearchParams(location.search);
   const chosen = query.has("alt") ? Number(query.get("alt")) : D.chosen;
   const dark =
@@ -89,10 +88,9 @@ function mapScript(D: PageData): void {
       };
   const CHOSEN = "#0a84ff";
   const S = D.scale;
-  if (!gl) {
-    document.body.innerHTML = '<p class="err">Map library could not be loaded. Are you offline?</p>';
-    return;
-  }
+  const fail = (message: string) => {
+    document.body.innerHTML = `<p class="err">${message}</p>`;
+  };
 
   const big = /country|state|city|capital|continent|water|sea|ocean|marine|lake|bay/;
   const recolour = (style: any) => {
@@ -142,14 +140,14 @@ function mapScript(D: PageData): void {
   };
 
   const loadStyle = async (): Promise<any> => {
-    if (D.provider === "here" && D.hereKey)
+    if (D.tiles === "here" && D.tilesKey)
       return {
         version: 8,
         sources: {
           here: {
             type: "raster",
             tiles: [
-              `https://maps.hereapi.com/v3/base/mc/{z}/{x}/{y}/png8?style=${dark ? "explore.night" : "explore.day"}&lang=${D.lang}&apiKey=${encodeURIComponent(D.hereKey)}`,
+              `https://maps.hereapi.com/v3/base/mc/{z}/{x}/{y}/png8?style=${dark ? "explore.night" : "explore.day"}&lang=${D.lang}&apiKey=${encodeURIComponent(D.tilesKey)}`,
             ],
             tileSize: 256,
             maxzoom: 20,
@@ -208,6 +206,162 @@ function mapScript(D: PageData): void {
     return bestDistance > 1e-6 ? best : undefined;
   };
 
+  // Stops on top of the start, a stop or the destination already have a marker there.
+  const near = (s: PagePoint) =>
+    D.points.some((p) => Math.abs(p.lat - s.lat) < 0.003 && Math.abs(p.lon - s.lon) < 0.004);
+  // Start and end labels face away from each other so they stay inside the map.
+  const pointElement = (p: PagePoint) => {
+    const first = D.points[0];
+    const last = D.points.at(-1);
+    return p.kind === "end"
+      ? withLabel(el("endpin"), p.label, D.points.length > 1 && p.lon > (first?.lon ?? 0))
+      : withLabel(
+          el(`dot ${p.kind}`),
+          p.kind === "start" ? p.label : "",
+          p.kind === "start" && last !== undefined && p.lon > last.lon,
+        );
+  };
+  const main = D.options[chosen];
+  const mainCoords = main ? main.legs.flatMap((l) => l.coords) : [];
+  const badgeStyle = (colour = CHOSEN, text = "#fff") => `background:${colour};color:${text}`;
+
+  /** Google Maps JavaScript API: its own map (default look in light mode), our routes on top. */
+  const drawGoogle = () => {
+    const g = W.google.maps;
+    const Base: any = g.OverlayView;
+    // HTML markers (dots, labels, chips, badges) positioned by Google's projection.
+    class Html extends Base {
+      at: any;
+      node: HTMLElement;
+      anchor: string;
+      constructor(lonLat: [number, number], node: HTMLElement, anchor = "center") {
+        super();
+        this.at = new g.LatLng(lonLat[1], lonLat[0]);
+        this.node = node;
+        this.anchor = anchor;
+        node.style.position = "absolute";
+      }
+      onAdd() {
+        this.getPanes().overlayMouseTarget.append(this.node);
+        g.OverlayView.preventMapHitsAndGesturesFrom(this.node);
+      }
+      draw() {
+        const p = this.getProjection().fromLatLngToDivPixel(this.at);
+        if (!p) return;
+        const { offsetWidth: w, offsetHeight: h } = this.node;
+        this.node.style.left = `${p.x - w / 2}px`;
+        this.node.style.top = `${this.anchor === "bottom" ? p.y - h : p.y - h / 2}px`;
+      }
+      onRemove() {
+        this.node.remove();
+      }
+    }
+    const latLng = ([lon, lat]: [number, number]) => ({ lat, lng: lon });
+    const map = new g.Map(document.getElementById("m"), {
+      center: latLng(all[0] ?? [0, 20]),
+      zoom: all.length ? 12 : 2,
+      disableDefaultUI: true,
+      zoomControl: true,
+      gestureHandling: "greedy",
+      clickableIcons: false,
+      backgroundColor: P.land,
+      styles: dark
+        ? [
+            { elementType: "geometry", stylers: [{ color: P.land }] },
+            { elementType: "labels.text.fill", stylers: [{ color: P.text }] },
+            { elementType: "labels.text.stroke", stylers: [{ color: P.land }] },
+            {
+              featureType: "administrative.locality",
+              elementType: "labels.text.fill",
+              stylers: [{ color: P.place }],
+            },
+            { featureType: "water", elementType: "geometry", stylers: [{ color: P.water }] },
+            { featureType: "poi.park", elementType: "geometry", stylers: [{ color: P.park }] },
+            { featureType: "road", elementType: "geometry.fill", stylers: [{ color: P.minor }] },
+            { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: P.casing }] },
+            { featureType: "road.arterial", elementType: "geometry.fill", stylers: [{ color: P.major }] },
+            { featureType: "road.highway", elementType: "geometry.fill", stylers: [{ color: P.motorway }] },
+            { featureType: "transit", elementType: "geometry", stylers: [{ color: P.building }] },
+          ]
+        : null,
+    });
+    const line = (coords: [number, number][], options: any) =>
+      new g.Polyline({ path: coords.map(latLng), map, clickable: false, strokeOpacity: 1, ...options });
+    D.options.forEach((o, i) => {
+      if (i === chosen) return;
+      const coords = o.legs.flatMap((l) => l.coords);
+      line(coords, { strokeColor: P.alt, strokeWeight: 5 * S, zIndex: 1 });
+      line(coords, {
+        strokeColor: "#000",
+        strokeOpacity: 0.01,
+        strokeWeight: 22,
+        zIndex: 2,
+        clickable: true,
+      }).addListener("click", () => pick(i));
+      const at = divergence(coords, mainCoords);
+      if (at) {
+        const chip = el("chip", o.label);
+        chip.addEventListener("click", () => pick(i));
+        new Html(at, chip).setMap(map);
+      }
+    });
+    if (main) {
+      for (const l of main.legs) {
+        line(l.coords, { strokeColor: P.routeCasing, strokeWeight: 10 * S, zIndex: 3 });
+        const colour = l.color ?? CHOSEN;
+        line(
+          l.coords,
+          l.walk
+            ? {
+                strokeOpacity: 0,
+                zIndex: 4,
+                icons: [
+                  {
+                    icon: {
+                      path: g.SymbolPath.CIRCLE,
+                      scale: 2.2 * S,
+                      fillColor: colour,
+                      fillOpacity: 1,
+                      strokeOpacity: 0,
+                    },
+                    offset: "0",
+                    repeat: "10px",
+                  },
+                ],
+              }
+            : { strokeColor: colour, strokeWeight: 5.5 * S, zIndex: 4 },
+        );
+        const mid = l.coords[Math.floor(l.coords.length / 2)];
+        if (l.line && mid) new Html(mid, el("badge", l.line, badgeStyle(l.color, l.textColor))).setMap(map);
+      }
+      for (const s of main.transfers.filter((stop) => !near(stop)))
+        new Html([s.lon, s.lat], withLabel(el("dot xfer"), D.stopNames ? s.label : "")).setMap(map);
+    }
+    for (const p of D.points)
+      new Html([p.lon, p.lat], pointElement(p), p.kind === "end" ? "bottom" : "center").setMap(map);
+    if (all.length > 1) {
+      const bounds = new g.LatLngBounds();
+      for (const c of all) bounds.extend(latLng(c));
+      map.fitBounds(bounds, { top: 46, bottom: 72, left: 60, right: 60 });
+      g.event.addListenerOnce(map, "idle", () => map.getZoom() > 16 && map.setZoom(16));
+    } else if (all[0]) map.setZoom(15);
+    const credit = el("credit", D.attribution);
+    document.body.append(credit);
+  };
+
+  if (D.tiles === "google") {
+    W.__zmapGoogle = drawGoogle;
+    W.gm_authFailure = () =>
+      fail("Google rejected the API key. Enable the Maps JavaScript API for it, or choose another map.");
+    return;
+  }
+
+  const gl = W.maplibregl;
+  if (!gl) {
+    fail("Map library could not be loaded. Are you offline?");
+    return;
+  }
+
   void loadStyle().then((style) => {
     const map = new gl.Map({
       container: "m",
@@ -263,8 +417,6 @@ function mapScript(D: PageData): void {
           paint,
         });
       };
-      const main = D.options[chosen];
-      const mainCoords = main ? main.legs.flatMap((l) => l.coords) : [];
       D.options.forEach((o, i) => {
         if (i === chosen) return;
         const coords = o.legs.flatMap((l) => l.coords);
@@ -294,26 +446,16 @@ function mapScript(D: PageData): void {
         for (const l of main.legs) {
           const mid = l.coords[Math.floor(l.coords.length / 2)];
           if (!l.line || !mid) continue;
-          const badge = el("badge", l.line, `background:${l.color ?? CHOSEN};color:${l.textColor ?? "#fff"}`);
+          const badge = el("badge", l.line, badgeStyle(l.color, l.textColor));
           new gl.Marker({ element: badge }).setLngLat(mid).addTo(map);
         }
-        // Stops on top of the start, a stop or the destination already have a marker there.
-        const near = (s: PagePoint) =>
-          D.points.some((p) => Math.abs(p.lat - s.lat) < 0.003 && Math.abs(p.lon - s.lon) < 0.004);
         for (const s of main.transfers.filter((stop) => !near(stop)))
           new gl.Marker({ element: withLabel(el("dot xfer"), D.stopNames ? s.label : "") })
             .setLngLat([s.lon, s.lat])
             .addTo(map);
       }
-      // Start and end labels face away from each other so they stay inside the map.
-      const end = D.points.at(-1);
       for (const p of D.points) {
-        const left = p.kind === "start" && end !== undefined && p.lon > end.lon;
-        const element =
-          p.kind === "end"
-            ? withLabel(el("endpin"), p.label, D.points.length > 1 && p.lon > (D.points[0]?.lon ?? 0))
-            : withLabel(el(`dot ${p.kind}`), p.kind === "start" ? p.label : "", left);
-        new gl.Marker({ element, anchor: p.kind === "end" ? "bottom" : "center" })
+        new gl.Marker({ element: pointElement(p), anchor: p.kind === "end" ? "bottom" : "center" })
           .setLngLat([p.lon, p.lat])
           .addTo(map);
       }
@@ -345,11 +487,23 @@ html.dark,html.dark body{background:#24262b}html.light,html.light body{backgroun
 html.dark .lbl{background:#3a3c42;color:#f2f2f4}
 .chip{background:#fff;color:#2f6fd6;font-weight:700;padding:3px 7px;border-radius:6px;box-shadow:0 1px 4px #0004;cursor:pointer}
 html.dark .chip{background:#2c3b52;color:#cfe0ff}
+.credit{position:absolute;right:6px;top:6px;font-size:10.5px;padding:2px 6px;border-radius:4px;background:#fffc;color:#333}
+html.dark .credit{background:#000a;color:#ddd}
 .badge{font-weight:700;padding:2px 6px;border-radius:4px;font-size:11.5px;box-shadow:0 1px 3px #0005;border:1.5px solid #fff}`;
 
-/** One HTML file with MapLibre from unpkg (jsDelivr as fallback) and the route data inline. */
+/** One HTML file with the route data inline and MapLibre (unpkg, jsDelivr fallback) or Google Maps. */
 export const mapPage = (data: PageData): string => {
-  const json = JSON.stringify(data).replace(/</g, "\\u003c");
+  const google = data.tiles === "google";
+  // The Google key belongs only in its script URL; HERE needs its key inside the tile URLs.
+  const json = JSON.stringify({ ...data, tilesKey: google ? undefined : data.tilesKey }).replace(
+    /</g,
+    "\\u003c",
+  );
+  if (google)
+    return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>${CSS}</style></head><body><div id="m"></div>
+<script>(${mapScript.toString()})(${json})</script>
+<script async src="https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(data.tilesKey ?? "")}&language=${data.lang}&loading=async&callback=__zmapGoogle"></script></body></html>`;
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@5/dist/maplibre-gl.css'">
 <style>${CSS}</style></head><body><div id="m"></div>

@@ -8,6 +8,9 @@ No third-party code is bundled. The map page loads these at runtime from public 
 - **Transitous** (MOTIS) routing and place search, an open community service: <https://transitous.org>.
 - **FOSSGIS OSRM** routing (routing.openstreetmap.de), limited to one request per second.
 - **Photon** by Komoot, place search fallback.
+- **Google Maps Platform** (Maps JavaScript API, Routes API, Places API (New)), only when you
+  enter your own Google API key. Use is subject to Google's terms; the Google map keeps its logo
+  and terms link.
 - **HERE** Geocoding, Routing, Public Transit and Map Tile APIs, only when you enter your own HERE
   API key. Use is subject to HERE's terms.
 

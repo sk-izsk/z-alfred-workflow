@@ -154,6 +154,22 @@
               "{value:via2.text}"
             ]
           }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "steps",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "steps",
+            "args": "selectprevious"
+          }
         }
       ],
       "components": [
@@ -294,7 +310,8 @@
                                     "{value:nach.text}",
                                     "{value:via0.text}",
                                     "{value:via1.text}",
-                                    "{value:via2.text}"
+                                    "{value:via2.text}",
+                                    "{value:steps.selected.uid}"
                                   ]
                                 },
                                 {
@@ -306,6 +323,23 @@
                                   "async": true
                                 }
                               ]
+                            },
+                            {
+                              "triggers": "typingstopped",
+                              "action": {
+                                "type": "script",
+                                "src": "../bin/zmap",
+                                "args": [
+                                  "suggest",
+                                  "{value:von.text}",
+                                  "{value:nach.text}",
+                                  "{value:via0.text}",
+                                  "{value:via1.text}",
+                                  "{value:via2.text}",
+                                  "von"
+                                ],
+                                "async": true
+                              }
                             }
                           ],
                           "focus": true
@@ -360,7 +394,8 @@
                                     "{value:nach.text}",
                                     "{value:via0.text}",
                                     "{value:via1.text}",
-                                    "{value:via2.text}"
+                                    "{value:via2.text}",
+                                    "{value:steps.selected.uid}"
                                   ]
                                 },
                                 {
@@ -372,6 +407,23 @@
                                   "async": true
                                 }
                               ]
+                            },
+                            {
+                              "triggers": "typingstopped",
+                              "action": {
+                                "type": "script",
+                                "src": "../bin/zmap",
+                                "args": [
+                                  "suggest",
+                                  "{value:von.text}",
+                                  "{value:nach.text}",
+                                  "{value:via0.text}",
+                                  "{value:via1.text}",
+                                  "{value:via2.text}",
+                                  "nach"
+                                ],
+                                "async": true
+                              }
                             }
                           ]
                         }
@@ -865,17 +917,50 @@
               "cell": {
                 "height": 21,
                 "init": {
+                  "stepRow.background": null,
                   "bar.background": null,
                   "dots.text": "",
                   "stime.colour": "labelColor",
                   "stext.colour": "labelColor"
                 },
-                "selected": {},
+                "selected": {
+                  "stepRow.background": "alfredSelectedResultBackgroundColor",
+                  "stext.colour": "alfredSelectedResultTextColor"
+                },
                 "root": {
                   "id": "stepRow",
                   "type": "view",
                   "layout": "border",
                   "spacing": 8,
+                  "cornerradius": 5,
+                  "events": [
+                    {
+                      "triggers": "clicked",
+                      "action": [
+                        {
+                          "type": "script",
+                          "src": "../bin/zmap",
+                          "args": [
+                            "choose",
+                            "{value:von.text}",
+                            "{value:nach.text}",
+                            "{value:via0.text}",
+                            "{value:via1.text}",
+                            "{value:via2.text}",
+                            "{data:uid}"
+                          ]
+                        },
+                        {
+                          "type": "script",
+                          "src": "../bin/zmap",
+                          "args": [
+                            "route"
+                          ],
+                          "async": true
+                        }
+                      ]
+                    }
+                  ],
                   "components": [
                     {
                       "id": "stepLead",

@@ -1,8 +1,9 @@
 # Maps for Alfred
 
 Routes and place search on a live map inside Alfred 6: car, transit, bike and walk, with stops,
-alternatives and a full transit itinerary. Open data by default, no API key. HERE is optional
-with your own key.
+alternatives, suggestions while you type and a full transit itinerary. Open data by default, no
+API key. Google (places, live-traffic routes and the Google map) or HERE are optional with your
+own key.
 
 ![Transit in a city: S-Bahn itinerary, mode times and the route on the map](assets/screenshots/city-transit.png)
 
@@ -20,6 +21,15 @@ Requires macOS, Alfred 6 with Powerpack, Node.js 22+ or Bun, and an internet con
 | `maps von A über B nach C` | The same in German |
 | `maps` with an address on the clipboard | A route from Home (if set) to the copied address |
 
+While you type in From, To or a stop, suggestions appear in the list under the modes: your
+saved places first (★), then places from the provider, near the start once it is known. Use ↓ ↑
+and ↩, or click one. A picked suggestion is pinned to its exact place.
+
+The Home, Work and saved-place buttons fill From while it is empty, otherwise To, and route
+once both are set. For an exact pin, any field (and Home or Work in Configuration) also takes
+coordinates such as `45.4995, -73.5665`, as copied from Google Maps; useful when an address
+search lands on a neighbouring house number.
+
 `home` (also `zuhause`, `daheim`) and `work` (also `office`, `arbeit`, `büro`) use the addresses
 from Workflow Configuration. Saved places work by their label, so `maps gym > work` routes
 between two saved places. Other workflows can open a route with the External Trigger `route`
@@ -33,7 +43,8 @@ Configuration, or the city of your Mac's time zone.
 
 | Key | Does |
 | --- | --- |
-| ↩ | Route. ↩ again (nothing changed) opens the route in Google Maps |
+| ↩ | Route, or use the highlighted suggestion. ↩ again (nothing changed) opens the route in Google Maps |
+| ↓ / ↑ | Move through suggestions |
 | ⌘O | Open the route in Google Maps, Apple Maps, OpenStreetMap or HERE WeGo (Configuration) |
 | ⌘1 – ⌘4 | Car, transit, bike, walk |
 | ⌘T | Swap From and To |
@@ -65,14 +76,26 @@ needs the room; see [UI_CONVENTIONS.md](../../UI_CONVENTIONS.md).
 
 ## Data, providers and privacy
 
-| | Open data (default) | HERE (your key) |
-| --- | --- | --- |
-| Places | Transitous, Photon as fallback | HERE Geocoding & Search |
-| Transit | Transitous (up to 3 connections, earliest arrival first) | HERE Public Transit |
-| Car, bike, walk | Transitous times; FOSSGIS OSRM alternatives | HERE Routing (car times include traffic) |
-| Map | OpenFreeMap with MapLibre GL, recoloured light/dark | HERE map tiles (day/night) |
+**Routes and places** and **Map** are two settings, so you can, for example, route with open
+data on a Google map, or route with Google on OpenFreeMap. **Map: Automatic** follows the routes.
 
-- With HERE selected but no key, open data is used and the footer says so.
+| | Open data (default) | Google (your key) | HERE (your key) |
+| --- | --- | --- | --- |
+| Places and suggestions | Transitous, Photon as fallback | Places API (New) text search | HERE Geocoding & Search |
+| Transit | Transitous (up to 3 connections) | Routes API, transit | HERE Public Transit |
+| Car, bike, walk | Transitous times; FOSSGIS OSRM alternatives | Routes API (car with live traffic) | HERE Routing (car with traffic) |
+| Map | OpenFreeMap with MapLibre GL, recoloured light/dark | Google Maps JavaScript API (Google's look; our dark palette in dark mode) | HERE map tiles (day/night) |
+
+- **Google key:** in the Google Cloud console, turn on billing and enable *Maps JavaScript API*,
+  *Routes API* and *Places API (New)*. Restrict the key to those APIs, not to websites: the map is
+  a local page with no web address. Google gives a monthly free allowance per API; beyond it you
+  pay Google. Each map redraw (opening, mode or alternative change) is one map load, each route
+  lookup is one request per mode, and each typing pause with suggestions is one place search.
+  Check Google's current pricing.
+- With Google or HERE selected but no key, open data is used and the footer says so. A rejected
+  key shows Google's or HERE's own message.
+- Google's Routes API takes no stops for transit, so transit with stops is planned leg by leg, as
+  with the other providers. Transit times from Google have no delay information.
 - FOSSGIS OSRM is asked at most once per second, as its usage policy requires. Alternatives for
   a mode are fetched when you switch to it; with stops, all three modes are fetched.
 - Transitous asks heavy users for a contact; set **Contact e-mail** to send it in the
@@ -86,7 +109,7 @@ needs the room; see [UI_CONVENTIONS.md](../../UI_CONVENTIONS.md).
 
 ## Configuration
 
-Keyword (`maps`), provider and HERE key, Open in (⌘O), default mode, Home and Work addresses,
+Keyword (`maps`), Routes and places, Map, Google and HERE keys, Open in (⌘O), default mode, Home and Work addresses,
 saved places (`Label = address`, one per line), quick buttons, clipboard destination, language
 (automatic, English, Deutsch), Search near, map colours (automatic, dark, light), route line
 scale, stop names, font sizes, window width, map height, contact e-mail, Actions and Back
@@ -119,7 +142,8 @@ code from it was available or copied. Routing by [Transitous](https://transitous
 [FOSSGIS OSRM](https://routing.openstreetmap.de), places by Transitous and
 [Photon](https://photon.komoot.io), map by [OpenFreeMap](https://openfreemap.org) and
 [MapLibre GL JS](https://maplibre.org), data © OpenStreetMap contributors. Optional
-[HERE](https://www.here.com) services with your key. See
+[Google Maps Platform](https://mapsplatform.google.com) and [HERE](https://www.here.com) services
+with your key. See
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and [LICENSE](LICENSE).
 
 This workflow was built with the help of AI tools. Review it before use and report issues on the
