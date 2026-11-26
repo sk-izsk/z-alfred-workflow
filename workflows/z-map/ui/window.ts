@@ -20,7 +20,6 @@ export const FIELDS = [
   "{value:via1.text}",
   "{value:via2.text}",
 ];
-const SELECTED = "{value:steps.selected.uid}";
 export const run = (command: string, extra: string[] = []): Json => ({
   type: "script",
   src: CLI,
@@ -60,7 +59,7 @@ export const field = (id: string, placeholder: string, size: number, extra: Json
   constraints: { size: { width: 277 } },
   events: [
     // ↩ takes the highlighted suggestion if there is one, otherwise routes.
-    on("actioned", act("enter", [SELECTED])),
+    on("actioned", act("enter")),
     on("typingstopped", { type: "script", src: CLI, args: ["suggest", ...FIELDS, id], async: true }),
   ],
   ...extra,
@@ -200,6 +199,9 @@ const steps: Json = {
   placeholder: "",
   behaviour: { selection: { allowempty: true } },
   constraints: { region: "centre", size: { width: 330 } },
+  // Selection only comes from a mouse click (↓/↑ move the script's own highlight), so a
+  // selection change means "use this suggestion". Itinerary rows are ignored by `choose`.
+  events: [on("changed", act("choose", ["{value:steps.selected.uid}"]))],
   data: { type: "basic", src: [] },
   cell: {
     height: 21,
@@ -210,18 +212,14 @@ const steps: Json = {
       "stime.colour": "labelColor",
       "stext.colour": "labelColor",
     },
-    // Only suggestions get selected (↓/↑ or a click); itinerary rows are never selected.
-    selected: {
-      "stepRow.background": "alfredSelectedResultBackgroundColor",
-      "stext.colour": "alfredSelectedResultTextColor",
-    },
+    // The highlight is row data from the script, not the dataview selection.
+    selected: {},
     root: {
       id: "stepRow",
       type: "view",
       layout: "border",
       spacing: 8,
       cornerradius: 5,
-      events: [on("clicked", act("choose", ["{data:uid}"]))],
       components: [
         {
           id: "stepLead",
@@ -321,8 +319,8 @@ export const mapWindow = {
         { shortcut: "⌘O", action: run("open") },
         { shortcut: "⌘T", action: act("swap") },
         { shortcut: "⌘U", action: run("add-stop") },
-        { shortcut: "↓", action: { type: "function", src: "steps", args: "selectnext" } },
-        { shortcut: "↑", action: { type: "function", src: "steps", args: "selectprevious" } },
+        { shortcut: "↓", action: run("suggest-move", ["1"]) },
+        { shortcut: "↑", action: run("suggest-move", ["-1"]) },
       ],
       components: [
         {

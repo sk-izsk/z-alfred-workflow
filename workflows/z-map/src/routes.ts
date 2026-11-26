@@ -38,12 +38,22 @@ export const resolvePlace = (query: string, provider: Provider, ctx: Ctx): Promi
   );
 };
 
-/** Suggestions while typing: five matches, cached for a day. */
-export const suggestPlaces = (query: string, provider: Provider, ctx: Ctx): Promise<Place[]> => {
-  const bias = ctx.bias ? point(ctx.bias) : "";
-  return cached(`suggest|${provider}|${ctx.lang}|${bias}|${query.toLowerCase()}`, 24 * 60 * MINUTE, () =>
-    SEARCH[provider](query, ctx, 5),
+const km = (a: { lat: number; lon: number }, b: { lat: number; lon: number }) =>
+  111 * Math.hypot(a.lat - b.lat, (a.lon - b.lon) * Math.cos((a.lat * Math.PI) / 180));
+
+/**
+ * Suggestions while typing, cached for a day: like Google Maps, matches within 100 km of the
+ * start come first (search services weigh text over distance), then the rest in their order.
+ */
+export const suggestPlaces = async (query: string, provider: Provider, ctx: Ctx): Promise<Place[]> => {
+  const bias = ctx.bias;
+  const found = await cached(
+    `suggest|${provider}|${ctx.lang}|${bias ? point(bias) : ""}|${query.toLowerCase()}`,
+    24 * 60 * MINUTE,
+    () => SEARCH[provider](query, ctx, 10),
   );
+  const near = (p: Place) => (bias && km(p, bias) < 100 ? 0 : 1);
+  return found.toSorted((a, b) => near(a) - near(b)).slice(0, 5);
 };
 
 const pairs = (places: Place[]): [Place, Place][] => places.slice(1).map((to, i) => [places[i] as Place, to]);

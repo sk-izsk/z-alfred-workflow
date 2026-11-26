@@ -182,7 +182,7 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
   enter: (s) => {
     const before = inputsKey(s);
     readFields(s);
-    if (extra().startsWith("sg") && s.suggest) return choose(s, extra());
+    if (s.suggest?.active !== undefined) return choose(s, `sg${s.suggest.active}`);
     const hadSuggestions = Boolean(s.suggest);
     s.suggest = undefined;
     if (!s.to && !s.from) return status(t(lang, "needsTo"), "systemOrangeColor");
@@ -224,7 +224,14 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
       try {
         // Like routing: other fields search near the start once it's known.
         const ctx = await context();
-        const start = field === "von" ? undefined : (s.pins?.[s.from] ?? s.places?.[0]);
+        const from = readFrom(s);
+        const start =
+          field === "von" || !from
+            ? undefined
+            : (s.pins?.[from] ??
+              (await resolvePlace(expandAlias(from, settings.saved), settings.provider, ctx).catch(
+                () => undefined,
+              )));
         const near = start ? { ...ctx, bias: { lat: start.lat, lon: start.lon } } : ctx;
         const places = await suggestPlaces(text, settings.provider, near);
         for (const place of places) items.push({ label: place.label, detail: place.detail, place });
@@ -243,20 +250,17 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
     }
     now.suggest = { field, items: items.slice(0, 8) };
     saveState(now);
-    return update({
-      steps: {
-        data: {
-          src: now.suggest.items.map((item, i) => ({
-            uid: `sg${i}`,
-            "stime.text": item.saved ? "★" : "",
-            "stime.colour": "systemYellowColor",
-            "stext.text": item.detail ? `${item.label}  ·  ${item.detail}` : item.label,
-          })),
-        },
-        select: "",
-      },
-      statusLabel: { text: t(lang, "suggestHint"), colour: MUTED },
-    });
+    return merge(suggestionRows(now), status(t(lang, "suggestHint")));
+  },
+
+  /** ↓ / ↑ while suggestions show: move the highlight that ↩ takes. */
+  "suggest-move": (s) => {
+    const list = s.suggest;
+    if (!list?.items.length) return {};
+    const step = Number(extra()) || 1;
+    const next = (list.active ?? (step > 0 ? -1 : list.items.length)) + step;
+    list.active = Math.min(list.items.length - 1, Math.max(0, next));
+    return suggestionRows(s);
   },
 
   /** A click on a suggestion. */
@@ -510,8 +514,34 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
   },
 };
 
+/** The From text as typed now (the suggest command gets every field's current text). */
+function readFrom(s: State): string {
+  return clean(args[0]) || s.from;
+}
+
+/** Suggestion rows; the highlighted one is drawn from row data, not the dataview selection. */
+function suggestionRows(s: State): Action {
+  const active = s.suggest?.active;
+  return update({
+    steps: {
+      data: {
+        src: (s.suggest?.items ?? []).map((item, i) => ({
+          uid: `sg${i}`,
+          "stepRow.background": i === active ? "alfredSelectedResultBackgroundColor" : null,
+          "stime.text": item.saved ? "★" : "",
+          "stime.colour": i === active ? "alfredSelectedResultTextColor" : "systemYellowColor",
+          "stext.text": item.detail ? `${item.label}  ·  ${item.detail}` : item.label,
+          "stext.colour": i === active ? "alfredSelectedResultTextColor" : "labelColor",
+        })),
+      },
+      select: "",
+    },
+  });
+}
+
 /** Puts a suggestion into its field, pins its exact place, and routes once From and To are set. */
 function choose(s: State, uid: string): Action {
+  if (!/^sg\d+$/.test(uid)) return {}; // a click on an itinerary row
   const item = s.suggest?.items[Number(uid.slice(2))];
   const field = s.suggest?.field ?? "";
   s.suggest = undefined;

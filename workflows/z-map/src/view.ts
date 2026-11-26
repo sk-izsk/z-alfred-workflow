@@ -24,7 +24,7 @@ export type State = {
   /** Set by visible actions that need network work; the async `route` run clears it. */
   needsRoute?: boolean;
   /** Suggestions shown in the list while typing in one field (`von`, `nach`, `via0`…). */
-  suggest?: { field: string; items: Suggestion[] };
+  suggest?: { field: string; items: Suggestion[]; active?: number };
   /** Exact places picked from suggestions, by the text they put in a field. */
   pins?: Record<string, Place>;
   /** Start of the latest suggestion run; older runs drop their answer. */
