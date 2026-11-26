@@ -63,4 +63,4 @@ All 29 active workflow projects passed type checking, lint, formatting, tests, p
 
 No implementation tasks remain within the agreed scope. Publishing release tags/assets and merging the PR were not requested.
 
-Currency follow-up was checked in isolation: three configurable pinned bases, row Actions to add/remove quick favorites with a strict three-item limit, and a compact searchable chooser were added, with 13 Currency tests passing. Other local project checks were not repeated for this scoped addition.
+Currency follow-up was checked in isolation: three configurable pinned bases, direct ☆/★ chooser buttons and row Actions to add/remove quick favorites with a strict three-item limit, and a compact searchable chooser were added, with 13 Currency tests passing. Other local project checks were not repeated for this scoped addition.

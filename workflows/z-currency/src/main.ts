@@ -6,7 +6,17 @@ import { randomUUID } from "node:crypto";
 import { create, read, save, pin, pinned, type State } from "./state.ts";
 import { loadRates } from "./api.ts";
 import { parseQuery, validDate } from "./expression.ts";
-import { components, rows, run, button, label, converted, amountText, flag } from "../ui/window.ts";
+import {
+  components,
+  rows,
+  run,
+  button,
+  label,
+  converted,
+  amountText,
+  flag,
+  quickBaseButtons,
+} from "../ui/window.ts";
 import {
   print,
   merge,
@@ -90,7 +100,13 @@ const load = async (s: State, fresh = false, initial = true): Promise<Action> =>
 const baseRows = (s: State, query = "") =>
   baseMatches(s, query).map((code) => ({
     uid: code,
-    "baseCode.text": `${quickBases(s).includes(code) ? "★ " : ""}${flag(code)} ${code}`,
+    code,
+    "baseFavorite.text": quickBases(s).includes(code) ? "★" : "☆",
+    "baseFavorite.tooltip": quickBases(s).includes(code) ? "Remove Quick Favorite" : "Add Quick Favorite",
+    "baseFavorite.contenttintcolour": quickBases(s).includes(code)
+      ? "systemYellowColor"
+      : "secondaryLabelColor",
+    "baseCode.text": `${flag(code)} ${code}`,
     "baseDescription.text": `${names[code] || code} · ${countries[code] || ""}`,
   }));
 const chooseBaseSheet = (s: State): Action =>
@@ -142,11 +158,28 @@ const chooseBaseSheet = (s: State): Action =>
               cornerradius: 6,
               components: [
                 {
-                  id: "baseCode",
-                  type: "label",
-                  text: "",
-                  font: { size: 14, weight: "medium" },
-                  constraints: { region: "left", size: { width: 100 } },
+                  type: "view",
+                  layout: "inline",
+                  spacing: 4,
+                  constraints: { region: "left" },
+                  components: [
+                    button(
+                      "baseFavorite",
+                      "☆",
+                      run("base-favorite", ["{data:code}", "{value:baseSearch.text}"], false),
+                      {
+                        font: { size: 19 },
+                        constraints: { size: { width: 26 } },
+                      },
+                    ),
+                    {
+                      id: "baseCode",
+                      type: "label",
+                      text: "",
+                      font: { size: 14, weight: "medium" },
+                      constraints: { size: { width: 80 } },
+                    },
+                  ],
                 },
                 {
                   id: "baseDescription",
@@ -163,6 +196,12 @@ const chooseBaseSheet = (s: State): Action =>
             selected: { "baseRow.background": "alfredSelectedResultBackgroundColor" },
           },
         },
+        label("baseNotice", "Click ☆ to add a quick favorite; click ★ to remove. Limit: 3.", {
+          font: { size: 11 },
+          colour: "secondaryLabelColor",
+          linebreak: "wordwrap",
+          constraints: { region: "bottom", size: { width: 510, height: 30 } },
+        }),
       ],
     },
     true,
@@ -210,6 +249,31 @@ const main = async (): Promise<Action | void> => {
     return result;
   }
   if (command === "base-picker") return chooseBaseSheet(s);
+  if (command === "base-favorite") {
+    const favorites = quickBases(s);
+    if (!favorites.includes(code) && favorites.length >= 3)
+      return update(
+        {
+          baseNotice: {
+            text: "Three favorites already pinned. Remove one ★ before adding another.",
+            colour: "systemOrangeColor",
+          },
+        },
+        true,
+      );
+    toggleQuickFavorite(s, code);
+    return update(
+      {
+        baseItems: { data: { src: baseRows(s, args[1] || "") }, select: code },
+        quickBaseButtons: { components: quickBaseButtons(s) },
+        baseNotice: {
+          text: "Click ☆ to add a quick favorite; click ★ to remove. Limit: 3.",
+          colour: "secondaryLabelColor",
+        },
+      },
+      true,
+    );
+  }
   if (command === "base-search") {
     const data = baseRows(s, args[0] || "");
     return update({

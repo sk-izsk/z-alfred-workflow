@@ -221,12 +221,16 @@ test("quick favorites persist and reject a fourth until one is removed", () => {
     const s = create("42");
     s.rates = { ...parseRates(raw, "allratestoday"), rates: { CAD: 1, USD: 0.7, BDT: 80, EUR: 0.6 } };
     save(s);
-    const invoke = (command: string, code: string) =>
+    const invoke = (command: string, code: string, search = "") =>
       JSON.parse(
-        execFileSync(process.execPath, [join(import.meta.dir, "../src/main.ts"), command, s.id, code], {
-          encoding: "utf8",
-          env: process.env,
-        }),
+        execFileSync(
+          process.execPath,
+          [join(import.meta.dir, "../src/main.ts"), command, s.id, code, search],
+          {
+            encoding: "utf8",
+            env: process.env,
+          },
+        ),
       );
     const warning = invoke("favorite", "EUR");
     expect(JSON.stringify(warning)).toContain("Remove one quick favorite");
@@ -241,6 +245,20 @@ test("quick favorites persist and reject a fourth until one is removed", () => {
     expect(JSON.stringify(updated)).toContain("★ EUR");
     expect(JSON.stringify(invoke("favorite", "BDT"))).toContain("Remove one quick favorite");
     expect(quickBases(s)).toEqual(["CAD", "USD", "EUR"]);
+    const picker = invoke("base-picker", "");
+    expect(JSON.stringify(picker)).toContain('"baseFavorite"');
+    const blocked = invoke("base-favorite", "BDT");
+    expect(blocked.update.ids.baseNotice.text).toContain("Remove one ★");
+    expect(blocked.sheet).toBeUndefined();
+    const removed = invoke("base-favorite", "EUR", "eur");
+    expect(removed.update.ids.baseItems.data.src.map((r: any) => r.uid)).toEqual(["EUR"]);
+    expect(removed.update.ids.baseItems.data.src[0]["baseFavorite.text"]).toBe("☆");
+    const added = invoke("base-favorite", "EUR", "eur");
+    expect(added.update.ids.baseItems.data.src[0]["baseFavorite.text"]).toBe("★");
+    expect(added.update.ids.quickBaseButtons.components).toHaveLength(3);
+    expect(added.update.ids).not.toHaveProperty("root");
+    expect(added.update.ids).not.toHaveProperty("baseSearch");
+    expect(added.sheet).toBeUndefined();
     expect(read(s.id).query).toBe("42");
   } finally {
     rmSync(favoriteFile, { force: true });

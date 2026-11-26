@@ -29,6 +29,14 @@ export const flag = (code: string): string => {
     ? [...region].map((c) => String.fromCodePoint(127397 + c.charCodeAt(0))).join("")
     : "🌐";
 };
+export const quickBaseButtons = (s: State): Json[] =>
+  quickBases(s).map((code, i) =>
+    button(`quickBase${i}`, `★ ${code}`, run("base", [code], false), {
+      font: { size: 11 },
+      contenttintcolour: s.base === code ? "systemBlueColor" : "secondaryLabelColor",
+      tooltip: `Switch base to ${code} — ${names[code] || code}`,
+    }),
+  );
 export const converted = (s: State, code: string): number => {
   const rates = s.rates?.rates;
   if (!rates?.[s.base] || !rates[code])
@@ -105,13 +113,8 @@ export const components = (s: State): Json[] => [
             layout: "inline",
             spacing: 6,
             constraints: { region: "right" },
-            components: quickBases(s).map((code, i) =>
-              button(`quickBase${i}`, `★ ${code}`, run("base", [code], false), {
-                font: { size: 11 },
-                contenttintcolour: s.base === code ? "systemBlueColor" : "secondaryLabelColor",
-                tooltip: `Switch base to ${code} — ${names[code] || code}`,
-              }),
-            ),
+            id: "quickBaseButtons",
+            components: quickBaseButtons(s),
           },
         ],
       },
