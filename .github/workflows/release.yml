@@ -2,7 +2,7 @@ name: Release workflow
 
 on:
   push:
-    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*", "z-brew/v*", "z-speedtest/v*", "z-github/v*", "z-kill-process/v*", "z-weather/v*", "z-adhan-time/v*", "z-currency/v*", "z-calculate-anything/v*", "z-swiss/v*", "z-world-clock/v*", "z-window-navigator/v*", "z-lunar/v*", "z-emoji/v*", "z-gif-search/v*", "z-mole/v*", "z-system-monitor/v*", "z-tag-manager/v*", "z-folder-navigator/v*", "z-translate/v*", "z-workflow-manager/v*"]
+    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*", "z-brew/v*", "z-speedtest/v*", "z-github/v*", "z-kill-process/v*", "z-weather/v*", "z-adhan-time/v*", "z-currency/v*", "z-calculate-anything/v*", "z-swiss/v*", "z-world-clock/v*", "z-window-navigator/v*", "z-lunar/v*", "z-emoji/v*", "z-gif-search/v*", "z-dev/v*", "z-mole/v*", "z-system-monitor/v*", "z-tag-manager/v*", "z-folder-navigator/v*", "z-translate/v*", "z-workflow-manager/v*"]
 
 permissions:
   contents: read
@@ -37,6 +37,7 @@ jobs:
             z-tag-manager/v*) workflow=z-tag-manager; artifact='Tag Manager.alfredworkflow' ;;
             z-system-monitor/v*) workflow=z-system-monitor; artifact='System Monitor.alfredworkflow' ;;
             z-mole/v*) workflow=z-mole; artifact='Mole.alfredworkflow' ;;
+            z-dev/v*) workflow=z-dev; artifact='Dev.alfredworkflow' ;;
             z-gif-search/v*) workflow=z-gif-search; artifact='GIF Search.alfredworkflow' ;;
             z-emoji/v*) workflow=z-emoji; artifact='Emoji Picker.alfredworkflow' ;;
             z-lunar/v*) workflow=z-lunar; artifact='Lunar Controls.alfredworkflow' ;;

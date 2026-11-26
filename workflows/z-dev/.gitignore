@@ -1,0 +1,5 @@
+node_modules
+dist/
+workflow/bin/dev.mjs
+workflow/prefs.plist
+.DS_Store

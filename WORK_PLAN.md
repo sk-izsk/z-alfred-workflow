@@ -39,7 +39,7 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 
 ## Dev launcher phase (after Swiss)
 
-- [ ] Dev launcher: separate searchable launcher using the same independent-tool and Back protocol as Swiss. These utilities belong only to Dev.
+- [x] Dev launcher: separate `dev` keyword with five trusted tool entries, installation/version checks and its own return-session protocol. These utilities belong only to Dev. Checked, packaged and installed.
 - [ ] Dev Servers: project grouping, tool filter, open/copy URL, stop/restart, Terminal/Finder actions, project/all-server stopping. Verify process identity before stopping; never stop real servers merely for testing.
 - [ ] Bluetooth: connect/disconnect, device type/battery/details and actions; verify macOS API/permission support first.
 - [ ] Wi-Fi: analogous network controls/details; verify current macOS scanning/permission restrictions before implementation.

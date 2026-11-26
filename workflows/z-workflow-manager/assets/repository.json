@@ -136,5 +136,11 @@
     "bundle": "com.izsk.gif-search",
     "name": "GIF Search",
     "description": "GIF search, favorites and recents in list or grid views"
+  },
+  {
+    "slug": "z-dev",
+    "name": "Dev",
+    "bundle": "com.izsk.dev",
+    "description": "Separate launcher for developer and connectivity tools"
   }
 ]
