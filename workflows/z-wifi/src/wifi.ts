@@ -16,12 +16,30 @@ export const hardware = (text: string): string =>
   text.match(/Hardware Port: (?:Wi-Fi|AirPort)\s+Device: (en\d+)/)?.[1] || "";
 const visible = (value: unknown): value is string =>
   typeof value === "string" && !!value && !/^<.*>$|redacted|hidden/i.test(value);
-export const parse = (raw: any, preferred: string[], device: string, power: boolean): Snapshot => {
+export type Association = { connected: boolean; name: string; security: string };
+export const association = (summary: string): Association => {
+  const field = (key: string) => summary.match(new RegExp(`^  ${key} : (.+)$`, "m"))?.[1]?.trim() || "";
+  const name = field("SSID");
+  return {
+    connected: field("LinkStatusActive") === "TRUE" && field("InterfaceType") === "WiFi",
+    name: visible(name) ? name : "",
+    security: field("Security"),
+  };
+};
+export const parse = (
+  raw: any,
+  preferred: string[],
+  device: string,
+  power: boolean,
+  link?: Association,
+): Snapshot => {
   const rows: Network[] = [];
   let redacted = false;
   for (const iface of raw?.SPAirPortDataType?.[0]?.spairport_airport_interfaces || []) {
     if (iface._name !== device) continue;
     const current = iface.spairport_current_network_information;
+    if (!current && power && iface.spairport_status_information === "spairport_status_connected" && !link)
+      link = { connected: true, name: "", security: "Unknown" };
     const all = [
       ...(current ? [{ ...current, current: true }] : []),
       ...(iface.spairport_airport_other_local_wireless_networks || []),
@@ -53,6 +71,38 @@ export const parse = (raw: any, preferred: string[], device: string, power: bool
         signal: String(n.spairport_signal_noise || ""),
         saved: preferred.includes(id),
         hidden: false,
+      });
+    }
+  }
+  if (power && link?.connected) {
+    if (link.name) {
+      const known = rows.find((row) => row.name === link.name);
+      for (const row of rows) row.connected = false;
+      const hidden = rows.findIndex((row) => row.hidden);
+      if (hidden >= 0) rows.splice(hidden, 1);
+      if (known) known.connected = true;
+      else
+        rows.push({
+          id: link.name,
+          name: link.name,
+          connected: true,
+          channel: "",
+          security: link.security || "Unknown",
+          signal: "",
+          saved: preferred.includes(link.name),
+          hidden: false,
+        });
+    } else if (!rows.some((row) => row.connected)) {
+      redacted = true;
+      rows.push({
+        id: "__current__",
+        name: "Connected network · name hidden by macOS",
+        connected: true,
+        channel: "",
+        security: link.security || "Unknown",
+        signal: "",
+        saved: false,
+        hidden: true,
       });
     }
   }
@@ -88,10 +138,11 @@ const run = async (cmd: string, args: string[], timeout = 12000): Promise<string
 export const scan = async (): Promise<Snapshot> => {
   const device = hardware(await run("/usr/sbin/networksetup", ["-listallhardwareports"]));
   if (!device) return { device: "", power: false, rows: [], note: "No Wi-Fi interface detected." };
-  const [report, preferred, power] = await Promise.all([
+  const [report, preferred, power, summary] = await Promise.all([
     run("/usr/sbin/system_profiler", ["SPAirPortDataType", "-json", "-detailLevel", "mini"], 15000),
     run("/usr/sbin/networksetup", ["-listpreferredwirelessnetworks", device]),
     run("/usr/sbin/networksetup", ["-getairportpower", device]),
+    run("/usr/sbin/ipconfig", ["getsummary", device]).catch(() => ""),
   ]);
   return parse(
     JSON.parse(report),
@@ -102,6 +153,7 @@ export const scan = async (): Promise<Snapshot> => {
       .filter(Boolean),
     device,
     /: On\s*$/i.test(power),
+    summary ? association(summary) : undefined,
   );
 };
 export const setPower = async (device: string, on: boolean): Promise<void> => {
@@ -138,3 +190,35 @@ export const disconnect = async (device: string): Promise<void> => {
     device,
   ]);
 };
+
+/** Keychain authenticates access; the secret stays out of workflow state, JSON actions and clipboard. */
+export const showPassword = async (ssid: string): Promise<void> => {
+  if (!ssid || Buffer.byteLength(ssid, "utf8") > 32 || [...ssid].some((char) => char.charCodeAt(0) < 32))
+    throw new Error("Select a saved network with a visible name.");
+  let password: string;
+  try {
+    password = (
+      await execute(
+        "/usr/bin/security",
+        ["find-generic-password", "-D", "AirPort network password", "-a", ssid, "-w"],
+        { encoding: "utf8", timeout: 120000, maxBuffer: 65536 },
+      )
+    ).stdout.replace(/\r?\n$/, "");
+  } catch {
+    throw new Error(
+      "Password access was cancelled, denied, or this network has no saved Keychain password. You can also view Wi-Fi passwords in Apple's Passwords app.",
+    );
+  }
+  const dialog = execute("/usr/bin/osascript", ["-"], { encoding: "utf8", timeout: 120000 });
+  dialog.child.stdin?.end(passwordDialog(password, ssid));
+  try {
+    await dialog;
+  } catch {
+    /* Closing the dialog reveals no secret in the action response. */
+  }
+};
+
+const quote = (value: string) =>
+  '"' + value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\r/g, "\\r").replace(/\n/g, "\\n") + '"';
+export const passwordDialog = (password: string, ssid: string): string =>
+  `display dialog ${quote(password)} with title ${quote("Wi-Fi password · " + ssid)} buttons {"Done"} default button "Done" giving up after 60\nreturn ""`;

@@ -3,7 +3,7 @@ await profileCommand(() => import("./env.ts"));
 import { execFileSync } from "node:child_process";
 import { str, bool } from "./env.ts";
 import { create, read, save, type State } from "./state.ts";
-import { scan, connect, disconnect, setPower } from "./wifi.ts";
+import { scan, connect, disconnect, setPower, showPassword } from "./wifi.ts";
 import { components } from "../ui/window.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { merge, vars, update, finish, popup, menuItem, copy, open, errorStatus, type Action } from "./ui.ts";
@@ -23,13 +23,9 @@ const render = (s: State): Action => {
           src: rows.map((d) => ({
             uid: d.id,
             "rowIcon.image.type": "symbol",
-            "rowIcon.image.src": /head|airpod/i.test(d.security + " " + d.name)
-              ? "headphones"
-              : /key/i.test(d.security)
-                ? "keyboard"
-                : "antenna.radiowaves.left.and.right",
+            "rowIcon.image.src": "wifi",
             "rowTitle.text": d.name,
-            "rowDescription.text": `${d.connected ? "Connected" : "Disconnected"} · ${d.security}${d.signal ? " · " + d.signal : ""}`,
+            "rowDescription.text": `${d.connected ? "Connected" : "Saved / not currently reported"} · ${d.security}${d.signal ? " · " + d.signal : ""}`,
           })),
         },
         select: s.selected,
@@ -120,6 +116,14 @@ const main = async (): Promise<Action | void> => {
       ...(d
         ? [
             menuItem(d.connected ? "Disconnect" : "Connect Saved Network", ["open", id, d.id]),
+            ...(d.saved && !d.hidden
+              ? [
+                  {
+                    ...menuItem("Show Saved Password…", ["password", id, d.id]),
+                    action: { type: "script", src: "../bin/wifi", args: ["password", id, d.id], async: true },
+                  },
+                ]
+              : []),
             menuItem("Copy Network Name", ["copy", id, d.id]),
             menuItem("Copy Network Data", ["data", id, d.id]),
           ]
@@ -134,6 +138,11 @@ const main = async (): Promise<Action | void> => {
   if (cmd === "copy") {
     if (d.hidden) throw new Error("macOS hides this network name.");
     return copy(d.name);
+  }
+  if (cmd === "password") {
+    if (!d.saved || d.hidden) throw new Error("Select a saved network with a visible name.");
+    await showPassword(d.name);
+    return {};
   }
   if (cmd === "data") return copy(JSON.stringify(d, null, 2));
   if (cmd === "open") {
