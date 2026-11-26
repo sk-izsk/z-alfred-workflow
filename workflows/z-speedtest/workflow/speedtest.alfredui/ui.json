@@ -5,6 +5,9 @@
     "internal": true
   },
   "variablesconfig": {
+    "swiss_return": {
+      "default": ""
+    },
     "session": {
       "default": "",
       "scriptenv": true
@@ -20,7 +23,13 @@
     },
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     },
     "mode": {
       "default": "meter",
@@ -65,10 +74,11 @@
   "window": {
     "title": "Test Internet Speed",
     "size": {
-      "height": 630
+      "height": 630,
+      "width": 780
     },
     "minsize": {
-      "width": 760,
+      "width": 560,
       "height": 560
     },
     "root": {
@@ -82,7 +92,7 @@
             "src": {
               "window": {
                 "resize": {
-                  "width": 1040
+                  "width": 780
                 }
               }
             }
@@ -90,15 +100,26 @@
         },
         {
           "triggers": "launched",
-          "action": {
-            "type": "script",
-            "src": "../bin/spt",
-            "args": [
-              "start",
-              "{var:session}"
-            ],
-            "async": false
-          }
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/spt",
+              "args": [
+                "ui-profile",
+                "footerBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/spt",
+              "args": [
+                "start",
+                "{var:session}"
+              ],
+              "async": false
+            }
+          ]
         },
         {
           "triggers": "quit",
@@ -306,7 +327,7 @@
                     {
                       "id": "footerBack",
                       "type": "button",
-                      "text": "Back  {var:back_shortcut}",
+                      "text": "Back  {var:back_label}",
                       "bordered": false,
                       "shortcut": "{var:back_shortcut}",
                       "events": [
@@ -383,9 +404,35 @@
                     "src": {
                       "finish": {
                         "variables": {
-                          "speedtest_out": "back"
+                          "speedtest_out": "back",
+                          "swiss_return": "{var:swiss_return}"
                         }
                       }
+                    }
+                  }
+                }
+              ],
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
+              "id": "escapeWindowKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "shortcut": "⎋",
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "finish": {}
                     }
                   }
                 }

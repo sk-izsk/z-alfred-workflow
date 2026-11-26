@@ -1,3 +1,5 @@
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import { join } from "node:path";
 import { api, hostname, viewer } from "./api.ts";
 import { str, readJson, writeJson, dataDir } from "./env.ts";

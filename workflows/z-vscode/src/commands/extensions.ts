@@ -87,65 +87,47 @@ export const previewSheet = (
   url: string,
   primary: { text: string; args: string[] },
 ): Action =>
-  sheet("previewSheet", {
-    type: "view",
-    layout: "border",
-    components: [
+  sheet(
+    "previewSheet",
+    {
+      type: "view",
+      layout: "border",
+      components: [
+        {
+          type: "webkitview",
+          text: html,
+          openlinksexternally: true,
+          constraints: { region: "centre", size: { width: 704, height: 500 } },
+        },
+        {
+          type: "label",
+          text: title,
+          colour: "secondaryLabelColor",
+          linebreak: "truncatetail",
+          constraints: { region: "bottom" },
+        },
+      ],
+    },
+    true,
+    undefined,
+    [
       {
-        // The size goes on the web view itself: a sheet sizes to its content.
-        constraints: { region: "centre", size: { width: 860, height: 540 } },
-        type: "webkitview",
-        text: html,
-        openlinksexternally: true,
-      },
-      {
-        constraints: { region: "bottom" },
-        type: "view",
-        layout: "border",
-        padding: 10,
-        components: [
-          {
-            constraints: { region: "left", position: "centre" },
-            type: "label",
-            text: title,
-            colour: "secondaryLabelColor",
-          },
-          {
-            constraints: { region: "right" },
-            type: "view",
-            layout: "inline",
-            spacing: 8,
-            components: [
-              {
-                type: "button",
-                text: "Open in Browser",
-                events: [
-                  {
-                    triggers: "actioned",
-                    action: { type: "json", src: { open: { type: "url", src: url } } },
-                  },
-                ],
-              },
-              {
-                type: "button",
-                text: "Close  ⎋",
-                // The web view swallows keys once clicked, so ⎋ is also this button's key equivalent.
-                shortcut: "⎋",
-                events: [{ triggers: "actioned", action: closeSheet }],
-              },
-              {
-                type: "button",
-                text: `${primary.text}  ↩`,
-                shortcut: "↩",
-                focus: true,
-                events: [{ triggers: "actioned", action: [closeSheet, script(primary.args, true)] }],
-              },
-            ],
-          },
+        type: "button",
+        text: "Open in Browser",
+        bordered: false,
+        events: [
+          { triggers: "actioned", action: { type: "json", src: { open: { type: "url", src: url } } } },
         ],
       },
+      {
+        type: "button",
+        text: `${primary.text}  ↩`,
+        bordered: false,
+        shortcut: "↩",
+        events: [{ triggers: "actioned", action: [closeSheet, script(primary.args, true)] }],
+      },
     ],
-  });
+  );
 
 /** Confirm with a second menu: a native "are you sure?" without a modal sheet. */
 export const confirmUninstall = (command: string, id: string, name: string, where = ""): Action =>

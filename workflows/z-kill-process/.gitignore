@@ -1,0 +1,5 @@
+node_modules/
+dist/
+workflow/bin/kproc.mjs
+workflow/prefs.plist
+.DS_Store

@@ -1,3 +1,5 @@
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import { bwPath } from "./bw.ts";
 import { clearIfUnchanged } from "./clipboard.ts";
 import { log as writeLog, logError } from "./log.ts";

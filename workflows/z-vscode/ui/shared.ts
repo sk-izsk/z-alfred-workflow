@@ -58,7 +58,7 @@ const backArrow: Json = {
   type: "button",
   text: "‹",
   bordered: false,
-  tooltip: "Back {var:back_shortcut}",
+  tooltip: "Back {var:back_label}",
   font: { size: 26, weight: "light" },
   events: [on("actioned", backAction)],
 };
@@ -149,7 +149,7 @@ export const footer = (right: Json[]): Json => ({
       layout: "inline",
       spacing: 10,
       components: [
-        footerButton("footerBack", "Back  {var:back_shortcut}", backAction, {
+        footerButton("footerBack", "Back  {var:back_label}", backAction, {
           shortcut: "{var:back_shortcut}",
         }),
         ...right,
@@ -287,7 +287,9 @@ export const window = (title: string, root: Json, extra: Json = {}): Json => ({
   ...extra,
   variablesconfig: {
     query: { src: "args[0]", default: "" },
-    back_shortcut: { src: "variable", default: "⌘[" },
+    back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
+    back_label: { default: "Hyper+B" },
+    actions_label: { default: "⌘K" },
     actions_shortcut: { src: "variable", default: "⌘K" },
     ...(extra.variablesconfig as Json | undefined),
   },

@@ -12,7 +12,11 @@ export const api = async (endpoint: string, method = "GET", body?: Json, fresh =
   const path = join(cacheDir(), `${key}.json`);
   if (method === "GET" && !fresh) {
     try {
-      if (Date.now() - statSync(path).mtimeMs < 30_000) return readJson(path, null);
+      if (
+        Date.now() - statSync(path).mtimeMs <
+        Math.max(1, Math.min(604800, Number(str("api_cache_seconds", "30")) || 30)) * 1000
+      )
+        return readJson(path, null);
     } catch {
       /* No cached response yet. */
     }

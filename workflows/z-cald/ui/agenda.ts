@@ -209,7 +209,7 @@ export const agenda = window(
       footer([
         accessButton,
         button("primaryButton", "Join / Open  ↩", event("join")),
-        button("actionsButton", "Actions  {var:actions_shortcut}", event("menu")),
+        button("actionsButton", "Actions  {var:actions_label}", event("menu")),
         privacyKey,
         hiddenKey("copyDetailsKey", "⇧⌘C", event("copy")),
       ]),

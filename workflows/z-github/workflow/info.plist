@@ -498,6 +498,23 @@ Adapted from Raycast GitHub and Git Repos under MIT; source icons used with perm
 			<key>config</key>
 			<dict>
 				<key>default</key>
+				<string>30</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Manual Refresh bypasses cached results. Provider update frequency is independent.</string>
+			<key>label</key>
+			<string>REST API cache seconds</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>api_cache_seconds</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
 				<string>github</string>
 				<key>placeholder</key>
 				<string>github</string>
@@ -772,16 +789,112 @@ Finder</string>
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>⌘[</string>
+				<true/>
+				<key>text</key>
+				<string>Enable Hyper key configuration</string>
+			</dict>
+			<key>description</key>
+			<string>Use the modifier checkboxes and Back key below. Disable to use the custom Back shortcut.</string>
+			<key>label</key>
+			<string>Hyper shortcuts</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_enabled</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Control</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Control</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_control</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Option</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Option</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_option</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Shift</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Shift</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_shift</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Command</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Command</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_command</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>B</string>
 				<key>placeholder</key>
-				<string>⌘[</string>
+				<string>B</string>
 				<key>required</key>
 				<false/>
 			</dict>
 			<key>description</key>
-			<string>Return to the previous screen; from its first list, return to the GitHub command menu.</string>
+			<string>One letter, number or punctuation key, combined with the enabled Hyper modifiers.</string>
 			<key>label</key>
-			<string>Back shortcut</string>
+			<string>Back key</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>back_key</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>⌃⌥⇧⌘B</string>
+				<key>placeholder</key>
+				<string>⌃⌥⇧⌘B</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Used when Hyper shortcuts are disabled. For example ⌘[.</string>
+			<key>label</key>
+			<string>Custom Back shortcut</string>
 			<key>type</key>
 			<string>textfield</string>
 			<key>variable</key>
@@ -817,7 +930,7 @@ Finder</string>
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.1.1</string>
+	<string>0.1.2</string>
 	<key>webaddress</key>
 	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-github</string>
 </dict>

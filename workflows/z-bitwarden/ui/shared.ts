@@ -142,12 +142,9 @@ export const arrows = (list: string): Json[] => [
 
 /** Footer hint for the back shortcut (every window shows it). */
 export const backHint = (): Json =>
-  footerButton(
-    "backButton",
-    "Back  {var:back_shortcut}",
-    json({ finish: { variables: { bw_out: "back" } } }),
-    { shortcut: "{var:back_shortcut}" },
-  );
+  footerButton("backButton", "Back  {var:back_label}", json({ finish: { variables: { bw_out: "back" } } }), {
+    shortcut: "{var:back_shortcut}",
+  });
 
 export const window = (root: Json, extra: Json = {}): Json => ({
   bundleid: "com.izsk.bitwarden",
@@ -155,7 +152,9 @@ export const window = (root: Json, extra: Json = {}): Json => ({
   ...extra,
   variablesconfig: {
     // Configurable in the Workflow's Configuration (⎋ can't be used: Alfred closes the window itself).
-    back_shortcut: { src: "variable", default: "⌘[" },
+    back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
+    back_label: { default: "Hyper+B" },
+    actions_label: { default: "⌘K" },
     ...(extra.variablesconfig as Json | undefined),
   },
   window: {

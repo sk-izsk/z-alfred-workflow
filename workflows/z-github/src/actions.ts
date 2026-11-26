@@ -1,7 +1,8 @@
+import { standardSheet } from "../../../shared/sheet.ts";
 import { api } from "./api.ts";
 import { object, text, type Row, type Json } from "./model.ts";
 import { openWithApps, githubRepo } from "./local.ts";
-import { run, json } from "../ui/window.ts";
+import { run } from "../ui/window.ts";
 export const menuItem = (
   title: string,
   operation: string,
@@ -206,52 +207,35 @@ export const rowMenu = async (row: Row): Promise<Json[]> => {
   items.push({ type: "separator" }, { text: "Refresh  ⌘R", action: run("refresh") });
   return items;
 };
-export const confirmSheet = (row: Row, op: string): Json => ({
-  sheet: {
-    id: "confirmSheet",
-    closeonescape: true,
-    root: {
-      type: "view",
-      layout: "inline",
-      direction: "vertical",
-      padding: 24,
-      spacing: 18,
-      components: [
-        {
-          type: "label",
-          text: op === "trash-force" ? "Force remove repository?" : `${op.replaceAll("-", " ")}?`,
-          font: { size: 18, weight: "semibold" },
-        },
-        { type: "label", text: row.title, font: { size: 14 } },
-        {
-          type: "label",
-          text:
-            op === "trash-force"
-              ? "Moves the folder to Trash, including uncommitted files and unpushed commits."
-              : op === "trash"
-                ? "Checks for local changes and unpushed commits, then moves the folder to Trash."
-                : "This action changes GitHub state. Confirm to continue.",
-        },
-        {
-          type: "button",
-          text: "Confirm",
-          shortcut: "⌘↩",
-          events: [{ triggers: "actioned", action: run("execute", [op, row.id]) }],
-        },
-        {
-          type: "button",
-          text: "Back  {var:back_shortcut}",
-          shortcut: "{var:back_shortcut}",
-          events: [
-            {
-              triggers: "actioned",
-              action: json({
-                sheet: { close: "confirmSheet" },
-              }),
-            },
-          ],
-        },
-      ],
-    },
-  },
-});
+export const confirmSheet = (row: Row, op: string): Json =>
+  standardSheet("confirmSheet", {
+    type: "view",
+    layout: "inline",
+    direction: "vertical",
+    padding: 24,
+    spacing: 18,
+    components: [
+      {
+        type: "label",
+        text: op === "trash-force" ? "Force remove repository?" : `${op.replaceAll("-", " ")}?`,
+        font: { size: 18, weight: "semibold" },
+      },
+      { type: "label", text: row.title, font: { size: 14 } },
+      {
+        type: "label",
+        text:
+          op === "trash-force"
+            ? "Moves the folder to Trash, including uncommitted files and unpushed commits."
+            : op === "trash"
+              ? "Checks for local changes and unpushed commits, then moves the folder to Trash."
+              : "This action changes GitHub state. Confirm to continue.",
+      },
+      {
+        type: "button",
+        text: "Confirm  ⌘↩",
+        constraints: { region: "bottom" },
+        shortcut: "⌘↩",
+        events: [{ triggers: "actioned", action: run("execute", [op, row.id]) }],
+      },
+    ],
+  });

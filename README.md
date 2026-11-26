@@ -12,6 +12,29 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Brew](workflows/z-brew) | Search packages, review upgrades, adopt apps and manage services and taps | [Brew 0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-brew%2Fv0.1.2) |
 | [Speed Test](workflows/z-speedtest) | Live Ookla speed meters, connection details and image export | [Speed Test 0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-speedtest%2Fv0.1.2) |
 | [GitHub & Git](workflows/z-github) | GitHub activity, full-history My PRs and local repositories | Initial release pending |
+| [Kill Process](workflows/z-kill-process) | Monitor CPU/RAM, terminate processes and restart apps | Initial release pending |
+| [Adhan Time](workflows/z-adhan-time) | City-local prayer calendar and next-prayer countdown | Initial release pending |
+| [Currency Exchange](workflows/z-currency) | Arithmetic, cross-rates, pinned targets and provider-based history | Initial release pending |
+| [Calculate Anything](workflows/z-calculate-anything) | Native results using your installed unit/conversion engine | Initial release pending |
+| [Workflow Manager](workflows/z-workflow-manager) | Installed workflows, Gallery, updates and configuration | Initial release pending |
+| [Translate](workflows/z-translate) | Clipboard and text translation with native split panes | Initial release pending |
+| [Folder Navigator](workflows/z-folder-navigator) | Find folders and browse files with complete Back history | Initial release pending |
+| [Tag Manager](workflows/z-tag-manager) | Find and manage Finder tags on files, folders and apps | Initial release pending |
+| [System Monitor](workflows/z-system-monitor) | Live CPU, memory, disks, power and network details | Initial release pending |
+| [Mole](workflows/z-mole) | Mole health, disk browsing and reviewed cleanup/optimization previews | Initial release pending |
+| [Dev](workflows/z-dev) | Separate launcher for developer and connectivity tools | Initial release pending |
+| [Dev Servers](workflows/z-dev-servers) | Inspect local servers and stop or restart by project | Initial release pending |
+| [Bluetooth](workflows/z-bluetooth) | Paired Bluetooth devices, connection controls and battery details | Initial release pending |
+| [Wi-Fi](workflows/z-wifi) | Wi-Fi networks, status and native connection controls | Initial release pending |
+| [Dev Cache Cleaner](workflows/z-dev-cache-cleaner) | Inspect developer caches and review individual or safe bulk cleanup | Initial release pending |
+| [Dev Utils](workflows/z-dev-utils) | Local developer and text transformations with clipboard input | Initial release pending |
+| [GIF Search](workflows/z-gif-search) | GIF search, favorites and recents; list/grid layouts | Initial release pending |
+| [Emoji Picker](workflows/z-emoji) | Offline emoji search, favorites, recents and skin-tone variants | Initial release pending |
+| [Lunar Controls](workflows/z-lunar) | Display brightness, contrast, volume, inputs and Lunar presets | Initial release pending |
+| [Window Navigator](workflows/z-window-navigator) | Search and focus windows on all desktops, the active app or the current desktop | Initial release pending |
+| [World Clock](workflows/z-world-clock) | Offline timezones, starred locations and native analog grid | Initial release pending |
+| [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | Initial release pending |
+| [Weather](workflows/z-weather) | Saved cities, colorful conditions and detailed weather forecasts | Initial release pending |
 
 Download a `.alfredworkflow` asset and double-click it to install. These workflows require macOS,
 Alfred 6 with the Powerpack and Node.js; see each workflow's README for its other requirements.
@@ -68,3 +91,7 @@ the repository organization; credits for adapted workflow code and assets remain
 
 AI tools helped organize this repository and prepare the migration. See each workflow's README
 for its own disclosure and review the code before use.
+
+## Shared UI and terminal behavior
+
+Workflows use the standard 780-point, screen-aware UI and configurable Hyper+B navigation described in [UI_CONVENTIONS.md](UI_CONVENTIONS.md). Terminal-opening tools offer Ghostty and other terminal choices in Workflow Configuration. See [completion verification](docs/FINAL_VERIFICATION.md) for the full scope, 333 tests and validation limits.

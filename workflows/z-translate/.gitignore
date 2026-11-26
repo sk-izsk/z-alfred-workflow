@@ -1,0 +1,5 @@
+node_modules/
+dist/
+workflow/bin/trns.mjs
+workflow/prefs.plist
+.DS_Store

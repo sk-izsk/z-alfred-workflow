@@ -1,0 +1,207 @@
+{
+  "bundleid": "com.izsk.world-clock",
+  "variablesconfig": {
+    "swiss_return": {
+      "default": ""
+    },
+    "clock_session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "clock_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    }
+  },
+  "window": {
+    "title": "World Clock",
+    "size": {
+      "height": 650,
+      "width": 780
+    },
+    "minsize": {
+      "width": 560,
+      "height": 600
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectup"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectdown"
+          }
+        },
+        {
+          "shortcut": "←",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectleft"
+          }
+        },
+        {
+          "shortcut": "→",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectright"
+          }
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/wclock",
+            "args": [
+              "menu",
+              "{var:clock_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘L",
+          "action": {
+            "type": "script",
+            "src": "../bin/wclock",
+            "args": [
+              "layout",
+              "{var:clock_session}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/wclock",
+            "args": [
+              "refresh",
+              "{var:clock_session}"
+            ],
+            "async": true
+          }
+        }
+      ],
+      "events": [
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 780
+                }
+              }
+            }
+          }
+        },
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/wclock",
+              "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/wclock",
+              "args": [
+                "prepare-origin",
+                "{var:clock_session}"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/wclock",
+              "args": [
+                "launch",
+                "{var:clock_session}"
+              ],
+              "async": true
+            }
+          ]
+        }
+      ],
+      "components": [
+        {
+          "id": "statusLabel",
+          "type": "label",
+          "text": "Loading world clocks…",
+          "constraints": {
+            "region": "centre",
+            "position": "centre"
+          }
+        },
+        {
+          "id": "initialBack",
+          "type": "button",
+          "text": "Back  {var:back_label}",
+          "bordered": false,
+          "events": [
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "json",
+                "src": {
+                  "finish": {
+                    "variables": {
+                      "clock_out": "back",
+                      "swiss_return": "{var:swiss_return}"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "shortcut": "{var:back_shortcut}",
+          "constraints": {
+            "region": "bottom",
+            "position": "left",
+            "insets": {
+              "left": 16,
+              "bottom": 16
+            }
+          }
+        }
+      ]
+    }
+  }
+}

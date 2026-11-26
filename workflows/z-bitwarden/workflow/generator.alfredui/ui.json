@@ -7,7 +7,13 @@
   "variablesconfig": {
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     },
     "generated": {
       "scriptenv": true,
@@ -60,10 +66,11 @@
   },
   "window": {
     "size": {
-      "height": 540
+      "height": 540,
+      "width": 780
     },
     "minsize": {
-      "width": 620,
+      "width": 560,
       "height": 380
     },
     "title": "Bitwarden",
@@ -73,24 +80,35 @@
       "events": [
         {
           "triggers": "launched",
-          "action": {
-            "type": "script",
-            "src": "../bin/bwa",
-            "args": [
-              "gen",
-              "{var:gen_type}",
-              "{var:gen_length}",
-              "{var:gen_upper}",
-              "{var:gen_lower}",
-              "{var:gen_number}",
-              "{var:gen_special}",
-              "{var:gen_words}",
-              "{var:gen_separator}",
-              "{var:gen_capitalize}",
-              "{var:gen_includeNumber}"
-            ],
-            "async": true
-          }
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/bwa",
+              "args": [
+                "ui-profile",
+                "backButton"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/bwa",
+              "args": [
+                "gen",
+                "{var:gen_type}",
+                "{var:gen_length}",
+                "{var:gen_upper}",
+                "{var:gen_lower}",
+                "{var:gen_number}",
+                "{var:gen_special}",
+                "{var:gen_words}",
+                "{var:gen_separator}",
+                "{var:gen_capitalize}",
+                "{var:gen_includeNumber}"
+              ],
+              "async": true
+            }
+          ]
         },
         {
           "triggers": "preload",
@@ -728,7 +746,7 @@
                 {
                   "id": "backButton",
                   "type": "button",
-                  "text": "Back  {var:back_shortcut}",
+                  "text": "Back  {var:back_label}",
                   "bordered": false,
                   "font": {
                     "size": 13,

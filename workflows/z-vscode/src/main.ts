@@ -1,3 +1,5 @@
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import * as clone from "./commands/clone.ts";
 import { chrome } from "./commands/common.ts";
 import { cloneFilter } from "./commands/clonefilter.ts";

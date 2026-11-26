@@ -100,9 +100,17 @@ This workflow was built with the help of AI tools. Review the code before use, a
 workflow; please report anything that does not work. Automated checks do not replace trying the
 window in Alfred.
 
-Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Back returns one screen at a time. Sheets close to their parent view; Back from the first screen returns to the main Alfred search.
+Back is configurable in Workflow’s Configuration and defaults to **Hyper+B**. Back returns one screen at a time. Sheets close to their parent view; Back from the first screen returns to the main Alfred search.
 Screenshots use illustrative data.
 
-Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.
+Back is always available directly in the footer as **Back Hyper+B** (configurable), including sheets. It is not inside the ⌘K actions menu.
 
 The workflow starts with the speed meter. Enter opens the detailed list; Back restores the meter without restarting the test. Live dials animate between CLI samples in a persistent local WebKit page, with reduced-motion support. No local web server is used.
+
+## Swiss launcher integration
+
+When opened from Swiss, the root Back returns to the same launcher search/selection. Child screens
+and sheets still go back one level first. Direct launches keep their normal Back behavior. Install
+Swiss separately; it is optional and does not run this tool until selected.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

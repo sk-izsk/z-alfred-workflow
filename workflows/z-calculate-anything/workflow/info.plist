@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.izsk.calculate-anything</string>
+	<key>category</key>
+	<string>Tools</string>
+	<key>connections</key>
+	<dict>
+		<key>KEYWORD</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>MODE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>MODE</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>UI</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>TRIGGER</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>MODE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>UI</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>POST</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>izsk</string>
+	<key>description</key>
+	<string>A native Alfred window for the installed Calculate Anything engine</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Calculate Anything</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>keyword</key>
+				<string>{var:kw_main}</string>
+				<key>subtext</key>
+				<string>A native Alfred window for the installed Calculate Anything engine</string>
+				<key>text</key>
+				<string>Calculate Anything</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>KEYWORD</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>availableviaurlscheme</key>
+				<true/>
+				<key>triggerid</key>
+				<string>open</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>TRIGGER</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>json</key>
+				<string>{"alfredworkflow":{"arg":"{query}","config":{"launchmode":"{var:launch_external}"}}}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.json</string>
+			<key>uid</key>
+			<string>MODE</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>launchmode</key>
+				<integer>0</integer>
+				<key>path</key>
+				<string>calculate.alfredui</string>
+				<key>stackview</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.userinterface.alfredui</string>
+			<key>uid</key>
+			<string>UI</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>./bin/calcany post</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>POST</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>Type calcany 100 km in miles, calcany 2 GB in MB, calcany 100 + 16%, or calcany 100+24/12. Natural-language conversion uses your installed Calculate Anything workflow by biati digital, preserving its configuration. Plain arithmetic is local. This bridge does not duplicate or replace your original workflow, keywords or preferences.
+
+Requires the original Calculate Anything workflow and PHP for unit/natural-language conversion. Select the installed workflow folder and PHP path in Workflow Configuration if automatic discovery fails. No software is installed at runtime. Engine cache is kept separately; original settings/API keys are read into the child environment and never logged or exported.
+
+Return copies the selected result. Command-K includes formatted, raw and alternate copies, Recalculate and Documentation. Arrow keys navigate; configurable Command-[ Back is visible in the footer. Source engine currency/crypto requests use its configured providers; availability follows that engine.
+
+Requires Alfred 6 Powerpack and Node.js 22+ or Bun. Calculate Anything icon/reference copyright 2020 biati digital, MIT. Built with help from AI tools.</string>
+	<key>uidata</key>
+	<dict>
+		<key>KEYWORD</key>
+		<dict>
+			<key>xpos</key>
+			<integer>0</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
+		<key>MODE</key>
+		<dict>
+			<key>xpos</key>
+			<integer>380</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
+		<key>POST</key>
+		<dict>
+			<key>xpos</key>
+			<integer>760</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
+		<key>TRIGGER</key>
+		<dict>
+			<key>xpos</key>
+			<integer>190</integer>
+			<key>ypos</key>
+			<integer>180</integer>
+		</dict>
+		<key>UI</key>
+		<dict>
+			<key>xpos</key>
+			<integer>570</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>calcany</string>
+				<key>placeholder</key>
+				<string>calcany</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Calculate units, percentages, data storage, time and arithmetic.</string>
+			<key>label</key>
+			<string>Calculate Anything keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>kw_main</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Optional installed workflow folder; auto-detected by com.alfred.calculateanything.</string>
+			<key>label</key>
+			<string>Calculate Anything folder</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>engine_path</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Optional absolute path to an installed PHP executable; the original engine requires PHP.</string>
+			<key>label</key>
+			<string>PHP executable</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>php_path</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>⌘K</string>
+				<key>placeholder</key>
+				<string>⌘K</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Open calculator actions.</string>
+			<key>label</key>
+			<string>Actions shortcut</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>actions_shortcut</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Enable Hyper key configuration</string>
+			</dict>
+			<key>description</key>
+			<string>Use the modifier checkboxes and Back key below. Disable to use the custom Back shortcut.</string>
+			<key>label</key>
+			<string>Hyper shortcuts</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_enabled</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Control</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Control</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_control</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Option</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Option</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_option</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Shift</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Shift</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_shift</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Command</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Command</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_command</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>B</string>
+				<key>placeholder</key>
+				<string>B</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>One letter, number or punctuation key, combined with the enabled Hyper modifiers.</string>
+			<key>label</key>
+			<string>Back key</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>back_key</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>⌃⌥⇧⌘B</string>
+				<key>placeholder</key>
+				<string>⌃⌥⇧⌘B</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Used when Hyper shortcuts are disabled. For example ⌘[.</string>
+			<key>label</key>
+			<string>Custom Back shortcut</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>back_shortcut</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>0</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Inside Alfred</string>
+						<string>0</string>
+					</array>
+					<array>
+						<string>Separate window</string>
+						<string>1</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>Choose Alfred’s window or a separate window.</string>
+			<key>label</key>
+			<string>Open window</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>launch_external</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Optional absolute path if automatic discovery fails.</string>
+			<key>label</key>
+			<string>Node.js executable</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>node_path</string>
+		</dict>
+	</array>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>0.1.0</string>
+	<key>webaddress</key>
+	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-calculate-anything</string>
+</dict>
+</plist>

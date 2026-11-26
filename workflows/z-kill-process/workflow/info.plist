@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.izsk.kill-process</string>
+	<key>category</key>
+	<string>Tools</string>
+	<key>connections</key>
+	<dict>
+		<key>KEYWORD</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>MODE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>MODE</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>UI</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>TRIGGER</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>MODE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>UI</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>POST</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>izsk</string>
+	<key>description</key>
+	<string>Live process CPU and memory monitor with termination and app restart actions for Alfred 6</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Kill Process</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>keyword</key>
+				<string>{var:kw_main}</string>
+				<key>subtext</key>
+				<string>Find processes by name or PID; sort CPU and memory</string>
+				<key>text</key>
+				<string>Kill Process</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>KEYWORD</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>availableviaurlscheme</key>
+				<true/>
+				<key>triggerid</key>
+				<string>open</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>TRIGGER</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>json</key>
+				<string>{"alfredworkflow":{"arg":"{query}","config":{"launchmode":"{var:launch_external}"}}}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.json</string>
+			<key>uid</key>
+			<string>MODE</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>launchmode</key>
+				<integer>0</integer>
+				<key>path</key>
+				<string>processes.alfredui</string>
+				<key>stackview</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.userinterface.alfredui</string>
+			<key>uid</key>
+			<string>UI</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>./bin/kproc post</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>POST</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>Type kill to browse processes; add a name or PID to filter. Sort by CPU or memory. The footer shows sampled system CPU and active+wired+compressed physical RAM usage. These are different measurements from per-process CPU and RSS.
+
+Arrow keys navigate, Return kills immediately, Command-K opens actions, Command-R reloads and Command-[ goes Back one level. Back stays visible in every footer, including sheets. Force Kill, Restart, Force Restart, Kill All, Force Kill All and Copy Path are in Actions; restart is available only for app processes.
+
+Kill requests termination with SIGTERM; Force Kill uses SIGKILL and may lose unsaved work. Kill All matches the exact executable path, not a text search. App restart targets processes in the app bundle and reopens only after they exit. Processes owned by other users, key macOS services and this workflow’s ancestors are protected. No sudo, shell command reconstruction or privilege escalation is used. PID identities are rechecked before signaling. Enable optional confirmation in Workflow Configuration if desired.
+
+Requires macOS, Alfred 6 Powerpack and Node.js 22+ or Bun. All tools and metrics are local; no service or network is used. See the README and TESTING.md in the repository for details.
+
+The icon and action inspiration are from Raycast Kill Process by rolandleth and contributors (MIT); see THIRD_PARTY_NOTICES.md. This workflow was built with the help of AI tools. Review it before use and report issues on the project page.</string>
+	<key>uidata</key>
+	<dict>
+		<key>KEYWORD</key>
+		<dict>
+			<key>xpos</key>
+			<integer>0</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
+		<key>MODE</key>
+		<dict>
+			<key>xpos</key>
+			<integer>380</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
+		<key>POST</key>
+		<dict>
+			<key>xpos</key>
+			<integer>760</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
+		<key>TRIGGER</key>
+		<dict>
+			<key>xpos</key>
+			<integer>190</integer>
+			<key>ypos</key>
+			<integer>180</integer>
+		</dict>
+		<key>UI</key>
+		<dict>
+			<key>xpos</key>
+			<integer>570</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>kill</string>
+				<key>placeholder</key>
+				<string>kill</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Direct access. Use at least three characters.</string>
+			<key>label</key>
+			<string>Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>kw_main</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>cpu</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>CPU Usage</string>
+						<string>cpu</string>
+					</array>
+					<array>
+						<string>Memory Usage</string>
+						<string>memory</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>Highest usage first.</string>
+			<key>label</key>
+			<string>Sort processes by</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>default_sort</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>3</string>
+				<key>placeholder</key>
+				<string>3</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>1–60 seconds between samples; 0 disables automatic refresh. CPU sampling takes about one second.</string>
+			<key>label</key>
+			<string>Refresh interval (seconds)</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>refresh_seconds</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include paths in search</string>
+			</dict>
+			<key>description</key>
+			<string>Names and PIDs always match.</string>
+			<key>label</key>
+			<string>Search executable paths</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>search_paths</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<false/>
+				<key>text</key>
+				<string>Ask before Kill, Force Kill, group actions and restarts</string>
+			</dict>
+			<key>description</key>
+			<string>Optional review dialog before process actions. Disabled by default.</string>
+			<key>label</key>
+			<string>Confirm process actions</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>confirm_termination</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>⌘K</string>
+				<key>placeholder</key>
+				<string>⌘K</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Actions for the selected process.</string>
+			<key>label</key>
+			<string>Actions shortcut</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>actions_shortcut</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Enable Hyper key configuration</string>
+			</dict>
+			<key>description</key>
+			<string>Use the modifier checkboxes and Back key below. Disable to use the custom Back shortcut.</string>
+			<key>label</key>
+			<string>Hyper shortcuts</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_enabled</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Control</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Control</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_control</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Option</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Option</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_option</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Shift</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Shift</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_shift</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Command</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Command</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_command</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>B</string>
+				<key>placeholder</key>
+				<string>B</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>One letter, number or punctuation key, combined with the enabled Hyper modifiers.</string>
+			<key>label</key>
+			<string>Back key</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>back_key</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>⌃⌥⇧⌘B</string>
+				<key>placeholder</key>
+				<string>⌃⌥⇧⌘B</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Used when Hyper shortcuts are disabled. For example ⌘[.</string>
+			<key>label</key>
+			<string>Custom Back shortcut</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>back_shortcut</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>0</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Inside Alfred</string>
+						<string>0</string>
+					</array>
+					<array>
+						<string>Separate window</string>
+						<string>1</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>Choose Alfred’s window or a separate window.</string>
+			<key>label</key>
+			<string>Open window</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>launch_external</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Optional absolute Node.js path if automatic discovery fails.</string>
+			<key>label</key>
+			<string>Node.js executable</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>node_path</string>
+		</dict>
+	</array>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>0.1.0</string>
+	<key>webaddress</key>
+	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-kill-process</string>
+</dict>
+</plist>

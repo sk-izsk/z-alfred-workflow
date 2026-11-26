@@ -13,7 +13,7 @@ import {
   store,
 } from "./brew.ts";
 import { doctorReport, vulnerabilityReport } from "./diagnostics.ts";
-import { bool, cacheDir, dataDir, readJson, writeJson } from "./env.ts";
+import { bool, cacheDir, dataDir, readJson, writeJson, cacheMinutes } from "./env.ts";
 import { type Package, packageDetails, tapName } from "./model.ts";
 import { commands, dryRun, packagePlan, type Plan, type Verb, terminalCommand } from "./operations.ts";
 import { metadata, render } from "./presentation.ts";
@@ -181,7 +181,7 @@ const reportSheet = (title: string, text: string): Action =>
         editable: false,
         selectable: true,
         font: { size: 13 },
-        constraints: { region: "centre", size: { width: 760, height: 400 } },
+        constraints: { region: "centre", size: { width: 704, height: 400 } },
       },
       button("closeSheet", "Close  ⎋", json({ sheet: { close: "detailsSheet" } }), {
         shortcut: "⎋",
@@ -197,7 +197,7 @@ export const selectedPackage = async ([uid = ""]: string[]): Promise<Action> => 
   if (state.mode !== "search") return {};
   try {
     const p = findPackage(uid, state);
-    return metadata(cached<Package>(detailKey(uid), 15 * 60000) || p);
+    return metadata(cached<Package>(detailKey(uid), cacheMinutes("detail_cache_minutes", 15) * 60000) || p);
   } catch {
     return {};
   }
@@ -209,7 +209,7 @@ export const hydrate = async ([uid = ""]: string[]): Promise<Action> => {
   await new Promise((r) => setTimeout(r, 200));
   if (selected() !== uid) return {};
   try {
-    const old = cached<Package>(detailKey(uid), 15 * 60000);
+    const old = cached<Package>(detailKey(uid), cacheMinutes("detail_cache_minutes", 15) * 60000);
     const p = old || (await details(findPackage(uid, state)));
     if (!old) store(detailKey(uid), p);
     return selected() === uid ? metadata(p) : {};

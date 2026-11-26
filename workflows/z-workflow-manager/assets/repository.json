@@ -1,0 +1,176 @@
+[
+  {
+    "slug": "z-kill-process",
+    "bundle": "com.izsk.kill-process",
+    "name": "Kill Process",
+    "description": "Live process CPU and memory monitor with termination and app restart actions for Alfred 6"
+  },
+  {
+    "slug": "z-brew",
+    "bundle": "com.izsk.brew",
+    "name": "Brew",
+    "description": "Search and manage Homebrew packages, upgrades, apps, services and taps"
+  },
+  {
+    "slug": "z-weather",
+    "bundle": "com.izsk.weather",
+    "name": "Weather",
+    "description": "Saved cities and detailed current weather and forecasts in Alfred 6"
+  },
+  {
+    "slug": "z-bitwarden",
+    "bundle": "com.izsk.bitwarden",
+    "name": "Bitwarden",
+    "description": "Search, autofill and manage your Bitwarden vault"
+  },
+  {
+    "slug": "z-world-clock",
+    "bundle": "com.izsk.world-clock",
+    "name": "World Clock",
+    "description": "Offline searchable world clocks with starred locations, list and analog grid"
+  },
+  {
+    "slug": "z-currency",
+    "bundle": "com.izsk.currency",
+    "name": "Currency Exchange",
+    "description": "Currency conversion, arithmetic, favorites and historical rates in Alfred"
+  },
+  {
+    "slug": "z-swiss",
+    "bundle": "com.izsk.swiss",
+    "name": "Swiss",
+    "description": "A lightweight searchable launcher for independent Alfred tools"
+  },
+  {
+    "slug": "z-github",
+    "bundle": "com.izsk.github",
+    "name": "GitHub",
+    "description": "GitHub activity and local Git repositories"
+  },
+  {
+    "slug": "z-adhan-time",
+    "bundle": "com.izsk.adhan-time",
+    "name": "Adhan Time",
+    "description": "Prayer times, next prayer and city-local countdown in Alfred"
+  },
+  {
+    "slug": "z-calculate-anything",
+    "bundle": "com.izsk.calculate-anything",
+    "name": "Calculate Anything",
+    "description": "A native Alfred window for the installed Calculate Anything engine"
+  },
+  {
+    "slug": "z-speedtest",
+    "bundle": "com.izsk.speedtest",
+    "name": "Speed Test",
+    "description": "Live Ookla download and upload meters, ping, jitter and connection quality"
+  },
+  {
+    "slug": "z-cald",
+    "bundle": "com.izsk.calendar",
+    "name": "Calendar",
+    "description": "Quick calendar, upcoming meetings and event creation using macOS Calendar"
+  },
+  {
+    "slug": "z-vscode",
+    "bundle": "com.izsk.vscode",
+    "name": "VS Code",
+    "description": "Recent projects, extensions and git clone for VS Code, Cursor, Zed and friends"
+  },
+  {
+    "slug": "z-workflow-manager",
+    "bundle": "com.izsk.workflow-manager",
+    "name": "Workflow Manager",
+    "description": "Manage installed and available Alfred workflows"
+  },
+  {
+    "slug": "z-translate",
+    "bundle": "com.izsk.translate",
+    "name": "Translate",
+    "description": "Clipboard and text translation with native split panes"
+  },
+  {
+    "slug": "z-folder-navigator",
+    "bundle": "com.izsk.folder-navigator",
+    "name": "Folder Navigator",
+    "description": "Find folders and browse files with complete Back history"
+  },
+  {
+    "slug": "z-tag-manager",
+    "bundle": "com.izsk.tag-manager",
+    "name": "Tag Manager",
+    "description": "Find and manage Finder tags on files, folders and apps"
+  },
+  {
+    "slug": "z-system-monitor",
+    "bundle": "com.izsk.system-monitor",
+    "name": "System Monitor",
+    "description": "Live CPU, memory, disks, power and network details"
+  },
+  {
+    "slug": "z-mole",
+    "bundle": "com.izsk.mole",
+    "name": "Mole",
+    "description": "Mole health, disk browsing and reviewed cleanup/optimization previews"
+  },
+  {
+    "slug": "z-emoji",
+    "bundle": "com.izsk.emoji",
+    "name": "Emoji Picker",
+    "description": "Offline emoji search, favorites, recents and skin-tone variants"
+  },
+  {
+    "slug": "z-lunar",
+    "bundle": "com.izsk.lunar",
+    "name": "Lunar Controls",
+    "description": "Display brightness, contrast, volume, inputs and Lunar presets"
+  },
+  {
+    "slug": "z-window-navigator",
+    "bundle": "com.izsk.window-navigator",
+    "name": "Window Navigator",
+    "description": "Search and focus windows on all desktops, the active app or the current desktop"
+  },
+  {
+    "slug": "z-gif-search",
+    "bundle": "com.izsk.gif-search",
+    "name": "GIF Search",
+    "description": "GIF search, favorites and recents in list or grid views"
+  },
+  {
+    "slug": "z-dev",
+    "name": "Dev",
+    "bundle": "com.izsk.dev",
+    "description": "Separate launcher for developer and connectivity tools"
+  },
+  {
+    "slug": "z-dev-servers",
+    "name": "Dev Servers",
+    "bundle": "com.izsk.dev-servers",
+    "description": "Inspect local servers and stop or restart by project"
+  },
+  {
+    "slug": "z-bluetooth",
+    "name": "Bluetooth",
+    "bundle": "com.izsk.bluetooth",
+    "description": "Paired Bluetooth devices, connection controls and battery details"
+  },
+  {
+    "slug": "z-wifi",
+    "name": "Wi-Fi",
+    "bundle": "com.izsk.wifi",
+    "description": "Wi-Fi networks, status and native connection controls"
+  },
+  {
+    "slug": "z-dev-cache-cleaner",
+    "name": "Dev Cache Cleaner",
+    "bundle": "com.izsk.dev-cache-cleaner",
+    "description": "Inspect developer caches and review individual or safe bulk cleanup"
+  },
+  {
+    "slug": "z-dev-utils",
+    "name": "Dev Utils",
+    "bundle": "com.izsk.dev-utils",
+    "description": "Local developer and text transformations with clipboard input"
+  }
+]

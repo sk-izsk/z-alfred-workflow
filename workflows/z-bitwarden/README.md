@@ -184,7 +184,7 @@ Alfred Preferences → Workflows → **Bitwarden** → **Configure Workflow**.
 |---|---|---|
 | Keywords | `bw`, `bwgen`, `bwgq`, `bwotp`, `bwsend`, `bwnew` | Change any keyword |
 | Window | Inside Alfred | Or open as a separate window |
-| Back Shortcut / Actions Shortcut | ⌘[ / ⌘K | Use ⌘ ⌥ ⌃ ⇧ symbols |
+| Back Shortcut / Actions Shortcut | Hyper+B / ⌘K | Use ⌘ ⌥ ⌃ ⇧ symbols |
 | Return Key | Autofill | Or paste / copy the password |
 | Autofill | — | Press Return after filling (submits the form); copy the TOTP after filling (on) |
 | Current Site | Filter | Pre-fill the site name, pin matches to the top, or off |
@@ -320,6 +320,8 @@ This project is an independent Alfred implementation. It is not affiliated with 
 
 [MIT](LICENSE). Third-party assets are covered by [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Bitwarden is a trademark of Bitwarden Inc.
 
-Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Back returns one screen at a time. Sheets close to their parent view; Back from the first screen returns to the Bitwarden command menu.
+Back is configurable in Workflow’s Configuration and defaults to **Hyper+B**. Back returns one screen at a time. Sheets close to their parent view; Back from the first screen returns to the Bitwarden command menu.
 
-Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.
+Back is always available directly in the footer as **Back Hyper+B** (configurable), including sheets. It is not inside the ⌘K actions menu.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

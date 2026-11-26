@@ -71,7 +71,7 @@ export const footer = (buttons: Json[], showIcon = false): Json => {
             spacing: 10,
             constraints: { region: "right", position: "centre" },
             components: [
-              button("footerBack", "Back  {var:back_shortcut}", back, { shortcut: "{var:back_shortcut}" }),
+              button("footerBack", "Back  {var:back_label}", back, { shortcut: "{var:back_shortcut}" }),
               ...visible,
             ],
           },
@@ -91,7 +91,7 @@ export const header = (title: Json, right?: Json): Json => ({
   components: [
     button("backButton", "‹", back, {
       font: { size: 26 },
-      tooltip: "Back {var:back_shortcut}",
+      tooltip: "Back {var:back_label}",
       constraints: { region: "left", position: "centre" },
     }),
     { ...title, constraints: { region: "centre", position: "centre", stretch: "horizontal" } },
@@ -125,7 +125,9 @@ export const window = (
     brew_tap: { default: "", scriptenv: true },
     brew_query: { src: "args[0]", default: "", scriptenv: true },
     actions_shortcut: { src: "variable", default: "⌘K" },
-    back_shortcut: { src: "variable", default: "⌘[" },
+    back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
+    back_label: { default: "Hyper+B" },
+    actions_label: { default: "⌘K" },
     ...variables,
   },
   window: {

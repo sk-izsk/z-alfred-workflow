@@ -1,0 +1,166 @@
+{
+  "bundleid": "com.izsk.mole",
+  "variablesconfig": {
+    "swiss_return": {
+      "default": ""
+    },
+    "moleui_session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "moleui_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    }
+  },
+  "window": {
+    "title": "Mole",
+    "size": {
+      "width": 780,
+      "height": 540
+    },
+    "minsize": {
+      "width": 560,
+      "height": 380
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/moleui",
+              "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/moleui",
+              "args": [
+                "prepare-origin",
+                "{var:moleui_session}"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/moleui",
+              "args": [
+                "launch",
+                "{var:moleui_session}"
+              ],
+              "async": true
+            }
+          ]
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/moleui",
+            "args": [
+              "menu",
+              "{var:moleui_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/moleui",
+            "args": [
+              "refresh",
+              "{var:moleui_session}"
+            ],
+            "async": true
+          }
+        }
+      ],
+      "components": [
+        {
+          "id": "statusLabel",
+          "type": "label",
+          "text": "Loading Mole…",
+          "constraints": {
+            "region": "centre",
+            "position": "centre"
+          }
+        },
+        {
+          "id": "initialBack",
+          "type": "button",
+          "text": "Back  {var:back_label}",
+          "shortcut": "{var:back_shortcut}",
+          "bordered": false,
+          "constraints": {
+            "region": "bottom",
+            "position": "right",
+            "insets": {
+              "right": 12,
+              "bottom": 12
+            }
+          },
+          "events": [
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "json",
+                "src": {
+                  "finish": {
+                    "variables": {
+                      "moleui_out": "back",
+                      "swiss_return": "{var:swiss_return}"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

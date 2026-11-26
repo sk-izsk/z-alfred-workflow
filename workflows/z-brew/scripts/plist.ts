@@ -1,3 +1,4 @@
+import { terminalConfiguration } from "../../../shared/terminal.ts";
 import pkg from "../package.json" with { type: "json" };
 
 type Obj = Record<string, unknown>;
@@ -171,6 +172,21 @@ const aliases: Record<string, string> = {
   maintenance: "brewm",
 };
 const userconfigurationconfig: Obj[] = [
+  {
+    type: "textfield",
+    variable: "catalog_cache_minutes",
+    label: "Catalog cache minutes",
+    description: "Manual Refresh bypasses cached results. Provider update frequency is independent.",
+    config: { default: "360", required: false },
+  },
+  {
+    type: "textfield",
+    variable: "detail_cache_minutes",
+    label: "Details cache minutes",
+    description: "Manual Refresh bypasses cached results. Provider update frequency is independent.",
+    config: { default: "15", required: false },
+  },
+
   text("kw_main", "Homebrew menu", "brew", "Search all Homebrew commands."),
   ...targets.map((target) =>
     text(
@@ -193,19 +209,7 @@ const userconfigurationconfig: Obj[] = [
     description: "Use Homebrew’s --greedy when checking and upgrading.",
     config: { default: false, text: "Include auto-updating and latest-version casks" },
   },
-  {
-    type: "popupbutton",
-    variable: "terminal_app",
-    label: "Run commands in",
-    description: "Commands run visibly after review.",
-    config: {
-      default: "Terminal",
-      pairs: [
-        ["Terminal", "Terminal"],
-        ["iTerm", "iTerm"],
-      ],
-    },
-  },
+  ...terminalConfiguration("Terminal"),
   text("actions_shortcut", "Actions shortcut", "⌘K", "Open the selected entry’s action menu."),
   text(
     "back_shortcut",

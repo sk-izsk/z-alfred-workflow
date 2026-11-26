@@ -1,0 +1,26 @@
+# Window Navigator
+
+Search window titles and application names in **all desktops, the active app or the current desktop**. Open `wnav` or choose Window Navigator in Swiss. Use `wins` to open the same window directly in Current Desktop mode. Both keywords are configurable; the separate Window Switcher workflow has been removed. Return or a row's primary action brings the selected window forward. Actions offers Close Window, Quit Owning App, Copy Window Title, Refresh, Accessibility Settings and Configuration.
+
+![Native window search](assets/screenshots/search.png)
+
+The scope picker offers All Desktops, Active App and Current Desktop. Navigator includes minimized windows and can restore them. Current-desktop matching uses the owning process plus title or geometry from CoreGraphics, excluding minimized windows. Title matching includes Stage Manager thumbnails whose visible geometry differs from the full-size Accessibility window. All lists refresh on opening or manual Refresh; they are not continually rebuilt while you type.
+
+Requires Alfred Accessibility permission and permission to automate System Events. Grant additional Screen Recording access only if macOS restricts current-desktop window information. Windows not exposed by an app's Accessibility interface cannot be listed. Cross-desktop navigation uses the app's Window menu where available, then falls back to AXRaise; app-specific behavior and desktop-switching preferences can affect it.
+
+Before an action, the workflow revalidates process, application bundle, window index and title. Closing additionally checks geometry. If a window changed or disappeared, it reopens the same search/selection with an error rather than acting on a different window. Quit is a normal app quit request; the app may still show its own unsaved-document prompt. No force-kill, private macOS APIs or bundled helper binaries are used.
+
+The shared width is 780 points with active-display clamping. Back defaults to Hyper+B, with a toggle, four modifier checkboxes and a custom shortcut. Back is visible outside Actions and restores Swiss when launched there. Local UI cache contains window metadata for the session; no remote API is contacted.
+
+```sh
+bun install
+bun run check
+bun run package
+bun run link
+```
+
+Tests cover search, selection, stable typing, action handoffs and menus. Read-only enumeration was checked against actual apps; raise and close were verified only on a newly created disposable TextEdit document. Quitting user applications was not tested.
+
+References: installed [Window Navigator](https://github.com/zeitlings/alfred-workflows) and [Window Switcher](https://github.com/alfredapp/window-switcher-workflow/). No reference source, artwork or binaries copied. Original implementation/icon MIT. Built with help from AI tools.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.

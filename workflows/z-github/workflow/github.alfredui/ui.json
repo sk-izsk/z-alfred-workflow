@@ -30,16 +30,23 @@
     },
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     }
   },
   "window": {
     "title": "GitHub",
     "size": {
-      "height": 630
+      "height": 630,
+      "width": 780
     },
     "minsize": {
-      "width": 760,
+      "width": 560,
       "height": 520
     },
     "root": {
@@ -54,7 +61,7 @@
             "src": {
               "window": {
                 "resize": {
-                  "width": 1040
+                  "width": 780
                 }
               }
             }
@@ -62,15 +69,26 @@
         },
         {
           "triggers": "launched",
-          "action": {
-            "type": "script",
-            "src": "../bin/gith",
-            "args": [
-              "launch",
-              "{var:g_session}"
-            ],
-            "async": true
-          }
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/gith",
+              "args": [
+                "ui-profile",
+                "loadingBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/gith",
+              "args": [
+                "launch",
+                "{var:g_session}"
+              ],
+              "async": true
+            }
+          ]
         }
       ],
       "shortcuts": [
@@ -225,7 +243,7 @@
             {
               "id": "loadingBack",
               "type": "button",
-              "text": "Back  {var:back_shortcut}",
+              "text": "Back  {var:back_label}",
               "bordered": false,
               "events": [
                 {

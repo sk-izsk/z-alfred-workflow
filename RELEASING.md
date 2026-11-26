@@ -10,6 +10,29 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-brew` | `z-brew/vX.Y.Z` | `Brew.alfredworkflow` |
 | `workflows/z-speedtest` | `z-speedtest/vX.Y.Z` | `Speed Test.alfredworkflow` |
 | `workflows/z-github` | `z-github/vX.Y.Z` | `GitHub.alfredworkflow` |
+| `workflows/z-kill-process` | `z-kill-process/vX.Y.Z` | `Kill Process.alfredworkflow` |
+| `workflows/z-adhan-time` | `z-adhan-time/vX.Y.Z` | `Adhan Time.alfredworkflow` |
+| `workflows/z-currency` | `z-currency/vX.Y.Z` | `Currency Exchange.alfredworkflow` |
+| `workflows/z-calculate-anything` | `z-calculate-anything/vX.Y.Z` | `Calculate Anything.alfredworkflow` |
+| `workflows/z-workflow-manager` | `z-workflow-manager/vX.Y.Z` | `Workflow Manager.alfredworkflow` |
+| `workflows/z-translate` | `z-translate/vX.Y.Z` | `Translate.alfredworkflow` |
+| `workflows/z-folder-navigator` | `z-folder-navigator/vX.Y.Z` | `Folder Navigator.alfredworkflow` |
+| `workflows/z-tag-manager` | `z-tag-manager/vX.Y.Z` | `Tag Manager.alfredworkflow` |
+| `workflows/z-system-monitor` | `z-system-monitor/vX.Y.Z` | `System Monitor.alfredworkflow` |
+| `workflows/z-mole` | `z-mole/vX.Y.Z` | `Mole.alfredworkflow` |
+| `workflows/z-dev` | `z-dev/vX.Y.Z` | `Dev.alfredworkflow` |
+| `workflows/z-dev-servers` | `z-dev-servers/vX.Y.Z` | `Dev Servers.alfredworkflow` |
+| `workflows/z-bluetooth` | `z-bluetooth/vX.Y.Z` | `Bluetooth.alfredworkflow` |
+| `workflows/z-wifi` | `z-wifi/vX.Y.Z` | `Wi-Fi.alfredworkflow` |
+| `workflows/z-dev-cache-cleaner` | `z-dev-cache-cleaner/vX.Y.Z` | `Dev Cache Cleaner.alfredworkflow` |
+| `workflows/z-dev-utils` | `z-dev-utils/vX.Y.Z` | `Dev Utils.alfredworkflow` |
+| `workflows/z-gif-search` | `z-gif-search/vX.Y.Z` | `GIF Search.alfredworkflow` |
+| `workflows/z-emoji` | `z-emoji/vX.Y.Z` | `Emoji Picker.alfredworkflow` |
+| `workflows/z-lunar` | `z-lunar/vX.Y.Z` | `Lunar Controls.alfredworkflow` |
+| `workflows/z-window-navigator` | `z-window-navigator/vX.Y.Z` | `Window Navigator.alfredworkflow` |
+| `workflows/z-world-clock` | `z-world-clock/vX.Y.Z` | `World Clock.alfredworkflow` |
+| `workflows/z-swiss` | `z-swiss/vX.Y.Z` | `Swiss.alfredworkflow` |
+| `workflows/z-weather` | `z-weather/vX.Y.Z` | `Weather.alfredworkflow` |
 
 1. Bump `version` in the selected workflow's `package.json`.
 2. In that folder, run `bun install --frozen-lockfile`, `bun run check` and `bun run package`.

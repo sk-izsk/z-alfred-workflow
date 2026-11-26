@@ -24,6 +24,52 @@ jobs:
             artifact: GitHub.alfredworkflow
           - workflow: z-speedtest
             artifact: Speed Test.alfredworkflow
+          - workflow: z-adhan-time
+            artifact: Adhan Time.alfredworkflow
+          - workflow: z-currency
+            artifact: Currency Exchange.alfredworkflow
+          - workflow: z-calculate-anything
+            artifact: Calculate Anything.alfredworkflow
+          - workflow: z-swiss
+            artifact: Swiss.alfredworkflow
+          - workflow: z-workflow-manager
+            artifact: Workflow Manager.alfredworkflow
+          - workflow: z-translate
+            artifact: Translate.alfredworkflow
+          - workflow: z-folder-navigator
+            artifact: Folder Navigator.alfredworkflow
+          - workflow: z-tag-manager
+            artifact: Tag Manager.alfredworkflow
+          - workflow: z-system-monitor
+            artifact: System Monitor.alfredworkflow
+          - workflow: z-mole
+            artifact: Mole.alfredworkflow
+          - workflow: z-dev
+            artifact: Dev.alfredworkflow
+          - workflow: z-dev-servers
+            artifact: Dev Servers.alfredworkflow
+          - workflow: z-bluetooth
+            artifact: Bluetooth.alfredworkflow
+          - workflow: z-wifi
+            artifact: Wi-Fi.alfredworkflow
+          - workflow: z-dev-cache-cleaner
+            artifact: Dev Cache Cleaner.alfredworkflow
+          - workflow: z-dev-utils
+            artifact: Dev Utils.alfredworkflow
+          - workflow: z-gif-search
+            artifact: GIF Search.alfredworkflow
+          - workflow: z-emoji
+            artifact: Emoji Picker.alfredworkflow
+          - workflow: z-lunar
+            artifact: Lunar Controls.alfredworkflow
+          - workflow: z-window-navigator
+            artifact: Window Navigator.alfredworkflow
+          - workflow: z-world-clock
+            artifact: World Clock.alfredworkflow
+          - workflow: z-weather
+            artifact: Weather.alfredworkflow
+          - workflow: z-kill-process
+            artifact: Kill Process.alfredworkflow
           - workflow: z-brew
             artifact: Brew.alfredworkflow
           - workflow: z-cald

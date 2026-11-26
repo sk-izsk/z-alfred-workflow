@@ -60,7 +60,7 @@ export const listComponents = (s: Session, repos: { text: string; value: string 
       components: [
         button("backButton", "‹", run("back", [], false), {
           font: { size: 28 },
-          tooltip: "Back {var:back_shortcut}",
+          tooltip: "Back {var:back_label}",
           constraints: { region: "left", position: "centre" },
         }),
         {
@@ -243,7 +243,7 @@ export const listComponents = (s: Session, repos: { text: string; value: string 
               spacing: 12,
               constraints: { region: "right" },
               components: [
-                button("footerBack", "Back  {var:back_shortcut}", run("back", [], false), {
+                button("footerBack", "Back  {var:back_label}", run("back", [], false), {
                   shortcut: "{var:back_shortcut}",
                 }),
                 ...(v.more ? [button("moreButton", "Load More", run("more"))] : []),
@@ -253,7 +253,7 @@ export const listComponents = (s: Session, repos: { text: string; value: string 
                   act("primary"),
                   { shortcut: "↩" },
                 ),
-                button("actionsButton", "Actions  {var:actions_shortcut}", act("menu")),
+                button("actionsButton", "Actions  {var:actions_label}", act("menu")),
               ],
             },
           ],
@@ -329,7 +329,7 @@ export const formSheet = (form: FormState): Json => {
               type: "view",
               layout: "border",
               spacing: 16,
-              constraints: { size: { width: 720 } },
+              constraints: { size: { width: 680 } },
               components: [
                 label(`label_${f.name}`, f.type === "check" ? "" : f.title, {
                   textalign: "right",
@@ -350,16 +350,15 @@ export const formSheet = (form: FormState): Json => {
                 font: { size: 12 },
                 constraints: { region: "top" },
               }),
-              button("formCancel", "Back  {var:back_shortcut}", run("form-back", formArgs(form), false), {
-                shortcut: "{var:back_shortcut}",
-                constraints: { region: "left" },
-              }),
               {
                 type: "view",
                 layout: "inline",
                 spacing: 14,
                 constraints: { region: "right" },
                 components: [
+                  button("formCancel", "Back  {var:back_label}", run("form-back", formArgs(form), false), {
+                    shortcut: "{var:back_shortcut}",
+                  }),
                   ...(page
                     ? [button("formPrevious", "Previous", run("form-page", ["-1", ...formArgs(form)]))]
                     : []),
@@ -373,7 +372,7 @@ export const formSheet = (form: FormState): Json => {
                         ...formArgs(form),
                       ]),
                     ],
-                    { shortcut: "⌘↩", bordered: true },
+                    { shortcut: "⌘↩", bordered: false },
                   ),
                 ],
               },
@@ -402,11 +401,11 @@ export const detailSheet = (title: string, markdown: string): Json => ({
           id: "detailContent",
           type: "markdownarea",
           text: markdown,
-          constraints: { region: "centre", size: { width: 800, height: 460 } },
+          constraints: { region: "centre", size: { width: 704, height: 460 } },
         },
-        button("detailClose", "Back  {var:back_shortcut}", json({ sheet: { close: "detailSheet" } }), {
+        button("detailClose", "Back  {var:back_label}", json({ sheet: { close: "detailSheet" } }), {
           shortcut: "{var:back_shortcut}",
-          constraints: { region: "bottom" },
+          constraints: { region: "bottom", position: "right" },
         }),
       ],
     },
@@ -421,7 +420,9 @@ export const githubWindow = {
     g_form: { src: "variable", default: "", scriptenv: true },
     g_query: { src: "args[0]", default: "", scriptenv: true },
     actions_shortcut: { src: "variable", default: "⌘K" },
-    back_shortcut: { src: "variable", default: "⌘[" },
+    back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
+    back_label: { default: "Hyper+B" },
+    actions_label: { default: "⌘K" },
   },
   window: {
     title: "GitHub",
@@ -484,7 +485,7 @@ export const githubWindow = {
           components: [
             button(
               "loadingBack",
-              "Back  {var:back_shortcut}",
+              "Back  {var:back_label}",
               json({ finish: { variables: { github_out: "back" } } }),
               { shortcut: "{var:back_shortcut}", constraints: { region: "right" } },
             ),

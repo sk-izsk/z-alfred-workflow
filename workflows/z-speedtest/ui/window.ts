@@ -32,9 +32,36 @@ export const body = (
   selection: string,
   meterPath?: string,
 ): Json[] => {
-  if (s.phase === "error" || mode !== "list") {
+  if (s.phase === "error")
+    return [
+      {
+        type: "view",
+        layout: "border",
+        padding: 32,
+        constraints: { region: "centre" },
+        components: [
+          {
+            type: "imageview",
+            image: { type: "symbol", src: "wifi.exclamationmark" },
+            contenttintcolour: "secondaryLabelColor",
+            constraints: { region: "top", position: "centre", size: { width: 64, height: 64 } },
+          },
+          {
+            id: "errorMessage",
+            type: "label",
+            text: s.errorMessage || "Speedtest failed",
+            font: { size: 17 },
+            colour: "secondaryLabelColor",
+            textalign: "centre",
+            linebreak: "wordwrap",
+            constraints: { region: "centre", position: "centre", stretch: "horizontal" },
+          },
+        ],
+      },
+    ];
+  if (mode !== "list") {
     const dashboard = web("dashboard", dashboardHTML(s));
-    if (meterPath && s.phase !== "error") {
+    if (meterPath) {
       delete dashboard.text;
       dashboard.src = meterPath;
     }
@@ -168,10 +195,13 @@ export const speedtestWindow = {
   bundleid: "com.izsk.speedtest",
   log: { level: "error", internal: true },
   variablesconfig: {
+    swiss_return: { default: "" },
     session: { default: "", scriptenv: true },
     speed_query: { default: "", scriptenv: true },
     launch_view: { src: "args[0]", default: "", scriptenv: true },
-    back_shortcut: { src: "variable", default: "⌘[" },
+    back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
+    back_label: { default: "Hyper+B" },
+    actions_label: { default: "⌘K" },
     mode: { default: "meter", scriptenv: true },
     details: { default: "1", persist: true, scriptenv: true },
     selection: { default: "ping", scriptenv: true },
@@ -269,7 +299,7 @@ export const speedtestWindow = {
                   spacing: 16,
                   constraints: { region: "right" },
                   components: [
-                    button("footerBack", "Back  {var:back_shortcut}", run("back"), "{var:back_shortcut}"),
+                    button("footerBack", "Back  {var:back_label}", run("back"), "{var:back_shortcut}"),
                     button("primaryButton", "Show Detailed List  ↩", run("primary"), "↩"),
                     button("actionsButton", "Actions  ⌘K", run("actions")),
                   ],
@@ -280,9 +310,16 @@ export const speedtestWindow = {
               ...button(
                 "closeWindowKey",
                 "",
-                json({ finish: { variables: { speedtest_out: "back" } } }),
+                json({
+                  finish: { variables: { speedtest_out: "back", swiss_return: "{var:swiss_return}" } },
+                }),
                 "⌘W",
               ),
+              opacity: 0,
+              constraints: { size: { width: 0, height: 0 } },
+            },
+            {
+              ...button("escapeWindowKey", "", json({ finish: {} }), "⎋"),
               opacity: 0,
               constraints: { size: { width: 0, height: 0 } },
             },

@@ -1,0 +1,230 @@
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { execFileSync } from "node:child_process";
+import { create, read, save } from "../src/state.ts";
+import { components } from "../ui/window.ts";
+import { referenceData } from "../../../shared/reference-rows.ts";
+import type { State } from "../src/state.ts";
+import { statusItems, previewItems } from "../src/presentation.ts";
+import { expect, test } from "bun:test";
+import { run, commandArgs, parseAnalysis, cleanOutput, shellQuote, execution } from "../src/mole.ts";
+test("previews always use dry-run and command selection is closed", () => {
+  expect(commandArgs("clean")).toEqual(["clean", "--dry-run"]);
+  expect(commandArgs("optimize")).toEqual(["optimize", "--dry-run"]);
+  expect(commandArgs("analyze", "/Volumes/My SSD")).toEqual(["analyze", "--json", "/Volumes/My SSD"]);
+  expect(() => commandArgs("analyze", "relative")).toThrow();
+  expect(() => execution("remove")).toThrow();
+  expect(shellQuote("a'b")).toBe("'a'\\''b'");
+});
+test("status handles nullable sections and analysis validates native entry types", () => {
+  const status = statusItems(
+    JSON.stringify({ hardware: { model: "Example" }, health_score: 92, batteries: null }),
+  );
+  expect(status.find((e) => e.id === "batteries")?.details[0]?.[1]).toBe("Unavailable");
+  const analysis = parseAnalysis(
+    JSON.stringify({
+      entries: [
+        { name: "Demo", path: "/tmp/Demo", size: 123, is_dir: true },
+        { path: "relative", name: "Bad", size: 1, is_dir: false },
+      ],
+    }),
+  );
+  expect(analysis).toHaveLength(1);
+  expect(analysis[0]!.directory).toBe(true);
+  expect(cleanOutput("\x1b[32mPreview\x1b[0m\rDone")).toEqual(["Preview", "Done"]);
+});
+
+test("grouped previews preserve real summary sizes/counts without claiming changes ran", () => {
+  const clean = previewItems(
+    "➤ User essentials\n ○ User app cache · 2 items, 522.4MB dry\n ◎ Trash · skipped, grant access\n➤ Browsers\n ○ Browser cache · 20KB dry\nPotential space: 1.11GB · 110 items",
+    "clean",
+  );
+  expect(clean[0]!.badge).toBe("1.11GB");
+  expect(clean[0]!.description).toBe("110 items");
+  expect(clean[1]!.group).toBe("User essentials");
+  expect(clean[1]!.badge).toBe("522.4MB");
+  expect(clean[2]!.badge).toBe("Skipped");
+  const opt = previewItems(
+    "➤ Finder Cache Refresh\n ○ QuickLook thumbnails refreshed\nWould apply 2 optimizations",
+    "optimize",
+  );
+  expect(opt[0]!.badge).toBe("2 optimizations");
+  expect(opt[1]!.details[1]![1]).toContain("not executed");
+  expect(() => previewItems("unsupported output", "clean")).toThrow("Unsupported");
+});
+test("native layouts keep reference grouping/badges and contain no web view", () => {
+  const s = {
+    mode: "clean",
+    query: "",
+    path: "",
+    items: [],
+    status: "Loading…",
+    selected: "",
+  } as unknown as State;
+  const items = previewItems(
+    "➤ User essentials\n ○ Cache · 10MB dry\nPotential space: 10MB · 2 items",
+    "clean",
+  );
+  const rows = referenceData(items, "mole");
+  expect(rows[0]!.header).toBe(true);
+  expect(rows.some((row) => row["moleBadgeLabel.text"] === "10MB")).toBe(true);
+  expect(JSON.stringify(components(s))).not.toContain("webkitview");
+  expect(JSON.stringify(components({ ...s, mode: "status" }))).toContain('"id":"details"');
+  expect(JSON.stringify(components(s))).not.toContain('"id":"details"');
+});
+
+test("folder Back restores the prior path/query/selection/scroll and previews cannot execute while loading", () => {
+  const dir = mkdtempSync(join(tmpdir(), "mole-nav-test-")),
+    prior = process.env.alfred_workflow_cache;
+  process.env.alfred_workflow_cache = dir;
+  try {
+    const s = create("", "");
+    s.mode = "analyze";
+    s.path = "/tmp/Example";
+    s.query = "Docs";
+    s.selected = "/tmp/Example/Docs";
+    s.scroll = 80;
+    s.ready = true;
+    s.items = [
+      {
+        id: s.selected,
+        name: "Docs",
+        description: "1 MB",
+        icon: "folder",
+        path: s.selected,
+        directory: true,
+        details: [["Bytes", "1048576"]],
+      },
+    ];
+    save(s);
+    const call = (command: string, ...args: string[]) =>
+      JSON.parse(
+        execFileSync(process.execPath, [join(import.meta.dir, "../src/main.ts"), command, s.id, ...args], {
+          encoding: "utf8",
+          env: process.env,
+        }),
+      );
+    const opened = call("open", s.selected);
+    expect(JSON.stringify(opened)).toContain("dataview");
+    expect(JSON.stringify(opened)).not.toContain("webkitview");
+    expect(read(s.id).path).toBe("/tmp/Example/Docs");
+    call("back");
+    const restored = read(s.id);
+    expect([restored.path, restored.query, restored.selected, restored.scroll]).toEqual([
+      s.path,
+      s.query,
+      s.selected,
+      80,
+    ]);
+    restored.mode = "clean";
+    restored.ready = false;
+    save(restored);
+    expect(call("open").sheet).toBeUndefined();
+  } finally {
+    if (prior === undefined) delete process.env.alfred_workflow_cache;
+    else process.env.alfred_workflow_cache = prior;
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("noninteractive previews close stdin and a completed worker is returned by polling", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "mole-worker-test-"));
+  const priorPath = process.env.mole_path,
+    priorCache = process.env.alfred_workflow_cache;
+  process.env.mole_path = join(dir, "fake-mole");
+  process.env.alfred_workflow_cache = dir;
+  writeFileSync(
+    process.env.mole_path,
+    '#!/bin/sh\ncat >/dev/null\nprintf "➤ Finder Cache Refresh\\n ○ QuickLook thumbnails refreshed\\nWould apply 1 optimizations\\n"\n',
+    { mode: 0o700 },
+  );
+  try {
+    expect(await run("optimize")).toContain("Would apply 1");
+    const s = create("", "");
+    s.mode = "optimize";
+    s.status = "Loading…";
+    save(s);
+    const call = (cmd: string) =>
+      JSON.parse(
+        execFileSync(process.execPath, [join(import.meta.dir, "../src/main.ts"), cmd, s.id, s.request], {
+          encoding: "utf8",
+          env: process.env,
+        }),
+      );
+    const started = call("load");
+    expect(started.pulse.args[0]).toBe("poll");
+    const deadline = Date.now() + 5000;
+    while (!read(s.id).ready && Date.now() < deadline) await Bun.sleep(30);
+    expect(read(s.id).ready).toBe(true);
+    const result = call("poll");
+    expect(result.pulse.interval).toBe(0);
+    const stalled = read(s.id);
+    stalled.ready = false;
+    stalled.status = "Loading…";
+    stalled.loadingSince = Date.now() - 101000;
+    save(stalled);
+    expect(call("poll").update.ids.items.placeholder).toContain("timed out");
+    expect(
+      result.update.ids.items.data.src.some(
+        (row: any) => row["moleTitle.text"] === "Available Optimizations",
+      ),
+    ).toBe(true);
+  } finally {
+    if (priorPath === undefined) delete process.env.mole_path;
+    else process.env.mole_path = priorPath;
+    if (priorCache === undefined) delete process.env.alfred_workflow_cache;
+    else process.env.alfred_workflow_cache = priorCache;
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("slow clean previews stream progress and never send a close or finish action", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "mole-progress-test-")),
+    oldPath = process.env.mole_path,
+    oldCache = process.env.alfred_workflow_cache;
+  process.env.mole_path = join(dir, "mole");
+  process.env.alfred_workflow_cache = dir;
+  writeFileSync(
+    process.env.mole_path,
+    '#!/bin/sh\nprintf "➤ User essentials\\n"\n/bin/sleep 0.6\nprintf " ○ Cache · 1MB dry\\nPotential space: 1MB · 1 items\\n"\n',
+    { mode: 0o700 },
+  );
+  try {
+    const s = create("", "");
+    s.mode = "clean";
+    s.ready = false;
+    s.status = "Loading…";
+    save(s);
+    const call = (cmd: string) =>
+      JSON.parse(
+        execFileSync(process.execPath, [join(import.meta.dir, "../src/main.ts"), cmd, s.id, s.request], {
+          encoding: "utf8",
+          env: process.env,
+        }),
+      );
+    const start = call("load");
+    expect(start.finish).toBeUndefined();
+    const deadline = Date.now() + 4000;
+    while (!read(s.id).progress && Date.now() < deadline) await Bun.sleep(20);
+    expect(read(s.id).progress).toContain("User essentials");
+    const loading = call("poll");
+    expect(loading.finish).toBeUndefined();
+    expect(loading.update.ids.primary.enabled).toBe(false);
+    expect(loading.update.ids.scanActivity.opacity).toBe(1);
+    expect(loading.update.ids.items.placeholder).toContain("User essentials");
+    expect(call("refresh")).toEqual({});
+    while (!read(s.id).ready && Date.now() < deadline) await Bun.sleep(20);
+    const done = call("poll");
+    expect(done.finish).toBeUndefined();
+    expect(done.pulse.interval).toBe(0);
+    expect(done.update.ids.scanActivity.opacity).toBe(0);
+    expect(read(s.id).items[0]!.badge).toBe("1MB");
+  } finally {
+    if (oldPath === undefined) delete process.env.mole_path;
+    else process.env.mole_path = oldPath;
+    if (oldCache === undefined) delete process.env.alfred_workflow_cache;
+    else process.env.alfred_workflow_cache = oldCache;
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

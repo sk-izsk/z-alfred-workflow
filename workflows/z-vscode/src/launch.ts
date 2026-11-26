@@ -1,3 +1,4 @@
+import { openTerminal } from "../../../shared/terminal.ts";
 import { existsSync } from "node:fs";
 import { EDITORS, type Editor, appPath, cliPath, editor } from "./editors.ts";
 import { str } from "./env.ts";
@@ -46,8 +47,7 @@ export const agentsWindow = (): Promise<string> => exec(cliPath(), ["--agents"])
 export const revealInFinder = (path: string): Promise<string> => exec(OPEN, ["-R", path]);
 
 /** Terminal app from the Workflow Configuration (Terminal by default). */
-export const openInTerminal = (dir: string): Promise<string> =>
-  exec(OPEN, ["-a", str("terminal_app", "Terminal"), dir]);
+export const openInTerminal = (dir: string): Promise<string> => openTerminal({ str }, { cwd: dir });
 
 /** Alfred's own File Actions panel for a path (Open With…, Move, Copy, AirDrop, …). */
 export const alfredActions = (path: string): Promise<string> =>

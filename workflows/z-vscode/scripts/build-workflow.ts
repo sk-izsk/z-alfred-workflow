@@ -1,3 +1,4 @@
+import { profileWindow, profileInfo } from "../../../shared/ui-profile.ts";
 /** Writes every `<name>.alfredui/ui.json`, info.plist and the icons into workflow/. */
 import { execFileSync } from "node:child_process";
 import { copyFileSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
@@ -10,11 +11,11 @@ const assets = join(import.meta.dir, "..", "assets", "icons");
 
 for (const [name, ui] of Object.entries(packages)) {
   mkdirSync(join(root, name), { recursive: true });
-  writeFileSync(join(root, name, "ui.json"), `${JSON.stringify(ui, null, 2)}\n`);
+  writeFileSync(join(root, name, "ui.json"), `${JSON.stringify(profileWindow(ui, "vsc"), null, 2)}\n`);
 }
 
 const plist = join(root, "info.plist");
-writeFileSync(plist, JSON.stringify(infoPlist));
+writeFileSync(plist, JSON.stringify(profileInfo(infoPlist)));
 execFileSync("/usr/bin/plutil", ["-convert", "xml1", plist]);
 
 // Menu item icons (the `vsc` Script Filter refers to icons/<name>.png).

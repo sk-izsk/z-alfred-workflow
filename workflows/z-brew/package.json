@@ -1,6 +1,6 @@
 {
   "name": "alfred-brew",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "description": "Search and manage Homebrew formulae, casks, upgrades, services and taps in Alfred 6",
   "author": "izsk",

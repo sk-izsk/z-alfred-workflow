@@ -1,3 +1,4 @@
+import { terminalConfiguration } from "../../../shared/terminal.ts";
 /**
  * info.plist as code: keywords → (launch mode) → Alfred UI → post step.
  * `bun run build` turns this into workflow/info.plist (via plutil).
@@ -449,12 +450,7 @@ const userconfigurationconfig = [
   check("launch_external", "Window", "Open in a separate window", false),
   check("close_others", "Opening", "Close other editor windows (⇧⌘↩ does the opposite)", false),
   check("show_branch", "Git", "Show the current git branch", true),
-  text(
-    "terminal_app",
-    "Terminal App",
-    "Terminal",
-    "App for “Open with Terminal”, e.g. Terminal, iTerm, Ghostty, Warp.",
-  ),
+  ...terminalConfiguration("Terminal"),
   text("actions_shortcut", "Actions Shortcut", "⌘K", "Use ⌘ ⌥ ⌃ ⇧ symbols, e.g. ⌘K or ⌘."),
   text(
     "back_shortcut",

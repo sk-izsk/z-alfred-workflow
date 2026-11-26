@@ -203,7 +203,7 @@ export const search = window(
       footer(
         [
           footerButton("primaryButton", "Autofill  ↩", item("primary")),
-          footerButton("actionsButton", "Actions  {var:actions_shortcut}", item("menu")),
+          footerButton("actionsButton", "Actions  {var:actions_label}", item("menu")),
           // ⌘↩ as a root shortcut swallows every ⌘ key in Alfred UI; a button key equivalent doesn't.
           footerButton("pasteButton", "", item("paste-password"), {
             shortcut: "⌘↩",
@@ -630,7 +630,7 @@ const newSendSheet = json({
         },
         sheetStatus,
         buttonRow([
-          button("Back  {var:back_shortcut}", json({ sheet: { close: "newSendSheet" } })),
+          button("Back  {var:back_label}", json({ sheet: { close: "newSendSheet" } })),
           button(
             "Create & Copy Link",
             [
@@ -699,7 +699,7 @@ const receiveSheet = json({
         },
         sheetStatus,
         buttonRow([
-          button("Back  {var:back_shortcut}", json({ sheet: { close: "receiveSheet" } })),
+          button("Back  {var:back_label}", json({ sheet: { close: "receiveSheet" } })),
           button(
             "Copy Text",
             json(

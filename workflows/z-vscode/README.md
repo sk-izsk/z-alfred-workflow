@@ -162,6 +162,10 @@ before use, as you would any workflow; please report anything that doesn't work.
 
 MIT. Parts are adapted from the MIT-licensed Raycast extension; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-Back is configurable in Workflow’s Configuration and defaults to **⌘[**. Back returns one screen at a time. Sheets close to their parent view; Back from the first screen returns to the VS Code command menu.
+Back is configurable in Workflow’s Configuration and defaults to **Hyper+B**. Back returns one screen at a time. Sheets close to their parent view; Back from the first screen returns to the VS Code command menu.
 
-Back is always available directly in the footer as **Back ⌘[** (configurable), including sheets. It is not inside the ⌘K actions menu.
+Back is always available directly in the footer as **Back Hyper+B** (configurable), including sheets. It is not inside the ⌘K actions menu.
+
+Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.
+
+Terminal actions use **Terminal application** in Workflow Configuration: Ghostty, Terminal, iTerm2, kitty, WezTerm, Alacritty or a custom executable. Ghostty uses its native AppleScript API (verified with installed Ghostty 1.4); macOS may request Automation permission. Custom arguments are a JSON array with `{command}` and `{cwd}` placeholders. Existing explicit terminal choices are preserved. No terminal is installed automatically.

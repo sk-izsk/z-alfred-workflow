@@ -1,3 +1,5 @@
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import { back, contextFor, decodeContext, restoreContext } from "./navigation.ts";
 import { previewCleanup, previewJoin, previewLoad, scrollTitle } from "./commands/preview.ts";
 import { CalendarAccessError } from "./calendar.ts";

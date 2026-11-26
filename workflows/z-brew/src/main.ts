@@ -1,3 +1,6 @@
+import { openTerminal } from "../../../shared/terminal.ts";
+import { profileCommand } from "../../../shared/ui-profile.ts";
+await profileCommand(() => import("./env.ts"));
 import { existsSync } from "node:fs";
 import * as actions from "./commands.ts";
 import { executable, readBrew } from "./brew.ts";
@@ -17,13 +20,7 @@ const post = async (): Promise<void> => {
     );
   if (out === "execute") {
     const command = terminalCommand(executable(), JSON.parse(process.env.brew_execution || "null") as Plan);
-    if (str("terminal_app", "Terminal") === "iTerm")
-      await osascript(
-        'tell application "iTerm"\nactivate\nif (count of windows) = 0 then create window with default profile\ntell current session of current window to write text (item 1 of argv)\nend tell',
-        command,
-      );
-    else
-      await osascript('tell application "Terminal"\nactivate\ndo script (item 1 of argv)\nend tell', command);
+    await openTerminal({ str }, { command });
   }
   if (out === "finder") {
     const [kind, ...parts] = (process.env.brew_package || "").split(":");

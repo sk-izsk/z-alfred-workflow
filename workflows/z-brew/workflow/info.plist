@@ -1767,6 +1767,40 @@ The Brew icon and feature inspiration are from Raycast Brew by nhojb and contrib
 			<key>config</key>
 			<dict>
 				<key>default</key>
+				<string>360</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Manual Refresh bypasses cached results. Provider update frequency is independent.</string>
+			<key>label</key>
+			<string>Catalog cache minutes</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>catalog_cache_minutes</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>15</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Manual Refresh bypasses cached results. Provider update frequency is independent.</string>
+			<key>label</key>
+			<string>Details cache minutes</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>detail_cache_minutes</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
 				<string>brew</string>
 				<key>placeholder</key>
 				<string>brew</string>
@@ -1997,23 +2031,79 @@ The Brew icon and feature inspiration are from Raycast Brew by nhojb and contrib
 				<key>pairs</key>
 				<array>
 					<array>
+						<string>Ghostty</string>
+						<string>Ghostty</string>
+					</array>
+					<array>
 						<string>Terminal</string>
 						<string>Terminal</string>
 					</array>
 					<array>
+						<string>iTerm2</string>
 						<string>iTerm</string>
-						<string>iTerm</string>
+					</array>
+					<array>
+						<string>kitty</string>
+						<string>kitty</string>
+					</array>
+					<array>
+						<string>WezTerm</string>
+						<string>WezTerm</string>
+					</array>
+					<array>
+						<string>Alacritty</string>
+						<string>Alacritty</string>
+					</array>
+					<array>
+						<string>Custom executable…</string>
+						<string>custom</string>
 					</array>
 				</array>
 			</dict>
 			<key>description</key>
-			<string>Commands run visibly after review.</string>
+			<string>Used for terminal commands and Open Terminal Here. Install the selected terminal separately.</string>
 			<key>label</key>
-			<string>Run commands in</string>
+			<string>Terminal application</string>
 			<key>type</key>
 			<string>popupbutton</string>
 			<key>variable</key>
 			<string>terminal_app</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string>/absolute/path/to/terminal</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Only used when Custom executable is selected.</string>
+			<key>label</key>
+			<string>Custom terminal executable</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>terminal_custom</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>["-e","/bin/zsh","-lc","{command}"]</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>JSON argument array. {command} is the command plus an interactive shell; {cwd} is the working folder. No shell interpolation is applied to the argument array.</string>
+			<key>label</key>
+			<string>Custom terminal arguments (JSON)</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>terminal_custom_args</string>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -2038,16 +2128,112 @@ The Brew icon and feature inspiration are from Raycast Brew by nhojb and contrib
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>⌘[</string>
+				<true/>
+				<key>text</key>
+				<string>Enable Hyper key configuration</string>
+			</dict>
+			<key>description</key>
+			<string>Use the modifier checkboxes and Back key below. Disable to use the custom Back shortcut.</string>
+			<key>label</key>
+			<string>Hyper shortcuts</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_enabled</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Control</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Control</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_control</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Option</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Option</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_option</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Shift</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Shift</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_shift</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Command</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Command</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_command</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>B</string>
 				<key>placeholder</key>
-				<string>⌘[</string>
+				<string>B</string>
 				<key>required</key>
 				<false/>
 			</dict>
 			<key>description</key>
-			<string>Return to the previous screen; from the first screen, return to the Brew command menu.</string>
+			<string>One letter, number or punctuation key, combined with the enabled Hyper modifiers.</string>
 			<key>label</key>
-			<string>Back shortcut</string>
+			<string>Back key</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>back_key</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>⌃⌥⇧⌘B</string>
+				<key>placeholder</key>
+				<string>⌃⌥⇧⌘B</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Used when Hyper shortcuts are disabled. For example ⌘[.</string>
+			<key>label</key>
+			<string>Custom Back shortcut</string>
 			<key>type</key>
 			<string>textfield</string>
 			<key>variable</key>
@@ -2102,7 +2288,7 @@ The Brew icon and feature inspiration are from Raycast Brew by nhojb and contrib
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.1.2</string>
+	<string>0.1.3</string>
 	<key>webaddress</key>
 	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-brew</string>
 </dict>

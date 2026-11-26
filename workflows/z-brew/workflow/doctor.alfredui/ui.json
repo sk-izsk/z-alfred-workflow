@@ -24,7 +24,13 @@
     },
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     },
     "brew_window": {
       "default": "",
@@ -34,10 +40,11 @@
   "window": {
     "title": "Homebrew Doctor",
     "size": {
-      "height": 580
+      "height": 580,
+      "width": 780
     },
     "minsize": {
-      "width": 620,
+      "width": 560,
       "height": 420
     },
     "root": {
@@ -46,15 +53,26 @@
       "events": [
         {
           "triggers": "launched",
-          "action": {
-            "type": "script",
-            "src": "../bin/brw",
-            "args": [
-              "load",
-              "doctor"
-            ],
-            "async": true
-          }
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/brw",
+              "args": [
+                "ui-profile",
+                "footerBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/brw",
+              "args": [
+                "load",
+                "doctor"
+              ],
+              "async": true
+            }
+          ]
         },
         {
           "triggers": "preload",
@@ -63,7 +81,7 @@
             "src": {
               "window": {
                 "resize": {
-                  "width": 900
+                  "width": 780
                 }
               }
             }
@@ -128,7 +146,7 @@
               "font": {
                 "size": 26
               },
-              "tooltip": "Back {var:back_shortcut}",
+              "tooltip": "Back {var:back_label}",
               "constraints": {
                 "region": "left",
                 "position": "centre"
@@ -239,7 +257,7 @@
                     {
                       "id": "footerBack",
                       "type": "button",
-                      "text": "Back  {var:back_shortcut}",
+                      "text": "Back  {var:back_label}",
                       "bordered": false,
                       "events": [
                         {
@@ -279,7 +297,7 @@
                     {
                       "id": "actionsButton",
                       "type": "button",
-                      "text": "Actions  {var:actions_shortcut}",
+                      "text": "Actions  {var:actions_label}",
                       "bordered": false,
                       "events": [
                         {

@@ -32,7 +32,13 @@
     },
     "back_shortcut": {
       "src": "variable",
-      "default": "⌘["
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
     },
     "cal_month": {
       "default": "",
@@ -62,10 +68,11 @@
   "window": {
     "title": "Quick Calendar",
     "size": {
-      "height": 450
+      "height": 450,
+      "width": 780
     },
     "minsize": {
-      "width": 620,
+      "width": 560,
       "height": 450
     },
     "root": {
@@ -75,6 +82,15 @@
         {
           "triggers": "launched",
           "action": [
+            {
+              "type": "script",
+              "src": "../bin/cald",
+              "args": [
+                "ui-profile",
+                "footerBack"
+              ],
+              "async": false
+            },
             {
               "type": "script",
               "src": "../bin/cald",
@@ -112,7 +128,7 @@
             "src": {
               "window": {
                 "resize": {
-                  "width": 700
+                  "width": 780
                 }
               }
             }
@@ -365,7 +381,7 @@
                   }
                 }
               ],
-              "tooltip": "Back {var:back_shortcut}",
+              "tooltip": "Back {var:back_label}",
               "font": {
                 "size": 20
               },
@@ -514,7 +530,7 @@
                     {
                       "id": "footerBack",
                       "type": "button",
-                      "text": "Back  {var:back_shortcut}",
+                      "text": "Back  {var:back_label}",
                       "bordered": false,
                       "events": [
                         {
@@ -563,7 +579,7 @@
                     {
                       "id": "actionsButton",
                       "type": "button",
-                      "text": "Actions  {var:actions_shortcut}",
+                      "text": "Actions  {var:actions_label}",
                       "bordered": false,
                       "events": [
                         {

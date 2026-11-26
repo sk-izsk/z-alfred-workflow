@@ -1,6 +1,6 @@
 import { accessSync, constants } from "node:fs";
 import { join } from "node:path";
-import { bool, cacheDir, readJson, str, writeJson } from "./env.ts";
+import { bool, cacheDir, readJson, str, writeJson, cacheMinutes } from "./env.ts";
 import { installedPackages, mergeInstalled, normalize, type Package, packageName } from "./model.ts";
 import { run, type RunResult } from "./proc.ts";
 
@@ -67,7 +67,7 @@ export const fetchJSON = async (url: string): Promise<any> => {
   return JSON.parse(Buffer.concat(chunks).toString("utf8"));
 };
 export const catalog = async (refresh = false): Promise<Package[]> => {
-  const old = cached<Package[]>("catalog", 6 * 3600000);
+  const old = cached<Package[]>("catalog", cacheMinutes("catalog_cache_minutes", 360) * 60000);
   if (old && !refresh) return old;
   const [formula, cask] = await Promise.all([
     fetchJSON("https://formulae.brew.sh/api/formula.json"),

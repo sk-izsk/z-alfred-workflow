@@ -169,6 +169,14 @@ export const infoPlist = {
     ].map((id, i) => [id, { xpos: 40 + (i % 4) * 220, ypos: 40 + Math.floor(i / 4) * 140 }]),
   ),
   userconfigurationconfig: [
+    {
+      type: "textfield",
+      variable: "api_cache_seconds",
+      label: "REST API cache seconds",
+      description: "Manual Refresh bypasses cached results. Provider update frequency is independent.",
+      config: { default: "30", required: false },
+    },
+
     text("kw_main", "GitHub menu", "github", "Search the combined GitHub and Git command menu."),
     text("kw_prs", "My PRs keyword", "myprs", "Open your PRs across all repositories."),
     text("kw_local", "Local repositories keyword", "gitrepos", "Search local repositories."),

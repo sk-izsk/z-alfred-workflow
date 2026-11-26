@@ -2,7 +2,7 @@ name: Release workflow
 
 on:
   push:
-    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*", "z-brew/v*", "z-speedtest/v*", "z-github/v*"]
+    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*", "z-brew/v*", "z-speedtest/v*", "z-github/v*", "z-kill-process/v*", "z-weather/v*", "z-adhan-time/v*", "z-currency/v*", "z-calculate-anything/v*", "z-swiss/v*", "z-world-clock/v*", "z-window-navigator/v*", "z-lunar/v*", "z-emoji/v*", "z-gif-search/v*", "z-dev-utils/v*", "z-dev-cache-cleaner/v*", "z-wifi/v*", "z-bluetooth/v*", "z-dev-servers/v*", "z-dev/v*", "z-mole/v*", "z-system-monitor/v*", "z-tag-manager/v*", "z-folder-navigator/v*", "z-translate/v*", "z-workflow-manager/v*"]
 
 permissions:
   contents: read
@@ -27,6 +27,29 @@ jobs:
             z-vscode/v*) workflow=z-vscode; artifact='VS Code.alfredworkflow' ;;
             z-github/v*) workflow=z-github; artifact=GitHub.alfredworkflow ;;
             z-speedtest/v*) workflow=z-speedtest; artifact='Speed Test.alfredworkflow' ;;
+            z-adhan-time/v*) workflow=z-adhan-time; artifact='Adhan Time.alfredworkflow' ;;
+            z-currency/v*) workflow=z-currency; artifact='Currency Exchange.alfredworkflow' ;;
+            z-calculate-anything/v*) workflow=z-calculate-anything; artifact='Calculate Anything.alfredworkflow' ;;
+            z-swiss/v*) workflow=z-swiss; artifact=Swiss.alfredworkflow ;;
+            z-workflow-manager/v*) workflow=z-workflow-manager; artifact='Workflow Manager.alfredworkflow' ;;
+            z-translate/v*) workflow=z-translate; artifact='Translate.alfredworkflow' ;;
+            z-folder-navigator/v*) workflow=z-folder-navigator; artifact='Folder Navigator.alfredworkflow' ;;
+            z-tag-manager/v*) workflow=z-tag-manager; artifact='Tag Manager.alfredworkflow' ;;
+            z-system-monitor/v*) workflow=z-system-monitor; artifact='System Monitor.alfredworkflow' ;;
+            z-mole/v*) workflow=z-mole; artifact='Mole.alfredworkflow' ;;
+            z-dev/v*) workflow=z-dev; artifact='Dev.alfredworkflow' ;;
+            z-dev-servers/v*) workflow=z-dev-servers; artifact='Dev Servers.alfredworkflow' ;;
+            z-bluetooth/v*) workflow=z-bluetooth; artifact='Bluetooth.alfredworkflow' ;;
+            z-wifi/v*) workflow=z-wifi; artifact='Wi-Fi.alfredworkflow' ;;
+            z-dev-cache-cleaner/v*) workflow=z-dev-cache-cleaner; artifact='Dev Cache Cleaner.alfredworkflow' ;;
+            z-dev-utils/v*) workflow=z-dev-utils; artifact='Dev Utils.alfredworkflow' ;;
+            z-gif-search/v*) workflow=z-gif-search; artifact='GIF Search.alfredworkflow' ;;
+            z-emoji/v*) workflow=z-emoji; artifact='Emoji Picker.alfredworkflow' ;;
+            z-lunar/v*) workflow=z-lunar; artifact='Lunar Controls.alfredworkflow' ;;
+            z-window-navigator/v*) workflow=z-window-navigator; artifact='Window Navigator.alfredworkflow' ;;
+            z-world-clock/v*) workflow=z-world-clock; artifact='World Clock.alfredworkflow' ;;
+            z-weather/v*) workflow=z-weather; artifact=Weather.alfredworkflow ;;
+            z-kill-process/v*) workflow=z-kill-process; artifact='Kill Process.alfredworkflow' ;;
             z-brew/v*) workflow=z-brew; artifact=Brew.alfredworkflow ;;
             z-cald/v*) workflow=z-cald; artifact=Calendar.alfredworkflow ;;
             *) echo 'Unknown workflow tag' >&2; exit 1 ;;

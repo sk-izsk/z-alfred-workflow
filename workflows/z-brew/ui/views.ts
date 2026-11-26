@@ -262,7 +262,7 @@ export const listWindow = (mode: string, title: string): Json =>
               mode === "upgrades" ? "Upgrade Selected" : "Show Details  ↩",
               act("primary"),
             ),
-            button("actionsButton", "Actions  {var:actions_shortcut}", act("menu")),
+            button("actionsButton", "Actions  {var:actions_label}", act("menu")),
             hiddenKey("previewKey", "⌥⌘I", act("preview")),
             hiddenKey("upgradeKey", "⇧⌘U", act("upgrade")),
             hiddenKey("pinKey", "⌘.", act("pin")),
@@ -306,7 +306,7 @@ export const reportWindow = (mode: string, title: string): Json =>
             ...(mode === "maintenance"
               ? [button("reviewAction", "Review Action", run(["maintenance-action"]))]
               : [button("copyReport", "Copy Report", run(["report-copy"]))]),
-            button("actionsButton", "Actions  {var:actions_shortcut}", run(["report-menu"])),
+            button("actionsButton", "Actions  {var:actions_label}", run(["report-menu"])),
           ],
           true,
         ),
