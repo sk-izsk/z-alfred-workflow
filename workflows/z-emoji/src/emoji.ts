@@ -20,14 +20,18 @@ export const find = (id: string): Emoji => {
   if (!value) throw new Error("Select an emoji.");
   return value;
 };
-export type Preferences = { favorites: string[]; recent: string[] };
+export type Preferences = { favorites: string[]; recent: string[]; layout: "list" | "grid" };
 export const preferences = (): Preferences => {
   const raw = readJson<Partial<Preferences>>(join(dataDir(), "preferences.json"), {}),
     valid = (values: unknown) =>
       Array.isArray(values)
         ? values.filter((v) => typeof v === "string" && emojis.some((e) => e.id === v))
         : [];
-  return { favorites: valid(raw.favorites), recent: valid(raw.recent).slice(0, 80) };
+  return {
+    favorites: valid(raw.favorites),
+    recent: valid(raw.recent).slice(0, 80),
+    layout: raw.layout === "grid" ? "grid" : "list",
+  };
 };
 export const record = (id: string): void => {
   find(id);
@@ -61,4 +65,10 @@ export const search = (query: string, category: string, parent = ""): Emoji[] =>
         ),
     )
     .slice(0, 500);
+};
+
+export const setLayout = (layout: "list" | "grid"): void => {
+  const p = preferences();
+  p.layout = layout;
+  writeJson(join(dataDir(), "preferences.json"), p);
 };

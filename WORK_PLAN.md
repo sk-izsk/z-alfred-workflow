@@ -34,7 +34,7 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 - [x] Lunar Controls: installed Lunar-fred/CLI verified; brightness/contrast/volume sliders with live labels, percentage shortcuts, modern input/adaptive/preset selectors, global adaptive modes, saved presets and reviewed power actions. Display-row clicks select controls instead of opening Lunar. Read-only native UI verified; physical settings were not changed for testing.
 - [x] Window Navigator: global/active/current-desktop scopes, native search and app icons, focus/close/quit actions, revalidation and Swiss Back. Native list verified; disposable TextEdit raise/close verified.
 - [x] Consolidated Window Switcher into Window Navigator per user request. `wins` opens Current Desktop mode in the same workflow; the separate project/Swiss entry is removed. Stage Manager visibility matches app/title as well as full-size geometry, with a count-checked fallback for stale thumbnail titles; real enumeration improved from one to six windows.
-- [ ] Emoji: selectable list/grid layout, preserving search/category/selection.
+- [x] Emoji: selectable list/grid layout, preserving search/category/selection; four tests and check/package pass.
 - [ ] GIF Search: pinned provider verification, standalone workflow under Swiss, list/grid layout and contextual actions.
 
 ## Dev launcher phase (after Swiss)
@@ -46,7 +46,7 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 - [ ] Dev Cache Cleaner: scan sizes, categories and risk filters; split details view, individual cleanup and safe-cache cleanup review. Never perform a cleanup just to verify the UI.
 - [ ] Dev Utils: pinned Raycast devutils plus installed Textformer reference; integrate supported text/developer transformations.
 
-- [ ] Password Generator: pinned Raycast reference plus existing Bitwarden generator; local cryptographic generation, length/character controls, copy/regenerate actions, no password cache persistence.
+- [x] Canceled standalone Password Generator at user request; use the existing Bitwarden generator. Original scope: pinned Raycast reference plus existing Bitwarden generator; local cryptographic generation, length/character controls, copy/regenerate actions, no password cache persistence.
 
 ## Shared completion checks
 

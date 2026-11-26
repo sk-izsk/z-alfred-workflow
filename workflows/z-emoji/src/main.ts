@@ -4,7 +4,7 @@ import { execFileSync } from "node:child_process";
 import { profileAction } from "../../../shared/ui-profile.ts";
 import { str, bool } from "./env.ts";
 import { create, read, save, type State } from "./state.ts";
-import { search, find, groups, preferences, favorite, record, variants } from "./emoji.ts";
+import { search, find, groups, preferences, favorite, record, variants, setLayout } from "./emoji.ts";
 import { components } from "../ui/window.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { merge, vars, update, finish, popup, menuItem, copy, open, errorStatus, type Action } from "./ui.ts";
@@ -51,11 +51,22 @@ const main = async (): Promise<Action | void> => {
   if (cmd === "launch") {
     const origin = launchInput(process.env.emoji_query),
       s = create(origin.query, origin.returnTo);
-    return merge(vars({ emoji_session: s.id }), update({ root: { components: components(s.query) } }, true), {
+    return merge(
+      vars({ emoji_session: s.id }),
+      update({ root: { components: components(s.query, preferences().layout) } }, true),
+      {
+        pulse: { src: "../bin/emoji", args: ["populate", s.id], interval: 0, now: true },
+      },
+    );
+  }
+  const s = read(id);
+  if (cmd === "layout") {
+    if (value !== "list" && value !== "grid") return {};
+    setLayout(value);
+    return merge(update({ root: { components: components(s.query, value, s.category) } }, true), {
       pulse: { src: "../bin/emoji", args: ["populate", s.id], interval: 0, now: true },
     });
   }
-  const s = read(id);
   if (cmd === "populate" || cmd === "refresh") return render(s);
   if (cmd === "query") {
     s.query = value;

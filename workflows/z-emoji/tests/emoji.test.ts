@@ -57,3 +57,22 @@ test("variants Back restores the exact category, query and selection", () => {
   expect(menu).toContain("Paste Emoji");
   expect(menu).not.toContain('"Back');
 });
+
+test("layout change preserves current search, category and selection", () => {
+  const s = create("thumb", "");
+  s.category = "People & Body";
+  s.selected = emojis.find((e) => e.emoji === "👍")!.id;
+  save(s);
+  const action = JSON.parse(
+    execFileSync(process.execPath, [join(import.meta.dir, "../src/main.ts"), "layout", s.id, "grid"], {
+      encoding: "utf8",
+      env: process.env,
+    }),
+  );
+  expect(read(s.id)).toEqual(s);
+  expect(preferences().layout).toBe("grid");
+  expect(JSON.stringify(action)).toContain('"cols":6');
+  expect(JSON.stringify(action)).toContain('"selected":"People & Body"');
+  record(s.selected);
+  expect(preferences().layout).toBe("grid");
+});

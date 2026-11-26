@@ -82,7 +82,7 @@
           "action": {
             "type": "function",
             "src": "items",
-            "args": "selectprevious"
+            "args": "selectup"
           }
         },
         {
@@ -90,7 +90,7 @@
           "action": {
             "type": "function",
             "src": "items",
-            "args": "selectnext"
+            "args": "selectdown"
           }
         },
         {
@@ -116,6 +116,22 @@
               "{var:emoji_session}"
             ],
             "async": true
+          }
+        },
+        {
+          "shortcut": "←",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectleft"
+          }
+        },
+        {
+          "shortcut": "→",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectright"
           }
         }
       ],
