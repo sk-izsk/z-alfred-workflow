@@ -668,9 +668,11 @@ export const clean = async (
   remove: (path: string) => Promise<void> = async (path) => {
     await run("/bin/rm", ["-rf", "--", path], 60000);
   },
+  progress?: (completed: number, total: number) => void,
 ): Promise<void> => {
   if (!targets.length) throw new Error("No caches selected.");
   for (const t of targets) await validate(t);
+  let completed = 0;
   for (const t of targets) {
     await validate(t);
     if (t.kind === "simulator") {
@@ -680,5 +682,6 @@ export const clean = async (
       if (!bin) throw new Error("Required cleanup tool is unavailable.");
       await run(bin, cleanupArgs(t.action), 60000);
     } else await remove(t.path);
+    progress?.(++completed, targets.length);
   }
 };

@@ -12,6 +12,14 @@ export type State = {
   at: number;
   limited: boolean;
   plan: Cache[];
+  job?: {
+    id: string;
+    phase: "cleaning" | "refreshing" | "done" | "error";
+    targets: Cache[];
+    completed: number;
+    total: number;
+    message: string;
+  };
 };
 const file = (id: string): string => {
   if (!/^[a-f0-9-]{36}$/.test(id)) throw new Error("Reopen Dev Cache Cleaner.");

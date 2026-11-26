@@ -73,5 +73,13 @@ export const components = (query = ""): Json[] => {
     urischemes: [],
     constraints: { region: "centre", size: { height: 320 } },
   };
+  values[2]!.components.unshift({
+    id: "activity",
+    type: "progress",
+    style: "round",
+    progress: 0,
+    opacity: 0,
+    constraints: { region: "left", size: { width: 16, height: 16 } },
+  });
   return values;
 };

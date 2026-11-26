@@ -90,7 +90,7 @@ Compare supplied layouts and action menus rather than substituting generic dashb
 | Lunar | Sliders, modern selectors, per-display selection | Pending final comparison |
 | Dev Servers | Project groups, framework filter, uptime/type and Cmd-K | Pending final comparison |
 | Bluetooth / Wi-Fi | Connection state, device/network details and contextual actions | Pending native comparison; connection mutations intentionally untested |
-| Dev Cache Cleaner | Category/risk list with selected-cache details and reviewed cleanup | Pending native comparison |
+| Dev Cache Cleaner | Category/risk list with selected-cache details and reviewed cleanup | Native list/detail/review and Escape verified; cleanup activity lifecycle tested with injected operations |
 | Dev Utils | Installed Text Transformer interaction and optional DevUtils handoff | Native editor verified; no supplied UI screenshot for DevUtils |
 
 ## Web view audit
@@ -112,3 +112,5 @@ All 29 workflow projects searched. Mole uses native lists/details and has no web
 - Dev keyword source and installed metadata have the corrected description; workflow reloaded to refresh Alfred's metadata. Existing Alfred search cache still needs final visual comparison.
 
 - Footer correction: sheet Back aligned right in 27 workflow helpers. Cache review now places Back/Clean together in a borderless footer, Return triggers Clean, and Escape dismisses the sheet without cleanup (verified in the installed native window). Convention recorded for future screens.
+
+- Cache cleanup activity: confirmed jobs run separately, show Cleaning/Refreshing phases and block duplicate actions. Fresh measurements replace the results after success or partial failure; tests cover refreshed totals and disappearing filters. Real cleanup remains untested.

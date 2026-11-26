@@ -1,9 +1,10 @@
 import { profileCommand, profileAction } from "../../../shared/ui-profile.ts";
 await profileCommand(() => import("./env.ts"));
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { str, bool } from "./env.ts";
 import { create, read, save, type State } from "./state.ts";
-import { scan, clean, bytes, cleanupCommand } from "./caches.ts";
+import { scan, bytes, cleanupCommand } from "./caches.ts";
+import { busy, beginCleanup, runCleanup } from "./jobs.ts";
 import { referenceData, skipHeading } from "../../../shared/reference-rows.ts";
 import { components } from "../ui/window.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
@@ -50,7 +51,7 @@ ${cleanupCommand(e).replace(/`/g, "\\`")}
       },
       primary: {
         text: e ? `Clean ${e.name}  ↩` : "Clean Selected Cache  ↩",
-        enabled: !!e && e.available !== false && !e.error,
+        enabled: !busy(s) && !!e && e.available !== false && !e.error,
       },
     },
     true,
@@ -100,22 +101,34 @@ const rowData = (s: State): Action[] => {
     return row;
   });
 };
-const render = (s: State): Action => {
+const render = (s: State, persist = true): Action => {
+  if (
+    !["All", "Safe", "Review", "Large > 1 GB"].includes(s.filter) &&
+    !s.rows.some((row) => row.category === s.filter)
+  )
+    s.filter = "All";
   const rows = visible(s);
   if (!rows.some((x) => x.id === s.selected)) s.selected = rows[0]?.id || "";
-  save(s);
+  if (persist) save(s);
   const total = bytes(s.rows.reduce((n, e) => n + e.bytes, 0)),
     safe = bytes(s.rows.filter((e) => e.risk === "Safe").reduce((n, e) => n + e.bytes, 0));
   const groups = [...new Set(s.rows.map((e) => e.category))];
   return merge(
     update(
       {
-        items: { data: { src: rowData(s) }, select: s.selected, placeholder: "No caches match this filter." },
+        items: {
+          enabled: !busy(s),
+          data: { src: rowData(s) },
+          select: s.selected,
+          placeholder: "No caches match this filter.",
+        },
         query: {
+          enabled: !busy(s),
           placeholder: `Search caches… (${total} total, ${safe} safe)`,
           tooltip: `${total} total · ${safe} safe`,
         },
         filter: {
+          enabled: !busy(s),
           items: [
             { text: `All (${s.rows.length})`, value: "All" },
             { text: `Safe Only (${s.rows.filter((e) => e.risk === "Safe").length})`, value: "Safe" },
@@ -129,9 +142,16 @@ const render = (s: State): Action => {
           ],
           selected: s.filter,
         },
+        activity: {
+          opacity: busy(s) ? 1 : 0,
+          progress: s.job ? s.job.completed / Math.max(1, s.job.total) : 0,
+        },
         statusLabel: {
-          text: "Scan Caches",
-          tooltip: `${total} total · ${safe} safe${s.limited ? " · Scan limit reached" : ""}`,
+          text: busy(s)
+            ? s.job!.message.replace("…", ".".repeat(1 + (Math.floor(Date.now() / 500) % 3)))
+            : s.job?.message || "Scan Caches",
+          tooltip: `${s.job?.message ? s.job.message + "\n" : ""}${total} total · ${safe} safe${s.limited ? " · Scan limit reached" : ""}`,
+          colour: s.job?.phase === "error" ? "systemRedColor" : "secondaryLabelColor",
         },
       },
       true,
@@ -244,7 +264,17 @@ const main = async (): Promise<Action | void> => {
     );
   }
   const s = read(id);
-  if (cmd === "refresh") return load(s);
+  if (cmd === "cleanup-worker") {
+    await runCleanup(id, value);
+    return {};
+  }
+  if (cmd === "cleanup-poll") return merge(render(s, !busy(s)), busy(s) ? {} : { pulse: { interval: 0 } });
+  if (busy(s) && ["refresh", "query", "filter", "select", "open", "safe", "confirm"].includes(cmd)) return {};
+  if (cmd === "refresh") {
+    s.job = undefined;
+    save(s);
+    return load(s);
+  }
   if (cmd === "query") {
     s.query = value;
     return render(s);
@@ -262,16 +292,29 @@ const main = async (): Promise<Action | void> => {
   if (cmd === "back") return finish({ devcache_out: "back", dev_return: s.returnTo });
   if (cmd === "open" || cmd === "safe") return review(s, cmd === "safe");
   if (cmd === "cancel-review") {
+    if (busy(s)) return { sheet: { close: "cleanupReview" } };
     s.plan = [];
     save(s);
     return { sheet: { close: "cleanupReview" } };
   }
   if (cmd === "confirm") {
-    const targets = s.plan;
-    s.plan = [];
-    save(s);
-    await clean(targets);
-    return merge({ sheet: { close: "cleanupReview" } }, await load(s));
+    const jobID = beginCleanup(s);
+    const action = merge({ sheet: { close: "cleanupReview" } }, render(s, false), {
+      pulse: {
+        src: "../bin/devcache",
+        args: ["cleanup-poll", id],
+        interval: 0.5,
+        intervalmode: "delay",
+        now: true,
+      },
+    });
+    const child = spawn(process.execPath, [process.argv[1]!, "cleanup-worker", id, jobID], {
+      detached: true,
+      stdio: "ignore",
+      env: process.env,
+    });
+    child.unref();
+    return action;
   }
   if (cmd === "configure") {
     execFileSync(
@@ -285,6 +328,8 @@ const main = async (): Promise<Action | void> => {
     return {};
   }
   const e = s.rows.find((x) => x.id === (value || s.selected));
+  if (cmd === "menu" && busy(s))
+    return popup("actionsButton", [menuItem("Cleanup is running…", ["cleanup-poll", id])]);
   if (cmd === "menu")
     return popup("actionsButton", [
       ...(e
