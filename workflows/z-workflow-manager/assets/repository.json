@@ -142,5 +142,11 @@
     "name": "Dev",
     "bundle": "com.izsk.dev",
     "description": "Separate launcher for developer and connectivity tools"
+  },
+  {
+    "slug": "z-dev-servers",
+    "name": "Dev Servers",
+    "bundle": "com.izsk.dev-servers",
+    "description": "Inspect local servers and stop or restart by project"
   }
 ]

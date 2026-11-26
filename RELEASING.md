@@ -21,6 +21,7 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-system-monitor` | `z-system-monitor/vX.Y.Z` | `System Monitor.alfredworkflow` |
 | `workflows/z-mole` | `z-mole/vX.Y.Z` | `Mole.alfredworkflow` |
 | `workflows/z-dev` | `z-dev/vX.Y.Z` | `Dev.alfredworkflow` |
+| `workflows/z-dev-servers` | `z-dev-servers/vX.Y.Z` | `Dev Servers.alfredworkflow` |
 | `workflows/z-gif-search` | `z-gif-search/vX.Y.Z` | `GIF Search.alfredworkflow` |
 | `workflows/z-emoji` | `z-emoji/vX.Y.Z` | `Emoji Picker.alfredworkflow` |
 | `workflows/z-lunar` | `z-lunar/vX.Y.Z` | `Lunar Controls.alfredworkflow` |

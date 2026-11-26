@@ -23,6 +23,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [System Monitor](workflows/z-system-monitor) | Live CPU, memory, disks, power and network details | Initial release pending |
 | [Mole](workflows/z-mole) | Mole health, disk browsing and reviewed cleanup/optimization previews | Initial release pending |
 | [Dev](workflows/z-dev) | Separate launcher for developer and connectivity tools | Initial release pending |
+| [Dev Servers](workflows/z-dev-servers) | Inspect local servers and stop or restart by project | Initial release pending |
 | [GIF Search](workflows/z-gif-search) | GIF search, favorites and recents; list/grid layouts | Initial release pending |
 | [Emoji Picker](workflows/z-emoji) | Offline emoji search, favorites, recents and skin-tone variants | Initial release pending |
 | [Lunar Controls](workflows/z-lunar) | Display brightness, contrast, volume, inputs and Lunar presets | Initial release pending |
