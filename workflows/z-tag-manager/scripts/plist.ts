@@ -82,11 +82,17 @@ export const infoPlist = {
   userconfigurationconfig: [
     text("kw_main", "Keyword", "tags", "Open Tag Manager."),
     ...hyperConfiguration(),
+    {
+      type: "checkbox",
+      variable: "search_all",
+      label: "Search entire system",
+      config: { default: true, text: "Search all Spotlight-indexed locations, including external drives" },
+    },
     text(
       "search_roots",
       "Search locations",
-      "~;/Volumes",
-      "Semicolon-separated Spotlight locations, including indexed external drives.",
+      "~;/Volumes;/Applications",
+      "Used only when Search entire system is disabled. Semicolon-separated locations.",
     ),
     text(
       "scan_minutes",

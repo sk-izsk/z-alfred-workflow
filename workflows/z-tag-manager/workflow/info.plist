@@ -341,14 +341,29 @@
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>~;/Volumes</string>
+				<true/>
+				<key>text</key>
+				<string>Search all Spotlight-indexed locations, including external drives</string>
+			</dict>
+			<key>label</key>
+			<string>Search entire system</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>search_all</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>~;/Volumes;/Applications</string>
 				<key>placeholder</key>
-				<string>~;/Volumes</string>
+				<string>~;/Volumes;/Applications</string>
 				<key>required</key>
 				<false/>
 			</dict>
 			<key>description</key>
-			<string>Semicolon-separated Spotlight locations, including indexed external drives.</string>
+			<string>Used only when Search entire system is disabled. Semicolon-separated locations.</string>
 			<key>label</key>
 			<string>Search locations</string>
 			<key>type</key>

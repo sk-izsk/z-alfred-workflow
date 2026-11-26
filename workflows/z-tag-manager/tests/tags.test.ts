@@ -96,13 +96,22 @@ test("editor Back restores the parent search and selection, stale view events ar
 
 test("changing tags updates the cached index immediately", async () => {
   const { writeJson, cacheDir } = await import("../src/env.ts");
-  const { scan } = await import("../src/tags.ts");
+  const { scan, scanSignature } = await import("../src/tags.ts");
   writeJson(join(cacheDir(), "index.json"), {
     entries: [await readEntry(path)],
+    signature: scanSignature(),
     fetched: Date.now(),
     limited: false,
     unavailable: 0,
   });
   await changeTags(path, ["Fresh"]);
   expect((await scan()).entries.find((entry) => entry.path === path)?.tags).toContain("Fresh");
+});
+
+import { discoveryArgs, tagPredicate } from "../src/tags.ts";
+test("default discovery searches the entire indexed system and filters at source before the result limit", () => {
+  expect(discoveryArgs("Paid")).not.toContain("-onlyin");
+  expect(discoveryArgs("Paid", "/Volumes/SSD")).toContain("/Volumes/SSD");
+  expect(tagPredicate("Paid")).toContain('kMDItemUserTags == "*Paid*"cd');
+  expect(tagPredicate('x" || bad')).toContain('x\\"');
 });

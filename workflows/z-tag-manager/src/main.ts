@@ -74,6 +74,7 @@ const rows = (s: State): Action => {
           s.mode === "edit"
             ? `${s.editing?.tags.length ?? 0} Finder tags`
             : `${s.index.entries.length} tagged items${s.index.limited ? " · First 500 paths" : ""}${s.index.unavailable ? ` · ${s.index.unavailable} unavailable` : ""}${s.index.stale ? " · Stale cache" : ""}`,
+        colour: s.index.unavailable ? "systemOrangeColor" : "secondaryLabelColor",
         tooltip: s.index.fetched
           ? `Index refreshed ${new Date(s.index.fetched).toLocaleString()}`
           : "Loading…",
@@ -262,7 +263,9 @@ const main = async (): Promise<Action | void> => {
   if (command === "load") {
     if (value !== s.request) return {};
     if (s.mode === "edit") return rows(s);
-    const index = await scan(args[1] === "force"),
+    await new Promise((resolve) => setTimeout(resolve, 180));
+    if (read(id).request !== value) return {};
+    const index = await scan(args[1] === "force", s.query),
       latest = read(id);
     if (latest.request !== value || latest.level !== level) return {};
     latest.index = index;
@@ -271,8 +274,9 @@ const main = async (): Promise<Action | void> => {
   }
   if (command === "query") {
     s.query = value.slice(0, 1000);
+    if (s.mode === "list") s.request = randomUUID();
     save(s);
-    return rows(s);
+    return s.mode === "list" ? merge(rows(s), pulse(s)) : rows(s);
   }
   if (command === "select") {
     s.selected = value;
@@ -373,7 +377,7 @@ const main = async (): Promise<Action | void> => {
     }
     const latest = read(id);
     if (latest.level !== level) return {};
-    latest.index = await scan(true);
+    latest.index = await scan(true, latest.query);
     if (latest.mode === "edit") latest.editing = await readEntry(latest.path);
     save(latest);
     return merge(

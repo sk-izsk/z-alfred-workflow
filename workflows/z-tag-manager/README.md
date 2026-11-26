@@ -1,6 +1,6 @@
 # Tag Manager
 
-An independent Alfred 6 workflow for **Finder tags on files, folders and applications**, including indexed external drives. Open it with `tags` or through Swiss.
+An independent Alfred 6 workflow for **Finder tags on files, folders and applications**, across the entire Spotlight-indexed system, including external drives. Open it with `tags` or through Swiss.
 
 Search by name, path or tag. Enter manages the selected item's tags: type a new tag to add it; select an existing tag and press Enter to remove it. The native file icon identifies each item. Open, Reveal in Finder, Copy Path and All Alfred File Actions (including installed integrations) are available in **⌘K**.
 
@@ -20,9 +20,11 @@ An import accepts up to 500 paths, 100 tags per path and 2 MB of JSON. It report
 
 ## Index and configuration
 
-Search locations default to `~;/Volumes`; use semicolons to include specific external-drive folders. Finder tag discovery uses Spotlight, so locations excluded from Spotlight will not appear automatically. Items tagged through this workflow are also remembered locally and can be edited without waiting for indexing.
+**Search entire system** is enabled by default. The Spotlight query covers all indexed system locations and mounted volumes, including `/Applications` and external SSDs. Disable that checkbox to restrict discovery to the semicolon-separated Search locations field (default `~;/Volumes;/Applications`).
 
-The index refresh interval defaults to **5 minutes**, configurable from 1–60. **Refresh** bypasses it. The first 500 discovered paths are loaded, with a visible limit indicator; narrow search locations for a large collection. Unavailable locations are reported, and a failed scan can retain a visibly stale index. Editing tags updates the cached index immediately.
+Search text is sent to Spotlight before the first-500-results limit, rather than filtering only an initially loaded subset. Query/scope changes invalidate the cached result automatically. If global discovery returns nothing or fails, a read-only application-folder fallback checks tagged app bundles directly. Finder tag discovery for arbitrary files still depends on Spotlight indexing; a folder excluded from Spotlight can be opened by its full path to manage its tags. Items tagged through this workflow are also remembered locally without waiting for indexing.
+
+The index refresh interval defaults to **5 minutes**, configurable from 1–60. **Refresh** bypasses it. The first 500 paths for the current search are loaded, with a visible limit indicator; narrow the search text or locations for a large collection. Unavailable locations are reported, and a failed scan can retain a visibly stale index. Editing tags updates the cached index immediately.
 
 Tags remain in the files' native metadata. Local cache/data contains file paths and tag names, not file contents. The workflow does not install a tagging CLI or contact a remote API. New tags have no colour; existing colours are preserved.
 
