@@ -94,6 +94,12 @@ export const infoPlist = {
       "30",
       "Project build folders younger than this are excluded. Range 1–365.",
     ),
+    text(
+      "min_app_cache_mb",
+      "Minimum app cache size (MB)",
+      "10",
+      "Lists non-Apple top-level user app caches above this size. Set 0 to include empty caches.",
+    ),
     text("actions_shortcut", "Actions shortcut", "⌘K", "Open actions."),
     text("node_path", "Node.js executable", "", "Optional absolute executable path."),
     {

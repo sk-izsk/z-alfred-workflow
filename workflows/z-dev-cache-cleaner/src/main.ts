@@ -3,8 +3,8 @@ await profileCommand(() => import("./env.ts"));
 import { execFileSync } from "node:child_process";
 import { str, bool } from "./env.ts";
 import { create, read, save, type State } from "./state.ts";
-import { scan, clean, bytes } from "./caches.ts";
-import { detailRows } from "../../../shared/dashboard.ts";
+import { scan, clean, bytes, cleanupCommand } from "./caches.ts";
+import { referenceData, skipHeading } from "../../../shared/reference-rows.ts";
 import { components } from "../ui/window.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import {
@@ -20,33 +20,44 @@ import {
   script,
   type Action,
 } from "./ui.ts";
+const plain = (value: string): string => value.replace(/[\\`*_{}[\]<>]/g, "\\$&");
 const details = (s: State): Action => {
   const e = s.rows.find((x) => x.id === s.selected);
   return update(
     {
-      details: {
-        data: {
-          src: detailRows(
-            e
-              ? [
-                  ["Cache", e.name],
-                  ["Size", e.error || bytes(e.bytes)],
-                  ["Category", e.category],
-                  ["Risk", e.risk],
-                  ["Path", e.path],
-                  ["Behavior", e.note],
-                  ["Cleanup", `Permanently remove ${e.path}`],
-                ]
-              : [],
-          ),
-        },
+      cacheDetails: {
+        text: e
+          ? `# ${plain(e.name)}
+
+${plain(e.note)}
+
+${e.context ? plain(e.context) + "\n\n" : ""}---
+
+**Size:** ${e.error ? plain(e.error) : bytes(e.bytes)}
+
+**Category:** ${plain(e.category)}
+
+**Risk:** ${e.risk === "Safe" ? "Safe to clean" : "Review before cleaning"}
+
+**Path:** ${plain(e.path)}
+
+**Clean command:**
+
+\`\`\`sh
+${cleanupCommand(e).replace(/`/g, "\\`")}
+\`\`\``
+          : "Select a cache to inspect its description and cleanup command.",
+      },
+      primary: {
+        text: e ? `Clean ${e.name}  ↩` : "Clean Selected Cache  ↩",
+        enabled: !!e && e.available !== false && !e.error,
       },
     },
     true,
   );
 };
-const render = (s: State): Action => {
-  const rows = s.rows.filter(
+const visible = (s: State) =>
+  s.rows.filter(
     (e) =>
       (s.filter === "All" ||
         s.filter === e.risk ||
@@ -54,26 +65,73 @@ const render = (s: State): Action => {
         (s.filter === "Large > 1 GB" && e.bytes > 1e9)) &&
       `${e.name} ${e.path}`.toLowerCase().includes(s.query.toLowerCase()),
   );
+const rowData = (s: State): Action[] => {
+  const rows = visible(s),
+    groups = new Map<string, { count: number; size: number }>();
+  for (const e of rows) {
+    const g = groups.get(e.category) || { count: 0, size: 0 };
+    g.count++;
+    g.size += e.bytes;
+    groups.set(e.category, g);
+  }
+  return referenceData(
+    rows.map((e) => ({
+      id: e.id,
+      name: e.name,
+      group: e.category,
+      badge: e.error ? "Unknown" : bytes(e.bytes),
+      tone: e.risk === "Safe" ? "green" : "orange",
+      icon: "circle.fill",
+    })),
+    "cache",
+  ).map((row) => {
+    delete row["cacheSubtitle.text"];
+    delete row["cacheSubtitle.tooltip"];
+    if (row.header) {
+      const group = row["cacheHeader.text"] as string,
+        g = groups.get(group)!;
+      delete row["cacheHeader.text"];
+      row["cacheGroupTitle.text"] = group;
+      row["cacheGroupTotal.text"] = `${g.count} items — ${bytes(g.size)}`;
+    } else {
+      row["cacheBadge.background"] = null;
+      row["cacheBadgeLabel.colour"] = "secondaryLabelColor";
+    }
+    return row;
+  });
+};
+const render = (s: State): Action => {
+  const rows = visible(s);
   if (!rows.some((x) => x.id === s.selected)) s.selected = rows[0]?.id || "";
   save(s);
+  const total = bytes(s.rows.reduce((n, e) => n + e.bytes, 0)),
+    safe = bytes(s.rows.filter((e) => e.risk === "Safe").reduce((n, e) => n + e.bytes, 0));
+  const groups = [...new Set(s.rows.map((e) => e.category))];
   return merge(
     update(
       {
-        items: {
-          data: {
-            src: rows.map((e) => ({
-              uid: e.id,
-              "rowIcon.image.type": "symbol",
-              "rowIcon.image.src": e.risk === "Safe" ? "checkmark.circle" : "exclamationmark.circle",
-              "rowTitle.text": `${e.name} · ${bytes(e.bytes)}`,
-              "rowDescription.text": `${e.risk} · ${e.category}`,
+        items: { data: { src: rowData(s) }, select: s.selected, placeholder: "No caches match this filter." },
+        query: {
+          placeholder: `Search caches… (${total} total, ${safe} safe)`,
+          tooltip: `${total} total · ${safe} safe`,
+        },
+        filter: {
+          items: [
+            { text: `All (${s.rows.length})`, value: "All" },
+            { text: `Safe Only (${s.rows.filter((e) => e.risk === "Safe").length})`, value: "Safe" },
+            { text: `Review (${s.rows.filter((e) => e.risk === "Review").length})`, value: "Review" },
+            { text: `Large > 1 GB (${s.rows.filter((e) => e.bytes > 1e9).length})`, value: "Large > 1 GB" },
+            { type: "separator" },
+            ...groups.map((value) => ({
+              text: `${value} (${s.rows.filter((e) => e.category === value).length})`,
+              value,
             })),
-          },
-          select: s.selected,
-          placeholder: "No caches in this filter.",
+          ],
+          selected: s.filter,
         },
         statusLabel: {
-          text: `${bytes(s.rows.reduce((n, e) => n + e.bytes, 0))} total · ${bytes(s.rows.filter((e) => e.risk === "Safe").reduce((n, e) => n + e.bytes, 0))} safe${s.limited ? " · Scan limit reached" : ""}`,
+          text: "Scan Caches",
+          tooltip: `${total} total · ${safe} safe${s.limited ? " · Scan limit reached" : ""}`,
         },
       },
       true,
@@ -90,8 +148,8 @@ const load = async (s: State): Promise<Action> => {
 };
 const review = (s: State, safe: boolean): Action => {
   const targets = safe
-    ? s.rows.filter((e) => e.risk === "Safe" && e.bytes > 0 && !e.error)
-    : s.rows.filter((e) => e.id === s.selected);
+    ? s.rows.filter((e) => e.risk === "Safe" && e.bytes > 0 && !e.error && e.available !== false)
+    : s.rows.filter((e) => e.id === s.selected && e.available !== false && !e.error);
   if (!targets.length) throw new Error("No selected caches to clean.");
   s.plan = targets;
   save(s);
@@ -102,11 +160,11 @@ const review = (s: State, safe: boolean): Action => {
       layout: "border",
       padding: 18,
       spacing: 12,
-      constraints: { size: { width: 650, height: 310 } },
+      constraints: { size: { width: 650, height: Math.min(310, Math.max(160, targets.length * 58 + 70)) } },
       components: [
         {
           type: "label",
-          text: `Permanently clean ${targets.length} cache folder(s)?`,
+          text: `Clean ${targets.length} cache ${targets.length === 1 ? "item" : "items"}?`,
           font: { size: 18, weight: "medium" },
           constraints: { region: "top" },
         },
@@ -119,7 +177,7 @@ const review = (s: State, safe: boolean): Action => {
               uid: e.id,
               "reviewName.text": `${e.name} · ${bytes(e.bytes)} · ${e.path}`,
               "reviewName.tooltip": e.path,
-              "reviewNote.text": `${e.risk}: ${e.note}`,
+              "reviewNote.text": `Permanent cleanup. ${e.risk}: ${e.note} ${e.kind === "simulator" ? "Only the reviewed unavailable devices will be deleted." : ""}`,
             })),
           },
           cell: {
@@ -149,16 +207,20 @@ const review = (s: State, safe: boolean): Action => {
             },
           },
         },
-        {
-          type: "button",
-          text: `Permanently Clean ${bytes(targets.reduce((n, e) => n + e.bytes, 0))}`,
-          constraints: { region: "bottom", position: "right" },
-          events: [{ triggers: "actioned", action: script(["confirm", s.id], true) }],
-        },
       ],
     },
-    false,
+    true,
     script(["cancel-review", s.id], false),
+    [
+      {
+        type: "button",
+        text: `Clean ${bytes(targets.reduce((n, e) => n + e.bytes, 0))}  ↩`,
+        bordered: false,
+        shortcut: "↩",
+        contenttintcolour: "systemRedColor",
+        events: [{ triggers: "actioned", action: script(["confirm", s.id], true) }],
+      },
+    ],
   );
 };
 const main = async (): Promise<Action | void> => {
@@ -192,6 +254,7 @@ const main = async (): Promise<Action | void> => {
     return render(s);
   }
   if (cmd === "select") {
+    if (value.startsWith("heading:")) return skipHeading(rowData(s), value, s.selected);
     s.selected = value;
     save(s);
     return details(s);
@@ -227,9 +290,9 @@ const main = async (): Promise<Action | void> => {
       ...(e
         ? [
             menuItem("Review Selected Cleanup…", ["open", id, e.id]),
-            menuItem("Open Folder", ["folder", id, e.id]),
+            ...(e.kind !== "command" ? [menuItem("Open Folder", ["folder", id, e.id])] : []),
             menuItem("Copy Path", ["copy", id, e.id]),
-            menuItem("Copy Cleanup Description", ["description", id, e.id]),
+            menuItem("Copy Clean Command", ["description", id, e.id]),
           ]
         : []),
       menuItem("Review Safe Caches…", ["safe", id]),
@@ -239,7 +302,7 @@ const main = async (): Promise<Action | void> => {
   if (!e) throw new Error("Select a cache.");
   if (cmd === "folder") return { open: { type: "file", src: e.path } };
   if (cmd === "copy") return copy(e.path);
-  if (cmd === "description") return copy(`${e.risk}: ${e.note}\nPermanently remove ${e.path}`);
+  if (cmd === "description") return copy(cleanupCommand(e));
   return {};
 };
 main()

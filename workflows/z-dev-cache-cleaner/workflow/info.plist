@@ -379,6 +379,25 @@
 			<key>config</key>
 			<dict>
 				<key>default</key>
+				<string>10</string>
+				<key>placeholder</key>
+				<string>10</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Lists non-Apple top-level user app caches above this size. Set 0 to include empty caches.</string>
+			<key>label</key>
+			<string>Minimum app cache size (MB)</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>min_app_cache_mb</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
 				<string>⌘K</string>
 				<key>placeholder</key>
 				<string>⌘K</string>
