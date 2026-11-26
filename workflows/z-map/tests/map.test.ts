@@ -431,3 +431,13 @@ describe("exact places", () => {
     expect(coordinates("95, 10")).toBeUndefined();
   });
 });
+
+describe("suggestion dropdown", () => {
+  test("open and collapsed dropdown sit in the same slot under the fields", async () => {
+    const { suggestions, emptySuggestions } = await import("../ui/window.ts");
+    const open = suggestions([{ uid: "sg0" }]) as { constraints: { region: string } };
+    expect(open.constraints.region).toBe("bottom");
+    expect((emptySuggestions.constraints as { region: string }).region).toBe("bottom");
+    expect(JSON.stringify(mapWindow)).toContain('"id":"suggestSlot"');
+  });
+});

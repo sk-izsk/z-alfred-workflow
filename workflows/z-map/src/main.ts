@@ -1,8 +1,22 @@
 // `zmap <command> <from> <to> <stop1> <stop2> <stop3> [extra]`: one JSON action on stdout per run.
 import { execFileSync } from "node:child_process";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { backBinding, displayWidth, shortcutLabel } from "../../../shared/ui-profile.ts";
-import { act, type Json, mapView, mapWidth, quickButton, rest, ROUTE, run, viaSlot } from "../ui/window.ts";
-import { bool, str } from "./env.ts";
+import {
+  act,
+  emptySuggestions,
+  type Json,
+  mapView,
+  mapWidth,
+  quickButton,
+  rest,
+  ROUTE,
+  run,
+  suggestions,
+  viaSlot,
+} from "../ui/window.ts";
+import { bool, cacheDir, str } from "./env.ts";
 import { t } from "./i18n.ts";
 import { directionsUrl, type Point, PROVIDER_NAMES } from "./links.ts";
 import { modeAt, type Place } from "./model.ts";
@@ -102,16 +116,26 @@ const chosenProvider = (): OpenIn => {
 };
 
 /** Place search is biased to the configured region, or the city of the Mac's time zone. */
+/**
+ * Where searches start: "Search near" if set, else your Home (people search near home), else the
+ * city of the Mac's time zone (America/Toronto covers Montreal too, so it's only a last resort).
+ */
+const homeArea = async (base: Ctx): Promise<Place | undefined> => {
+  const home = settings.saved.home;
+  const region = settings.startRegion;
+  try {
+    if (region) return await resolvePlace(region, "open", base);
+    if (home) return await resolvePlace(home, "open", base);
+    const zone = regionName("");
+    return zone ? await resolvePlace(zone, "open", base) : undefined;
+  } catch {
+    return undefined;
+  }
+};
 const context = async (): Promise<Ctx> => {
   const base: Ctx = { ua: settings.ua, lang, hereKey: settings.hereKey, googleKey: settings.googleKey };
-  const region = regionName(settings.startRegion);
-  if (!region) return base;
-  try {
-    const place = await resolvePlace(region, "open", base);
-    return place ? { ...base, bias: { lat: place.lat, lon: place.lon } } : base;
-  } catch {
-    return base;
-  }
+  const place = await homeArea(base);
+  return place ? { ...base, bias: { lat: place.lat, lon: place.lon } } : base;
 };
 
 const clipboard = (): string => {
@@ -163,7 +187,8 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
       suggest: undefined,
       pins: undefined,
     });
-    bump(s, Boolean(query.to));
+    // With nothing to route, the async run still shows the map around your area.
+    bump(s, true);
     const size = settings.fonts.fields;
     return merge(
       update({
@@ -195,7 +220,7 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
     bump(s);
     return merge(
       update({ von: { text: s.from }, nach: { text: s.to } }),
-      hadSuggestions ? update({ steps: { data: { src: [] } } }) : {},
+      hadSuggestions ? hideSuggestions() : {},
       routing(),
     );
   },
@@ -246,11 +271,11 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
       if (!now.suggest) return {};
       now.suggest = undefined;
       saveState(now);
-      return render(now, settings, cachedEntry(now), false);
+      return merge(hideSuggestions(), status(hint(settings)));
     }
     now.suggest = { field, items: items.slice(0, 8) };
     saveState(now);
-    return merge(suggestionRows(now), status(t(lang, "suggestHint")));
+    return merge(showSuggestions(now), status(t(lang, "suggestHint")));
   },
 
   /** ↓ / ↑ while suggestions show: move the highlight that ↩ takes. */
@@ -260,7 +285,7 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
     const step = Number(extra()) || 1;
     const next = (list.active ?? (step > 0 ? -1 : list.items.length)) + step;
     list.active = Math.min(list.items.length - 1, Math.max(0, next));
-    return suggestionRows(s);
+    return update({ suggestList: { data: { src: suggestionData(s) } } });
   },
 
   /** A click on a suggestion. */
@@ -449,8 +474,9 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
         durationLabel: { text: "" },
         infoLabel: { text: "" },
         steps: { data: { src: [] } },
-        map: { text: "<html><body style='background:transparent'></body></html>" },
       }),
+      hideSuggestions(),
+      s.area ? render(s, settings, undefined) : {},
       stopFields(s),
       status(hint(settings)),
     );
@@ -462,6 +488,15 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
     const token = s.token;
     const key = inputsKey(s);
     const texts = [s.from, ...s.via.filter(Boolean), s.to].filter(Boolean);
+    if (!texts.length) {
+      const ctx = await context();
+      const now = loadState(settings.defaultMode);
+      if (now.token !== token || !ctx.bias) return {};
+      Object.assign(now, { area: ctx.bias, needsRoute: false, places: undefined });
+      const action = render(now, settings, undefined);
+      saveState(now);
+      return action;
+    }
     const latest = () => {
       const now = loadState(settings.defaultMode);
       return now.token === token ? now : undefined;
@@ -485,8 +520,9 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
         places.length > 1 ? await ensureRoutes(settings.provider, places, s.mode, ctx) : undefined;
       const now = latest();
       if (!now) return {};
+      const dropdown = Boolean(now.suggest);
       Object.assign(now, { places, placesFor: key, error: undefined, needsRoute: false, suggest: undefined });
-      const action = render(now, settings, entry);
+      const action = merge(render(now, settings, entry), dropdown ? hideSuggestions() : {});
       saveState(now);
       return action;
     } catch (error) {
@@ -519,25 +555,29 @@ function readFrom(s: State): string {
   return clean(args[0]) || s.from;
 }
 
-/** Suggestion rows; the highlighted one is drawn from row data, not the dataview selection. */
-function suggestionRows(s: State): Action {
+/** Dropdown rows; the highlighted one is drawn from row data, not the dataview selection. */
+function suggestionData(s: State): Json[] {
   const active = s.suggest?.active;
-  return update({
-    steps: {
-      data: {
-        src: (s.suggest?.items ?? []).map((item, i) => ({
-          uid: `sg${i}`,
-          "stepRow.background": i === active ? "alfredSelectedResultBackgroundColor" : null,
-          "stime.text": item.saved ? "★" : "",
-          "stime.colour": i === active ? "alfredSelectedResultTextColor" : "systemYellowColor",
-          "stext.text": item.detail ? `${item.label}  ·  ${item.detail}` : item.label,
-          "stext.colour": i === active ? "alfredSelectedResultTextColor" : "labelColor",
-        })),
-      },
-      select: "",
+  const on = "alfredSelectedResultTextColor";
+  return (s.suggest?.items ?? []).map((item, i) => ({
+    uid: `sg${i}`,
+    "sgRow.background": i === active ? "alfredSelectedResultBackgroundColor" : null,
+    "sgIcon.image": {
+      type: "symbol",
+      src: item.saved ? "star.fill" : "mappin.circle.fill",
+      size: { width: 18, height: 18 },
     },
-  });
+    "sgIcon.contenttintcolour": item.saved ? "systemYellowColor" : i === active ? on : MUTED,
+    "sgTitle.text": item.label,
+    "sgTitle.colour": i === active ? on : "labelColor",
+    "sgDetail.text": item.detail ?? "",
+    "sgDetail.colour": i === active ? on : MUTED,
+  }));
 }
+const showSuggestions = (s: State): Action => ({
+  replace: { ids: { suggestSlot: suggestions(suggestionData(s)) } },
+});
+const hideSuggestions = (): Action => ({ replace: { ids: { suggestSlot: emptySuggestions } } });
 
 /** Puts a suggestion into its field, pins its exact place, and routes once From and To are set. */
 function choose(s: State, uid: string): Action {
@@ -555,7 +595,8 @@ function choose(s: State, uid: string): Action {
   s.alt = 0;
   bump(s, ready);
   return merge(
-    update({ [field]: { text: item.label }, steps: { data: { src: [] }, select: "" } }),
+    update({ [field]: { text: item.label } }),
+    hideSuggestions(),
     ready ? routing() : status(hint(settings)),
   );
 }
@@ -570,7 +611,29 @@ function removeStop(s: State): Action {
 const emit = (action: Action) =>
   new Promise<void>((resolve) => process.stdout.write(JSON.stringify(action), () => resolve()));
 
+/**
+ * Which commands Alfred ran, for diagnosing keys and buttons that seem to do nothing. Field texts
+ * are not logged, only their lengths. Local only (Alfred's cache folder), last 300 lines.
+ */
+const logCommand = (): void => {
+  try {
+    const path = join(cacheDir(), "commands.log");
+    const lengths = args.slice(0, 5).map((a) => clean(a).length);
+    const detail = ["mode", "alt", "suggest", "suggest-move", "choose", "pick"].includes(command)
+      ? ` ${clean(args[5]).slice(0, 12)}`
+      : "";
+    const lines = existsSync(path) ? readFileSync(path, "utf8").split("\n").slice(-299) : [];
+    writeFileSync(
+      path,
+      [...lines, `${new Date().toISOString()} ${command} [${lengths}]${detail}`].join("\n"),
+    );
+  } catch {
+    // never let logging break the window
+  }
+};
+
 const main = async (): Promise<void> => {
+  logCommand();
   const handler = commands[command];
   if (!handler) throw new Error(`Unknown command: ${command}`);
   const s = loadState(settings.defaultMode);

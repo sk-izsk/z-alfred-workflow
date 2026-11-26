@@ -31,6 +31,7 @@ type PhotonHit = {
     city?: string;
     state?: string;
     country?: string;
+    countrycode?: string;
   };
 };
 
@@ -48,36 +49,56 @@ const areas = (hit: GeoHit) =>
     .join(", ");
 
 /** Best matches first; Transitous, then Photon when Transitous fails or finds nothing. */
-export const search = async (query: string, ctx: Ctx, limit = 1): Promise<Place[]> => {
-  const params = new URLSearchParams({ text: query, language: ctx.lang, numResults: String(limit) });
-  if (ctx.bias) params.set("place", `${ctx.bias.lat},${ctx.bias.lon}`);
-  try {
-    const hits = await getJson<GeoHit[]>(`${TRANSITOUS}/v1/geocode?${params}`, ctx.ua);
-    if (hits.length)
-      return hits
-        .slice(0, limit)
-        .map((hit) => ({ query, label: label(hit), detail: areas(hit), lat: hit.lat, lon: hit.lon }));
-  } catch {
-    // fall through to Photon
-  }
-  const photon = new URLSearchParams({ q: query, lang: ctx.lang, limit: String(limit) });
+/** Photon: made for search-as-you-type (prefixes, "yul"), strong location bias, OSM addresses. */
+const photon = async (query: string, ctx: Ctx, limit: number): Promise<Place[]> => {
+  const params = new URLSearchParams({ q: query, limit: String(limit), lang: ctx.lang });
   if (ctx.bias) {
-    photon.set("lat", String(ctx.bias.lat));
-    photon.set("lon", String(ctx.bias.lon));
+    params.set("lat", String(ctx.bias.lat));
+    params.set("lon", String(ctx.bias.lon));
   }
-  const result = await getJson<{ features: PhotonHit[] }>(`https://photon.komoot.io/api/?${photon}`, ctx.ua);
+  const result = await getJson<{ features: PhotonHit[] }>(`https://photon.komoot.io/api/?${params}`, ctx.ua);
   return result.features.slice(0, limit).map((hit) => {
     const p = hit.properties;
-    const name = p.name ?? [p.street, p.housenumber].filter(Boolean).join(" ");
+    // North America writes the number first: "4003 Boulevard Décarie".
+    const street = p.housenumber
+      ? ["us", "ca"].includes(p.countrycode?.toLowerCase() ?? "")
+        ? `${p.housenumber} ${p.street ?? ""}`
+        : `${p.street ?? ""} ${p.housenumber}`
+      : p.street;
+    const name = p.name ?? street?.trim() ?? query;
     const [lon, lat] = hit.geometry.coordinates;
     return {
       query,
-      label: [name, p.city].filter(Boolean).join(", ") || query,
-      detail: [p.state, p.country].filter(Boolean).join(", "),
+      label: name,
+      detail: [p.name && street, p.city, p.state, p.country].filter(Boolean).join(", "),
       lat,
       lon,
     };
   });
+};
+
+/** Transitous knows every stop and station; used when Photon fails or finds nothing. */
+const transitous = async (query: string, ctx: Ctx, limit: number): Promise<Place[]> => {
+  const params = new URLSearchParams({ text: query, language: ctx.lang, numResults: String(limit) });
+  if (ctx.bias) params.set("place", `${ctx.bias.lat},${ctx.bias.lon}`);
+  const hits = await getJson<GeoHit[]>(`${TRANSITOUS}/v1/geocode?${params}`, ctx.ua);
+  return hits
+    .slice(0, limit)
+    .map((hit) => ({ query, label: label(hit), detail: areas(hit), lat: hit.lat, lon: hit.lon }));
+};
+
+/**
+ * Photon first: Transitous turned a full street address into an unrelated bank 30 km away and
+ * can't complete half-typed words. Transitous is the fallback.
+ */
+export const search = async (query: string, ctx: Ctx, limit = 1): Promise<Place[]> => {
+  try {
+    const found = await photon(query, ctx, limit);
+    if (found.length) return found;
+  } catch {
+    // fall through to Transitous
+  }
+  return transitous(query, ctx, limit);
 };
 export const geocode = async (query: string, ctx: Ctx) => (await search(query, ctx))[0];
 

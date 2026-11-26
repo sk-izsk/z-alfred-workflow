@@ -29,6 +29,8 @@ export type State = {
   pins?: Record<string, Place>;
   /** Start of the latest suggestion run; older runs drop their answer. */
   suggestStarted?: number;
+  /** Where searches start; shown as the map before anything is routed. */
+  area?: { lat: number; lon: number };
   page: number;
   picks: string[];
 };
@@ -164,6 +166,7 @@ const writeMap = (s: State, settings: Settings, entry: Entry | undefined): strin
       chosen: Math.min(s.alt, Math.max(0, options.length - 1)),
       options: options.map((o) => pageOption(o, chipLabel(o, s.mode, settings.loc))),
       points: points(s.places ?? []),
+      center: s.area ? [s.area.lon, s.area.lat] : undefined,
       attribution: {
         open: `Routes: Transitous${usesOsrm ? " · FOSSGIS OSRM" : ""}`,
         here: "Routes: HERE",
@@ -211,6 +214,7 @@ export const render = (s: State, settings: Settings, entry: Entry | undefined, m
   ids.statusLabel = s.error
     ? { text: s.error, colour: "systemRedColor" }
     : { text: hint(settings), colour: MUTED };
-  if (map && (entry || place)) ids.map = { src: writeMap(s, settings, entry) };
+  const idle = !s.places?.length && s.area;
+  if (map && (entry || place || idle)) ids.map = { src: writeMap(s, settings, entry) };
   return update(ids, true);
 };

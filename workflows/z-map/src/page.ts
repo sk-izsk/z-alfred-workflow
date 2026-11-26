@@ -29,6 +29,8 @@ export type PageData = {
   options: PageOption[];
   points: PagePoint[];
   attribution: string;
+  /** With nothing to show yet: the area searches start from ([lon, lat]). */
+  center?: [number, number];
 };
 
 const MODE_COLOUR: Record<string, string> = { BIKE: "#30b158", WALK: "#8e8e93" };
@@ -258,8 +260,8 @@ function mapScript(D: PageData): void {
     }
     const latLng = ([lon, lat]: [number, number]) => ({ lat, lng: lon });
     const map = new g.Map(document.getElementById("m"), {
-      center: latLng(all[0] ?? [0, 20]),
-      zoom: all.length ? 12 : 2,
+      center: latLng(all[0] ?? D.center ?? [0, 20]),
+      zoom: all.length || D.center ? 12 : 2,
       disableDefaultUI: true,
       zoomControl: true,
       gestureHandling: "greedy",
@@ -370,8 +372,8 @@ function mapScript(D: PageData): void {
       dragRotate: false,
       pitchWithRotate: false,
       maxPitch: 0,
-      center: all[0] ?? [0, 20],
-      zoom: all.length ? 12 : 1.5,
+      center: all[0] ?? D.center ?? [0, 20],
+      zoom: all.length || D.center ? 12 : 1.5,
     });
     map.addControl(
       new gl.AttributionControl({ compact: true, customAttribution: D.attribution }),

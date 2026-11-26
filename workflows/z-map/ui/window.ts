@@ -192,6 +192,81 @@ export const quickButton = (id: string, text: string, action: Json[]): Json => (
   events: [on("actioned", action)],
 });
 
+/** Collapsed dropdown: an empty view has no height, so there is no gap when nothing is suggested. */
+export const emptySuggestions: Json = { id: "suggestSlot", type: "view", constraints: { region: "bottom" } };
+export const SUGGEST_ROW = 36;
+
+/**
+ * The dropdown under the fields. ↓/↑ move a highlight drawn from row data; a click selects a row,
+ * and that selection change picks the suggestion.
+ */
+export const suggestions = (rows: Json[]): Json => ({
+  id: "suggestSlot",
+  type: "view",
+  layout: "stack",
+  cornerradius: 10,
+  padding: 4,
+  background: CARD,
+  constraints: { region: "bottom", insets: { top: 6, right: 15 } },
+  components: [
+    {
+      id: "suggestList",
+      type: "dataview",
+      spacing: 0,
+      behaviour: { selection: { allowempty: true } },
+      constraints: { size: { width: 318, height: rows.length * SUGGEST_ROW } },
+      data: { type: "basic", src: rows },
+      events: [on("changed", act("choose", ["{value:suggestList.selected.uid}"]))],
+      cell: {
+        height: SUGGEST_ROW,
+        init: { "sgRow.background": null, "sgTitle.colour": "labelColor", "sgDetail.colour": MUTED },
+        selected: {},
+        root: {
+          id: "sgRow",
+          type: "view",
+          layout: "border",
+          padding: 3,
+          spacing: 6,
+          cornerradius: 6,
+          components: [
+            {
+              id: "sgIcon",
+              type: "imageview",
+              image: { type: "symbol", src: "mappin.circle.fill", size: { width: 18, height: 18 } },
+              contenttintcolour: MUTED,
+              constraints: { region: "left", position: "centre", size: { width: 22, height: 22 } },
+            },
+            {
+              id: "sgText",
+              type: "view",
+              layout: "border",
+              constraints: { region: "centre" },
+              components: [
+                {
+                  id: "sgTitle",
+                  type: "label",
+                  text: "",
+                  font: { size: 13, weight: "medium" },
+                  linebreak: "truncatetail",
+                  constraints: { region: "top", position: "left", stretch: "horizontal" },
+                },
+                {
+                  id: "sgDetail",
+                  type: "label",
+                  text: "",
+                  font: { size: 11 },
+                  linebreak: "truncatetail",
+                  constraints: { region: "bottom", position: "left", stretch: "horizontal" },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    },
+  ],
+});
+
 const steps: Json = {
   id: "steps",
   type: "dataview",
@@ -199,9 +274,6 @@ const steps: Json = {
   placeholder: "",
   behaviour: { selection: { allowempty: true } },
   constraints: { region: "centre", size: { width: 330 } },
-  // Selection only comes from a mouse click (↓/↑ move the script's own highlight), so a
-  // selection change means "use this suggestion". Itinerary rows are ignored by `choose`.
-  events: [on("changed", act("choose", ["{value:steps.selected.uid}"]))],
   data: { type: "basic", src: [] },
   cell: {
     height: 21,
@@ -340,46 +412,56 @@ export const mapWindow = {
               constraints: { region: "top" },
               components: [
                 {
-                  id: "fieldsBlock",
+                  // From/To card with the suggestion dropdown right under it, like Google Maps.
+                  id: "fieldsArea",
                   type: "view",
                   layout: "border",
-                  padding: 4,
-                  spacing: 2,
-                  cornerradius: 10,
-                  background: CARD,
-                  constraints: { grid: { col: 0, row: 0, colweight: 1 }, insets: { right: 15 } },
+                  constraints: { grid: { col: 0, row: 0, colweight: 1 } },
                   components: [
-                    symbolButton("swapButton", "arrow.up.arrow.down", 15, act("swap"), {
-                      constraints: {
-                        region: "left",
-                        position: "centre",
-                        size: { width: 26, height: 26 },
-                      },
-                      tooltip: "⌘T",
-                    }),
                     {
-                      id: "fieldStack",
+                      id: "fieldsBlock",
                       type: "view",
-                      layout: "inline",
-                      direction: "vertical",
-                      constraints: { region: "centre" },
+                      layout: "border",
+                      padding: 4,
+                      spacing: 2,
+                      cornerradius: 10,
+                      background: CARD,
+                      constraints: { region: "top", insets: { right: 15 } },
                       components: [
-                        field("von", "From", 15, { focus: true }),
-                        divider("fieldDivider"),
+                        symbolButton("swapButton", "arrow.up.arrow.down", 15, act("swap"), {
+                          constraints: {
+                            region: "left",
+                            position: "centre",
+                            size: { width: 26, height: 26 },
+                          },
+                          tooltip: "⌘T",
+                        }),
                         {
-                          id: "viaSlot",
+                          id: "fieldStack",
                           type: "view",
                           layout: "inline",
                           direction: "vertical",
-                          components: [],
+                          constraints: { region: "centre" },
+                          components: [
+                            field("von", "From", 15, { focus: true }),
+                            divider("fieldDivider"),
+                            {
+                              id: "viaSlot",
+                              type: "view",
+                              layout: "inline",
+                              direction: "vertical",
+                              components: [],
+                            },
+                            field("nach", "To", 15),
+                          ],
                         },
-                        field("nach", "To", 15),
+                        symbolButton("viaButton", "plus.circle.fill", 26, run("add-stop"), {
+                          constraints: { region: "right", position: "centre" },
+                          tooltip: "⌘U",
+                        }),
                       ],
                     },
-                    symbolButton("viaButton", "plus.circle.fill", 26, run("add-stop"), {
-                      constraints: { region: "right", position: "centre" },
-                      tooltip: "⌘U",
-                    }),
+                    emptySuggestions,
                   ],
                 },
                 rest([], { duration: 32, info: 14 }),

@@ -21,9 +21,12 @@ Requires macOS, Alfred 6 with Powerpack, Node.js 22+ or Bun, and an internet con
 | `maps von A über B nach C` | The same in German |
 | `maps` with an address on the clipboard | A route from Home (if set) to the copied address |
 
-While you type in From, To or a stop, suggestions appear in the list under the modes: your
-saved places first (★), then places from the provider, near the start once it is known. Use ↓ ↑
-and ↩, or click one. A picked suggestion is pinned to its exact place.
+While you type in From, To or a stop, suggestions drop down right under the fields, as in
+Google Maps: your saved places first (★), then places from the provider. Use ↓ ↑ and ↩, or
+click one. A picked suggestion is pinned to its exact place. Searches start near **Search near**
+in Configuration, else near your Home address, else the city of your Mac's time zone; To and
+stops search near From, and places within 100 km come first. Before anything is routed, the map
+shows that area.
 
 The Home, Work and saved-place buttons fill From while it is empty, otherwise To, and route
 once both are set. For an exact pin, any field (and Home or Work in Configuration) also takes
@@ -81,7 +84,7 @@ data on a Google map, or route with Google on OpenFreeMap. **Map: Automatic** fo
 
 | | Open data (default) | Google (your key) | HERE (your key) |
 | --- | --- | --- | --- |
-| Places and suggestions | Transitous, Photon as fallback | Places API (New) text search | HERE Geocoding & Search |
+| Places and suggestions | Photon (search-as-you-type, addresses), Transitous as fallback | Places API (New) text search | HERE Geocoding & Search |
 | Transit | Transitous (up to 3 connections) | Routes API, transit | HERE Public Transit |
 | Car, bike, walk | Transitous times; FOSSGIS OSRM alternatives | Routes API (car with live traffic) | HERE Routing (car with traffic) |
 | Map | OpenFreeMap with MapLibre GL, recoloured light/dark | Google Maps JavaScript API (Google's look; our dark palette in dark mode) | HERE map tiles (day/night) |
@@ -106,6 +109,10 @@ data on a Google map, or route with Google on OpenFreeMap. **Map: Automatic** fo
   are marked as not exported with the workflow.
 - Places, stops and route coordinates you search for are sent to the providers above. The map
   page loads MapLibre from unpkg (jsDelivr as fallback).
+
+If a key or button seems to do nothing, `commands.log` in the workflow's cache folder
+(`~/Library/Caches/com.runningwithcrayons.Alfred/Workflow Data/com.izsk.map`) lists the
+commands Alfred ran, with field lengths only, never their text.
 
 ## Configuration
 
