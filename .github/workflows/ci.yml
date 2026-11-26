@@ -42,6 +42,8 @@ jobs:
             artifact: Tag Manager.alfredworkflow
           - workflow: z-system-monitor
             artifact: System Monitor.alfredworkflow
+          - workflow: z-mole
+            artifact: Mole.alfredworkflow
           - workflow: z-world-clock
             artifact: World Clock.alfredworkflow
           - workflow: z-weather

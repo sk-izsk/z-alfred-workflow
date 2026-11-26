@@ -106,5 +106,11 @@
     "bundle": "com.izsk.system-monitor",
     "name": "System Monitor",
     "description": "Live CPU, memory, disks, power and network details"
+  },
+  {
+    "slug": "z-mole",
+    "bundle": "com.izsk.mole",
+    "name": "Mole",
+    "description": "Mole health, disk browsing and reviewed cleanup/optimization previews"
   }
 ]

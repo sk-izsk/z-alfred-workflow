@@ -13,6 +13,16 @@ export type Tool = {
 };
 export const tools: Tool[] = [
   {
+    id: "mole",
+    name: "Mole",
+    description: "Mole health, disk browsing and reviewed cleanup/optimization previews",
+    bundle: "com.izsk.mole",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "moleui",
+  },
+
+  {
     id: "system-monitor",
     name: "System Monitor",
     description: "Live CPU, memory, disks, power and network details",
