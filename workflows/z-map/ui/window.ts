@@ -193,8 +193,16 @@ export const quickButton = (id: string, text: string, action: Json[]): Json => (
 });
 
 /** Collapsed dropdown: an empty view has no height, so there is no gap when nothing is suggested. */
-export const emptySuggestions: Json = { id: "suggestSlot", type: "view", constraints: { region: "bottom" } };
-export const SUGGEST_ROW = 36;
+export const emptySuggestions: Json = {
+  id: "suggestSlot",
+  type: "view",
+  constraints: { position: "top", size: { width: 0, height: 0 } },
+};
+export const SUGGEST_ROW = 32;
+/** Four rows fit inside the modes area, so the floating card never needs more room. */
+export const SUGGEST_MAX = 4;
+/** Opaque, unlike the cards: text underneath must not show through. */
+const MENU = { light: "#f5f5f7", dark: "#2a2b30" };
 
 /**
  * The dropdown under the fields. ↓/↑ move a highlight drawn from row data; a click selects a row,
@@ -206,8 +214,9 @@ export const suggestions = (rows: Json[]): Json => ({
   layout: "stack",
   cornerradius: 10,
   padding: 4,
-  background: CARD,
-  constraints: { region: "bottom", insets: { top: 6, right: 15 } },
+  background: MENU,
+  border: { width: 1, colour: "separatorColor" },
+  constraints: { position: "top", stretch: "horizontal", insets: { right: 15 } },
   components: [
     {
       id: "suggestList",
@@ -254,7 +263,7 @@ export const suggestions = (rows: Json[]): Json => ({
                   id: "sgDetail",
                   type: "label",
                   text: "",
-                  font: { size: 11 },
+                  font: { size: 10.5 },
                   linebreak: "truncatetail",
                   constraints: { region: "bottom", position: "left", stretch: "horizontal" },
                 },
@@ -412,59 +421,57 @@ export const mapWindow = {
               constraints: { region: "top" },
               components: [
                 {
-                  // From/To card with the suggestion dropdown right under it, like Google Maps.
-                  id: "fieldsArea",
+                  id: "fieldsBlock",
                   type: "view",
                   layout: "border",
-                  constraints: { grid: { col: 0, row: 0, colweight: 1 } },
+                  padding: 4,
+                  spacing: 2,
+                  cornerradius: 10,
+                  background: CARD,
+                  constraints: { grid: { col: 0, row: 0, colweight: 1 }, insets: { right: 15 } },
                   components: [
+                    symbolButton("swapButton", "arrow.up.arrow.down", 15, act("swap"), {
+                      constraints: {
+                        region: "left",
+                        position: "centre",
+                        size: { width: 26, height: 26 },
+                      },
+                      tooltip: "⌘T",
+                    }),
                     {
-                      id: "fieldsBlock",
+                      id: "fieldStack",
                       type: "view",
-                      layout: "border",
-                      padding: 4,
-                      spacing: 2,
-                      cornerradius: 10,
-                      background: CARD,
-                      constraints: { region: "top", insets: { right: 15 } },
+                      layout: "inline",
+                      direction: "vertical",
+                      constraints: { region: "centre" },
                       components: [
-                        symbolButton("swapButton", "arrow.up.arrow.down", 15, act("swap"), {
-                          constraints: {
-                            region: "left",
-                            position: "centre",
-                            size: { width: 26, height: 26 },
-                          },
-                          tooltip: "⌘T",
-                        }),
+                        field("von", "From", 15, { focus: true }),
+                        divider("fieldDivider"),
                         {
-                          id: "fieldStack",
+                          id: "viaSlot",
                           type: "view",
                           layout: "inline",
                           direction: "vertical",
-                          constraints: { region: "centre" },
-                          components: [
-                            field("von", "From", 15, { focus: true }),
-                            divider("fieldDivider"),
-                            {
-                              id: "viaSlot",
-                              type: "view",
-                              layout: "inline",
-                              direction: "vertical",
-                              components: [],
-                            },
-                            field("nach", "To", 15),
-                          ],
+                          components: [],
                         },
-                        symbolButton("viaButton", "plus.circle.fill", 26, run("add-stop"), {
-                          constraints: { region: "right", position: "centre" },
-                          tooltip: "⌘U",
-                        }),
+                        field("nach", "To", 15),
                       ],
                     },
-                    emptySuggestions,
+                    symbolButton("viaButton", "plus.circle.fill", 26, run("add-stop"), {
+                      constraints: { region: "right", position: "centre" },
+                      tooltip: "⌘U",
+                    }),
                   ],
                 },
-                rest([], { duration: 32, info: 14 }),
+                {
+                  // The dropdown floats over the modes, right under the fields, like Google Maps:
+                  // growing the column at runtime overlapped the fields inside Alfred.
+                  id: "restStack",
+                  type: "view",
+                  layout: "stack",
+                  constraints: { grid: { col: 0, row: 1, colweight: 1 } },
+                  components: [rest([], { duration: 32, info: 14 }), emptySuggestions],
+                },
               ],
             },
             steps,

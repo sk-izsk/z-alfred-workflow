@@ -263,13 +263,16 @@ describe("window", () => {
     expect(dupes).toEqual([]);
   });
 
-  test("replaced parts keep their grid slot (rest stays in row 1)", () => {
-    const left = mapWindow.window.root.components[0] as {
-      components: { components: { constraints: unknown }[] }[];
-    };
-    const original = JSON.stringify(left.components[0]?.components[1]?.constraints);
+  test("replaced parts keep their slot (rest inside the stack under the fields)", () => {
+    type Node = { id?: string; constraints?: unknown; components?: Node[] };
+    const find = (node: Node, id: string): Node | undefined =>
+      node.id === id ? node : node.components?.map((c) => find(c, id)).find(Boolean);
+    const stack = find(mapWindow.window.root as Node, "restStack");
+    const original = JSON.stringify(stack?.components?.[0]?.constraints);
+    expect(stack?.components?.[0]?.id).toBe("rest");
     expect(JSON.stringify(rest([{ id: "x" }], { duration: 32, info: 14 }).constraints)).toBe(original);
     expect(JSON.stringify(rest([], { duration: 32, info: 14 }).constraints)).toBe(original);
+    expect(stack?.components?.[1]?.id).toBe("suggestSlot");
   });
 
   test("British keys and the link rule", () => {
@@ -433,11 +436,11 @@ describe("exact places", () => {
 });
 
 describe("suggestion dropdown", () => {
-  test("open and collapsed dropdown sit in the same slot under the fields", async () => {
+  test("open and collapsed dropdown float at the top of the stack under the fields", async () => {
     const { suggestions, emptySuggestions } = await import("../ui/window.ts");
-    const open = suggestions([{ uid: "sg0" }]) as { constraints: { region: string } };
-    expect(open.constraints.region).toBe("bottom");
-    expect((emptySuggestions.constraints as { region: string }).region).toBe("bottom");
+    const open = suggestions([{ uid: "sg0" }]) as { constraints: { position: string } };
+    expect(open.constraints.position).toBe("top");
+    expect((emptySuggestions.constraints as { position: string }).position).toBe("top");
     expect(JSON.stringify(mapWindow)).toContain('"id":"suggestSlot"');
   });
 });

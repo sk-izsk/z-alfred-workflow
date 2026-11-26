@@ -1,6 +1,6 @@
 // `zmap <command> <from> <to> <stop1> <stop2> <stop3> [extra]`: one JSON action on stdout per run.
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { backBinding, displayWidth, shortcutLabel } from "../../../shared/ui-profile.ts";
 import {
@@ -13,6 +13,7 @@ import {
   rest,
   ROUTE,
   run,
+  SUGGEST_MAX,
   suggestions,
   viaSlot,
 } from "../ui/window.ts";
@@ -273,7 +274,7 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
       saveState(now);
       return merge(hideSuggestions(), status(hint(settings)));
     }
-    now.suggest = { field, items: items.slice(0, 8) };
+    now.suggest = { field, items: items.slice(0, SUGGEST_MAX) };
     saveState(now);
     return merge(showSuggestions(now), status(t(lang, "suggestHint")));
   },
@@ -622,11 +623,12 @@ const logCommand = (): void => {
     const detail = ["mode", "alt", "suggest", "suggest-move", "choose", "pick"].includes(command)
       ? ` ${clean(args[5]).slice(0, 12)}`
       : "";
-    const lines = existsSync(path) ? readFileSync(path, "utf8").split("\n").slice(-299) : [];
-    writeFileSync(
-      path,
-      [...lines, `${new Date().toISOString()} ${command} [${lengths}]${detail}`].join("\n"),
-    );
+    // Append, never rewrite: async runs overlap, and a rewrite dropped their lines.
+    appendFileSync(path, `${new Date().toISOString()} ${command} [${lengths}]${detail}\n`);
+    if (statSync(path).size > 64_000) {
+      const lines = readFileSync(path, "utf8").split("\n");
+      writeFileSync(path, lines.slice(-300).join("\n"));
+    }
   } catch {
     // never let logging break the window
   }
