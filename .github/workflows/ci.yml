@@ -50,6 +50,8 @@ jobs:
             artifact: Dev Servers.alfredworkflow
           - workflow: z-bluetooth
             artifact: Bluetooth.alfredworkflow
+          - workflow: z-wifi
+            artifact: Wi-Fi.alfredworkflow
           - workflow: z-gif-search
             artifact: GIF Search.alfredworkflow
           - workflow: z-emoji

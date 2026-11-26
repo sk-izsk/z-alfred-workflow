@@ -154,5 +154,11 @@
     "name": "Bluetooth",
     "bundle": "com.izsk.bluetooth",
     "description": "Paired Bluetooth devices, connection controls and battery details"
+  },
+  {
+    "slug": "z-wifi",
+    "name": "Wi-Fi",
+    "bundle": "com.izsk.wifi",
+    "description": "Wi-Fi networks, status and native connection controls"
   }
 ]

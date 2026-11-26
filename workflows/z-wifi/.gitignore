@@ -1,0 +1,5 @@
+node_modules
+dist/
+workflow/bin/wifi.mjs
+workflow/prefs.plist
+.DS_Store

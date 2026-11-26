@@ -42,7 +42,7 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 - [x] Dev launcher: separate `dev` keyword with five trusted tool entries, installation/version checks and its own return-session protocol. These utilities belong only to Dev. Checked, packaged and installed.
 - [x] Dev Servers: independent keyword and Dev return protocol; checked/packaged, disposable server detection/stop verified. Implemented scope: project grouping, tool filter, open/copy URL, stop/restart, Terminal/Finder actions, project/all-server stopping. Verify process identity before stopping; never stop real servers merely for testing.
 - [x] Bluetooth: independent workflow installed; native metadata verified (12 paired), check/package passed; connection changes left untested on user devices. Implemented scope: connect/disconnect, device type/battery/details and actions; verify macOS API/permission support first.
-- [ ] Wi-Fi: analogous network controls/details; verify current macOS scanning/permission restrictions before implementation.
+- [x] Wi-Fi: native report/status and saved networks, privacy-aware current row; checked/packaged and installed. No live connection/power changed. Implemented scope: analogous network controls/details; verify current macOS scanning/permission restrictions before implementation.
 - [ ] Dev Cache Cleaner: scan sizes, categories and risk filters; split details view, individual cleanup and safe-cache cleanup review. Never perform a cleanup just to verify the UI.
 - [ ] Dev Utils: pinned Raycast devutils plus installed Textformer reference; integrate supported text/developer transformations.
 

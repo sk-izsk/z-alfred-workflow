@@ -111,5 +111,5 @@ export const infoPlist = {
   ],
   variablesdontexport: [],
   readme:
-    "Find and manage local development servers. Use Command-K for actions. Back (Hyper+B) returns one level or to Dev. Built with help from AI tools. See README for sources and limitations.",
+    "Paired Bluetooth connections and available battery metadata. Use Command-K for actions. Back (Hyper+B) returns one level or to Dev. Built with help from AI tools. See README for sources and limitations.",
 };
