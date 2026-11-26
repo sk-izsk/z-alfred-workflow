@@ -27,3 +27,5 @@ Tests verify command allowlisting, dry-run flags, shell quoting and response par
 Behavioral reference: [Raycast Mole](https://github.com/raycast/extensions/tree/459326f4f557692a79246dba2d013746f56d724b/extensions/mole/). No reference code or artwork was copied. MIT. Built with help from AI tools.
 
 Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.
+
+Long CLI previews run in a separate worker. The native UI polls session results once a second, keeping Back/search responsive; preview stdin is closed and execution has a 90-second timeout. Errors replace the loading placeholder.

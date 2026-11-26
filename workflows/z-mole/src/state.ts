@@ -12,7 +12,14 @@ export type Frame = {
   scroll?: number;
   ready?: boolean;
 };
-export type State = Frame & { id: string; returnTo: string; at: number; request: string; history: Frame[] };
+export type State = Frame & {
+  id: string;
+  returnTo: string;
+  at: number;
+  request: string;
+  history: Frame[];
+  loadingSince?: number;
+};
 const file = (id: string) => {
   if (!/^[a-f0-9-]{36}$/.test(id)) throw new Error("Reopen Mole.");
   return join(cacheDir(), `window-${id}.json`);

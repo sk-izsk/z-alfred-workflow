@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
@@ -8,7 +8,7 @@ import { referenceData } from "../../../shared/reference-rows.ts";
 import type { State } from "../src/state.ts";
 import { statusItems, previewItems } from "../src/presentation.ts";
 import { expect, test } from "bun:test";
-import { commandArgs, parseAnalysis, cleanOutput, shellQuote, execution } from "../src/mole.ts";
+import { run, commandArgs, parseAnalysis, cleanOutput, shellQuote, execution } from "../src/mole.ts";
 test("previews always use dry-run and command selection is closed", () => {
   expect(commandArgs("clean")).toEqual(["clean", "--dry-run"]);
   expect(commandArgs("optimize")).toEqual(["optimize", "--dry-run"]);
@@ -124,6 +124,57 @@ test("folder Back restores the prior path/query/selection/scroll and previews ca
   } finally {
     if (prior === undefined) delete process.env.alfred_workflow_cache;
     else process.env.alfred_workflow_cache = prior;
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("noninteractive previews close stdin and a completed worker is returned by polling", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "mole-worker-test-"));
+  const priorPath = process.env.mole_path,
+    priorCache = process.env.alfred_workflow_cache;
+  process.env.mole_path = join(dir, "fake-mole");
+  process.env.alfred_workflow_cache = dir;
+  writeFileSync(
+    process.env.mole_path,
+    '#!/bin/sh\ncat >/dev/null\nprintf "➤ Finder Cache Refresh\\n ○ QuickLook thumbnails refreshed\\nWould apply 1 optimizations\\n"\n',
+    { mode: 0o700 },
+  );
+  try {
+    expect(await run("optimize")).toContain("Would apply 1");
+    const s = create("", "");
+    s.mode = "optimize";
+    s.status = "Loading…";
+    save(s);
+    const call = (cmd: string) =>
+      JSON.parse(
+        execFileSync(process.execPath, [join(import.meta.dir, "../src/main.ts"), cmd, s.id, s.request], {
+          encoding: "utf8",
+          env: process.env,
+        }),
+      );
+    const started = call("load");
+    expect(started.pulse.args[0]).toBe("poll");
+    const deadline = Date.now() + 5000;
+    while (!read(s.id).ready && Date.now() < deadline) await Bun.sleep(30);
+    expect(read(s.id).ready).toBe(true);
+    const result = call("poll");
+    expect(result.pulse.interval).toBe(0);
+    const stalled = read(s.id);
+    stalled.ready = false;
+    stalled.status = "Loading…";
+    stalled.loadingSince = Date.now() - 101000;
+    save(stalled);
+    expect(call("poll").update.ids.items.placeholder).toContain("timed out");
+    expect(
+      result.update.ids.items.data.src.some(
+        (row: any) => row["moleTitle.text"] === "Available Optimizations",
+      ),
+    ).toBe(true);
+  } finally {
+    if (priorPath === undefined) delete process.env.mole_path;
+    else process.env.mole_path = priorPath;
+    if (priorCache === undefined) delete process.env.alfred_workflow_cache;
+    else process.env.alfred_workflow_cache = priorCache;
     rmSync(dir, { recursive: true, force: true });
   }
 });

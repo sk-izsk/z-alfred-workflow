@@ -26,7 +26,7 @@ export const commandArgs = (mode: Mode, path = ""): string[] => {
   throw new Error("Choose a Mole command.");
 };
 export const run = async (mode: Mode, path = ""): Promise<string> => {
-  const result = await exec(executable(), commandArgs(mode, path), {
+  const pending = exec(executable(), commandArgs(mode, path), {
     timeout: 90000,
     maxBuffer: 8000000,
     env: {
@@ -36,7 +36,8 @@ export const run = async (mode: Mode, path = ""): Promise<string> => {
       NO_COLOR: "1",
     },
   });
-  return result.stdout;
+  pending.child.stdin?.end();
+  return (await pending).stdout;
 };
 export const cleanOutput = (text: string): string[] =>
   stripVTControlCharacters(text)

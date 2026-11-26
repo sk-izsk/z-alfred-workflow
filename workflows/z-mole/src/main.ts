@@ -1,6 +1,6 @@
 import { profileCommand } from "../../../shared/ui-profile.ts";
 await profileCommand(() => import("./env.ts"));
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { statusItems, previewItems, size, usageTone } from "./presentation.ts";
 import { referenceData, skipHeading, toneBackground, toneColour } from "../../../shared/reference-rows.ts";
@@ -133,12 +133,19 @@ const mount = (s: State, load = false): Action =>
     pulse: {
       src: "../bin/moleui",
       args: load ? ["load", s.id, s.request] : ["populate", s.id],
-      interval: 0,
+      interval: 1,
+      intervalmode: "delay",
       now: true,
     },
   });
 const pulse = (s: State): Action => ({
-  pulse: { src: "../bin/moleui", args: ["load", s.id, s.request], interval: 0, now: true },
+  pulse: {
+    src: "../bin/moleui",
+    args: ["load", s.id, s.request],
+    interval: 1,
+    intervalmode: "delay",
+    now: true,
+  },
 });
 const main = async (): Promise<Action | void> => {
   let [cmd = "", id = "", ...args] = process.argv.slice(2),
@@ -155,7 +162,17 @@ const main = async (): Promise<Action | void> => {
     return merge(vars({ moleui_session: s.id }), mount(s, true));
   }
   const s = read(id);
-  if (cmd === "populate") return render(s);
+  if (cmd === "populate") return merge(render(s), { pulse: { interval: 0 } });
+  if (cmd === "poll") {
+    if (s.status === "Loading…" || s.status === "Refreshing…") {
+      if (!s.loadingSince || Date.now() - s.loadingSince < 100000) return {};
+      s.status = "Mole preview timed out. Use Refresh to try again.";
+      s.items = [];
+      s.ready = false;
+      s.request = randomUUID();
+    }
+    return merge(render(s), { pulse: { interval: 0 } });
+  }
   if (cmd === "back") {
     const prior = s.history.pop();
     if (!prior) return finish({ moleui_out: "back", swiss_return: s.returnTo });
@@ -165,8 +182,24 @@ const main = async (): Promise<Action | void> => {
     return mount(s);
   }
   if (cmd === "load") {
-    if (value !== s.request) return {};
-    if (s.mode === "menu") return render(s);
+    if (value !== s.request) return { pulse: { interval: 0 } };
+    if (s.mode === "menu") return merge(render(s), { pulse: { interval: 0 } });
+    s.loadingSince = Date.now();
+    const action = render(s);
+    // Long CLI previews must not hold Alfred's pulse response open.
+    const child = spawn(process.execPath, [process.argv[1]!, "load-worker", id, value], {
+      detached: true,
+      stdio: "ignore",
+      env: process.env,
+    });
+    child.unref();
+    return merge(action, {
+      pulse: { src: "../bin/moleui", args: ["poll", id], interval: 1, intervalmode: "delay", now: false },
+    });
+  }
+  if (cmd === "load-worker") {
+    if (value !== s.request || s.mode === "menu") return {};
+
     try {
       const output = await run(s.mode, s.path),
         latest = read(id);
@@ -180,7 +213,7 @@ const main = async (): Promise<Action | void> => {
       latest.ready = true;
       latest.status = `${latest.items.length} rows · ${new Date().toLocaleTimeString()}${s.mode === "clean" || s.mode === "optimize" ? " · Dry run" : ""}`;
       save(latest);
-      return render(latest);
+      return {};
     } catch (error) {
       const latest = read(id);
       if (latest.request !== value) return {};
@@ -188,7 +221,7 @@ const main = async (): Promise<Action | void> => {
       latest.items = [];
       latest.status = error instanceof Error ? error.message : String(error);
       save(latest);
-      return render(latest);
+      return {};
     }
   }
   if (cmd === "query") {
