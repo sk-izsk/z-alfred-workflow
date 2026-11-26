@@ -15,7 +15,7 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 - [x] Translation: clipboard on empty invocation, editable original and translated split panes, two language dropdowns, pronunciation, 50,000-character sequential translation with progress/continue, stable typing and Swiss Back. Keep the window near its original size with tighter footer spacing; overflowing panes scroll.
 - [x] Refresh controls/audit for Weather, AQI, Currency, Adhan, Brew catalog/details and GitHub GET cache; see API_REFRESH.md.
 
-## In progress
+## Completed navigation phase
 
 - [x] Folder Navigator: native folder descent/Back and external SSD list verified, docs/screenshots and Swiss registration complete. Source is in `workflows/z-folder-navigator`. Initial Spotlight folder search, full paths, directory browsing, file opening, complete Back history and native file icons. Installed reference: Dynamic File Search.
 
@@ -25,7 +25,7 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 - [x] Folder Navigator: configurable Hyper+B, modifier checkboxes, compact footer labels and screen-aware 780 width; shared helper and UI_CONVENTIONS.md available for each new workflow.
 - [x] Migrated all 22 workflows / 40 windows to the shared width/Hyper convention, preserving explicit legacy shortcuts. Checks/package and bare-environment profiles passed; native Weather and Calendar widths/footers verified.
 
-## Remaining Swiss work, in order
+## Completed Swiss phases
 
 - [x] Tag Manager: native Finder metadata across files/folders/apps; search, add/remove, reviewed merge import/export, native file actions, shared 780/Hyper profile. Temporary-file metadata tests and native editor/menu verified. Fixed global discovery across indexed system/external volumes; live Paid search verified 29 matching apps.
 - [x] System Monitor: native live overview/CPU/memory/disks/power/network dashboard, per-core and per-process rates, shared UI profile, checked/packaged and native overview verified. Sensors without a supported provider are explicitly unavailable.
@@ -69,48 +69,37 @@ Camera is deferred. Last Changed Files is canceled. Menubar features are exclude
 
 ## Screenshot fidelity correction
 
-- [ ] Mole: implemented with native Alfred controls: status split dashboard, grouped cleanup/optimization summaries and full-width disk browser with size badges. Final native screenshot comparison remains.
-- [ ] Review supplied screenshots when verifying each affected workflow; do not substitute a generic layout. Rule recorded in UI_CONVENTIONS.md.
+- [x] Mole: implemented with native Alfred controls: status split dashboard, grouped cleanup/optimization summaries and full-width disk browser with size badges. Native five-mode comparison and loading regression checks completed.
+- [x] Review supplied screenshots when verifying each affected workflow; do not substitute a generic layout. Rule recorded in UI_CONVENTIONS.md.
 
-## Cross-workflow screenshot audit (user requested)
+## Completed reference audit
 
-Compare supplied layouts and action menus rather than substituting generic dashboards. Camera, Last Changed Files and standalone Password Generator are excluded by user request.
+All requested reference layouts, controls and Actions were reviewed. The four identified gaps are corrected: native tag pills, System Monitor sections/badges, Dev Servers project headings/uptime, and Bluetooth battery accessories. Dev Cache Cleaner uses grouped native list/details and a consistent cleanup footer. Weather’s excess height and oversized sheet contents were reduced.
 
-| Workflow | Reference focus | Audit status |
-| --- | --- | --- |
-| Weather | Two halves, forecast only at left, right-side details/AQI/high-low rows | Pending final native comparison |
-| Currency | Flags, pinned rows, amount math/history and Cmd-K | Pending final comparison |
-| Translation | Two panes and adjacent language selectors, compact gaps, scrolling | Pending final comparison |
-| World Clock | List and analog grid, stars, names/time differences | Pending final comparison |
-| Workflow Manager | Installed/available/update filters and contextual actions | Pending final comparison |
-| Tag Manager | Existing Finder tags, tag pills and tag editing/actions | Pending final comparison |
-| System Monitor | Sectioned metric sidebar, value badges and details | Pending final comparison |
-| Mole | Status split, grouped cleanup/optimization summaries, full-width disk list | Native correction implemented, checked and packaged; final screenshot comparison pending |
-| Emoji / GIF | List/grid selector beside category/provider, compact tiles/actions | Emoji and GIF layout corrections verified; actions audit pending |
-| Lunar | Sliders, modern selectors, per-display selection | Pending final comparison |
-| Dev Servers | Project groups, framework filter, uptime/type and Cmd-K | Pending final comparison |
-| Bluetooth / Wi-Fi | Connection state, device/network details and contextual actions | Pending native comparison; connection mutations intentionally untested |
-| Dev Cache Cleaner | Category/risk list with selected-cache details and reviewed cleanup | Native list/detail/review and Escape verified; cleanup activity lifecycle tested with injected operations |
-| Dev Utils | Installed Text Transformer interaction and optional DevUtils handoff | Native editor verified; no supplied UI screenshot for DevUtils |
+See [docs/FINAL_VERIFICATION.md](docs/FINAL_VERIFICATION.md) for the per-workflow test counts, native evidence, command checks and verification limits. All 29 active projects pass checks and packaging; 331 tests pass. No agreed implementation tasks remain. Camera, Last Changed Files, standalone Password Generator and menubar features retain their earlier excluded/deferred status.
 
 ## Web view audit
 
 All 29 workflow projects searched. Mole uses native lists/details and has no web view. Speed Test connection errors moved to native controls. Retained only Lunar sliders, Speed Test charts, VS Code rich HTML extension preview and animated GIF details, with reasons in UI_CONVENTIONS.md. VS Code dynamic preview width reduced to the shared 704-point content width.
 
-## Remaining after native/web-view audit
+## Completion
 
-- Finish screenshot comparisons and resulting layout/action corrections. Known gaps to address: Tag Manager tag pills, System Monitor section headings/value badges, Dev Servers project sections/uptime, Bluetooth right-side battery accessories, (Dev Cache Cleaner category headings are now implemented).
-- Complete native visual checks for Mole’s five modes, including section navigation/Back and loading/error states; update screenshots/docs with the corrected native view.
-- Recheck the other supplied Weather, Currency, Translation, World Clock, Workflow Manager, Emoji/GIF and Lunar references against native UI and Cmd-K actions; retain existing verified behavior.
-- Finish final native interaction checks and documentation. Live device/network mutations and actual cache/system cleanup have deliberately not been run for testing.
+- [x] Finish the reference layout/action correction pass and shared footer/Escape behavior.
+- [x] Verify Mole's five native modes and real read-only Clean System loading/completion without an automatic close command.
+- [x] Verify Dev descriptions/icons, paired Bluetooth discovery and privacy-aware Wi-Fi association.
+- [x] Add configurable terminal routing to every terminal-opening workflow, including Ghostty.
+- [x] Complete all 29 project checks/packages, plist/UI validation and package exclusion checks.
+- [x] Record validation scope and intentionally untested destructive/credential operations.
 
 ## November 26 regression fixes
 
 - Mole previews now use a separate CLI worker and short native polling; stdin closes, CLI execution is bounded, and a watchdog replaces stalled loading with an error. Installed Optimize preview visually verified through completion.
 - Wi-Fi association uses ipconfig metadata when system_profiler omits the current connection. Read-only verification: one connected network, name redacted by macOS. Saved Password action uses Keychain authentication and an ephemeral native dialog; no password retrieval or network mutation was performed during testing.
 - Cache Cleaner now follows the grouped list/Markdown detail reference, counted filters and risk dots. Expanded manager/language/app/Xcode/Apple simulator/Android snapshot/Docker coverage; real scan found 15 entries. npm root-cache layout fixed; absent Homebrew cache stays visible. Available simulator storage is never counted as reclaimable. Native grouped/detail view visually verified; no deletion performed.
-- Dev keyword source and installed metadata have the corrected description; workflow reloaded to refresh Alfred's metadata. Existing Alfred search cache still needs final visual comparison.
+- Dev keyword source and installed metadata have the corrected description; workflow reloaded to refresh Alfred's metadata. Actual Alfred search description visually verified.
 
 - Footer correction: sheet Back aligned right in 27 workflow helpers. Cache review now places Back/Clean together in a borderless footer, Return triggers Clean, and Escape dismisses the sheet without cleanup (verified in the installed native window). Convention recorded for future screens.
 
 - Cache cleanup activity: confirmed jobs run separately, show Cleaning/Refreshing phases and block duplicate actions. Fresh measurements replace the results after success or partial failure; tests cover refreshed totals and disappearing filters. Real cleanup remains untested.
+
+- Final pass: shared sheet implementation prevents footer/Escape drift; tag/metric/project/battery layouts corrected; terminal configuration centralized; read-only Mole progress verified with no finish action. Detailed evidence and limits are in docs/FINAL_VERIFICATION.md.

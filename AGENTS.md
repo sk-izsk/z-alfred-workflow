@@ -18,4 +18,7 @@
 
 - Follow [UI_CONVENTIONS.md](UI_CONVENTIONS.md): standard width 780, screen-aware clamping,
   configurable Hyper modifiers and compact footer labels. Apply to current/new workflows now;
-  migrate existing workflows after the remaining feature phases, preserving user choices.
+  keep existing and future workflows consistent, preserving user choices.
+
+- Use `shared/sheet.ts` for native sheets so Back, primary actions and Escape stay consistent.
+- Any terminal handoff must use `shared/terminal.ts` and expose the shared terminal selector in Workflow Configuration; preserve existing user choices.

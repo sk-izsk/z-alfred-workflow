@@ -91,3 +91,7 @@ the repository organization; credits for adapted workflow code and assets remain
 
 AI tools helped organize this repository and prepare the migration. See each workflow's README
 for its own disclosure and review the code before use.
+
+## Shared UI and terminal behavior
+
+Workflows use the standard 780-point, screen-aware UI and configurable Hyper+B navigation described in [UI_CONVENTIONS.md](UI_CONVENTIONS.md). Terminal-opening tools offer Ghostty and other terminal choices in Workflow Configuration. See [completion verification](docs/FINAL_VERIFICATION.md) for the full scope, 331 tests and validation limits.

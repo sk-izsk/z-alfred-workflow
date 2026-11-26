@@ -12,7 +12,7 @@ Apply this convention to Folder Navigator and each new workflow now. After the r
 
 Window property reference: [Alfred UI window documentation](https://www.alfredapp.com/help/alfredui/window/). Alfred's embedded width otherwise follows the theme; use the documented window resize action to apply the shared width on launch.
 
-Generation uses `profileWindow(ui, cli)` and `profileInfo(infoPlist)`. CLI entry points call `await profileCommand(() => import("./env.ts"))` before dispatch. The launch profile updates only component IDs present in the initial view. Runtime views resolve `backBinding()` and `shortcutLabel()` from the same settings. Existing custom Back shortcuts remain active until the user explicitly configures Hyper. All 22 existing workflow projects have been migrated and checked.
+Generation uses `profileWindow(ui, cli)` and `profileInfo(infoPlist)`. CLI entry points call `await profileCommand(() => import("./env.ts"))` before dispatch. The launch profile updates only component IDs present in the initial view. Runtime views resolve `backBinding()` and `shortcutLabel()` from the same settings. Existing custom Back shortcuts remain active until the user explicitly configures Hyper. All 29 current workflow projects follow the shared profile and have been checked.
 
 ## Screenshot fidelity
 
@@ -25,3 +25,9 @@ Use native Alfred components for lists, groups, value badges, forms, error state
 ## Footer and Escape consistency
 
 Keep Back, the primary action and Actions together on the right in that order, including sheets. Primary footer actions use the same borderless treatment and a compact Return hint, with Return bound to the action. Explain permanent effects in review content, rather than a differently styled oversized button. Escape closes the top sheet to its parent or dismisses the window through Alfred’s standard behavior; it never confirms changes.
+
+Sheet construction uses `shared/sheet.ts`, bundled independently into each workflow. It places bottom actions beside Back on the right, uses borderless buttons, preserves existing action shortcuts, and keeps Escape closure enabled. Initial loading screens also align Back on the right.
+
+## Terminal handoff
+
+Any workflow that opens a terminal must use `shared/terminal.ts` and expose `terminalConfiguration()` in Configuration Builder. Offer Ghostty, Terminal, iTerm2, kitty, WezTerm, Alacritty and a custom executable/argument array. Preserve user-selected app values; existing Brew/VS Code defaults remain Terminal. New terminal settings default to Ghostty. Ghostty uses its native scripting API; commands and paths pass as arguments, never interpolated into AppleScript source. Keep command reviews intact.
