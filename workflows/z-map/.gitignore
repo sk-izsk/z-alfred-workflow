@@ -3,3 +3,4 @@ dist/
 workflow/bin/zmap.mjs
 workflow/prefs.plist
 .DS_Store
+workflow/vendor/

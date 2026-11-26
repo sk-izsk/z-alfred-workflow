@@ -475,6 +475,7 @@ function mapScript(D: PageData): void {
 }
 
 const CSS = `html,body{margin:0;height:100%;overflow:hidden;font:12px -apple-system,BlinkMacSystemFont,sans-serif}
+html,body{background:#f2f1ed}@media (prefers-color-scheme:dark){html,body{background:#24262b}}
 html.dark,html.dark body{background:#24262b}html.light,html.light body{background:#f2f1ed}
 #m{position:absolute;inset:0}
 .err{margin:40px;color:#8e8e93;font-size:14px;text-align:center}
@@ -501,15 +502,19 @@ export const mapPage = (data: PageData): string => {
     /</g,
     "\\u003c",
   );
+  // Background from the first frame: never a white box while tiles or the library load.
+  const theme = data.style === "auto" ? "" : ` class="${data.style}"`;
   if (google)
-    return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    return `<!doctype html><html${theme}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <style>${CSS}</style></head><body><div id="m"></div>
 <script>(${mapScript.toString()})(${json})</script>
 <script async src="https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(data.tilesKey ?? "")}&language=${data.lang}&loading=async&callback=__zmapGoogle"></script></body></html>`;
-  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/maplibre-gl@5/dist/maplibre-gl.css'">
+  // MapLibre next to the page (copied from the workflow); unpkg, then jsDelivr, only if it's missing.
+  return `<!doctype html><html${theme}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="maplibre-gl.css" onerror="this.onerror=null;this.href='https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css'">
 <style>${CSS}</style></head><body><div id="m"></div>
-<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
+<script src="maplibre-gl.js"></script>
+<script>window.maplibregl||document.write('<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"><\\/script>')</script>
 <script>window.maplibregl||document.write('<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5/dist/maplibre-gl.js"><\\/script>')</script>
 <script>(${mapScript.toString()})(${json})</script></body></html>`;
 };

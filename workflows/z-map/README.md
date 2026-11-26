@@ -107,8 +107,11 @@ data on a Google map, or route with Google on OpenFreeMap. **Map: Automatic** fo
 - Cache: routes 10 minutes, failed requests 60 seconds, places 7 days, in Alfred's workflow cache.
   Saved places live in Alfred's workflow data folder. Your HERE key, addresses and saved places
   are marked as not exported with the workflow.
-- Places, stops and route coordinates you search for are sent to the providers above. The map
-  page loads MapLibre from unpkg (jsDelivr as fallback).
+- Places, stops and route coordinates you search for are sent to the providers above. MapLibre
+  is bundled in the workflow, so the map doesn't wait on a CDN.
+- Transit with open data exists only where cities publish open timetables (Transitous). Where
+  there are none (for example Kolkata), the transit button shows "–" and the footer suggests the
+  Google provider, which covers more cities.
 
 If a key or button seems to do nothing, `commands.log` in the workflow's cache folder
 (`~/Library/Caches/com.runningwithcrayons.Alfred/Workflow Data/com.izsk.map`) lists the

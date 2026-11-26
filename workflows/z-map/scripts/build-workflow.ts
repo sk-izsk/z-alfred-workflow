@@ -20,6 +20,16 @@ map.constraints.size = { width: mapWidth(DEFAULT_WIDTH), height: DEFAULT_MAP_HEI
 writeFileSync(join(root, "maps.alfredui/ui.json"), JSON.stringify(ui, null, 2) + "\n");
 writeFileSync(join(root, "info.plist"), JSON.stringify(profileInfo(infoPlist)));
 execFileSync("/usr/bin/plutil", ["-convert", "xml1", join(root, "info.plist")]);
+// MapLibre ships inside the package (BSD-3-Clause) so the map never waits on a CDN.
+const vendor = join(root, "vendor");
+mkdirSync(vendor, { recursive: true });
+const maplibre = join(root, "../node_modules/maplibre-gl/dist");
+const files: [string, string][] = [
+  ["maplibre-gl.js", "maplibre-gl.js"],
+  ["maplibre-gl.css", "maplibre-gl.css"],
+  ["LICENSE.txt", "MAPLIBRE-LICENSE.txt"],
+];
+for (const [from, to] of files) copyFileSync(join(maplibre, from), join(vendor, to));
 for (const name of ["icon", "KEYWORD", "TRIGGER", "UI"])
   copyFileSync(join(root, "../assets/icon.png"), join(root, `${name}.png`));
 console.log("Generated Maps UI, metadata and icons");

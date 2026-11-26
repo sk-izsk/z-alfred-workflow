@@ -1,6 +1,6 @@
-import { writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { cacheDir, readJson, writeJson } from "./env.ts";
+import { cacheDir, readJson, workflowDir, writeJson } from "./env.ts";
 import { clock, distance, type Key, type Locale, longDuration, shortDuration, t } from "./i18n.ts";
 import { PROVIDER_NAMES } from "./links.ts";
 import { type Leg, type Mode, MODES, type Option, type Place } from "./model.ts";
@@ -146,11 +146,28 @@ const points = (places: Place[]): PagePoint[] =>
     kind: places.length === 1 || i === places.length - 1 ? "end" : i === 0 ? "start" : "stop",
   }));
 
+/**
+ * The web view may read only files beside the page, so the bundled MapLibre is copied into the
+ * cache folder once (again after an update changes its size).
+ */
+const ensureMapLibre = (dir: string): void => {
+  for (const name of ["maplibre-gl.js", "maplibre-gl.css"]) {
+    const from = join(workflowDir(), "vendor", name);
+    const to = join(dir, name);
+    try {
+      if (!existsSync(to) || statSync(to).size !== statSync(from).size) copyFileSync(from, to);
+    } catch {
+      // not bundled (development without a build): the page falls back to unpkg
+    }
+  }
+};
+
 /** Writes the next of four rotating page files: the web view only reloads when `src` changes. */
 const writeMap = (s: State, settings: Settings, entry: Entry | undefined): string => {
   const options = entry?.routes[s.mode] ?? [];
   s.page = (s.page + 1) % 4;
   const path = join(cacheDir(), `map-${s.page}.html`);
+  if (settings.tiles !== "google") ensureMapLibre(cacheDir());
   const usesOsrm = settings.provider === "open" && s.mode !== "transit" && entry?.full.includes(s.mode);
   writeFileSync(
     path,
@@ -198,13 +215,17 @@ export const render = (s: State, settings: Settings, entry: Entry | undefined, m
     };
   const place = !s.from && s.places?.length === 1 ? s.places[0] : undefined;
   ids.durationLabel = { text: option ? longDuration(option.duration, lang) : "" };
+  // Transitous covers only cities that publish open timetables (e.g. not Kolkata).
+  const noTransit = Boolean(entry) && !option && s.mode === "transit";
   ids.infoLabel = {
     text: place
       ? place.label
       : option
         ? infoLine(option, s.mode, settings.loc)
         : entry
-          ? t(lang, "noRoute", { mode: t(lang, MODE_KEY[s.mode]) })
+          ? noTransit
+            ? t(lang, "noTransit")
+            : t(lang, "noRoute", { mode: t(lang, MODE_KEY[s.mode]) })
           : "",
   };
   ids.steps = {
@@ -213,7 +234,9 @@ export const render = (s: State, settings: Settings, entry: Entry | undefined, m
   };
   ids.statusLabel = s.error
     ? { text: s.error, colour: "systemRedColor" }
-    : { text: hint(settings), colour: MUTED };
+    : noTransit && settings.provider === "open"
+      ? { text: t(lang, "transitHint"), colour: "systemOrangeColor" }
+      : { text: hint(settings), colour: MUTED };
   const idle = !s.places?.length && s.area;
   if (map && (entry || place || idle)) ids.map = { src: writeMap(s, settings, entry) };
   return update(ids, true);

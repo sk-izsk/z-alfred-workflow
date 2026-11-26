@@ -1,8 +1,11 @@
 # Third-party notices
 
-No third-party code is bundled. The map page loads these at runtime from public CDNs and services:
+**Bundled:** MapLibre GL JS 5 (`workflow/vendor/maplibre-gl.js` and `.css`, copied from the
+npm package at build time), BSD-3-Clause, © MapLibre contributors. Its license ships as
+`vendor/MAPLIBRE-LICENSE.txt`. unpkg and jsDelivr are used only if the bundled copy is missing.
 
-- **MapLibre GL JS 5** (BSD-3-Clause), from unpkg.com, with jsDelivr as fallback. © MapLibre contributors.
+**Used at runtime:**
+
 - **OpenFreeMap** map styles and tiles. Map data © OpenStreetMap contributors (ODbL); tiles from
   OpenMapTiles. The attribution is shown on the map.
 - **Transitous** (MOTIS) routing and place search, an open community service: <https://transitous.org>.

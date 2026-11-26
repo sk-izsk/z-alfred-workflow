@@ -47,6 +47,8 @@ const I18N = {
     keyMissing: "{provider} needs an API key in Workflow Configuration; using open data.",
     copied: "Link copied",
     suggestHint: "↓ ↑ choose · ↩ or click to use",
+    noTransit: "No public transport data for this area",
+    transitHint: "Open data has no timetables here. Google (Workflow Configuration) covers more cities.",
   },
   de: {
     from: "Von",
@@ -94,6 +96,9 @@ const I18N = {
       "{provider} braucht einen API-Schlüssel in der Workflow-Konfiguration; offene Daten werden genutzt.",
     copied: "Link kopiert",
     suggestHint: "↓ ↑ wählen · ↩ oder Klick übernimmt",
+    noTransit: "Keine ÖPNV-Daten für diese Gegend",
+    transitHint:
+      "Offene Daten haben hier keine Fahrpläne. Google (Workflow-Konfiguration) deckt mehr Städte ab.",
   },
 } satisfies Record<Lang, Record<string, string>>;
 export type Key = keyof typeof I18N.en;
