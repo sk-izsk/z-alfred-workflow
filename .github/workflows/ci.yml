@@ -40,6 +40,8 @@ jobs:
             artifact: Folder Navigator.alfredworkflow
           - workflow: z-tag-manager
             artifact: Tag Manager.alfredworkflow
+          - workflow: z-system-monitor
+            artifact: System Monitor.alfredworkflow
           - workflow: z-world-clock
             artifact: World Clock.alfredworkflow
           - workflow: z-weather

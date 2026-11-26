@@ -100,5 +100,11 @@
     "bundle": "com.izsk.tag-manager",
     "name": "Tag Manager",
     "description": "Find and manage Finder tags on files, folders and apps"
+  },
+  {
+    "slug": "z-system-monitor",
+    "bundle": "com.izsk.system-monitor",
+    "name": "System Monitor",
+    "description": "Live CPU, memory, disks, power and network details"
   }
 ]

@@ -13,6 +13,16 @@ export type Tool = {
 };
 export const tools: Tool[] = [
   {
+    id: "system-monitor",
+    name: "System Monitor",
+    description: "Live CPU, memory, disks, power and network details",
+    bundle: "com.izsk.system-monitor",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "sysmon",
+  },
+
+  {
     id: "tag-manager",
     name: "Tag Manager",
     description: "Find and manage Finder tags on files, folders and apps",

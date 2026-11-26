@@ -25,15 +25,18 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 - [x] Folder Navigator: configurable Hyper+B, modifier checkboxes, compact footer labels and screen-aware 780 width; shared helper and UI_CONVENTIONS.md available for each new workflow.
 - [ ] After feature phases: migrate all existing workflows to the same width/Hyper convention, preserving user choices.
 
-## Remaining, in order
+## Remaining Swiss work, in order
 
 - [x] Tag Manager: native Finder metadata across files/folders/apps; search, add/remove, reviewed merge import/export, native file actions, shared 780/Hyper profile. Temporary-file metadata tests and native editor/menu verified.
-- [ ] System Monitor: native overview/CPU/memory/disks/power/network details. Inspect installed atop and pinned Raycast system-monitor.
+- [x] System Monitor: native live overview/CPU/memory/disks/power/network dashboard, per-core and per-process rates, shared UI profile, checked/packaged and native overview verified. Sensors without a supported provider are explicitly unavailable.
 - [ ] Mole: status, cleanup, disk browsing and optimization using supported CLI behavior, with review for cleanup actions.
 - [ ] Emoji Picker: search, favorites/recents, variants, copy/paste and actions.
 - [ ] Lunar controls: inspect installed Lunar-fred; native display controls/presets/adaptive options supported by the actual CLI.
 - [ ] Window Navigator: inspect installed workflow and integrate.
 - [ ] Window Switcher: inspect installed workflow and integrate separately.
+## Dev launcher phase (after Swiss)
+
+- [ ] Dev launcher: separate searchable launcher using the same independent-tool and Back protocol as Swiss. These utilities belong only to Dev.
 - [ ] Dev Servers: project grouping, tool filter, open/copy URL, stop/restart, Terminal/Finder actions, project/all-server stopping. Verify process identity before stopping; never stop real servers merely for testing.
 - [ ] Bluetooth: connect/disconnect, device type/battery/details and actions; verify macOS API/permission support first.
 - [ ] Wi-Fi: analogous network controls/details; verify current macOS scanning/permission restrictions before implementation.
