@@ -94,5 +94,11 @@
     "bundle": "com.izsk.folder-navigator",
     "name": "Folder Navigator",
     "description": "Find folders and browse files with complete Back history"
+  },
+  {
+    "slug": "z-tag-manager",
+    "bundle": "com.izsk.tag-manager",
+    "name": "Tag Manager",
+    "description": "Find and manage Finder tags on files, folders and apps"
   }
 ]

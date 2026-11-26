@@ -13,6 +13,16 @@ export type Tool = {
 };
 export const tools: Tool[] = [
   {
+    id: "tag-manager",
+    name: "Tag Manager",
+    description: "Find and manage Finder tags on files, folders and apps",
+    bundle: "com.izsk.tag-manager",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "tags",
+  },
+
+  {
     id: "folder-navigator",
     name: "Folder Navigator",
     description: "Find folders and browse files with complete Back history",

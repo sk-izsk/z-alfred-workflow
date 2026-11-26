@@ -38,6 +38,8 @@ jobs:
             artifact: Translate.alfredworkflow
           - workflow: z-folder-navigator
             artifact: Folder Navigator.alfredworkflow
+          - workflow: z-tag-manager
+            artifact: Tag Manager.alfredworkflow
           - workflow: z-world-clock
             artifact: World Clock.alfredworkflow
           - workflow: z-weather

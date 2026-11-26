@@ -27,7 +27,7 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 
 ## Remaining, in order
 
-- [ ] Tag Manager for Finder tags on files/folders/apps; search, add/remove and import/export. Inspect installed Tag Finder and pinned Raycast app-tag-manager.
+- [x] Tag Manager: native Finder metadata across files/folders/apps; search, add/remove, reviewed merge import/export, native file actions, shared 780/Hyper profile. Temporary-file metadata tests and native editor/menu verified.
 - [ ] System Monitor: native overview/CPU/memory/disks/power/network details. Inspect installed atop and pinned Raycast system-monitor.
 - [ ] Mole: status, cleanup, disk browsing and optimization using supported CLI behavior, with review for cleanup actions.
 - [ ] Emoji Picker: search, favorites/recents, variants, copy/paste and actions.

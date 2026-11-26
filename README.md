@@ -19,6 +19,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Workflow Manager](workflows/z-workflow-manager) | Installed workflows, Gallery, updates and configuration | Initial release pending |
 | [Translate](workflows/z-translate) | Clipboard and text translation with native split panes | Initial release pending |
 | [Folder Navigator](workflows/z-folder-navigator) | Find folders and browse files with complete Back history | Initial release pending |
+| [Tag Manager](workflows/z-tag-manager) | Find and manage Finder tags on files, folders and apps | Initial release pending |
 | [World Clock](workflows/z-world-clock) | Offline timezones, starred locations and native analog grid | Initial release pending |
 | [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | Initial release pending |
 | [Weather](workflows/z-weather) | Saved cities, colorful conditions and detailed weather forecasts | Initial release pending |

@@ -17,6 +17,7 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-workflow-manager` | `z-workflow-manager/vX.Y.Z` | `Workflow Manager.alfredworkflow` |
 | `workflows/z-translate` | `z-translate/vX.Y.Z` | `Translate.alfredworkflow` |
 | `workflows/z-folder-navigator` | `z-folder-navigator/vX.Y.Z` | `Folder Navigator.alfredworkflow` |
+| `workflows/z-tag-manager` | `z-tag-manager/vX.Y.Z` | `Tag Manager.alfredworkflow` |
 | `workflows/z-world-clock` | `z-world-clock/vX.Y.Z` | `World Clock.alfredworkflow` |
 | `workflows/z-swiss` | `z-swiss/vX.Y.Z` | `Swiss.alfredworkflow` |
 | `workflows/z-weather` | `z-weather/vX.Y.Z` | `Weather.alfredworkflow` |
