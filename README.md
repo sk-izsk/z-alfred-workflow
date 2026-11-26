@@ -22,6 +22,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Tag Manager](workflows/z-tag-manager) | Find and manage Finder tags on files, folders and apps | Initial release pending |
 | [System Monitor](workflows/z-system-monitor) | Live CPU, memory, disks, power and network details | Initial release pending |
 | [Mole](workflows/z-mole) | Mole health, disk browsing and reviewed cleanup/optimization previews | Initial release pending |
+| [Emoji Picker](workflows/z-emoji) | Offline emoji search, favorites, recents and skin-tone variants | Initial release pending |
 | [World Clock](workflows/z-world-clock) | Offline timezones, starred locations and native analog grid | Initial release pending |
 | [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | Initial release pending |
 | [Weather](workflows/z-weather) | Saved cities, colorful conditions and detailed weather forecasts | Initial release pending |

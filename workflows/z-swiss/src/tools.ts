@@ -13,6 +13,16 @@ export type Tool = {
 };
 export const tools: Tool[] = [
   {
+    id: "emoji",
+    name: "Emoji Picker",
+    description: "Offline emoji search, favorites, recents and skin-tone variants",
+    bundle: "com.izsk.emoji",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "emoji",
+  },
+
+  {
     id: "mole",
     name: "Mole",
     description: "Mole health, disk browsing and reviewed cleanup/optimization previews",

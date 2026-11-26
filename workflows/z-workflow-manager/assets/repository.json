@@ -112,5 +112,11 @@
     "bundle": "com.izsk.mole",
     "name": "Mole",
     "description": "Mole health, disk browsing and reviewed cleanup/optimization previews"
+  },
+  {
+    "slug": "z-emoji",
+    "bundle": "com.izsk.emoji",
+    "name": "Emoji Picker",
+    "description": "Offline emoji search, favorites, recents and skin-tone variants"
   }
 ]

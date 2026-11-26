@@ -30,7 +30,7 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 - [x] Tag Manager: native Finder metadata across files/folders/apps; search, add/remove, reviewed merge import/export, native file actions, shared 780/Hyper profile. Temporary-file metadata tests and native editor/menu verified.
 - [x] System Monitor: native live overview/CPU/memory/disks/power/network dashboard, per-core and per-process rates, shared UI profile, checked/packaged and native overview verified. Sensors without a supported provider are explicitly unavailable.
 - [x] Mole: actual installed CLI status, disk analysis, cleanup/optimization dry-run previews, explicit review and Terminal execution for real changes. Native status verified; no cleanup was performed.
-- [ ] Emoji Picker: search, favorites/recents, variants, copy/paste and actions.
+- [x] Emoji Picker: bundled Unicode 17 data (3,944 sequences), native search/categories, favorites/recents, variants, copy/paste actions; tests and native search verified.
 - [ ] Lunar controls: inspect installed Lunar-fred; native display controls/presets/adaptive options supported by the actual CLI.
 - [ ] Window Navigator: inspect installed workflow and integrate.
 - [ ] Window Switcher: inspect installed workflow and integrate separately.
