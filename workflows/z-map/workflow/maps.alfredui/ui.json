@@ -1,0 +1,1137 @@
+{
+  "bundleid": "com.izsk.map",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "map_query": {
+      "src": "args[0]",
+      "default": ""
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
+    }
+  },
+  "window": {
+    "title": "Maps",
+    "size": {
+      "width": 1180
+    },
+    "minsize": {
+      "width": 560,
+      "height": 400
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "padding": 12,
+      "spacing": 12,
+      "events": [
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "json",
+            "src": {
+              "window": {
+                "resize": {
+                  "width": 1180
+                }
+              }
+            }
+          }
+        },
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/zmap",
+              "args": [
+                "ui-profile",
+                "footerBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/zmap",
+              "args": [
+                "launch",
+                "{var:map_query}"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/zmap",
+              "args": [
+                "route"
+              ],
+              "async": true
+            }
+          ]
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/zmap",
+            "args": [
+              "menu",
+              "{value:von.text}",
+              "{value:nach.text}",
+              "{value:via0.text}",
+              "{value:via1.text}",
+              "{value:via2.text}"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘O",
+          "action": {
+            "type": "script",
+            "src": "../bin/zmap",
+            "args": [
+              "open",
+              "{value:von.text}",
+              "{value:nach.text}",
+              "{value:via0.text}",
+              "{value:via1.text}",
+              "{value:via2.text}"
+            ]
+          }
+        },
+        {
+          "shortcut": "⌘T",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/zmap",
+              "args": [
+                "swap",
+                "{value:von.text}",
+                "{value:nach.text}",
+                "{value:via0.text}",
+                "{value:via1.text}",
+                "{value:via2.text}"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/zmap",
+              "args": [
+                "route"
+              ],
+              "async": true
+            }
+          ]
+        },
+        {
+          "shortcut": "⌘U",
+          "action": {
+            "type": "script",
+            "src": "../bin/zmap",
+            "args": [
+              "add-stop",
+              "{value:von.text}",
+              "{value:nach.text}",
+              "{value:via0.text}",
+              "{value:via1.text}",
+              "{value:via2.text}"
+            ]
+          }
+        }
+      ],
+      "components": [
+        {
+          "id": "left",
+          "type": "view",
+          "layout": "border",
+          "spacing": 10,
+          "constraints": {
+            "region": "left",
+            "size": {
+              "width": 345
+            }
+          },
+          "components": [
+            {
+              "id": "leftTop",
+              "type": "view",
+              "layout": "flex",
+              "cols": 1,
+              "rows": 2,
+              "spacing": 10,
+              "constraints": {
+                "region": "top"
+              },
+              "components": [
+                {
+                  "id": "fieldsBlock",
+                  "type": "view",
+                  "layout": "border",
+                  "padding": 4,
+                  "spacing": 2,
+                  "cornerradius": 10,
+                  "background": {
+                    "light": "#0000000d",
+                    "dark": "#ffffff12"
+                  },
+                  "constraints": {
+                    "grid": {
+                      "col": 0,
+                      "row": 0,
+                      "colweight": 1
+                    },
+                    "insets": {
+                      "right": 15
+                    }
+                  },
+                  "components": [
+                    {
+                      "id": "swapButton",
+                      "type": "button",
+                      "text": "",
+                      "bordered": false,
+                      "image": {
+                        "type": "symbol",
+                        "src": "arrow.up.arrow.down",
+                        "size": {
+                          "width": 15,
+                          "height": 15
+                        }
+                      },
+                      "contenttintcolour": "secondaryLabelColor",
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": [
+                            {
+                              "type": "script",
+                              "src": "../bin/zmap",
+                              "args": [
+                                "swap",
+                                "{value:von.text}",
+                                "{value:nach.text}",
+                                "{value:via0.text}",
+                                "{value:via1.text}",
+                                "{value:via2.text}"
+                              ]
+                            },
+                            {
+                              "type": "script",
+                              "src": "../bin/zmap",
+                              "args": [
+                                "route"
+                              ],
+                              "async": true
+                            }
+                          ]
+                        }
+                      ],
+                      "constraints": {
+                        "region": "left",
+                        "position": "centre",
+                        "size": {
+                          "width": 26,
+                          "height": 26
+                        }
+                      },
+                      "tooltip": "⌘T"
+                    },
+                    {
+                      "id": "fieldStack",
+                      "type": "view",
+                      "layout": "inline",
+                      "direction": "vertical",
+                      "constraints": {
+                        "region": "centre"
+                      },
+                      "components": [
+                        {
+                          "id": "von",
+                          "type": "textfield",
+                          "placeholder": "From",
+                          "bordered": false,
+                          "focusring": false,
+                          "background": null,
+                          "textinsets": {
+                            "horizontal": 10,
+                            "vertical": 8
+                          },
+                          "font": {
+                            "size": 15
+                          },
+                          "constraints": {
+                            "size": {
+                              "width": 277
+                            }
+                          },
+                          "events": [
+                            {
+                              "triggers": "actioned",
+                              "action": [
+                                {
+                                  "type": "script",
+                                  "src": "../bin/zmap",
+                                  "args": [
+                                    "enter",
+                                    "{value:von.text}",
+                                    "{value:nach.text}",
+                                    "{value:via0.text}",
+                                    "{value:via1.text}",
+                                    "{value:via2.text}"
+                                  ]
+                                },
+                                {
+                                  "type": "script",
+                                  "src": "../bin/zmap",
+                                  "args": [
+                                    "route"
+                                  ],
+                                  "async": true
+                                }
+                              ]
+                            }
+                          ],
+                          "focus": true
+                        },
+                        {
+                          "id": "fieldDivider",
+                          "type": "view",
+                          "background": "separatorColor",
+                          "constraints": {
+                            "size": {
+                              "width": 277,
+                              "height": 1
+                            }
+                          }
+                        },
+                        {
+                          "id": "viaSlot",
+                          "type": "view",
+                          "layout": "inline",
+                          "direction": "vertical",
+                          "components": []
+                        },
+                        {
+                          "id": "nach",
+                          "type": "textfield",
+                          "placeholder": "To",
+                          "bordered": false,
+                          "focusring": false,
+                          "background": null,
+                          "textinsets": {
+                            "horizontal": 10,
+                            "vertical": 8
+                          },
+                          "font": {
+                            "size": 15
+                          },
+                          "constraints": {
+                            "size": {
+                              "width": 277
+                            }
+                          },
+                          "events": [
+                            {
+                              "triggers": "actioned",
+                              "action": [
+                                {
+                                  "type": "script",
+                                  "src": "../bin/zmap",
+                                  "args": [
+                                    "enter",
+                                    "{value:von.text}",
+                                    "{value:nach.text}",
+                                    "{value:via0.text}",
+                                    "{value:via1.text}",
+                                    "{value:via2.text}"
+                                  ]
+                                },
+                                {
+                                  "type": "script",
+                                  "src": "../bin/zmap",
+                                  "args": [
+                                    "route"
+                                  ],
+                                  "async": true
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "viaButton",
+                      "type": "button",
+                      "text": "",
+                      "bordered": false,
+                      "image": {
+                        "type": "symbol",
+                        "src": "plus.circle.fill",
+                        "size": {
+                          "width": 26,
+                          "height": 26
+                        }
+                      },
+                      "contenttintcolour": "secondaryLabelColor",
+                      "events": [
+                        {
+                          "triggers": "actioned",
+                          "action": {
+                            "type": "script",
+                            "src": "../bin/zmap",
+                            "args": [
+                              "add-stop",
+                              "{value:von.text}",
+                              "{value:nach.text}",
+                              "{value:via0.text}",
+                              "{value:via1.text}",
+                              "{value:via2.text}"
+                            ]
+                          }
+                        }
+                      ],
+                      "constraints": {
+                        "region": "right",
+                        "position": "centre"
+                      },
+                      "tooltip": "⌘U"
+                    }
+                  ]
+                },
+                {
+                  "id": "rest",
+                  "type": "view",
+                  "layout": "flex",
+                  "cols": 1,
+                  "rows": 3,
+                  "spacing": 10,
+                  "constraints": {
+                    "grid": {
+                      "col": 0,
+                      "row": 1,
+                      "colweight": 1
+                    },
+                    "size": {
+                      "width": 330
+                    }
+                  },
+                  "components": [
+                    {
+                      "id": "modesCard",
+                      "type": "view",
+                      "layout": "grid",
+                      "rows": 2,
+                      "cols": 4,
+                      "padding": 6,
+                      "spacing": 2,
+                      "cornerradius": 10,
+                      "background": {
+                        "light": "#0000000d",
+                        "dark": "#ffffff12"
+                      },
+                      "constraints": {
+                        "grid": {
+                          "col": 0,
+                          "row": 0,
+                          "colweight": 1
+                        }
+                      },
+                      "components": [
+                        {
+                          "id": "modeBtn0",
+                          "type": "button",
+                          "text": "",
+                          "bordered": false,
+                          "image": {
+                            "type": "symbol",
+                            "src": "car.fill",
+                            "size": {
+                              "width": 20,
+                              "height": 20
+                            }
+                          },
+                          "contenttintcolour": "secondaryLabelColor",
+                          "events": [
+                            {
+                              "triggers": "actioned",
+                              "action": [
+                                {
+                                  "type": "script",
+                                  "src": "../bin/zmap",
+                                  "args": [
+                                    "mode",
+                                    "{value:von.text}",
+                                    "{value:nach.text}",
+                                    "{value:via0.text}",
+                                    "{value:via1.text}",
+                                    "{value:via2.text}",
+                                    "0"
+                                  ]
+                                },
+                                {
+                                  "type": "script",
+                                  "src": "../bin/zmap",
+                                  "args": [
+                                    "route"
+                                  ],
+                                  "async": true
+                                }
+                              ]
+                            }
+                          ],
+                          "shortcut": "⌘1"
+                        },
+                        {
+                          "id": "modeBtn1",
+                          "type": "button",
+                          "text": "",
+                          "bordered": false,
+                          "image": {
+                            "type": "symbol",
+                            "src": "tram.fill",
+                            "size": {
+                              "width": 20,
+                              "height": 20
+                            }
+                          },
+                          "contenttintcolour": "controlAccentColor",
+                          "events": [
+                            {
+                              "triggers": "actioned",
+                              "action": [
+                                {
+                                  "type": "script",
+                                  "src": "../bin/zmap",
+                                  "args": [
+                                    "mode",
+                                    "{value:von.text}",
+                                    "{value:nach.text}",
+                                    "{value:via0.text}",
+                                    "{value:via1.text}",
+                                    "{value:via2.text}",
+                                    "1"
+                                  ]
+                                },
+                                {
+                                  "type": "script",
+                                  "src": "../bin/zmap",
+                                  "args": [
+                                    "route"
+                                  ],
+                                  "async": true
+                                }
+                              ]
+                            }
+                          ],
+                          "shortcut": "⌘2"
+                        },
+                        {
+                          "id": "modeBtn2",
+                          "type": "button",
+                          "text": "",
+                          "bordered": false,
+                          "image": {
+                            "type": "symbol",
+                            "src": "bicycle",
+                            "size": {
+                              "width": 20,
+                              "height": 20
+                            }
+                          },
+                          "contenttintcolour": "secondaryLabelColor",
+                          "events": [
+                            {
+                              "triggers": "actioned",
+                              "action": [
+                                {
+                                  "type": "script",
+                                  "src": "../bin/zmap",
+                                  "args": [
+                                    "mode",
+                                    "{value:von.text}",
+                                    "{value:nach.text}",
+                                    "{value:via0.text}",
+                                    "{value:via1.text}",
+                                    "{value:via2.text}",
+                                    "2"
+                                  ]
+                                },
+                                {
+                                  "type": "script",
+                                  "src": "../bin/zmap",
+                                  "args": [
+                                    "route"
+                                  ],
+                                  "async": true
+                                }
+                              ]
+                            }
+                          ],
+                          "shortcut": "⌘3"
+                        },
+                        {
+                          "id": "modeBtn3",
+                          "type": "button",
+                          "text": "",
+                          "bordered": false,
+                          "image": {
+                            "type": "symbol",
+                            "src": "figure.walk",
+                            "size": {
+                              "width": 20,
+                              "height": 20
+                            }
+                          },
+                          "contenttintcolour": "secondaryLabelColor",
+                          "events": [
+                            {
+                              "triggers": "actioned",
+                              "action": [
+                                {
+                                  "type": "script",
+                                  "src": "../bin/zmap",
+                                  "args": [
+                                    "mode",
+                                    "{value:von.text}",
+                                    "{value:nach.text}",
+                                    "{value:via0.text}",
+                                    "{value:via1.text}",
+                                    "{value:via2.text}",
+                                    "3"
+                                  ]
+                                },
+                                {
+                                  "type": "script",
+                                  "src": "../bin/zmap",
+                                  "args": [
+                                    "route"
+                                  ],
+                                  "async": true
+                                }
+                              ]
+                            }
+                          ],
+                          "shortcut": "⌘4"
+                        },
+                        {
+                          "id": "modeTime0",
+                          "type": "label",
+                          "text": "–",
+                          "textalign": "centre",
+                          "font": {
+                            "size": 13,
+                            "weight": "bold"
+                          },
+                          "colour": "secondaryLabelColor"
+                        },
+                        {
+                          "id": "modeTime1",
+                          "type": "label",
+                          "text": "–",
+                          "textalign": "centre",
+                          "font": {
+                            "size": 13,
+                            "weight": "bold"
+                          },
+                          "colour": "secondaryLabelColor"
+                        },
+                        {
+                          "id": "modeTime2",
+                          "type": "label",
+                          "text": "–",
+                          "textalign": "centre",
+                          "font": {
+                            "size": 13,
+                            "weight": "bold"
+                          },
+                          "colour": "secondaryLabelColor"
+                        },
+                        {
+                          "id": "modeTime3",
+                          "type": "label",
+                          "text": "–",
+                          "textalign": "centre",
+                          "font": {
+                            "size": 13,
+                            "weight": "bold"
+                          },
+                          "colour": "secondaryLabelColor"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "durationRow",
+                      "type": "view",
+                      "layout": "border",
+                      "constraints": {
+                        "grid": {
+                          "col": 0,
+                          "row": 1,
+                          "colweight": 1
+                        }
+                      },
+                      "components": [
+                        {
+                          "id": "durationLabel",
+                          "type": "label",
+                          "text": "",
+                          "font": {
+                            "size": 32,
+                            "weight": "bold"
+                          },
+                          "constraints": {
+                            "region": "centre",
+                            "position": "left",
+                            "stretch": "horizontal"
+                          }
+                        },
+                        {
+                          "id": "altRow",
+                          "type": "view",
+                          "layout": "inline",
+                          "spacing": 4,
+                          "constraints": {
+                            "region": "right",
+                            "position": "centre"
+                          },
+                          "components": [
+                            {
+                              "id": "alt0",
+                              "type": "button",
+                              "text": "",
+                              "bordered": false,
+                              "image": {
+                                "type": "symbol",
+                                "src": "1.circle.fill",
+                                "size": {
+                                  "width": 26,
+                                  "height": 26
+                                }
+                              },
+                              "contenttintcolour": "secondaryLabelColor",
+                              "events": [
+                                {
+                                  "triggers": "actioned",
+                                  "action": {
+                                    "type": "script",
+                                    "src": "../bin/zmap",
+                                    "args": [
+                                      "alt",
+                                      "{value:von.text}",
+                                      "{value:nach.text}",
+                                      "{value:via0.text}",
+                                      "{value:via1.text}",
+                                      "{value:via2.text}",
+                                      "0"
+                                    ]
+                                  }
+                                }
+                              ],
+                              "hidden": true
+                            },
+                            {
+                              "id": "alt1",
+                              "type": "button",
+                              "text": "",
+                              "bordered": false,
+                              "image": {
+                                "type": "symbol",
+                                "src": "2.circle.fill",
+                                "size": {
+                                  "width": 26,
+                                  "height": 26
+                                }
+                              },
+                              "contenttintcolour": "secondaryLabelColor",
+                              "events": [
+                                {
+                                  "triggers": "actioned",
+                                  "action": {
+                                    "type": "script",
+                                    "src": "../bin/zmap",
+                                    "args": [
+                                      "alt",
+                                      "{value:von.text}",
+                                      "{value:nach.text}",
+                                      "{value:via0.text}",
+                                      "{value:via1.text}",
+                                      "{value:via2.text}",
+                                      "1"
+                                    ]
+                                  }
+                                }
+                              ],
+                              "hidden": true
+                            },
+                            {
+                              "id": "alt2",
+                              "type": "button",
+                              "text": "",
+                              "bordered": false,
+                              "image": {
+                                "type": "symbol",
+                                "src": "3.circle.fill",
+                                "size": {
+                                  "width": 26,
+                                  "height": 26
+                                }
+                              },
+                              "contenttintcolour": "secondaryLabelColor",
+                              "events": [
+                                {
+                                  "triggers": "actioned",
+                                  "action": {
+                                    "type": "script",
+                                    "src": "../bin/zmap",
+                                    "args": [
+                                      "alt",
+                                      "{value:von.text}",
+                                      "{value:nach.text}",
+                                      "{value:via0.text}",
+                                      "{value:via1.text}",
+                                      "{value:via2.text}",
+                                      "2"
+                                    ]
+                                  }
+                                }
+                              ],
+                              "hidden": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "infoLabel",
+                      "type": "label",
+                      "text": "",
+                      "colour": "secondaryLabelColor",
+                      "font": {
+                        "size": 14
+                      },
+                      "linebreak": "truncatetail",
+                      "constraints": {
+                        "grid": {
+                          "col": 0,
+                          "row": 2,
+                          "colweight": 1
+                        },
+                        "position": "left",
+                        "stretch": "horizontal"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "steps",
+              "type": "dataview",
+              "spacing": 0,
+              "placeholder": "",
+              "behaviour": {
+                "selection": {
+                  "allowempty": true
+                }
+              },
+              "constraints": {
+                "region": "centre",
+                "size": {
+                  "width": 330
+                }
+              },
+              "data": {
+                "type": "basic",
+                "src": []
+              },
+              "cell": {
+                "height": 21,
+                "init": {
+                  "bar.background": null,
+                  "dots.text": "",
+                  "stime.colour": "labelColor",
+                  "stext.colour": "labelColor"
+                },
+                "selected": {},
+                "root": {
+                  "id": "stepRow",
+                  "type": "view",
+                  "layout": "border",
+                  "spacing": 8,
+                  "components": [
+                    {
+                      "id": "stepLead",
+                      "type": "view",
+                      "layout": "inline",
+                      "spacing": 6,
+                      "constraints": {
+                        "region": "left"
+                      },
+                      "components": [
+                        {
+                          "id": "bar",
+                          "type": "view",
+                          "constraints": {
+                            "size": {
+                              "width": 5,
+                              "height": 21
+                            }
+                          }
+                        },
+                        {
+                          "id": "dots",
+                          "type": "label",
+                          "text": "",
+                          "colour": "secondaryLabelColor",
+                          "font": {
+                            "size": 13
+                          },
+                          "constraints": {
+                            "size": {
+                              "width": 6
+                            }
+                          }
+                        },
+                        {
+                          "id": "stime",
+                          "type": "label",
+                          "text": "",
+                          "font": {
+                            "size": 13,
+                            "weight": "bold",
+                            "monospaced": "digits"
+                          },
+                          "linebreak": "truncatetail",
+                          "constraints": {
+                            "size": {
+                              "width": 46
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "stext",
+                      "type": "label",
+                      "text": "",
+                      "font": {
+                        "size": 13
+                      },
+                      "linebreak": "truncatetail",
+                      "constraints": {
+                        "region": "centre",
+                        "position": "left",
+                        "stretch": "horizontal"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "mapBox",
+          "type": "view",
+          "layout": "stack",
+          "cornerradius": 12,
+          "cliptobounds": true,
+          "constraints": {
+            "region": "centre"
+          },
+          "components": [
+            {
+              "id": "map",
+              "type": "webkitview",
+              "text": "<html><body style='background:transparent'></body></html>",
+              "openlinksexternally": "^https?:",
+              "constraints": {
+                "size": {
+                  "width": 799,
+                  "height": 620
+                }
+              },
+              "events": [
+                {
+                  "triggers": "changed",
+                  "action": {
+                    "type": "script",
+                    "src": "../bin/zmap",
+                    "args": [
+                      "pick",
+                      "{value:map.src}"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "footer",
+          "type": "view",
+          "layout": "border",
+          "spacing": 12,
+          "constraints": {
+            "region": "bottom"
+          },
+          "components": [
+            {
+              "id": "statusLabel",
+              "type": "label",
+              "text": "",
+              "colour": "secondaryLabelColor",
+              "font": {
+                "size": 12.5
+              },
+              "linebreak": "truncatetail",
+              "constraints": {
+                "region": "centre",
+                "position": "left",
+                "stretch": "horizontal"
+              }
+            },
+            {
+              "id": "footerButtons",
+              "type": "view",
+              "layout": "inline",
+              "spacing": 12,
+              "constraints": {
+                "region": "right"
+              },
+              "components": [
+                {
+                  "id": "footerBack",
+                  "type": "button",
+                  "text": "Back  {var:back_label}",
+                  "bordered": false,
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "finish": {
+                            "variables": {
+                              "map_out": "back"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "shortcut": "{var:back_shortcut}"
+                },
+                {
+                  "id": "routeButton",
+                  "type": "button",
+                  "text": "Route  ↩",
+                  "bordered": false,
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": [
+                        {
+                          "type": "script",
+                          "src": "../bin/zmap",
+                          "args": [
+                            "enter",
+                            "{value:von.text}",
+                            "{value:nach.text}",
+                            "{value:via0.text}",
+                            "{value:via1.text}",
+                            "{value:via2.text}"
+                          ]
+                        },
+                        {
+                          "type": "script",
+                          "src": "../bin/zmap",
+                          "args": [
+                            "route"
+                          ],
+                          "async": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "actionsButton",
+                  "type": "button",
+                  "text": "Actions  {var:actions_label}",
+                  "bordered": false,
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/zmap",
+                        "args": [
+                          "menu",
+                          "{value:von.text}",
+                          "{value:nach.text}",
+                          "{value:via0.text}",
+                          "{value:via1.text}",
+                          "{value:via2.text}"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "removeStopKey",
+                  "type": "button",
+                  "text": "",
+                  "bordered": false,
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/zmap",
+                        "args": [
+                          "remove-stop",
+                          "{value:von.text}",
+                          "{value:nach.text}",
+                          "{value:via0.text}",
+                          "{value:via1.text}",
+                          "{value:via2.text}"
+                        ]
+                      }
+                    }
+                  ],
+                  "shortcut": "⇧⌘U",
+                  "opacity": 0,
+                  "constraints": {
+                    "size": {
+                      "width": 0,
+                      "height": 0
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

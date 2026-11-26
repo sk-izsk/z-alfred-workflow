@@ -20,7 +20,7 @@ User-provided screenshots define the required layout and interactions for every 
 
 ## Native controls before web views
 
-Use native Alfred components for lists, groups, value badges, forms, error states and navigation. A CLI backend is not a reason to add a web view. Keep web views only for a concrete capability/design requirement unsupported by the native components, and record that reason. Current exceptions: Lunar sliders (no native slider control), Speed Test gauge/sparkline charts, VS Code rich HTML extension README previews, and animated GIF detail previews. GIF search/results, weather and ordinary status/error lists remain native.
+Use native Alfred components for lists, groups, value badges, forms, error states and navigation. A CLI backend is not a reason to add a web view. Keep web views only for a concrete capability/design requirement unsupported by the native components, and record that reason. Current exceptions: Lunar sliders (no native slider control), Speed Test gauge/sparkline charts, VS Code rich HTML extension README previews, animated GIF detail previews, and the Maps route map (MapLibre). Maps is also the one width exception: a map needs room, so it opens at 1180 × 620 points (configurable, clamped to the display) while its sidebar, footer, Back and Actions follow these conventions. GIF search/results, weather and ordinary status/error lists remain native.
 
 ## Footer and Escape consistency
 
