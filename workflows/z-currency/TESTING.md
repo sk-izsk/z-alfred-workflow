@@ -14,3 +14,5 @@ without credentials; a matching provider date is required before displaying hist
 Before release, interactively verify typing/filter focus, picker changes, pin/copy actions, date sheet
 save/error/Back, custom shortcuts, offline refresh, themes and unavailable-base errors. Inspect the
 archive for prefs.plist, keys, caches, dependencies and development files.
+
+Currency-only follow-up: 13 tests / 65 assertions pass, including three configured base buttons, code/name/country search, local switching without clearing the amount/query, the searchable sheet’s Back/Escape behavior, and persisted row favorites with a strict three-item warning. Check/package/UI validation passed; other workflows were not rerun locally for this addition.

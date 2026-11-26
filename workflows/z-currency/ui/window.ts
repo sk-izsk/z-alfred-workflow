@@ -1,3 +1,4 @@
+import { quickBases } from "../src/base-currencies.ts";
 import type { State } from "../src/state.ts";
 import { pinned } from "../src/state.ts";
 import { currencyCode2Name as names, currencyCode2CountryAndRegion as countries } from "../src/catalog.ts";
@@ -78,29 +79,42 @@ export const components = (s: State): Json[] => [
         ],
         constraints: { region: "centre" },
       },
+      button("basePicker", `${flag(s.base)} ${s.base} ▾`, run("base-picker"), {
+        font: { size: 14, weight: "medium" },
+        tooltip: "Search base currencies by code, name or country",
+        constraints: { region: "right", size: { width: 130 } },
+      }),
       {
-        id: "basePicker",
-        type: "picker",
-        bordered: false,
-        items: Object.keys(s.rates?.rates || { [s.base]: 1 })
-          .toSorted()
-          .map((code) => ({
-            text: `${flag(code)} ${code} — ${countries[code] || names[code] || code}`,
-            value: code,
-          })),
-        selected: s.base,
-        events: [{ triggers: "changed", action: run("base", ["{value:self.selected.value}"], false) }],
-        constraints: { region: "right", size: { width: 290 } },
+        type: "view",
+        layout: "border",
+        spacing: 8,
+        constraints: { region: "bottom", insets: { top: 8 } },
+        components: [
+          label(
+            "sectionTitle",
+            `${s.amount} ${s.base} · ${s.rates?.date || "Rate date unavailable"} · ${Object.keys(s.rates?.rates || {}).length} currencies`,
+            {
+              font: { size: 11 },
+              colour: "secondaryLabelColor",
+              linebreak: "truncatetail",
+              constraints: { region: "centre", stretch: "horizontal" },
+            },
+          ),
+          {
+            type: "view",
+            layout: "inline",
+            spacing: 6,
+            constraints: { region: "right" },
+            components: quickBases(s).map((code, i) =>
+              button(`quickBase${i}`, `★ ${code}`, run("base", [code], false), {
+                font: { size: 11 },
+                contenttintcolour: s.base === code ? "systemBlueColor" : "secondaryLabelColor",
+                tooltip: `Switch base to ${code} — ${names[code] || code}`,
+              }),
+            ),
+          },
+        ],
       },
-      label(
-        "sectionTitle",
-        `${s.amount} ${s.base} · ${s.rates?.date || "Rate date unavailable"} · ${Object.keys(s.rates?.rates || {}).length} currencies · Pinned first`,
-        {
-          font: { size: 12 },
-          colour: "secondaryLabelColor",
-          constraints: { region: "bottom", insets: { left: 20, bottom: 8 } },
-        },
-      ),
     ],
   },
 
@@ -256,7 +270,7 @@ export const currencyWindow = {
           },
           {
             shortcut: "{var:back_shortcut}",
-            constraints: { region: "bottom", position: "left", insets: { left: 16, bottom: 16 } },
+            constraints: { region: "bottom", position: "right", insets: { right: 16, bottom: 16 } },
           },
         ),
       ],

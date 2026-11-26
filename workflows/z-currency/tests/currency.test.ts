@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import { calculate, parseQuery, validDate } from "../src/expression.ts";
 import { parseRates, loadRates } from "../src/api.ts";
-import { create, save, pin } from "../src/state.ts";
+import { create, read, save, pin } from "../src/state.ts";
 import { converted, rows, components } from "../ui/window.ts";
 const dir = mkdtempSync(join(tmpdir(), "currency-tests-")),
   previous = { ...process.env };
@@ -161,4 +161,92 @@ test("open access includes Bangladesh and other broader currencies without a key
   s.filter = "bangladesh";
   expect(rows(s).map((row) => row.uid)).toEqual(["BDT"]);
   expect(converted(s, "BDT")).toBeCloseTo(1246.8);
+});
+
+import { quickBases, baseMatches } from "../src/base-currencies.ts";
+test("three configurable quick bases and searchable code/name/country options are local", () => {
+  const settings = {
+    base_currency: process.env.base_currency,
+    secondary_currency: process.env.secondary_currency,
+    third_currency: process.env.third_currency,
+  };
+  process.env.base_currency = "CAD";
+  process.env.secondary_currency = "USD";
+  process.env.third_currency = "BDT";
+  try {
+    const s = create("100+24/12");
+    s.rates = { ...parseRates(raw, "allratestoday"), rates: { CAD: 1, USD: 0.7, BDT: 80, EUR: 0.6 } };
+    s.amount = 102;
+    save(s);
+    expect(quickBases(s)).toEqual(["CAD", "USD", "BDT"]);
+    expect(baseMatches(s, "bangladesh")).toEqual(["BDT"]);
+    expect(baseMatches(s, "us dollar")).toEqual(["USD"]);
+    const invoke = (command: string, ...args: string[]) =>
+      JSON.parse(
+        execFileSync(process.execPath, [join(import.meta.dir, "../src/main.ts"), command, s.id, ...args], {
+          encoding: "utf8",
+          env: process.env,
+        }),
+      );
+    const picker = invoke("base-picker");
+    expect(picker.sheet.closeonescape).toBe(true);
+    expect(JSON.stringify(picker)).toContain("Search code, currency or country");
+    const found = invoke("base-search", "bangladesh");
+    expect(found.update.ids.baseItems.data.src.map((r: any) => r.uid)).toEqual(["BDT"]);
+    const switched = invoke("base", "USD");
+    expect(switched.update.ids.basePicker.text).toContain("USD");
+    expect(switched.finish).toBeUndefined();
+    const selected = invoke("choose-base", "BDT");
+    expect(selected.sheet.close).toBe("baseSheet");
+    expect(read(s.id).base).toBe("BDT");
+    expect(read(s.id).query).toBe("100+24/12");
+    expect(read(s.id).amount).toBe(102);
+    expect(JSON.stringify(components(s))).not.toContain('"type":"picker"');
+  } finally {
+    for (const [key, value] of Object.entries(settings)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("quick favorites persist and reject a fourth until one is removed", () => {
+  const settings = Object.fromEntries(
+    ["base_currency", "secondary_currency", "third_currency"].map((k) => [k, process.env[k]]),
+  );
+  Object.assign(process.env, { base_currency: "CAD", secondary_currency: "USD", third_currency: "BDT" });
+  const favoriteFile = join(dir, "data", "quick-favorites.json");
+  rmSync(favoriteFile, { force: true });
+  try {
+    const s = create("42");
+    s.rates = { ...parseRates(raw, "allratestoday"), rates: { CAD: 1, USD: 0.7, BDT: 80, EUR: 0.6 } };
+    save(s);
+    const invoke = (command: string, code: string) =>
+      JSON.parse(
+        execFileSync(process.execPath, [join(import.meta.dir, "../src/main.ts"), command, s.id, code], {
+          encoding: "utf8",
+          env: process.env,
+        }),
+      );
+    const warning = invoke("favorite", "EUR");
+    expect(JSON.stringify(warning)).toContain("Remove one quick favorite");
+    expect(warning.sheet.closeonescape).toBe(true);
+    expect(quickBases(s)).toEqual(["CAD", "USD", "BDT"]);
+    expect(JSON.stringify(invoke("menu", "BDT"))).toContain("Remove Quick Favorite");
+    invoke("favorite", "BDT");
+    expect(quickBases(s)).toEqual(["CAD", "USD"]);
+    expect(JSON.stringify(invoke("menu", "EUR"))).toContain("Add Quick Favorite");
+    const updated = invoke("favorite", "EUR");
+    expect(quickBases(s)).toEqual(["CAD", "USD", "EUR"]);
+    expect(JSON.stringify(updated)).toContain("★ EUR");
+    expect(JSON.stringify(invoke("favorite", "BDT"))).toContain("Remove one quick favorite");
+    expect(quickBases(s)).toEqual(["CAD", "USD", "EUR"]);
+    expect(read(s.id).query).toBe("42");
+  } finally {
+    rmSync(favoriteFile, { force: true });
+    for (const [key, value] of Object.entries(settings)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
 });

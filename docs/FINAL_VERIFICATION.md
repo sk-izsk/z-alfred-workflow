@@ -4,7 +4,7 @@ The requested Swiss and Dev feature phases and reference-layout correction pass 
 
 ## Build and test results
 
-All 29 active workflow projects passed type checking, lint, formatting, tests, packaging and the Alfred UI checker. All generated plists passed validation. Package inspection found no preferences, dependency directories, logs or environment files. There are 331 passing tests. Empty placeholder folders without a package.json are not active workflow projects.
+All 29 active workflow projects passed type checking, lint, formatting, tests, packaging and the Alfred UI checker. All generated plists passed validation. Package inspection found no preferences, dependency directories, logs or environment files. There are 333 passing tests. Empty placeholder folders without a package.json are not active workflow projects.
 
 | Workflow | Passing tests |
 | --- | ---: |
@@ -14,7 +14,7 @@ All 29 active workflow projects passed type checking, lint, formatting, tests, p
 | `z-brew` | 23 |
 | `z-calculate-anything` | 7 |
 | `z-cald` | 26 |
-| `z-currency` | 11 |
+| `z-currency` | 13 |
 | `z-dev` | 1 |
 | `z-dev-cache-cleaner` | 5 |
 | `z-dev-servers` | 6 |
@@ -62,3 +62,5 @@ All 29 active workflow projects passed type checking, lint, formatting, tests, p
 - Personal live screenshots remain local. The committed Dev/Emoji captures contain only generic tool data and sample searches. Web views are retained only for Lunar sliders, Speed Test charts, rich VS Code README previews and animated GIF details, as documented in UI_CONVENTIONS.md.
 
 No implementation tasks remain within the agreed scope. Publishing release tags/assets and merging the PR were not requested.
+
+Currency follow-up was checked in isolation: three configurable pinned bases, row Actions to add/remove quick favorites with a strict three-item limit, and a compact searchable chooser were added, with 13 Currency tests passing. Other local project checks were not repeated for this scoped addition.

@@ -6,7 +6,7 @@ import { randomUUID } from "node:crypto";
 import { create, read, save, pin, pinned, type State } from "./state.ts";
 import { loadRates } from "./api.ts";
 import { parseQuery, validDate } from "./expression.ts";
-import { components, rows, run, button, label, converted, amountText } from "../ui/window.ts";
+import { components, rows, run, button, label, converted, amountText, flag } from "../ui/window.ts";
 import {
   print,
   merge,
@@ -21,6 +21,8 @@ import {
   finish,
   type Action,
 } from "./ui.ts";
+import { quickBases, baseMatches, toggleQuickFavorite } from "./base-currencies.ts";
+import { currencyCode2Name as names, currencyCode2CountryAndRegion as countries } from "./catalog.ts";
 const populate = (s: State): Action => {
   const data = rows(s);
   return merge(
@@ -85,6 +87,92 @@ const load = async (s: State, fresh = false, initial = true): Promise<Action> =>
     ),
   );
 };
+const baseRows = (s: State, query = "") =>
+  baseMatches(s, query).map((code) => ({
+    uid: code,
+    "baseCode.text": `${quickBases(s).includes(code) ? "★ " : ""}${flag(code)} ${code}`,
+    "baseDescription.text": `${names[code] || code} · ${countries[code] || ""}`,
+  }));
+const chooseBaseSheet = (s: State): Action =>
+  sheet(
+    "baseSheet",
+    {
+      type: "view",
+      layout: "border",
+      padding: 16,
+      spacing: 10,
+      shortcuts: [
+        { shortcut: "↑", action: { type: "function", src: "baseItems", args: "selectprevious" } },
+        { shortcut: "↓", action: { type: "function", src: "baseItems", args: "selectnext" } },
+      ],
+      components: [
+        {
+          id: "baseSearch",
+          type: "textfield",
+          text: "",
+          placeholder: "Search code, currency or country…",
+          focus: true,
+          background: null,
+          bordered: false,
+          constraints: { region: "top", size: { width: 510 } },
+          events: [
+            { triggers: "typingstopped", action: run("base-search", ["{value:self.text}"], false) },
+            { triggers: "actioned", action: run("choose-base", ["{value:baseItems.selected.uid}"], false) },
+          ],
+        },
+        {
+          id: "baseItems",
+          type: "dataview",
+          data: { type: "basic", src: baseRows(s) },
+          select: s.rates?.rates[s.base] ? s.base : baseMatches(s)[0] || "",
+          placeholder: "No matching currencies",
+          padding: 4,
+          spacing: 2,
+          constraints: { region: "centre", size: { width: 510, height: 300 } },
+          events: [
+            { triggers: "actioned", action: run("choose-base", ["{value:self.selected.uid}"], false) },
+          ],
+          cell: {
+            height: 44,
+            root: {
+              id: "baseRow",
+              type: "view",
+              layout: "border",
+              padding: 6,
+              cornerradius: 6,
+              components: [
+                {
+                  id: "baseCode",
+                  type: "label",
+                  text: "",
+                  font: { size: 14, weight: "medium" },
+                  constraints: { region: "left", size: { width: 100 } },
+                },
+                {
+                  id: "baseDescription",
+                  type: "label",
+                  text: "",
+                  font: { size: 11 },
+                  colour: "secondaryLabelColor",
+                  linebreak: "truncatetail",
+                  constraints: { region: "centre", position: "centre", stretch: "horizontal" },
+                },
+              ],
+            },
+            init: { "baseRow.background": null },
+            selected: { "baseRow.background": "alfredSelectedResultBackgroundColor" },
+          },
+        },
+      ],
+    },
+    true,
+    undefined,
+    [
+      button("applyBase", "Use Currency  ↩", run("choose-base", ["{value:baseItems.selected.uid}"], false), {
+        shortcut: "↩",
+      }),
+    ],
+  );
 const main = async (): Promise<Action | void> => {
   const [command = "", id = "", ...args] = process.argv.slice(2);
   if (command === "prepare-origin") return vars(backVariables("fx_out", process.env.fx_query));
@@ -97,7 +185,7 @@ const main = async (): Promise<Action | void> => {
     return merge(vars({ fx_session: s.id }), await load(s));
   }
   const s = read(id),
-    code = args[0] || s.selected;
+    code = command === "choose-base" ? args[0] || "" : args[0] || s.selected;
   if (command === "back") return finish(backVariables("fx_out", process.env.fx_query));
   if (command === "tick") {
     if (
@@ -121,13 +209,29 @@ const main = async (): Promise<Action | void> => {
     const result = await load(s, false, false);
     return result;
   }
-  if (command === "base") {
+  if (command === "base-picker") return chooseBaseSheet(s);
+  if (command === "base-search") {
+    const data = baseRows(s, args[0] || "");
+    return update({
+      baseItems: { data: { src: data }, select: data[0]?.uid || "" },
+      applyBase: { enabled: data.length > 0 },
+    });
+  }
+  if (command === "base" || command === "choose-base") {
     if (!s.rates?.rates[code]) throw new Error("Choose a supported currency.");
     s.base = code;
     save(s);
     return merge(
+      command === "choose-base" ? { sheet: { close: "baseSheet" } } : {},
       update(
         {
+          basePicker: { text: `${flag(s.base)} ${s.base} ▾` },
+          ...Object.fromEntries(
+            quickBases(s).map((value, i) => [
+              `quickBase${i}`,
+              { contenttintcolour: value === s.base ? "systemBlueColor" : "secondaryLabelColor" },
+            ]),
+          ),
           sectionTitle: {
             text: `${s.amount} ${s.base} · ${s.rates.date || "Rate date unavailable"} · ${Object.keys(s.rates.rates).length} currencies · Pinned first`,
           },
@@ -138,6 +242,29 @@ const main = async (): Promise<Action | void> => {
     );
   }
   if (command === "refresh") return load(s, true);
+  if (command === "favorite") {
+    const favorites = quickBases(s);
+    if (!favorites.includes(code) && favorites.length >= 3)
+      return sheet("favoriteLimit", {
+        type: "view",
+        layout: "border",
+        padding: 18,
+        spacing: 12,
+        components: [
+          label("favoriteLimitTitle", "Three quick favorites are already pinned", {
+            font: { size: 17, weight: "semibold" },
+            constraints: { region: "top" },
+          }),
+          label(
+            "favoriteLimitMessage",
+            "Remove one quick favorite from its Actions menu, then select another currency.",
+            { linebreak: "wordwrap", constraints: { region: "centre", size: { width: 430, height: 60 } } },
+          ),
+        ],
+      });
+    toggleQuickFavorite(s, code);
+    return render(s);
+  }
   if (command === "pin") {
     pin(code);
     return populate(s);
@@ -222,7 +349,13 @@ const main = async (): Promise<Action | void> => {
     return popup("actionsButton", [
       menuItem("Copy to Clipboard", ["copy", id, code], "↩"),
       menuItem("Copy Full Conversion", ["copy-full", id, code]),
+      menuItem(quickBases(s).includes(code) ? "Remove Quick Favorite" : "Add Quick Favorite", [
+        "favorite",
+        id,
+        code,
+      ]),
       menuItem(pinned().includes(code) ? "Unpin Currency" : "Pin Currency", ["pin", id, code]),
+      menuItem("Choose Base Currency…", ["base-picker", id]),
       menuItem("Set Currency Date…", ["date", id]),
       menuItem("Use Latest Rates", ["latest", id]),
       menuItem("Refresh Rates", ["refresh", id], "⌘R"),

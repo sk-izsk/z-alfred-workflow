@@ -76,7 +76,7 @@ Camera is deferred. Last Changed Files is canceled. Menubar features are exclude
 
 All requested reference layouts, controls and Actions were reviewed. The four identified gaps are corrected: native tag pills, System Monitor sections/badges, Dev Servers project headings/uptime, and Bluetooth battery accessories. Dev Cache Cleaner uses grouped native list/details and a consistent cleanup footer. Weather’s excess height and oversized sheet contents were reduced.
 
-See [docs/FINAL_VERIFICATION.md](docs/FINAL_VERIFICATION.md) for the per-workflow test counts, native evidence, command checks and verification limits. All 29 active projects pass checks and packaging; 331 tests pass. No agreed implementation tasks remain. Camera, Last Changed Files, standalone Password Generator and menubar features retain their earlier excluded/deferred status.
+See [docs/FINAL_VERIFICATION.md](docs/FINAL_VERIFICATION.md) for the per-workflow test counts, native evidence, command checks and verification limits. All 29 active projects pass checks and packaging; 333 tests pass. No agreed implementation tasks remain. Camera, Last Changed Files, standalone Password Generator and menubar features retain their earlier excluded/deferred status.
 
 ## Web view audit
 
@@ -103,3 +103,5 @@ All 29 workflow projects searched. Mole uses native lists/details and has no web
 - Cache cleanup activity: confirmed jobs run separately, show Cleaning/Refreshing phases and block duplicate actions. Fresh measurements replace the results after success or partial failure; tests cover refreshed totals and disappearing filters. Real cleanup remains untested.
 
 - Final pass: shared sheet implementation prevents footer/Escape drift; tag/metric/project/battery layouts corrected; terminal configuration centralized; read-only Mole progress verified with no finish action. Detailed evidence and limits are in docs/FINAL_VERIFICATION.md.
+
+- Currency follow-up: three configured base currencies appear as pinned quick buttons above results; the compact base chooser opens local code/name/country search. Row Actions add/remove quick favorites, warn at the three-item limit, and persist choices. Currency-only checks and packaging passed.

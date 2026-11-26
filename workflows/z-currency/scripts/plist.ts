@@ -128,6 +128,18 @@ export const infoPlist = {
       "USD",
       "Three-letter currency code supported by your provider.",
     ),
+    text(
+      "secondary_currency",
+      "Quick currency 2",
+      "",
+      "Three-letter code. Blank automatically chooses CAD when the primary is USD, otherwise USD. Shown as a pinned base button.",
+    ),
+    text(
+      "third_currency",
+      "Quick currency 3",
+      "BDT",
+      "Third pinned base currency. Choose a provider-supported three-letter code; duplicates are shown once.",
+    ),
     text("actions_shortcut", "Actions shortcut", "⌘K", "Open currency actions."),
     text("back_shortcut", "Back shortcut", "⌘[", "Back to Alfred search; date sheet returns to conversion."),
     {
@@ -146,7 +158,7 @@ export const infoPlist = {
     text("node_path", "Node.js executable", "", "Optional absolute path if automatic discovery fails."),
   ],
   variablesdontexport: ["api_key"],
-  readme: `Type currency, currency 100+24/12, or currency 100 in Canada. Choose the base from the picker. The list shows only currencies supported by your provider; pinned targets appear first. Return copies the value, Command-K offers Copy, Pin/Unpin, Set Currency Date, Latest Rates, Refresh and Provider Documentation. Command-[ is configurable Back and stays visible in all footers.
+  readme: `Type currency, currency 100+24/12, or currency 100 in Canada. Choose a base with the compact searchable chooser or the three configured pinned buttons. The list shows only currencies supported by your provider; pinned targets appear first. Return copies the value, Command-K offers Copy, Pin/Unpin, Set Currency Date, Latest Rates, Refresh and Provider Documentation. Hyper+B is configurable Back and stays visible in all footers.
 
 Default provider: ExchangeRate-API Open Access, no key, 160+ currencies including BDT, daily updates and no history. Rates By Exchange Rate API: https://www.exchangerate-api.com. ECB reference rates remain optional. Select ExchangeRate-API or UniRateAPI and supply your API key in Workflow Configuration for broader coverage. History depends on provider/plan and is never silently replaced by current rates. Keys are excluded from exports but stored in local Alfred preferences.
 
