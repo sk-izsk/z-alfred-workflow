@@ -51,20 +51,22 @@ export const components = (query = "", layout: "list" | "grid" = "list", categor
     if (object.cell?.root) visit(object.cell.root);
   };
   values.forEach(visit);
-  values[0]!.components.push({
+  const categoryPicker = {
     id: "category",
     type: "picker",
     selected: category,
     items: ["All", "Favorites", "Recent", ...groups].map((text) => ({ text, value: text })),
     constraints: { region: "right", size: { width: 175 } },
     events: [{ triggers: "changed", action: ui.run("category", ["{value:self.selected.value}"]) }],
-  });
-  values.splice(1, 0, {
+  };
+  values[0]!.spacing = 12;
+  values[0]!.components.push({
     type: "view",
-    layout: "border",
-    padding: 8,
-    constraints: { region: "top" },
+    layout: "inline",
+    spacing: 8,
+    constraints: { region: "right" },
     components: [
+      categoryPicker,
       {
         id: "layoutPicker",
         type: "picker",
@@ -77,14 +79,6 @@ export const components = (query = "", layout: "list" | "grid" = "list", categor
         events: [{ triggers: "changed", action: ui.run("layout", ["{value:self.selected.value}"], false) }],
       },
     ],
-  });
-  const header = values.shift()!;
-  const viewPicker = values.shift()!;
-  values.unshift({
-    type: "view",
-    layout: "border",
-    constraints: { region: "top" },
-    components: [header, { ...viewPicker, constraints: { region: "bottom" } }],
   });
   return values;
 };
