@@ -21,3 +21,7 @@ User-provided screenshots define the required layout and interactions for every 
 ## Native controls before web views
 
 Use native Alfred components for lists, groups, value badges, forms, error states and navigation. A CLI backend is not a reason to add a web view. Keep web views only for a concrete capability/design requirement unsupported by the native components, and record that reason. Current exceptions: Lunar sliders (no native slider control), Speed Test gauge/sparkline charts, VS Code rich HTML extension README previews, and animated GIF detail previews. GIF search/results, weather and ordinary status/error lists remain native.
+
+## Footer and Escape consistency
+
+Keep Back, the primary action and Actions together on the right in that order, including sheets. Primary footer actions use the same borderless treatment and a compact Return hint, with Return bound to the action. Explain permanent effects in review content, rather than a differently styled oversized button. Escape closes the top sheet to its parent or dismisses the window through Alfred’s standard behavior; it never confirms changes.

@@ -89,7 +89,7 @@ export const sheet = (id: string, root: Action, closeOnEscape = true): Action =>
             text: "Back  {var:back_label}",
             bordered: false,
             shortcut: "{var:back_shortcut}",
-            constraints: { region: "bottom", position: "left", insets: { left: 16, bottom: 12 } },
+            constraints: { region: "bottom", position: "right", insets: { right: 16, bottom: 12 } },
             events: [{ triggers: "actioned", action: back }],
           },
         ],

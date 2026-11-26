@@ -99,7 +99,16 @@ All 29 workflow projects searched. Mole uses native lists/details and has no web
 
 ## Remaining after native/web-view audit
 
-- Finish screenshot comparisons and resulting layout/action corrections. Known gaps to address: Tag Manager tag pills, System Monitor section headings/value badges, Dev Servers project sections/uptime, Bluetooth right-side battery accessories, and Dev Cache Cleaner category headings.
+- Finish screenshot comparisons and resulting layout/action corrections. Known gaps to address: Tag Manager tag pills, System Monitor section headings/value badges, Dev Servers project sections/uptime, Bluetooth right-side battery accessories, (Dev Cache Cleaner category headings are now implemented).
 - Complete native visual checks for Mole’s five modes, including section navigation/Back and loading/error states; update screenshots/docs with the corrected native view.
 - Recheck the other supplied Weather, Currency, Translation, World Clock, Workflow Manager, Emoji/GIF and Lunar references against native UI and Cmd-K actions; retain existing verified behavior.
 - Finish final native interaction checks and documentation. Live device/network mutations and actual cache/system cleanup have deliberately not been run for testing.
+
+## November 26 regression fixes
+
+- Mole previews now use a separate CLI worker and short native polling; stdin closes, CLI execution is bounded, and a watchdog replaces stalled loading with an error. Installed Optimize preview visually verified through completion.
+- Wi-Fi association uses ipconfig metadata when system_profiler omits the current connection. Read-only verification: one connected network, name redacted by macOS. Saved Password action uses Keychain authentication and an ephemeral native dialog; no password retrieval or network mutation was performed during testing.
+- Cache Cleaner now follows the grouped list/Markdown detail reference, counted filters and risk dots. Expanded manager/language/app/Xcode/Apple simulator/Android snapshot/Docker coverage; real scan found 15 entries. npm root-cache layout fixed; absent Homebrew cache stays visible. Available simulator storage is never counted as reclaimable. Native grouped/detail view visually verified; no deletion performed.
+- Dev keyword source and installed metadata have the corrected description; workflow reloaded to refresh Alfred's metadata. Existing Alfred search cache still needs final visual comparison.
+
+- Footer correction: sheet Back aligned right in 27 workflow helpers. Cache review now places Back/Clean together in a borderless footer, Return triggers Clean, and Escape dismisses the sheet without cleanup (verified in the installed native window). Convention recorded for future screens.
