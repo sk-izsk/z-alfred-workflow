@@ -7,12 +7,12 @@ const ui = dashboard({
   primary: "Switch  ↩",
 });
 export const toolWindow = ui.window;
-export const components = (query = ""): Json[] => {
+export const components = (query = "", scope = "all"): Json[] => {
   const values = ui.components(query);
   values[0]!.components.push({
     id: "scope",
     type: "picker",
-    selected: "all",
+    selected: scope,
     items: [
       { text: "All desktops", value: "all" },
       { text: "Active app", value: "active" },

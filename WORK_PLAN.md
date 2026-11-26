@@ -33,7 +33,7 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 - [x] Emoji Picker: bundled Unicode 17 data (3,944 sequences), native search/categories, favorites/recents, variants, copy/paste actions; tests and native search verified.
 - [x] Lunar Controls: installed Lunar-fred/CLI verified; brightness/contrast/volume sliders with live labels, percentage shortcuts, modern input/adaptive/preset selectors, global adaptive modes, saved presets and reviewed power actions. Display-row clicks select controls instead of opening Lunar. Read-only native UI verified; physical settings were not changed for testing.
 - [x] Window Navigator: global/active/current-desktop scopes, native search and app icons, focus/close/quit actions, revalidation and Swiss Back. Native list verified; disposable TextEdit raise/close verified.
-- [x] Window Switcher: independent current-desktop list and actions, shared Accessibility bridge, native UI verified with a disposable document.
+- [x] Consolidated Window Switcher into Window Navigator per user request. `wins` opens Current Desktop mode in the same workflow; the separate project/Swiss entry is removed. Stage Manager visibility matches app/title as well as full-size geometry, with a count-checked fallback for stale thumbnail titles; real enumeration improved from one to six windows.
 ## Dev launcher phase (after Swiss)
 
 - [ ] Dev launcher: separate searchable launcher using the same independent-tool and Back protocol as Swiss. These utilities belong only to Dev.

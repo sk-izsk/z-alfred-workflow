@@ -1,3 +1,4 @@
+import { windowInput } from "./launch.ts";
 import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { profileAction } from "../../../shared/ui-profile.ts";
@@ -5,7 +6,7 @@ import { listWindows, actOnWindow, matchesWindow, type Scope } from "../../../sh
 import { str, bool } from "./env.ts";
 import { create, read, save, type State } from "./state.ts";
 import { components } from "../ui/window.ts";
-import { launchInput, backVariables, performBack } from "./navigation.ts";
+import { backVariables, performBack } from "./navigation.ts";
 import { merge, vars, update, finish, popup, menuItem, copy, errorStatus, type Action } from "./ui.ts";
 const visible = (s: State) => s.items.filter((w) => matchesWindow(w, s.query));
 const render = (s: State): Action => {
@@ -66,11 +67,15 @@ const main = async (): Promise<Action | void> => {
   }
   if (cmd === "launch") {
     const raw = process.env.wnav_query || "",
-      origin = raw.startsWith("resume:") ? null : launchInput(raw),
+      origin = raw.startsWith("resume:") ? null : windowInput(raw),
       s = origin ? create(origin.query, origin.returnTo) : read(raw.slice(7));
+    if (origin) {
+      s.scope = origin.scope;
+      save(s);
+    }
     return merge(
       vars({ wnav_session: s.id }),
-      update({ root: { components: components(s.query) } }, true),
+      update({ root: { components: components(s.query, s.scope) } }, true),
       origin ? pulse(s) : { pulse: { src: "../bin/wnav", args: ["populate", s.id], interval: 0, now: true } },
     );
   }

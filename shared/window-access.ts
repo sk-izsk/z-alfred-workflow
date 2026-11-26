@@ -1,7 +1,22 @@
 import {execFile} from "node:child_process";
 export type WindowItem={id:string;pid:number;bundle:string;app:string;title:string;index:number;position:number[];size:number[];minimized:boolean;onscreen:boolean;appPath:string};
 export type Scope="all"|"active"|"desktop";
-const script=`ObjC.import('Foundation');ObjC.import('AppKit');ObjC.import('CoreGraphics');
+export type VisibleWindow={kCGWindowOwnerPID:number;kCGWindowLayer:number;kCGWindowName?:string;kCGWindowBounds:{X:number;Y:number;Width:number;Height:number}};
+export function visibleWindow(target:Pick<WindowItem,"pid"|"title"|"position"|"size">,windows:VisibleWindow[],axWindowCount=0):boolean {
+ var matches=windows.some(function(cg){
+  if(cg.kCGWindowOwnerPID!==target.pid||cg.kCGWindowLayer!==0)return false;
+  var b=cg.kCGWindowBounds;
+  var title=typeof cg.kCGWindowName==="string"&&cg.kCGWindowName.length>0&&cg.kCGWindowName===target.title;
+  var geometry=Math.abs(b.X-target.position[0]!)<5&&Math.abs(b.Y-target.position[1]!)<5&&Math.abs(b.Width-target.size[0]!)<5&&Math.abs(b.Height-target.size[1]!)<5;
+  return title||geometry;
+ });
+ if(matches)return true;
+ // Stage Manager can retain a thumbnail title briefly after an app changes its window title.
+ var candidates=windows.filter(function(cg){return cg.kCGWindowOwnerPID===target.pid&&cg.kCGWindowLayer===0;});
+ return axWindowCount>0&&candidates.length===axWindowCount&&candidates.every(function(cg){var b=cg.kCGWindowBounds;return b.Width>=40&&b.Width<=350&&b.Height>=40&&b.Height<=350;});
+}
+const script=`var visibleWindow = (${visibleWindow.toString()});
+ObjC.import('Foundation');ObjC.import('AppKit');ObjC.import('CoreGraphics');
 function run(argv){
  var input=JSON.parse(ObjC.unwrap($.NSString.alloc.initWithDataEncoding($.NSFileHandle.fileHandleWithStandardInput.readDataToEndOfFile,$.NSUTF8StringEncoding)));
  var se=Application('System Events');
@@ -21,11 +36,7 @@ function run(argv){
       var w=windows[j],title=w.name()||'',position=w.position(),size=w.size(),minimized=false;
       try{minimized=Boolean(w.attributes.byName('AXMinimized').value());}catch(e){}
       if(size[0]<100||size[1]<60||(!input.minimized&&minimized))continue;
-      var onscreen=false;
-      for(var k=0;k<visible.length;k++){
-       var cg=visible[k],b=cg.kCGWindowBounds;
-       if(cg.kCGWindowOwnerPID===pid&&cg.kCGWindowLayer===0&&Math.abs(b.X-position[0])<5&&Math.abs(b.Y-position[1])<5&&Math.abs(b.Width-size[0])<5&&Math.abs(b.Height-size[1])<5){onscreen=true;break;}
-      }
+      var onscreen=visibleWindow({pid:pid,title:title,position:position,size:size},visible,windows.length);
       if(input.scope==='desktop'&&(!onscreen||minimized))continue;
       items.push({id:String(pid)+':'+String(j),pid:pid,bundle:bundle,app:app,title:title,index:j,position:position,size:size,minimized:minimized,onscreen:onscreen,appPath:appPath});
      }catch(e){}

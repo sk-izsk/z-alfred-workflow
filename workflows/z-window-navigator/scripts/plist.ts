@@ -18,13 +18,31 @@ export const infoPlist = {
   webaddress: "https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-window-navigator",
   objects: [
     {
+      uid: "KEYWORD_DESKTOP",
+      type: "alfred.workflow.input.keyword",
+      version: 1,
+      config: {
+        keyword: "{var:kw_switch}",
+        text: "Switch Windows on Current Desktop",
+        subtext: "Window Navigator, including Stage Manager windows",
+        argumenttype: 1,
+        withspace: true,
+      },
+    },
+    {
+      uid: "DESKTOP_ARG",
+      type: "alfred.workflow.utility.json",
+      version: 1,
+      config: { json: JSON.stringify({ alfredworkflow: { arg: "desktop:{query}" } }) },
+    },
+    {
       uid: "KEYWORD",
       type: "alfred.workflow.input.keyword",
       version: 1,
       config: {
         keyword: "{var:kw_main}",
         text: "Window Navigator",
-        subtext: "Units, percentages, time, data storage and arithmetic",
+        subtext: "Find windows across desktops or the active app",
         argumenttype: 1,
         withspace: true,
       },
@@ -68,19 +86,27 @@ export const infoPlist = {
   connections: Object.fromEntries(
     [
       ["KEYWORD", "MODE"],
+      ["KEYWORD_DESKTOP", "DESKTOP_ARG"],
+      ["DESKTOP_ARG", "MODE"],
       ["TRIGGER", "MODE"],
       ["MODE", "UI"],
       ["UI", "POST"],
     ].map(([a, b]) => [a, [{ destinationuid: b, modifiers: 0, modifiersubtext: "", vitoclose: false }]]),
   ),
   uidata: Object.fromEntries(
-    ["KEYWORD", "TRIGGER", "MODE", "UI", "POST"].map((id, i) => [
+    ["KEYWORD", "KEYWORD_DESKTOP", "DESKTOP_ARG", "TRIGGER", "MODE", "UI", "POST"].map((id, i) => [
       id,
       { xpos: i * 190, ypos: id === "TRIGGER" ? 180 : 40 },
     ]),
   ),
   userconfigurationconfig: [
     text("kw_main", "Keyword", "wnav", "Open Window Navigator."),
+    text(
+      "kw_switch",
+      "Current desktop keyword",
+      "wins",
+      "Open the same navigator directly in Current Desktop mode.",
+    ),
     ...hyperConfiguration(),
     text("actions_shortcut", "Actions shortcut", "⌘K", "Open actions."),
     text("node_path", "Node.js executable", "", "Optional absolute executable path."),

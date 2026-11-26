@@ -1,5 +1,0 @@
-node_modules/
-dist/
-workflow/bin/wins.mjs
-workflow/prefs.plist
-.DS_Store

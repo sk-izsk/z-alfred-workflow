@@ -1,10 +1,10 @@
 # Window Navigator
 
-Search window titles and application names in **all desktops, the active app or the current desktop**. Open `wnav` or choose Window Navigator in Swiss. Return or a row's primary action brings the selected window forward. Actions offers Close Window, Quit Owning App, Copy Window Title, Refresh, Accessibility Settings and Configuration.
+Search window titles and application names in **all desktops, the active app or the current desktop**. Open `wnav` or choose Window Navigator in Swiss. Use `wins` to open the same window directly in Current Desktop mode. Both keywords are configurable; the separate Window Switcher workflow has been removed. Return or a row's primary action brings the selected window forward. Actions offers Close Window, Quit Owning App, Copy Window Title, Refresh, Accessibility Settings and Configuration.
 
 ![Native window search](assets/screenshots/search.png)
 
-Window Navigator has a scope picker; Window Switcher is intentionally restricted to the current desktop. Navigator includes minimized windows and can restore them. Current-desktop matching uses the window owner's process and geometry from CoreGraphics, excluding minimized windows. All lists refresh on opening or manual Refresh; they are not continually rebuilt while you type.
+The scope picker offers All Desktops, Active App and Current Desktop. Navigator includes minimized windows and can restore them. Current-desktop matching uses the owning process plus title or geometry from CoreGraphics, excluding minimized windows. Title matching includes Stage Manager thumbnails whose visible geometry differs from the full-size Accessibility window. All lists refresh on opening or manual Refresh; they are not continually rebuilt while you type.
 
 Requires Alfred Accessibility permission and permission to automate System Events. Grant additional Screen Recording access only if macOS restricts current-desktop window information. Windows not exposed by an app's Accessibility interface cannot be listed. Cross-desktop navigation uses the app's Window menu where available, then falls back to AXRaise; app-specific behavior and desktop-switching preferences can affect it.
 

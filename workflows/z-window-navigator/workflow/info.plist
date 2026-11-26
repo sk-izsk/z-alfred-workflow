@@ -8,11 +8,37 @@
 	<string>Tools</string>
 	<key>connections</key>
 	<dict>
+		<key>DESKTOP_ARG</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>MODE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>KEYWORD</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>MODE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>KEYWORD_DESKTOP</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>DESKTOP_ARG</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -77,9 +103,43 @@
 				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>keyword</key>
+				<string>{var:kw_switch}</string>
+				<key>subtext</key>
+				<string>Window Navigator, including Stage Manager windows</string>
+				<key>text</key>
+				<string>Switch Windows on Current Desktop</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>KEYWORD_DESKTOP</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>json</key>
+				<string>{"alfredworkflow":{"arg":"desktop:{query}"}}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.json</string>
+			<key>uid</key>
+			<string>DESKTOP_ARG</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>keyword</key>
 				<string>{var:kw_main}</string>
 				<key>subtext</key>
-				<string>Units, percentages, time, data storage and arithmetic</string>
+				<string>Find windows across desktops or the active app</string>
 				<key>text</key>
 				<string>Window Navigator</string>
 				<key>withspace</key>
@@ -165,6 +225,13 @@
 	<string>Search and focus application windows with native Alfred controls. Use Command-K for actions. Back (Hyper+B) returns one level or to Swiss. Built with help from AI tools. See README for sources and limitations.</string>
 	<key>uidata</key>
 	<dict>
+		<key>DESKTOP_ARG</key>
+		<dict>
+			<key>xpos</key>
+			<integer>380</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
 		<key>KEYWORD</key>
 		<dict>
 			<key>xpos</key>
@@ -172,31 +239,38 @@
 			<key>ypos</key>
 			<integer>40</integer>
 		</dict>
-		<key>MODE</key>
+		<key>KEYWORD_DESKTOP</key>
 		<dict>
 			<key>xpos</key>
-			<integer>380</integer>
+			<integer>190</integer>
 			<key>ypos</key>
 			<integer>40</integer>
 		</dict>
-		<key>POST</key>
+		<key>MODE</key>
 		<dict>
 			<key>xpos</key>
 			<integer>760</integer>
 			<key>ypos</key>
 			<integer>40</integer>
 		</dict>
+		<key>POST</key>
+		<dict>
+			<key>xpos</key>
+			<integer>1140</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
 		<key>TRIGGER</key>
 		<dict>
 			<key>xpos</key>
-			<integer>190</integer>
+			<integer>570</integer>
 			<key>ypos</key>
 			<integer>180</integer>
 		</dict>
 		<key>UI</key>
 		<dict>
 			<key>xpos</key>
-			<integer>570</integer>
+			<integer>950</integer>
 			<key>ypos</key>
 			<integer>40</integer>
 		</dict>
@@ -221,6 +295,25 @@
 			<string>textfield</string>
 			<key>variable</key>
 			<string>kw_main</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>wins</string>
+				<key>placeholder</key>
+				<string>wins</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Open the same navigator directly in Current Desktop mode.</string>
+			<key>label</key>
+			<string>Current desktop keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>kw_switch</string>
 		</dict>
 		<dict>
 			<key>config</key>

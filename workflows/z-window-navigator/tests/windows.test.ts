@@ -46,3 +46,33 @@ test("search spans application and title; action only emits a validated handoff"
   expect(menu).toContain("Close Window");
   expect(menu).not.toContain('"Back');
 });
+
+import { visibleWindow } from "../../../shared/window-access.ts";
+import { windowInput } from "../src/launch.ts";
+test("Stage Manager thumbnails match the owning app and title despite scaled geometry", () => {
+  const thumbnail = {
+    kCGWindowOwnerPID: 12,
+    kCGWindowLayer: 0,
+    kCGWindowName: "Project Notes",
+    kCGWindowBounds: { X: 15, Y: 500, Width: 160, Height: 100 },
+  };
+  expect(visibleWindow(example, [thumbnail])).toBe(true);
+  expect(visibleWindow(example, [{ ...thumbnail, kCGWindowOwnerPID: 99 }])).toBe(false);
+  expect(visibleWindow(example, [{ ...thumbnail, kCGWindowName: "Other window" }])).toBe(false);
+  expect(visibleWindow(example, [])).toBe(false);
+});
+test("the wins keyword opens the same navigator in current-desktop mode", () => {
+  expect(windowInput("desktop:notes")).toEqual({ query: "notes", returnTo: "", scope: "desktop" });
+  expect(windowInput("notes").scope).toBe("all");
+});
+
+test("Stage Manager stale thumbnail titles fall back only when visible and accessible counts agree", () => {
+  const thumbnail = {
+    kCGWindowOwnerPID: 12,
+    kCGWindowLayer: 0,
+    kCGWindowName: "Older tab title",
+    kCGWindowBounds: { X: 15, Y: 500, Width: 160, Height: 100 },
+  };
+  expect(visibleWindow(example, [thumbnail], 1)).toBe(true);
+  expect(visibleWindow(example, [thumbnail], 2)).toBe(false);
+});

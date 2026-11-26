@@ -23,7 +23,6 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-emoji` | `z-emoji/vX.Y.Z` | `Emoji Picker.alfredworkflow` |
 | `workflows/z-lunar` | `z-lunar/vX.Y.Z` | `Lunar Controls.alfredworkflow` |
 | `workflows/z-window-navigator` | `z-window-navigator/vX.Y.Z` | `Window Navigator.alfredworkflow` |
-| `workflows/z-window-switcher` | `z-window-switcher/vX.Y.Z` | `Window Switcher.alfredworkflow` |
 | `workflows/z-world-clock` | `z-world-clock/vX.Y.Z` | `World Clock.alfredworkflow` |
 | `workflows/z-swiss` | `z-swiss/vX.Y.Z` | `Swiss.alfredworkflow` |
 | `workflows/z-weather` | `z-weather/vX.Y.Z` | `Weather.alfredworkflow` |

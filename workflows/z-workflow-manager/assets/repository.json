@@ -130,11 +130,5 @@
     "bundle": "com.izsk.window-navigator",
     "name": "Window Navigator",
     "description": "Search and focus windows on all desktops, the active app or the current desktop"
-  },
-  {
-    "slug": "z-window-switcher",
-    "bundle": "com.izsk.window-switcher",
-    "name": "Window Switcher",
-    "description": "Search and focus windows on the current desktop only"
   }
 ]
