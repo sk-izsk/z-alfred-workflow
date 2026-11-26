@@ -57,7 +57,7 @@ export const components = (s: State): Json[] => [
       { triggers: "actioned", action: run("enter", ["{value:self.selected.uid}"]) },
     ],
     cell: {
-      height: 72,
+      height: 62,
       init: {
         "row.background": null,
         "rowTitle.colour": "labelColor",
@@ -80,7 +80,24 @@ export const components = (s: State): Json[] => [
             id: "rowFlag",
             type: "imageview",
             image: { type: "file", src: "../icon.png" },
-            constraints: { region: "left", position: "centre", size: { width: 40 } },
+            constraints: { region: "left", position: "centre", size: { width: 26, height: 26 } },
+          },
+          {
+            type: "view",
+            layout: "inline",
+            spacing: 5,
+            constraints: { region: "right", position: "centre" },
+            components: Array.from({ length: 4 }, (_, i) => ({
+              id: `tagPill${i}`,
+              type: "view",
+              layout: "inline",
+              padding: 4,
+              cornerradius: 5,
+              background: null,
+              components: [
+                { id: `tagText${i}`, type: "label", text: "", font: { size: 11 }, linebreak: "truncatetail" },
+              ],
+            })),
           },
           {
             type: "view",
@@ -93,14 +110,14 @@ export const components = (s: State): Json[] => [
                 id: "rowTitle",
                 type: "label",
                 text: "",
-                font: { size: 19, weight: "medium" },
+                font: { size: 15, weight: "medium" },
                 linebreak: "truncatetail",
               },
               {
                 id: "rowDescription",
                 type: "label",
                 text: "",
-                font: { size: 12 },
+                font: { size: 11 },
                 linebreak: "truncatetail",
               },
             ],
@@ -198,7 +215,7 @@ export const toolWindow = {
           text: "Back  {var:back_label}",
           bordered: false,
           shortcut: "{var:back_shortcut}",
-          constraints: { region: "bottom", position: "left", insets: { left: 16, bottom: 16 } },
+          constraints: { region: "bottom", position: "right", insets: { right: 16, bottom: 16 } },
           events: [
             {
               triggers: "actioned",

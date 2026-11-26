@@ -148,3 +148,14 @@ export const restartPlan = (server: Server): string => {
   }
   throw new Error("Restart requires a project package.json. Use the original terminal for other servers.");
 };
+
+export const uptime = (started: string, now = Date.now()): string => {
+  const ms = now - Date.parse(started);
+  if (!Number.isFinite(ms) || ms < 0) return "Unknown uptime";
+  const seconds = Math.floor(ms / 1000);
+  return seconds >= 3600
+    ? `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`
+    : seconds >= 60
+      ? `${Math.floor(seconds / 60)}m`
+      : `${seconds}s`;
+};

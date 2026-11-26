@@ -102,7 +102,7 @@ export const ramadanContent = (settings: Settings, year: number, month: Month): 
     {
       type: "view",
       layout: "border",
-      constraints: { region: "centre", size: { width: 820, height: 440 } },
+      constraints: { region: "centre", size: { width: 704, height: 440 } },
       components: [
         {
           type: "view",

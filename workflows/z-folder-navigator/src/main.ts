@@ -1,3 +1,4 @@
+import { openTerminal } from "../../../shared/terminal.ts";
 import { profileCommand } from "../../../shared/ui-profile.ts";
 await profileCommand(() => import("./env.ts"));
 import { profileAction } from "../../../shared/ui-profile.ts";
@@ -283,7 +284,7 @@ const main = async (): Promise<Action | void> => {
   }
   if (cmd === "copy") return copy(entry.uid);
   if (cmd === "terminal") {
-    execFileSync("/usr/bin/open", ["-a", "Terminal", containingFolder(entry)], { timeout: 5000 });
+    await openTerminal({ str }, { cwd: containingFolder(entry) });
     return {};
   }
   if (cmd === "file-actions") return finish({ folders_out: "file-actions", action_path: entry.uid });

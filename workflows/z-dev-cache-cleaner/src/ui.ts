@@ -68,46 +68,4 @@ export const print = (action: Action): void => {
   process.stdout.write(JSON.stringify(action));
 };
 
-export const sheet = (
-  id: string,
-  root: Action,
-  closeOnEscape = true,
-  backAction?: Action,
-  footerActions: Action[] = [],
-): Action => {
-  const back: Action = backAction ?? {
-    type: "json",
-    src: { sheet: { close: id } },
-  };
-  return {
-    sheet: {
-      id,
-      closeonescape: closeOnEscape,
-      root: {
-        type: "view",
-        layout: "border",
-        spacing: 4,
-        components: [
-          { ...root, constraints: { ...(root.constraints as Action | undefined), region: "centre" } },
-          {
-            type: "view",
-            layout: "inline",
-            spacing: 10,
-            constraints: { region: "bottom", position: "right", insets: { right: 16, bottom: 12 } },
-            components: [
-              {
-                id: `${id}Back`,
-                type: "button",
-                text: "Back  {var:back_label}",
-                bordered: false,
-                shortcut: "{var:back_shortcut}",
-                events: [{ triggers: "actioned", action: back }],
-              },
-              ...footerActions,
-            ],
-          },
-        ],
-      },
-    },
-  };
-};
+export { standardSheet as sheet } from "../../../shared/sheet.ts";

@@ -19,6 +19,7 @@ export type State = Frame & {
   request: string;
   history: Frame[];
   loadingSince?: number;
+  progress?: string;
 };
 const file = (id: string) => {
   if (!/^[a-f0-9-]{36}$/.test(id)) throw new Error("Reopen Mole.");

@@ -191,14 +191,18 @@ export const dashboard = (d: Dashboard) => {
               type: "button",
               text: d.primary || "Open  ↩",
               bordered: false,
-              events: [{ triggers: "actioned", action: run("open", ["{value:items.selected.uid}"]) }],
+              events: [
+                { triggers: "actioned", action: run("open", ["{value:items.selected.uid}"]) },
+              ],
             },
             {
               id: "actionsButton",
               type: "button",
               text: "Actions  {var:actions_label}",
               bordered: false,
-              events: [{ triggers: "actioned", action: run("menu", ["{value:items.selected.uid}"]) }],
+              events: [
+                { triggers: "actioned", action: run("menu", ["{value:items.selected.uid}"]) },
+              ],
             },
           ],
         },
@@ -227,11 +231,16 @@ export const dashboard = (d: Dashboard) => {
           id: "root",
           type: "view",
           layout: "border",
-          events: [{ triggers: "launched", action: [run("prepare-origin", [], false), run("launch")] }],
+          events: [
+            { triggers: "launched", action: [run("prepare-origin", [], false), run("launch")] },
+          ],
           shortcuts: [
             { shortcut: "↑", action: { type: "function", src: "items", args: "selectprevious" } },
             { shortcut: "↓", action: { type: "function", src: "items", args: "selectnext" } },
-            { shortcut: "{var:actions_shortcut}", action: run("menu", ["{value:items.selected.uid}"]) },
+            {
+              shortcut: "{var:actions_shortcut}",
+              action: run("menu", ["{value:items.selected.uid}"]),
+            },
             { shortcut: "⌘R", action: run("refresh") },
           ],
           components: [
@@ -247,14 +256,20 @@ export const dashboard = (d: Dashboard) => {
               text: "Back  {var:back_label}",
               shortcut: "{var:back_shortcut}",
               bordered: false,
-              constraints: { region: "bottom", position: "left", insets: { left: 12, bottom: 12 } },
+              constraints: {
+                region: "bottom",
+                position: "right",
+                insets: { right: 12, bottom: 12 },
+              },
               events: [
                 {
                   triggers: "actioned",
                   action: {
                     type: "json",
                     src: {
-                      finish: { variables: { [`${d.cli}_out`]: "back", swiss_return: "{var:swiss_return}" } },
+                      finish: {
+                        variables: { [`${d.cli}_out`]: "back", swiss_return: "{var:swiss_return}" },
+                      },
                     },
                   },
                 },

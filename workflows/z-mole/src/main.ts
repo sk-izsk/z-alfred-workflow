@@ -1,3 +1,4 @@
+import { openTerminal } from "../../../shared/terminal.ts";
 import { profileCommand } from "../../../shared/ui-profile.ts";
 await profileCommand(() => import("./env.ts"));
 import { execFileSync, spawn } from "node:child_process";
@@ -110,6 +111,10 @@ const render = (s: State): Action => {
                   : "Optimize System · Dry run",
         tooltip: s.status,
       },
+      query: {
+        enabled: !(s.mode !== "menu" && !s.ready && (s.status === "Loading…" || s.status === "Refreshing…")),
+      },
+      scanActivity: { opacity: 0 },
       primary: {
         enabled: s.mode === "menu" || !!s.ready,
         contenttintcolour: s.mode === "clean" ? "systemRedColor" : null,
@@ -165,7 +170,22 @@ const main = async (): Promise<Action | void> => {
   if (cmd === "populate") return merge(render(s), { pulse: { interval: 0 } });
   if (cmd === "poll") {
     if (s.status === "Loading…" || s.status === "Refreshing…") {
-      if (!s.loadingSince || Date.now() - s.loadingSince < 100000) return {};
+      if (!s.loadingSince || Date.now() - s.loadingSince < 100000) {
+        const seconds = Math.max(0, Math.floor((Date.now() - (s.loadingSince || Date.now())) / 1000));
+        return update(
+          {
+            items: { placeholder: s.progress || "Scanning system… No changes are being made." },
+            scanActivity: { opacity: 1, progress: (Date.now() % 3000) / 3000 },
+            statusLabel: {
+              text: `Scanning${".".repeat(1 + (seconds % 3))} ${seconds}s · ${s.mode === "clean" || s.mode === "optimize" ? "Dry run" : "Read-only"}`,
+              tooltip: s.progress || "Read-only preview in progress",
+            },
+            query: { enabled: false },
+            primary: { enabled: false },
+          },
+          true,
+        );
+      }
       s.status = "Mole preview timed out. Use Refresh to try again.";
       s.items = [];
       s.ready = false;
@@ -185,6 +205,7 @@ const main = async (): Promise<Action | void> => {
     if (value !== s.request) return { pulse: { interval: 0 } };
     if (s.mode === "menu") return merge(render(s), { pulse: { interval: 0 } });
     s.loadingSince = Date.now();
+    s.progress = "";
     const action = render(s);
     // Long CLI previews must not hold Alfred's pulse response open.
     const child = spawn(process.execPath, [process.argv[1]!, "load-worker", id, value], {
@@ -201,7 +222,15 @@ const main = async (): Promise<Action | void> => {
     if (value !== s.request || s.mode === "menu") return {};
 
     try {
-      const output = await run(s.mode, s.path),
+      let lastProgress = 0;
+      const output = await run(s.mode, s.path, (line) => {
+          if (Date.now() - lastProgress < 250) return;
+          lastProgress = Date.now();
+          const current = read(id);
+          if (current.request !== value || current.ready) return;
+          current.progress = line;
+          save(current);
+        }),
         latest = read(id);
       if (latest.request !== value) return {};
       latest.items =
@@ -224,6 +253,13 @@ const main = async (): Promise<Action | void> => {
       return {};
     }
   }
+  if (
+    s.mode !== "menu" &&
+    !s.ready &&
+    (s.status === "Loading…" || s.status === "Refreshing…") &&
+    ["query", "select", "refresh", "open"].includes(cmd)
+  )
+    return {};
   if (cmd === "query") {
     s.query = value;
     save(s);
@@ -268,13 +304,13 @@ const main = async (): Promise<Action | void> => {
           },
           {
             type: "label",
-            text: "The preview is read-only. Continuing launches the real command in Terminal, where Mole handles its prompts. Cleanup can permanently remove caches and files; optimization changes system services. Review the preview first.",
+            text: "The preview is read-only. Continuing launches the real command in your configured terminal, where Mole handles its prompts. Cleanup can permanently remove caches and files; optimization changes system services. Review the preview first.",
             linebreak: "wordwrap",
             constraints: { region: "centre", size: { width: 550, height: 100 } },
           },
           {
             type: "button",
-            text: `Run ${s.mode} in Terminal`,
+            text: `Run ${s.mode} in ${str("terminal_app", "Ghostty")}`,
             constraints: { region: "bottom" },
             events: [
               {
@@ -310,15 +346,7 @@ const main = async (): Promise<Action | void> => {
     if (value !== s.mode || args[1] !== s.request || !s.items.length || !s.ready)
       throw new Error("Refresh and review the preview before running.");
     const command = execution(value);
-    execFileSync(
-      "/usr/bin/osascript",
-      [
-        "-e",
-        'on run argv\ntell application "Terminal"\nactivate\ndo script (item 1 of argv)\nend tell\nend run',
-        command,
-      ],
-      { timeout: 5000 },
-    );
+    await openTerminal({ str }, { command });
     return { sheet: { close: "review" } };
   }
   if (cmd === "copy")

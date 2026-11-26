@@ -35,12 +35,12 @@
   "window": {
     "title": "Weather",
     "size": {
-      "height": 800,
+      "height": 540,
       "width": 780
     },
     "minsize": {
       "width": 560,
-      "height": 540
+      "height": 420
     },
     "root": {
       "id": "root",

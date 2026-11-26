@@ -25,7 +25,7 @@ export const commandArgs = (mode: Mode, path = ""): string[] => {
   if (mode === "clean" || mode === "optimize") return [mode, "--dry-run"];
   throw new Error("Choose a Mole command.");
 };
-export const run = async (mode: Mode, path = ""): Promise<string> => {
+export const run = async (mode: Mode, path = "", progress?: (line: string) => void): Promise<string> => {
   const pending = exec(executable(), commandArgs(mode, path), {
     timeout: 90000,
     maxBuffer: 8000000,
@@ -36,6 +36,14 @@ export const run = async (mode: Mode, path = ""): Promise<string> => {
       NO_COLOR: "1",
     },
   });
+  if (progress && (mode === "clean" || mode === "optimize")) {
+    let buffer = "";
+    pending.child.stdout?.on("data", (chunk: string | Buffer) => {
+      buffer = (buffer + String(chunk)).slice(-16000);
+      const line = cleanOutput(buffer).at(-1);
+      if (line) progress(line.slice(0, 220));
+    });
+  }
   pending.child.stdin?.end();
   return (await pending).stdout;
 };

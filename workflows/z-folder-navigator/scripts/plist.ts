@@ -1,3 +1,4 @@
+import { terminalConfiguration } from "../../../shared/terminal.ts";
 import { hyperConfiguration } from "../../../shared/ui-profile.ts";
 import pkg from "../package.json" with { type: "json" };
 const text = (variable: string, label: string, value: string, description: string) => ({
@@ -106,6 +107,7 @@ export const infoPlist = {
       config: { default: true, text: "Show external/mounted drives in the starting list" },
     },
     ...hyperConfiguration(),
+    ...terminalConfiguration(),
     text("actions_shortcut", "Actions shortcut", "⌘K", "Open actions."),
     text("node_path", "Node.js executable", "", "Optional absolute executable path."),
     {

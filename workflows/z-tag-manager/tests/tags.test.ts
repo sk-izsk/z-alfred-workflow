@@ -115,3 +115,17 @@ test("default discovery searches the entire indexed system and filters at source
   expect(tagPredicate("Paid")).toContain('kMDItemUserTags == "*Paid*"cd');
   expect(tagPredicate('x" || bad')).toContain('x\\"');
 });
+
+test("file rows show native tag pills and keep full names in tooltips", () => {
+  const s = create("");
+  s.index.entries = [
+    { path, name: "Example.txt", tags: ["Paid", "Development", "Reference", "Fourth", "Fifth"] },
+  ];
+  save(s);
+  const action = invoke("query", s.id, s.level, "");
+  const row = action.update.ids.items.data.src[0];
+  expect(row["tagText0.text"]).toBe("Paid");
+  expect(row["tagText3.text"]).toBe("+2");
+  expect(row["tagText3.tooltip"]).toBe("Fourth, Fifth");
+  expect(JSON.stringify(components(s))).toContain('"id":"tagPill0"');
+});

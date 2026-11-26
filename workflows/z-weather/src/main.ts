@@ -166,7 +166,7 @@ const hourly = (s: State): Action => {
             "hourIcon.contenttintcolour": condition(h.weatherCode, first(h.weatherDesc)).colour,
           })),
         },
-        constraints: { region: "centre", size: { width: 740, height: 360 } },
+        constraints: { region: "centre", size: { width: 704, height: 360 } },
         cell: {
           height: 43,
           root: {

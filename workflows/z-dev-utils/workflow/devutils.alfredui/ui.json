@@ -141,9 +141,9 @@
           "bordered": false,
           "constraints": {
             "region": "bottom",
-            "position": "left",
+            "position": "right",
             "insets": {
-              "left": 12,
+              "right": 12,
               "bottom": 12
             }
           },

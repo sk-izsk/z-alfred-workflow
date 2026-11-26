@@ -178,3 +178,53 @@ test("noninteractive previews close stdin and a completed worker is returned by 
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("slow clean previews stream progress and never send a close or finish action", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "mole-progress-test-")),
+    oldPath = process.env.mole_path,
+    oldCache = process.env.alfred_workflow_cache;
+  process.env.mole_path = join(dir, "mole");
+  process.env.alfred_workflow_cache = dir;
+  writeFileSync(
+    process.env.mole_path,
+    '#!/bin/sh\nprintf "➤ User essentials\\n"\n/bin/sleep 0.6\nprintf " ○ Cache · 1MB dry\\nPotential space: 1MB · 1 items\\n"\n',
+    { mode: 0o700 },
+  );
+  try {
+    const s = create("", "");
+    s.mode = "clean";
+    s.ready = false;
+    s.status = "Loading…";
+    save(s);
+    const call = (cmd: string) =>
+      JSON.parse(
+        execFileSync(process.execPath, [join(import.meta.dir, "../src/main.ts"), cmd, s.id, s.request], {
+          encoding: "utf8",
+          env: process.env,
+        }),
+      );
+    const start = call("load");
+    expect(start.finish).toBeUndefined();
+    const deadline = Date.now() + 4000;
+    while (!read(s.id).progress && Date.now() < deadline) await Bun.sleep(20);
+    expect(read(s.id).progress).toContain("User essentials");
+    const loading = call("poll");
+    expect(loading.finish).toBeUndefined();
+    expect(loading.update.ids.primary.enabled).toBe(false);
+    expect(loading.update.ids.scanActivity.opacity).toBe(1);
+    expect(loading.update.ids.items.placeholder).toContain("User essentials");
+    expect(call("refresh")).toEqual({});
+    while (!read(s.id).ready && Date.now() < deadline) await Bun.sleep(20);
+    const done = call("poll");
+    expect(done.finish).toBeUndefined();
+    expect(done.pulse.interval).toBe(0);
+    expect(done.update.ids.scanActivity.opacity).toBe(0);
+    expect(read(s.id).items[0]!.badge).toBe("1MB");
+  } finally {
+    if (oldPath === undefined) delete process.env.mole_path;
+    else process.env.mole_path = oldPath;
+    if (oldCache === undefined) delete process.env.alfred_workflow_cache;
+    else process.env.alfred_workflow_cache = oldCache;
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

@@ -2031,23 +2031,79 @@ The Brew icon and feature inspiration are from Raycast Brew by nhojb and contrib
 				<key>pairs</key>
 				<array>
 					<array>
+						<string>Ghostty</string>
+						<string>Ghostty</string>
+					</array>
+					<array>
 						<string>Terminal</string>
 						<string>Terminal</string>
 					</array>
 					<array>
+						<string>iTerm2</string>
 						<string>iTerm</string>
-						<string>iTerm</string>
+					</array>
+					<array>
+						<string>kitty</string>
+						<string>kitty</string>
+					</array>
+					<array>
+						<string>WezTerm</string>
+						<string>WezTerm</string>
+					</array>
+					<array>
+						<string>Alacritty</string>
+						<string>Alacritty</string>
+					</array>
+					<array>
+						<string>Custom executable…</string>
+						<string>custom</string>
 					</array>
 				</array>
 			</dict>
 			<key>description</key>
-			<string>Commands run visibly after review.</string>
+			<string>Used for terminal commands and Open Terminal Here. Install the selected terminal separately.</string>
 			<key>label</key>
-			<string>Run commands in</string>
+			<string>Terminal application</string>
 			<key>type</key>
 			<string>popupbutton</string>
 			<key>variable</key>
 			<string>terminal_app</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string>/absolute/path/to/terminal</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Only used when Custom executable is selected.</string>
+			<key>label</key>
+			<string>Custom terminal executable</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>terminal_custom</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>["-e","/bin/zsh","-lc","{command}"]</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>JSON argument array. {command} is the command plus an interactive shell; {cwd} is the working folder. No shell interpolation is applied to the argument array.</string>
+			<key>label</key>
+			<string>Custom terminal arguments (JSON)</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>terminal_custom_args</string>
 		</dict>
 		<dict>
 			<key>config</key>

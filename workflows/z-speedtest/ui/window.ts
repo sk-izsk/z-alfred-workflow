@@ -318,6 +318,11 @@ export const speedtestWindow = {
               opacity: 0,
               constraints: { size: { width: 0, height: 0 } },
             },
+            {
+              ...button("escapeWindowKey", "", json({ finish: {} }), "⎋"),
+              opacity: 0,
+              constraints: { size: { width: 0, height: 0 } },
+            },
             hidden("copyKey", "⌘C", "copy-summary"),
             hidden("copySectionKey", "⇧⌘C", "copy-section"),
             hidden("openKey", "⌥↩", "open"),

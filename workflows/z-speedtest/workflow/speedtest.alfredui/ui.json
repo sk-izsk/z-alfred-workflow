@@ -421,6 +421,31 @@
               }
             },
             {
+              "id": "escapeWindowKey",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "shortcut": "⎋",
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "json",
+                    "src": {
+                      "finish": {}
+                    }
+                  }
+                }
+              ],
+              "opacity": 0,
+              "constraints": {
+                "size": {
+                  "width": 0,
+                  "height": 0
+                }
+              }
+            },
+            {
               "id": "copyKey",
               "type": "button",
               "text": "",

@@ -7,3 +7,5 @@ Uses macOS system_profiler for metadata and IOBluetooth for connection requests.
 Visible configurable Hyper+B returns one level or to the previous Dev launcher session. Standard width 780, screen-aware sizing, and compact footer labels follow UI_CONVENTIONS.md. Independent workflow requiring Node.js or Bun. Build with `bun run check`, `bun run package`, install locally with `bun run link`.
 
 Built with help from AI tools. Inspired by [Toothpick](https://github.com/raycast/extensions/tree/c4e0f79975a011e16032382f2d1263f712f8b43c/extensions/toothpick/). No connection was changed for verification.
+
+The scanner requests the full macOS report: the mini report omits device addresses on current macOS. Devices with restricted addresses remain visible with connection actions disabled. Available case/left/right/device battery readings appear at the right of each row; absent readings are not invented.

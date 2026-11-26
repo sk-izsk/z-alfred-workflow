@@ -95,6 +95,7 @@ const main = async (): Promise<Action | void> => {
     return controls(s);
   }
   if (cmd === "slider-change") {
+    if (value === "about:blank#action=close") return { finish: {} };
     if (value === "about:blank#action=back") return finish({ lunarui_out: "back", swiss_return: s.returnTo });
     if (value === "about:blank#action=menu") cmd = "menu";
     else {

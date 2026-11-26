@@ -1,4 +1,5 @@
 import { dashboard, type Json } from "../../../shared/dashboard.ts";
+import { referenceCell } from "../../../shared/reference-rows.ts";
 const ui = dashboard({
   bundle: "com.izsk.dev-servers",
   cli: "devservers",
@@ -12,6 +13,10 @@ const initial = JSON.stringify(ui.window).replaceAll("swiss_return", "dev_return
 export const toolWindow = JSON.parse(initial);
 export const components = (query = ""): Json[] => {
   const values = structuredClone(ui.components(query));
+  values[1]!.components[0].cell = referenceCell("server", 46);
+  values[1]!.components[0].cell.root.components[0].components[2].components[1].constraints.size.width = 0;
+  const accessories = values[1]!.components[0].cell.root.components[0].components[1].components;
+  accessories.reverse();
   values[0]!.spacing = 10;
   values[0]!.components.push({
     id: "filter",

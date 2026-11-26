@@ -133,9 +133,9 @@
           "shortcut": "{var:back_shortcut}",
           "constraints": {
             "region": "bottom",
-            "position": "left",
+            "position": "right",
             "insets": {
-              "left": 16,
+              "right": 16,
               "bottom": 16
             }
           },

@@ -29,3 +29,7 @@ Behavioral reference: [Raycast Mole](https://github.com/raycast/extensions/tree/
 Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.
 
 Long CLI previews run in a separate worker. The native UI polls session results once a second, keeping Back/search responsive; preview stdin is closed and execution has a 90-second timeout. Errors replace the loading placeholder.
+
+Terminal actions use **Terminal application** in Workflow Configuration: Ghostty, Terminal, iTerm2, kitty, WezTerm, Alacritty or a custom executable. Ghostty uses its native AppleScript API (verified with installed Ghostty 1.4); macOS may request Automation permission. Custom arguments are a JSON array with `{command}` and `{cwd}` placeholders. Existing explicit terminal choices are preserved. No terminal is installed automatically.
+
+Read-only previews show an animated busy indicator, elapsed time and the latest CLI scan line while running. Clean/Optimize stay disabled until a valid preview completes. Load completion and failure never send a finish/close action; Back and Escape remain user actions. Alfred’s embedded window can still hide when another application takes focus; the configurable Separate window option is available for persistent presentation.

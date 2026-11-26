@@ -20,13 +20,21 @@ export const toneColour = (tone = "neutral"): string =>
   })[tone] || "secondaryLabelColor";
 export const toneBackground = (tone = "neutral"): Json => ({
   light:
-    { green: "#328B601A", yellow: "#AA84251A", orange: "#CC88331A", red: "#DC4B501A", blue: "#3189D71A" }[
-      tone
-    ] || "#88888822",
+    {
+      green: "#328B601A",
+      yellow: "#AA84251A",
+      orange: "#CC88331A",
+      red: "#DC4B501A",
+      blue: "#3189D71A",
+    }[tone] || "#88888822",
   dark:
-    { green: "#86C88D22", yellow: "#D4B26422", orange: "#D79A6422", red: "#E97C8422", blue: "#7CB5ED22" }[
-      tone
-    ] || "#88888822",
+    {
+      green: "#86C88D22",
+      yellow: "#D4B26422",
+      orange: "#D79A6422",
+      red: "#E97C8422",
+      blue: "#7CB5ED22",
+    }[tone] || "#88888822",
 });
 const symbol = (name = "doc"): string =>
   ({
@@ -178,8 +186,21 @@ export const referenceData = (rows: ReferenceRow[], prefix: string, headers = tr
   return data;
 };
 /** Section headings are display rows, not an extra navigation level. */
-export const skipHeading = (rows: Json[], selected: string, previous: string, list = "items"): Json => {
+export const skipHeading = (
+  rows: Json[],
+  selected: string,
+  previous: string,
+  list = "items",
+): Json => {
   const next = rows.findIndex((r) => r.uid === selected),
     before = rows.findIndex((r) => r.uid === previous);
-  return { functions: { ids: { [list]: next >= before ? "selectnext" : "selectprevious" } } };
+  const direction = next >= before ? 1 : -1;
+  let index = next;
+  while (index >= 0 && index < rows.length && rows[index]?.header) index += direction;
+  const uid =
+    rows[index]?.uid ||
+    (rows.some((r) => r.uid === previous && !r.header)
+      ? previous
+      : rows.find((r) => !r.header)?.uid || "");
+  return { update: { ids: { [list]: { select: uid } } } };
 };

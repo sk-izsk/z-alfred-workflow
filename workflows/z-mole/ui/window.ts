@@ -13,6 +13,7 @@ export const components = (s: State): Json[] => {
   const values = structuredClone(ui.components(s.query));
   values[0]!.components[0].placeholder =
     s.mode === "analyze" ? `Browsing ${s.path}…` : s.mode === "clean" ? "Search cleanable items…" : "Search…";
+  values[0]!.components[0].enabled = s.mode === "menu" || !!s.ready;
   values[0]!.components[0].events[1].action = ui.run("open");
   values[0]!.components.unshift({
     type: "button",
@@ -27,6 +28,7 @@ export const components = (s: State): Json[] => {
   list.padding = 8;
   list.spacing = 2;
   if (s.mode === "status") {
+    list.cell.root.components[0].components[2].components[1].constraints.size.width = 0;
     list.constraints = { region: "left", size: { width: 300 } };
     values[1]!.components.push({
       id: "details",
@@ -75,7 +77,17 @@ export const components = (s: State): Json[] => {
       },
     });
   }
-  const footer = values[2]!.components[1].components;
+  values[2]!.components.unshift({
+    id: "scanActivity",
+    type: "progress",
+    style: "round",
+    progress: 0,
+    opacity: 0,
+    constraints: { region: "left", size: { width: 16, height: 16 } },
+  });
+  const footer = values[2]!.components.find(
+    (c: Json) => c.type === "view" && c.layout === "inline",
+  ).components;
   footer[1].enabled = s.mode === "menu" || !!s.ready;
   footer[1].text =
     s.mode === "status"

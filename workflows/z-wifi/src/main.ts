@@ -37,7 +37,8 @@ const render = (s: State): Action => {
       },
       primary: { text: selected?.connected ? "Disconnect  ↩" : "Connect  ↩" },
       statusLabel: {
-        text: `${s.rows.length} networks · ${s.note || (s.power ? "Wi-Fi On" : "Wi-Fi Off")} · ${s.paused ? "Paused" : new Date().toLocaleTimeString()}`,
+        text: `${s.rows.length} networks · ${s.power ? "Wi-Fi On" : "Wi-Fi Off"}${s.paused ? " · Paused" : ""}`,
+        tooltip: `${s.note}${s.note ? " · " : ""}Updated ${new Date().toLocaleTimeString()}`,
       },
     },
     true,

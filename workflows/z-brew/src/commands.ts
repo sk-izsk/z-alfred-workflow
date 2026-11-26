@@ -181,7 +181,7 @@ const reportSheet = (title: string, text: string): Action =>
         editable: false,
         selectable: true,
         font: { size: 13 },
-        constraints: { region: "centre", size: { width: 760, height: 400 } },
+        constraints: { region: "centre", size: { width: 704, height: 400 } },
       },
       button("closeSheet", "Close  ⎋", json({ sheet: { close: "detailsSheet" } }), {
         shortcut: "⎋",

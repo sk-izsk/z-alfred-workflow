@@ -28,13 +28,27 @@ const run = (command: string, s: State, args: string[] = [], async = false): Act
   async,
 });
 const visible = (s: State): Entry[] => s.index.entries.filter((entry) => matches(entry, s.query));
+const pills = (tags: string[] = []): Action =>
+  Object.fromEntries(
+    Array.from({ length: 4 }, (_, i) => {
+      const text = i === 3 && tags.length > 4 ? `+${tags.length - 3}` : tags[i] || "";
+      return [
+        [`tagText${i}.text`, text.length > 14 ? text.slice(0, 13) + "…" : text],
+        [`tagText${i}.tooltip`, i === 3 ? tags.slice(3).join(", ") : text],
+        [`tagPill${i}.background`, text ? { light: "#55555520", dark: "#BBBBBB25" } : null],
+      ];
+    }).flat(),
+  );
 const rows = (s: State): Action => {
   const values =
     s.mode === "list"
       ? visible(s).map((entry) => ({
           uid: entry.path,
           "rowTitle.text": entry.name,
-          "rowDescription.text": entry.tags.join(" · "),
+          "rowTitle.tooltip": entry.name,
+          "rowDescription.tooltip": entry.path,
+          "rowDescription.text": entry.path,
+          ...pills(entry.tags),
           "rowFlag.image.type": "fileicon",
           "rowFlag.image.src": entry.path,
         }))
@@ -45,6 +59,7 @@ const rows = (s: State): Action => {
                   uid: "+",
                   "rowTitle.text": `Add “${s.query.trim()}”`,
                   "rowDescription.text": "Enter to add this tag",
+                  ...pills(),
                   "rowFlag.image.type": "symbol",
                   "rowFlag.image.src": "plus.circle",
                 },
@@ -56,6 +71,7 @@ const rows = (s: State): Action => {
               uid: `tag:${tag}`,
               "rowTitle.text": tag,
               "rowDescription.text": "Enter to remove",
+              ...pills(),
               "rowFlag.image.type": "symbol",
               "rowFlag.image.src": "tag",
             })),

@@ -32,35 +32,7 @@ export const update = (ids: Record<string, Action>, relayout = false): Action =>
 });
 export const fn = (ids: Record<string, string | string[]>): Action => ({ functions: { ids } });
 export const vars = (variables: Record<string, unknown>): Action => ({ variables });
-export const sheet = (id: string, root: Action, closeOnEscape = true): Action => {
-  const back: Action = {
-    type: "json",
-    src: { sheet: { close: id } },
-  };
-  return {
-    sheet: {
-      id,
-      closeonescape: closeOnEscape,
-      root: {
-        type: "view",
-        layout: "border",
-        spacing: 4,
-        components: [
-          { ...root, constraints: { ...(root.constraints as Action | undefined), region: "centre" } },
-          {
-            id: `${id}Back`,
-            type: "button",
-            text: "Back  {var:back_label}",
-            bordered: false,
-            shortcut: "{var:back_shortcut}",
-            constraints: { region: "bottom", position: "right", insets: { right: 16, bottom: 12 } },
-            events: [{ triggers: "actioned", action: back }],
-          },
-        ],
-      },
-    },
-  };
-};
+export { standardSheet as sheet } from "../../../shared/sheet.ts";
 export const closeSheet = (id: string): Action => ({ sheet: { close: id } });
 export const finish = (variables: Record<string, string> = {}, args = ""): Action => ({
   finish: { args, variables },

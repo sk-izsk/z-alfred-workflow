@@ -329,7 +329,7 @@ export const formSheet = (form: FormState): Json => {
               type: "view",
               layout: "border",
               spacing: 16,
-              constraints: { size: { width: 720 } },
+              constraints: { size: { width: 680 } },
               components: [
                 label(`label_${f.name}`, f.type === "check" ? "" : f.title, {
                   textalign: "right",
@@ -350,16 +350,15 @@ export const formSheet = (form: FormState): Json => {
                 font: { size: 12 },
                 constraints: { region: "top" },
               }),
-              button("formCancel", "Back  {var:back_label}", run("form-back", formArgs(form), false), {
-                shortcut: "{var:back_shortcut}",
-                constraints: { region: "left" },
-              }),
               {
                 type: "view",
                 layout: "inline",
                 spacing: 14,
                 constraints: { region: "right" },
                 components: [
+                  button("formCancel", "Back  {var:back_label}", run("form-back", formArgs(form), false), {
+                    shortcut: "{var:back_shortcut}",
+                  }),
                   ...(page
                     ? [button("formPrevious", "Previous", run("form-page", ["-1", ...formArgs(form)]))]
                     : []),
@@ -373,7 +372,7 @@ export const formSheet = (form: FormState): Json => {
                         ...formArgs(form),
                       ]),
                     ],
-                    { shortcut: "⌘↩", bordered: true },
+                    { shortcut: "⌘↩", bordered: false },
                   ),
                 ],
               },
@@ -402,11 +401,11 @@ export const detailSheet = (title: string, markdown: string): Json => ({
           id: "detailContent",
           type: "markdownarea",
           text: markdown,
-          constraints: { region: "centre", size: { width: 800, height: 460 } },
+          constraints: { region: "centre", size: { width: 704, height: 460 } },
         },
         button("detailClose", "Back  {var:back_label}", json({ sheet: { close: "detailSheet" } }), {
           shortcut: "{var:back_shortcut}",
-          constraints: { region: "bottom" },
+          constraints: { region: "bottom", position: "right" },
         }),
       ],
     },

@@ -3,7 +3,7 @@ await profileCommand(() => import("./env.ts"));
 import { execFileSync } from "node:child_process";
 import { str, bool } from "./env.ts";
 import { create, read, save, type State } from "./state.ts";
-import { scan, connect } from "./bluetooth.ts";
+import { scan, connect, validAddress } from "./bluetooth.ts";
 import { components } from "../ui/window.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { merge, vars, update, finish, popup, menuItem, copy, open, errorStatus, type Action } from "./ui.ts";
@@ -29,7 +29,23 @@ const render = (s: State): Action => {
                 ? "keyboard"
                 : "antenna.radiowaves.left.and.right",
             "rowTitle.text": d.name,
-            "rowDescription.text": `${d.connected ? "Connected" : "Disconnected"} · ${d.type}${d.battery ? " · " + d.battery : ""}`,
+            "rowDescription.text": `${d.connected ? "Connected" : "Disconnected"} · ${d.type}${d.hidden ? " · Address unavailable from macOS" : ""}`,
+            "rowIcon.contenttintcolour": d.connected ? "systemBlueColor" : "secondaryLabelColor",
+            ...Object.fromEntries(
+              Array.from({ length: 3 }, (_, i) => {
+                const part = d.batteries?.[i];
+                return [
+                  [`battery${i}.opacity`, part ? 1 : 0],
+                  [`batteryText${i}.text`, part ? `${part.percent}%` : ""],
+                  [`battery${i}.tooltip`, part ? `${part.part} battery` : ""],
+                  [`batteryIcon${i}.image.type`, "symbol"],
+                  [
+                    `batteryIcon${i}.image.src`,
+                    part?.part === "left" ? "l.circle" : part?.part === "right" ? "r.circle" : "battery.100",
+                  ],
+                ];
+              }).flat(),
+            ),
           })),
         },
         select: s.selected,
@@ -39,7 +55,10 @@ const render = (s: State): Action => {
         items: ["All", "Connected", "Disconnected"].map((value) => ({ text: value, value })),
         selected: s.filter,
       },
-      primary: { text: selected?.connected ? "Disconnect  ↩" : "Connect  ↩" },
+      primary: {
+        text: selected?.connected ? "Disconnect  ↩" : "Connect  ↩",
+        enabled: !!selected && validAddress(selected.id),
+      },
       statusLabel: {
         text: `${s.rows.length} paired · ${s.paused ? "Paused" : new Date().toLocaleTimeString()}`,
       },
@@ -95,7 +114,12 @@ const main = async (): Promise<Action | void> => {
     s.selected = value;
     save(s);
     return update(
-      { primary: { text: s.rows.find((d) => d.id === value)?.connected ? "Disconnect  ↩" : "Connect  ↩" } },
+      {
+        primary: {
+          text: s.rows.find((d) => d.id === value)?.connected ? "Disconnect  ↩" : "Connect  ↩",
+          enabled: validAddress(value),
+        },
+      },
       true,
     );
   }
@@ -122,8 +146,12 @@ const main = async (): Promise<Action | void> => {
     return popup("actionsButton", [
       ...(d
         ? [
-            menuItem(d.connected ? "Disconnect" : "Connect", ["open", id, d.id]),
-            menuItem("Copy MAC Address", ["copy", id, d.id]),
+            ...(validAddress(d.id)
+              ? [
+                  menuItem(d.connected ? "Disconnect" : "Connect", ["open", id, d.id]),
+                  menuItem("Copy MAC Address", ["copy", id, d.id]),
+                ]
+              : []),
             menuItem("Copy Device Data", ["data", id, d.id]),
           ]
         : []),
@@ -133,7 +161,10 @@ const main = async (): Promise<Action | void> => {
       menuItem("Workflow Configuration…", ["configure", id]),
     ]);
   if (!d) throw new Error("Select a Bluetooth device.");
-  if (cmd === "copy") return copy(d.id);
+  if (cmd === "copy") {
+    if (!validAddress(d.id)) throw new Error("macOS did not expose this device address.");
+    return copy(d.id);
+  }
   if (cmd === "data") return copy(JSON.stringify(d, null, 2));
   if (cmd === "open") {
     await connect(d.id, !d.connected);

@@ -1,3 +1,4 @@
+import { standardSheet } from "../../../shared/sheet.ts";
 import { profileCommand } from "../../../shared/ui-profile.ts";
 await profileCommand(() => import("./env.ts"));
 import { launchInput, backVariables, performBack } from "./navigation.ts";
@@ -130,46 +131,28 @@ const begin = (previous: string): Json => {
   ((result.update as Json).ids as Json).searchField = { text: "" };
   return result;
 };
-const clearConfirmation = (): Json => ({
-  sheet: {
-    id: "clearSheet",
-    closeonescape: true,
-    root: {
-      type: "view",
-      layout: "inline",
-      direction: "vertical",
-      padding: 24,
-      spacing: 16,
-      components: [
-        { type: "label", text: "Clear CLI Cache?", font: { size: 18, weight: "semibold" } },
-        {
-          type: "label",
-          text: "Clears this workflow’s test data and exported images. Your installed CLI is preserved.",
-        },
-        {
-          type: "button",
-          text: "Clear Cache",
-          shortcut: "↩",
-          events: [{ triggers: "actioned", action: run("clear") }],
-        },
-        {
-          type: "button",
-          text: "Back  {var:back_label}",
-          shortcut: "{var:back_shortcut}",
-          events: [
-            {
-              triggers: "actioned",
-              action: {
-                type: "json",
-                src: { sheet: { close: "clearSheet" } },
-              },
-            },
-          ],
-        },
-      ],
-    },
-  },
-});
+const clearConfirmation = (): Json =>
+  standardSheet("clearSheet", {
+    type: "view",
+    layout: "inline",
+    direction: "vertical",
+    padding: 24,
+    spacing: 16,
+    components: [
+      { type: "label", text: "Clear CLI Cache?", font: { size: 18, weight: "semibold" } },
+      {
+        type: "label",
+        text: "Clears this workflow’s test data and exported images. Your installed CLI is preserved.",
+      },
+      {
+        type: "button",
+        text: "Clear Cache  ↩",
+        shortcut: "↩",
+        constraints: { region: "bottom" },
+        events: [{ triggers: "actioned", action: run("clear") }],
+      },
+    ],
+  });
 const item = (text: string, cmd: string, args: string[] = []) => ({ text, action: run(cmd, args, true) });
 const actions = (s: State): Json => {
   return {

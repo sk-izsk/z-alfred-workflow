@@ -139,7 +139,7 @@ export const scan = async (): Promise<Snapshot> => {
   const device = hardware(await run("/usr/sbin/networksetup", ["-listallhardwareports"]));
   if (!device) return { device: "", power: false, rows: [], note: "No Wi-Fi interface detected." };
   const [report, preferred, power, summary] = await Promise.all([
-    run("/usr/sbin/system_profiler", ["SPAirPortDataType", "-json", "-detailLevel", "mini"], 15000),
+    run("/usr/sbin/system_profiler", ["SPAirPortDataType", "-json", "-detailLevel", "full"], 15000),
     run("/usr/sbin/networksetup", ["-listpreferredwirelessnetworks", device]),
     run("/usr/sbin/networksetup", ["-getairportpower", device]),
     run("/usr/sbin/ipconfig", ["getsummary", device]).catch(() => ""),

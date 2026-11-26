@@ -26,3 +26,5 @@ Data: [Unicode emoji-test 17.0](https://www.unicode.org/Public/17.0.0/emoji/emoj
 Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.
 
 Choose **List** or **Grid** above the results. The layout is remembered; switching keeps the current search, category and selected emoji. Arrow keys navigate the tile grid.
+
+![Native emoji grid with adjacent category and layout selectors](assets/grid.png)

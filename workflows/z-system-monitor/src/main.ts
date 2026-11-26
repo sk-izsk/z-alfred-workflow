@@ -1,7 +1,7 @@
 import { profileCommand } from "../../../shared/ui-profile.ts";
 await profileCommand(() => import("./env.ts"));
 import { execFileSync } from "node:child_process";
-import { detailRows } from "../../../shared/dashboard.ts";
+import { referenceData, skipHeading } from "../../../shared/reference-rows.ts";
 import { profileAction } from "../../../shared/ui-profile.ts";
 import { str, bool } from "./env.ts";
 import { create, read, save, type State } from "./state.ts";
@@ -19,6 +19,53 @@ const categories = [
 ];
 const filtered = (s: State) =>
   categories.filter((c) => c.name.toLowerCase().includes(s.query.toLowerCase().trim()));
+const tone = (text: string, power = false): string => {
+  const n = Number.parseFloat(text);
+  return !Number.isFinite(n)
+    ? "neutral"
+    : power
+      ? n < 20
+        ? "red"
+        : "green"
+      : n >= 90
+        ? "red"
+        : n >= 60
+          ? "yellow"
+          : "green";
+};
+const sidebar = (s: State) =>
+  referenceData(
+    filtered(s).map((c) => ({
+      ...c,
+      group: c.id === "system" ? "Overview" : c.name,
+      badge:
+        c.id === "disks"
+          ? s.sample?.sections.disks?.find(([key]) => key === "/")?.[1].match(/([\d.]+)%/)?.[0] ||
+            s.sample?.badges.disks ||
+            "…"
+          : c.id === "system"
+            ? ""
+            : s.sample?.badges[c.id] || "…",
+      tone: tone(s.sample?.badges[c.id] || "", c.id === "power"),
+    })),
+    "monitor",
+  );
+const detailData = (s: State) =>
+  referenceData(
+    (s.sample?.sections[s.selected] || []).map(([name, value], i) => ({
+      id: String(i),
+      name,
+      badge: value,
+      group: name.startsWith("#") ? "Top Processes" : name.startsWith("Core ") ? "Per-Core" : undefined,
+      tone: /%/.test(value) ? tone(value, s.selected === "power") : "neutral",
+    })),
+    "metric",
+  ).map((row) => {
+    for (const key of ["metricIcon.image.type", "metricIcon.image.src", "metricIcon.contenttintcolour"])
+      delete row[key];
+    if (!row.header && !/%/.test(row["metricBadgeLabel.text"])) row["metricBadge.background"] = null;
+    return row;
+  });
 const render = (s: State): Action => {
   const visible = filtered(s);
   if (!visible.some((c) => c.id === s.selected)) s.selected = visible[0]?.id || "";
@@ -27,17 +74,12 @@ const render = (s: State): Action => {
     {
       items: {
         data: {
-          src: visible.map((c) => ({
-            uid: c.id,
-            "rowTitle.text": c.name,
-            "rowDescription.text": s.sample?.badges[c.id] || "Loading…",
-            "rowIcon.image.src": c.icon,
-          })),
+          src: sidebar(s),
         },
         select: s.selected,
         placeholder: "No matching section",
       },
-      details: { data: { src: detailRows(s.sample?.sections[s.selected] || []) } },
+      details: { data: { src: detailData(s) } },
       statusLabel: {
         text: s.sample
           ? `${s.paused ? "Paused · " : ""}Updated ${new Date(s.sample.at).toLocaleTimeString()}`
@@ -81,10 +123,11 @@ const main = async (): Promise<Action | void> => {
     return render(s);
   }
   if (cmd === "select") {
+    if (args[0]?.startsWith("heading:")) return skipHeading(sidebar(s), args[0], s.selected);
     if (!categories.some((c) => c.id === args[0]) || s.selected === args[0]) return {};
     s.selected = args[0]!;
     save(s);
-    return update({ details: { data: { src: detailRows(s.sample?.sections[s.selected] || []) } } }, true);
+    return update({ details: { data: { src: detailData(s) } } }, true);
   }
   if (cmd === "pause") {
     s.paused = !s.paused;

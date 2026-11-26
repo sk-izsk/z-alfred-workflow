@@ -9,3 +9,7 @@ Restart looks for a declared dev/start/develop package.json script and detects n
 Back defaults to configurable Hyper+B and restores the Dev launcher’s search/selection. Standard width 780 and screen-aware sizing follow UI_CONVENTIONS.md. Independent workflow; Node.js or Bun required. Build: `bun run check`, `bun run package`; local installation: `bun run link`.
 
 Built with help from AI tools. Reference: [Raycast Dev Servers](https://github.com/raycast/extensions/tree/18750b5bc7fe87eb76991e86f0cda47200daa48f/extensions/dev-servers/). The implementation uses system ps/lsof inspection and does not bundle Raycast code or binaries.
+
+Terminal actions use **Terminal application** in Workflow Configuration: Ghostty, Terminal, iTerm2, kitty, WezTerm, Alacritty or a custom executable. Ghostty uses its native AppleScript API (verified with installed Ghostty 1.4); macOS may request Automation permission. Custom arguments are a JSON array with `{command}` and `{cwd}` placeholders. Existing explicit terminal choices are preserved. No terminal is installed automatically.
+
+Server rows are grouped by project directory with counts, localhost ports, measured process uptime and framework badges. Heading rows cannot trap keyboard selection. Stop All Listed Servers affects the current visible/filter results; Stop All for Project covers the selected project.

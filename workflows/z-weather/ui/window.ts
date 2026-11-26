@@ -569,8 +569,8 @@ export const weatherWindow = {
   },
   window: {
     title: "Weather",
-    size: { height: 800 },
-    minsize: { width: 560, height: 540 },
+    size: { height: 540 },
+    minsize: { width: 560, height: 420 },
     root: {
       id: "root",
       type: "view",

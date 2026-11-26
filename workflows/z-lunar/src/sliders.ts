@@ -92,6 +92,6 @@ export const sliderHTML = (
  document.querySelectorAll('[data-level]').forEach(button=>button.addEventListener('click',()=>send({property:'brightness',value:button.dataset.level})));
  document.querySelectorAll('select').forEach(select=>select.addEventListener('change',()=>{if(select.value)send({action:select.id,value:select.value});}));
  function match(event,shortcut){const key=shortcut.replace(/[⌃⌥⇧⌘]/g,'').toLowerCase();return event.key.toLowerCase()===key&&event.ctrlKey===shortcut.includes('⌃')&&event.altKey===shortcut.includes('⌥')&&event.shiftKey===shortcut.includes('⇧')&&event.metaKey===shortcut.includes('⌘');}
- document.addEventListener('keydown',event=>{if(match(event,${JSON.stringify(backShortcut)})){event.preventDefault();location.hash='action=back';}else if(match(event,${JSON.stringify(actionsShortcut)})){event.preventDefault();location.hash='action=menu';}});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();location.hash='action=close';}else if(match(event,${JSON.stringify(backShortcut)})){event.preventDefault();location.hash='action=back';}else if(match(event,${JSON.stringify(actionsShortcut)})){event.preventDefault();location.hash='action=menu';}});
  </script></body></html>`;
 };

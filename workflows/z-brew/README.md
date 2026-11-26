@@ -84,3 +84,5 @@ Back is always available directly in the footer as **Back Hyper+B** (configurabl
 Catalog cache minutes (default 360) and Details cache minutes (15) are configurable. Manual Refresh bypasses cached data. These settings control data reuse when browsing; they do not run background Homebrew updates.
 
 Shared UI: windows use the 780-point reference width with active-display clamping. Back defaults to Hyper+B (Control + Option + Shift + Command + B); Configuration includes the Hyper toggle, four modifier checkboxes, Back key and custom shortcut. Footer labels use Hyper+B. Existing explicit custom Back shortcuts remain active until Hyper configuration is explicitly saved.
+
+Terminal actions use **Terminal application** in Workflow Configuration: Ghostty, Terminal, iTerm2, kitty, WezTerm, Alacritty or a custom executable. Ghostty uses its native AppleScript API (verified with installed Ghostty 1.4); macOS may request Automation permission. Custom arguments are a JSON array with `{command}` and `{cwd}` placeholders. Existing explicit terminal choices are preserved. No terminal is installed automatically.

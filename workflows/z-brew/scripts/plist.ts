@@ -1,3 +1,4 @@
+import { terminalConfiguration } from "../../../shared/terminal.ts";
 import pkg from "../package.json" with { type: "json" };
 
 type Obj = Record<string, unknown>;
@@ -208,19 +209,7 @@ const userconfigurationconfig: Obj[] = [
     description: "Use Homebrew’s --greedy when checking and upgrading.",
     config: { default: false, text: "Include auto-updating and latest-version casks" },
   },
-  {
-    type: "popupbutton",
-    variable: "terminal_app",
-    label: "Run commands in",
-    description: "Commands run visibly after review.",
-    config: {
-      default: "Terminal",
-      pairs: [
-        ["Terminal", "Terminal"],
-        ["iTerm", "iTerm"],
-      ],
-    },
-  },
+  ...terminalConfiguration("Terminal"),
   text("actions_shortcut", "Actions shortcut", "⌘K", "Open the selected entry’s action menu."),
   text(
     "back_shortcut",

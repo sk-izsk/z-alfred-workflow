@@ -1,3 +1,4 @@
+import { terminalConfiguration } from "../../../shared/terminal.ts";
 import { hyperConfiguration } from "../../../shared/ui-profile.ts";
 import pkg from "../package.json" with { type: "json" };
 const text = (variable: string, label: string, value: string, description: string) => ({
@@ -82,6 +83,7 @@ export const infoPlist = {
   userconfigurationconfig: [
     text("kw_main", "Keyword", "moleui", "Open Mole."),
     ...hyperConfiguration(),
+    ...terminalConfiguration(),
     text(
       "mole_path",
       "Mole executable",

@@ -8,7 +8,9 @@ export type Device = {
   name: string;
   type: string;
   connected: boolean;
+  hidden?: boolean;
   battery: string;
+  batteries?: { part: "case" | "left" | "right" | "device"; percent: number }[];
   raw: Record<string, unknown>;
 };
 export const validAddress = (address: string): boolean =>
@@ -23,10 +25,15 @@ export const parse = (raw: any): Device[] => {
       for (const wrapper of controller[group] || [])
         for (const [name, value] of Object.entries(wrapper)) {
           const d = value as Record<string, unknown>,
-            id = String(d.device_address || "")
+            address = String(d.device_address || "")
               .toUpperCase()
               .replaceAll("-", ":");
-          if (!validAddress(id)) continue;
+          const id = validAddress(address)
+            ? address
+            : !d.device_address || /^<.*>$/.test(address)
+              ? `hidden:${connected ? 1 : 0}:${name}`
+              : "";
+          if (!id) continue;
           const battery = Object.entries(d)
             .filter(([key]) => /battery/i.test(key))
             .flatMap(([key, val]) => {
@@ -36,12 +43,38 @@ export const parse = (raw: any): Device[] => {
                 : [];
             })
             .join(" · ");
+          const batteries = Object.entries(d)
+            .filter(([key]) => /battery/i.test(key))
+            .flatMap(([key, value]) => {
+              const percent = Number.parseInt(String(value));
+              return Number.isFinite(percent) && percent >= 0 && percent <= 100
+                ? [
+                    {
+                      part: (/case/i.test(key)
+                        ? "case"
+                        : /left/i.test(key)
+                          ? "left"
+                          : /right/i.test(key)
+                            ? "right"
+                            : "device") as "case" | "left" | "right" | "device",
+                      percent,
+                    },
+                  ]
+                : [];
+            })
+            .sort(
+              (a, b) =>
+                ["case", "left", "right", "device"].indexOf(a.part) -
+                ["case", "left", "right", "device"].indexOf(b.part),
+            );
           devices.push({
             id,
+            hidden: !validAddress(address),
             name,
             type: String(d.device_minorType || d.device_majorType || "Device"),
             connected,
             battery,
+            batteries,
             raw: d,
           });
         }
@@ -53,7 +86,7 @@ export const parse = (raw: any): Device[] => {
 export const scan = async (): Promise<Device[]> => {
   const { stdout } = await execute(
     "/usr/sbin/system_profiler",
-    ["SPBluetoothDataType", "-json", "-detailLevel", "mini"],
+    ["SPBluetoothDataType", "-json", "-detailLevel", "full"],
     { encoding: "utf8", timeout: 12000, maxBuffer: 2e6 },
   );
   return parse(JSON.parse(stdout));

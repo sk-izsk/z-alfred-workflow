@@ -185,7 +185,7 @@ export const calculateWindow = {
           text: "Back  {var:back_label}",
           bordered: false,
           shortcut: "{var:back_shortcut}",
-          constraints: { region: "bottom", position: "left", insets: { left: 16, bottom: 16 } },
+          constraints: { region: "bottom", position: "right", insets: { right: 16, bottom: 16 } },
           events: [
             {
               triggers: "actioned",
