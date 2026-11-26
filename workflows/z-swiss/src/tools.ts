@@ -13,6 +13,16 @@ export type Tool = {
 };
 export const tools: Tool[] = [
   {
+    id: "folder-navigator",
+    name: "Folder Navigator",
+    description: "Find folders and browse files with complete Back history",
+    bundle: "com.izsk.folder-navigator",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "folders",
+  },
+
+  {
     id: "translate",
     name: "Translate",
     description: "Clipboard and text translation with native split panes",

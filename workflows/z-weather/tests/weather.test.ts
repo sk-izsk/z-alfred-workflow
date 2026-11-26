@@ -401,3 +401,18 @@ test("cache lifetime is configurable and failure metadata never makes data fresh
     else process.env.cache_minutes = oldMinutes;
   }
 });
+
+test("daily range uses the selected units and handles absent provider values", () => {
+  const r = {
+    days: [{ maxtempC: "12", mintempC: "-2", maxtempF: "54", mintempF: "28" }],
+    current: {},
+    city: "Example",
+    region: "",
+    country: "Example",
+  } as any;
+  expect(summary(r, 0, false).high).toBe("12 °C");
+  expect(summary(r, 0, false).low).toBe("-2 °C");
+  expect(summary(r, 0, true).high).toBe("54 °F");
+  delete r.days[0].mintempF;
+  expect(summary(r, 0, true).low).toBe("—");
+});

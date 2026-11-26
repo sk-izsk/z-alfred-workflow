@@ -88,5 +88,11 @@
     "bundle": "com.izsk.translate",
     "name": "Translate",
     "description": "Clipboard and text translation with native split panes"
+  },
+  {
+    "slug": "z-folder-navigator",
+    "bundle": "com.izsk.folder-navigator",
+    "name": "Folder Navigator",
+    "description": "Find folders and browse files with complete Back history"
   }
 ]

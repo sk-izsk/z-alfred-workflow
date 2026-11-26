@@ -119,6 +119,8 @@ export const summary = (r: Report, dayIndex: number, imperial: boolean) => {
     title: `${r.city}${r.region ? ", " + r.region : ""}, ${r.country}`,
     description: first(data.weatherDesc) || "Conditions unavailable",
     temperature: temperature(data, imperial, current),
+    high: value(day[imperial ? "maxtempF" : "maxtempC"], imperial ? "°F" : "°C"),
+    low: value(day[imperial ? "mintempF" : "mintempC"], imperial ? "°F" : "°C"),
     ...condition(data.weatherCode, first(data.weatherDesc)),
   };
 };

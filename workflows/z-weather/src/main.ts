@@ -1,3 +1,4 @@
+import { windowWidth } from "../../../shared/ui-profile.ts";
 import { bool, cacheMinutes } from "./env.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { forecastCards } from "./forecast.ts";
@@ -43,7 +44,7 @@ const cityRows = (s: State): Action[] => {
       uid: c.id,
       "cityTitle.text": c.query,
       "cityDesc.text": h
-        ? `${h.description} · ${old!.refreshFailedAt || Date.now() - old!.fetched > cacheMinutes("cache_minutes", 10) * 60000 ? "Stale cache" : "Fetched"} ${new Date(old!.fetched).toLocaleTimeString()}`
+        ? `${h.description} · H ${h.high} / L ${h.low} · ${old!.refreshFailedAt || Date.now() - old!.fetched > cacheMinutes("cache_minutes", 10) * 60000 ? "Stale cache" : "Fetched"} ${new Date(old!.fetched).toLocaleTimeString()}`
         : s.listErrors?.[c.query] || "Loading conditions…",
       "cityTemp.text": h?.temperature || "",
       "cityIcon.image.src": h?.icon || "cloud.sun.fill",
@@ -231,7 +232,10 @@ const menu = (s: State, id: string): Action => {
 };
 const main = async (): Promise<Action | void> => {
   const [command = "", id = "", ...args] = process.argv.slice(2);
-  if (command === "prepare-origin") return vars(backVariables("weather_out", process.env.weather_query));
+  if (command === "prepare-origin")
+    return merge(vars(backVariables("weather_out", process.env.weather_query)), {
+      window: { resize: { width: windowWidth() } },
+    });
   if (command === "post") {
     if (process.env.weather_out === "back") performBack(process.env.swiss_return);
     return;

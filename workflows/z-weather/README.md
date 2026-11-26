@@ -3,6 +3,8 @@
 Saved cities, colorful current conditions, and detailed forecasts in a native Alfred 6 window.
 Inspired by [Raycast Weather](https://www.raycast.com/tonka3000/weather), using the same wttr.in provider.
 
+City rows show current temperature plus the forecast high and low in the selected units. Windows use the shared 780-point reference width, clamped to the active display.
+
 ![Current conditions and weather details](assets/screenshots/details.png)
 
 Requires macOS, Alfred 6 with Powerpack, Node.js 22+ or Bun, and internet access for new reports.

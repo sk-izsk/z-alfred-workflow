@@ -1,3 +1,4 @@
+import { STANDARD_WIDTH } from "../../../shared/ui-profile.ts";
 import { forecastCards } from "../src/forecast.ts";
 import { type State } from "../src/state.ts";
 import { summary, value, details } from "../src/model.ts";
@@ -226,7 +227,7 @@ export const detailPane = (s: State): Json[] => {
             tooltip: d.tooltip || d.value,
             textalign: "right",
             linebreak: "truncatetail",
-            constraints: { region: "right", position: "centre", size: { width: 180 } },
+            constraints: { region: "right", position: "centre", size: { width: 138 } },
           }),
         ],
       })),
@@ -379,7 +380,7 @@ const detail = (s: State): Json[] => {
             id: "dayPicker",
             type: "picker",
             bordered: false,
-            constraints: { size: { width: 250 } },
+            constraints: { size: { width: 190 } },
             items: r.days.map((d, i) => ({
               text: `${d.date}${i === 0 ? " · Current" : " · Noon forecast"}`,
               value: String(i),
@@ -408,8 +409,8 @@ const detail = (s: State): Json[] => {
       layout: "grid",
       rows: 1,
       cols: 2,
-      padding: 22,
-      spacing: 30,
+      padding: 16,
+      spacing: 18,
       constraints: { region: "centre" },
       components: [
         {
@@ -437,7 +438,7 @@ const detail = (s: State): Json[] => {
                   textalign: "centre",
                   linebreak: "truncatetail",
                   tooltip: hero.description,
-                  constraints: { size: { width: 380 } },
+                  constraints: { size: { width: 280 } },
                 }),
                 label("overviewCity", r.query, {
                   font: { size: 17 },
@@ -445,7 +446,7 @@ const detail = (s: State): Json[] => {
                   textalign: "centre",
                   linebreak: "truncatetail",
                   tooltip: hero.title,
-                  constraints: { size: { width: 380 } },
+                  constraints: { size: { width: 280 } },
                 }),
                 label(
                   "overviewRange",
@@ -496,7 +497,7 @@ const detail = (s: State): Json[] => {
                     colour: "secondaryLabelColor",
                     textalign: "centre",
                     linebreak: "wordwrap",
-                    constraints: { size: { width: 380 } },
+                    constraints: { size: { width: 280 } },
                   },
                 ),
               ],
@@ -567,13 +568,13 @@ export const weatherWindow = {
   window: {
     title: "Weather",
     size: { height: 800 },
-    minsize: { width: 900, height: 800 },
+    minsize: { width: 560, height: 540 },
     root: {
       id: "root",
       type: "view",
       layout: "border",
       events: [
-        on("preload", json({ window: { resize: { width: 1000 } } })),
+        on("preload", json({ window: { resize: { width: STANDARD_WIDTH } } })),
         on("launched", [run("prepare-origin", [], false), run("launch")]),
       ],
       shortcuts: [
