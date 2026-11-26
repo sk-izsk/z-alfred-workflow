@@ -48,6 +48,10 @@ jobs:
             artifact: Emoji Picker.alfredworkflow
           - workflow: z-lunar
             artifact: Lunar Controls.alfredworkflow
+          - workflow: z-window-navigator
+            artifact: Window Navigator.alfredworkflow
+          - workflow: z-window-switcher
+            artifact: Window Switcher.alfredworkflow
           - workflow: z-world-clock
             artifact: World Clock.alfredworkflow
           - workflow: z-weather

@@ -32,8 +32,8 @@ Work continues on `feature/kill-process-workflow`, PR #9 into `dev`. Keep each u
 - [x] Mole: actual installed CLI status, disk analysis, cleanup/optimization dry-run previews, explicit review and Terminal execution for real changes. Native status verified; no cleanup was performed.
 - [x] Emoji Picker: bundled Unicode 17 data (3,944 sequences), native search/categories, favorites/recents, variants, copy/paste actions; tests and native search verified.
 - [x] Lunar Controls: installed Lunar-fred/CLI verified; brightness/contrast/volume sliders with live labels, percentage shortcuts, modern input/adaptive/preset selectors, global adaptive modes, saved presets and reviewed power actions. Display-row clicks select controls instead of opening Lunar. Read-only native UI verified; physical settings were not changed for testing.
-- [ ] Window Navigator: inspect installed workflow and integrate.
-- [ ] Window Switcher: inspect installed workflow and integrate separately.
+- [x] Window Navigator: global/active/current-desktop scopes, native search and app icons, focus/close/quit actions, revalidation and Swiss Back. Native list verified; disposable TextEdit raise/close verified.
+- [x] Window Switcher: independent current-desktop list and actions, shared Accessibility bridge, native UI verified with a disposable document.
 ## Dev launcher phase (after Swiss)
 
 - [ ] Dev launcher: separate searchable launcher using the same independent-tool and Back protocol as Swiss. These utilities belong only to Dev.

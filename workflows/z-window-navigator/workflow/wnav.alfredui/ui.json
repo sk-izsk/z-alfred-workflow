@@ -1,0 +1,157 @@
+{
+  "bundleid": "com.izsk.window-navigator",
+  "variablesconfig": {
+    "swiss_return": {
+      "default": ""
+    },
+    "wnav_session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "wnav_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    }
+  },
+  "window": {
+    "title": "Window Navigator",
+    "size": {
+      "width": 780,
+      "height": 540
+    },
+    "minsize": {
+      "width": 560,
+      "height": 380
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/wnav",
+              "args": [
+                "prepare-origin",
+                "{var:wnav_session}"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/wnav",
+              "args": [
+                "launch",
+                "{var:wnav_session}"
+              ],
+              "async": true
+            }
+          ]
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/wnav",
+            "args": [
+              "menu",
+              "{var:wnav_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/wnav",
+            "args": [
+              "refresh",
+              "{var:wnav_session}"
+            ],
+            "async": true
+          }
+        }
+      ],
+      "components": [
+        {
+          "id": "statusLabel",
+          "type": "label",
+          "text": "Loading Window Navigator…",
+          "constraints": {
+            "region": "centre",
+            "position": "centre"
+          }
+        },
+        {
+          "id": "initialBack",
+          "type": "button",
+          "text": "Back  {var:back_label}",
+          "shortcut": "{var:back_shortcut}",
+          "bordered": false,
+          "constraints": {
+            "region": "bottom",
+            "position": "left",
+            "insets": {
+              "left": 12,
+              "bottom": 12
+            }
+          },
+          "events": [
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "json",
+                "src": {
+                  "finish": {
+                    "variables": {
+                      "wnav_out": "back",
+                      "swiss_return": "{var:swiss_return}"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -13,6 +13,26 @@ export type Tool = {
 };
 export const tools: Tool[] = [
   {
+    id: "window-switcher",
+    name: "Window Switcher",
+    description: "Search and focus windows on the current desktop only",
+    bundle: "com.izsk.window-switcher",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "wins",
+  },
+
+  {
+    id: "window-navigator",
+    name: "Window Navigator",
+    description: "Search and focus windows on all desktops, the active app or the current desktop",
+    bundle: "com.izsk.window-navigator",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "wnav",
+  },
+
+  {
     id: "lunar",
     name: "Lunar Controls",
     description: "Display brightness, contrast, volume, inputs and Lunar presets",

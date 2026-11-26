@@ -56,9 +56,9 @@ var primary=screens.objectAtIndex(0).frame;
 var top=primary.origin.y+primary.size.height;
 var apps=$.NSRunningApplication.runningApplicationsWithBundleIdentifier('com.runningwithcrayons.Alfred');
 var pid=apps.count ? apps.objectAtIndex(0).processIdentifier : -1;
-var windows=ObjC.deepUnwrap($.CGWindowListCopyWindowInfo(1,0));
+var windows=ObjC.deepUnwrap(ObjC.castRefToObject($.CGWindowListCopyWindowInfo(1,0)));
 var current=null;
-for(var j=0;j<windows.length;j++){var w=windows[j];if(w.kCGWindowOwnerPID===pid && w.kCGWindowLayer===0 && w.kCGWindowBounds.Width>100){current=w;break;}}
+for(var j=0;j<windows.length;j++){var w=windows[j];if(w.kCGWindowOwnerPID===pid && w.kCGWindowBounds.Width>100){current=w;break;}}
 var chosen=$.NSScreen.mainScreen;
 if(current){
  var b=current.kCGWindowBounds,cx=b.X+b.Width/2,cy=b.Y+b.Height/2;
