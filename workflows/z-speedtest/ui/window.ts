@@ -32,9 +32,36 @@ export const body = (
   selection: string,
   meterPath?: string,
 ): Json[] => {
-  if (s.phase === "error" || mode !== "list") {
+  if (s.phase === "error")
+    return [
+      {
+        type: "view",
+        layout: "border",
+        padding: 32,
+        constraints: { region: "centre" },
+        components: [
+          {
+            type: "imageview",
+            image: { type: "symbol", src: "wifi.exclamationmark" },
+            contenttintcolour: "secondaryLabelColor",
+            constraints: { region: "top", position: "centre", size: { width: 64, height: 64 } },
+          },
+          {
+            id: "errorMessage",
+            type: "label",
+            text: s.errorMessage || "Speedtest failed",
+            font: { size: 17 },
+            colour: "secondaryLabelColor",
+            textalign: "centre",
+            linebreak: "wordwrap",
+            constraints: { region: "centre", position: "centre", stretch: "horizontal" },
+          },
+        ],
+      },
+    ];
+  if (mode !== "list") {
     const dashboard = web("dashboard", dashboardHTML(s));
-    if (meterPath && s.phase !== "error") {
+    if (meterPath) {
       delete dashboard.text;
       dashboard.src = meterPath;
     }

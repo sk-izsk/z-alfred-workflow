@@ -17,3 +17,7 @@ Generation uses `profileWindow(ui, cli)` and `profileInfo(infoPlist)`. CLI entry
 ## Screenshot fidelity
 
 User-provided screenshots define the required layout and interactions for every workflow: preserve hierarchy, section grouping, summary rows, list versus split-detail arrangement, controls, density and Actions items. Do not replace a supplied design with a generic dashboard. Adapt only Alfred theme, documented platform constraints and the shared width/Back conventions. Check the actual native window against its reference before calling the UI complete; record any unverified differences.
+
+## Native controls before web views
+
+Use native Alfred components for lists, groups, value badges, forms, error states and navigation. A CLI backend is not a reason to add a web view. Keep web views only for a concrete capability/design requirement unsupported by the native components, and record that reason. Current exceptions: Lunar sliders (no native slider control), Speed Test gauge/sparkline charts, VS Code rich HTML extension README previews, and animated GIF detail previews. GIF search/results, weather and ordinary status/error lists remain native.

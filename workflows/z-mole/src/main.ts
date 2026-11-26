@@ -2,20 +2,12 @@ import { profileCommand } from "../../../shared/ui-profile.ts";
 await profileCommand(() => import("./env.ts"));
 import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { detailRows } from "../../../shared/dashboard.ts";
+import { statusItems, previewItems, size, usageTone } from "./presentation.ts";
+import { referenceData, skipHeading, toneBackground, toneColour } from "../../../shared/reference-rows.ts";
 import { profileAction } from "../../../shared/ui-profile.ts";
 import { str, bool } from "./env.ts";
 import { create, read, save, frame, type State } from "./state.ts";
-import {
-  run,
-  parseStatus,
-  parseAnalysis,
-  cleanOutput,
-  folder,
-  execution,
-  type Mode,
-  type Item,
-} from "./mole.ts";
+import { run, parseAnalysis, folder, execution, type Mode, type Item } from "./mole.ts";
 import { components } from "../ui/window.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { merge, vars, update, finish, popup, menuItem, copy, sheet, errorStatus, type Action } from "./ui.ts";
@@ -53,6 +45,46 @@ const data = (s: State) =>
   (s.mode === "menu" ? choices : s.items).filter((e) =>
     `${e.name} ${e.description}`.toLowerCase().includes(s.query.toLowerCase().trim()),
   );
+const rowData = (s: State) =>
+  referenceData(
+    data(s).map((e) =>
+      s.mode === "analyze"
+        ? {
+            ...e,
+            badge: e.details.find(([key]) => key === "Bytes")
+              ? size(e.details.find(([key]) => key === "Bytes")![1])
+              : e.description,
+            description: "",
+            tone:
+              Number(e.details.find(([key]) => key === "Bytes")?.[1]) > 50e9
+                ? "red"
+                : Number(e.details.find(([key]) => key === "Bytes")?.[1]) > 10e9
+                  ? "orange"
+                  : Number(e.details.find(([key]) => key === "Bytes")?.[1]) > 5e9
+                    ? "yellow"
+                    : "neutral",
+          }
+        : e.id === "summary"
+          ? { ...e, note: e.description, description: "" }
+          : e,
+    ),
+    "mole",
+    s.mode !== "analyze" && s.mode !== "menu",
+  );
+const detailData = (s: State) =>
+  (data(s).find((e) => e.id === s.selected)?.details || []).map(([name, value], i) => {
+    const number = value.match(/^(\d+(?:\.\d+)?)%/);
+    const badge = ["Health", "CPU", "Usage", "Memory", "Battery"].includes(name) || name.startsWith("Disk (");
+    const tone = name === "Health" ? "green" : number ? usageTone(Number(number[1])) : "neutral";
+    return {
+      uid: String(i),
+      "metricName.text": name,
+      "metricValue.text": value,
+      "metricValue.tooltip": value,
+      "metricValue.colour": badge ? toneColour(tone) : "labelColor",
+      "metricBadge.background": badge && value !== "Not present" ? toneBackground(tone) : null,
+    };
+  });
 const render = (s: State): Action => {
   const values = data(s);
   if (!values.some((e) => e.id === s.selected)) s.selected = values[0]?.id || "";
@@ -60,40 +92,56 @@ const render = (s: State): Action => {
   return update(
     {
       items: {
-        data: {
-          src: values.map((e) => ({
-            uid: e.id,
-            "rowTitle.text": e.name,
-            "rowDescription.text": e.description,
-            "rowIcon.image.src": e.icon,
-          })),
-        },
+        data: { src: rowData(s) },
         select: s.selected,
-        placeholder: s.status,
+        placeholder: s.items.length ? "No matching items" : s.status,
       },
-      details: {
-        data: {
-          src: detailRows(
-            values.find((e) => e.id === s.selected)?.details.length
-              ? values.find((e) => e.id === s.selected)!.details
-              : [
-                  ["Command", values.find((e) => e.id === s.selected)?.name || "Mole"],
-                  ["Behavior", values.find((e) => e.id === s.selected)?.description || s.status],
-                ],
-          ),
-        },
+      ...(s.mode === "status" ? { details: { data: { src: detailData(s) } } } : {}),
+      statusLabel: {
+        text:
+          s.mode === "menu"
+            ? "Mole"
+            : s.mode === "status"
+              ? "System Status"
+              : s.mode === "analyze"
+                ? s.path
+                : s.mode === "clean"
+                  ? "Clean System · Dry run"
+                  : "Optimize System · Dry run",
+        tooltip: s.status,
       },
-      statusLabel: { text: s.status, tooltip: s.path },
-      primary: { text: s.mode === "clean" || s.mode === "optimize" ? "Review…" : "Open  ↩" },
+      primary: {
+        enabled: s.mode === "menu" || !!s.ready,
+        contenttintcolour: s.mode === "clean" ? "systemRedColor" : null,
+        text:
+          s.mode === "status"
+            ? "Refresh  ↩"
+            : s.mode === "analyze"
+              ? "Browse  ↩"
+              : s.mode === "clean"
+                ? "Clean All  ↩"
+                : s.mode === "optimize"
+                  ? "Optimize All  ↩"
+                  : "Open  ↩",
+      },
     },
     true,
   );
 };
+const mount = (s: State, load = false): Action =>
+  merge(update({ root: { components: components(s) } }, true), {
+    pulse: {
+      src: "../bin/moleui",
+      args: load ? ["load", s.id, s.request] : ["populate", s.id],
+      interval: 0,
+      now: true,
+    },
+  });
 const pulse = (s: State): Action => ({
   pulse: { src: "../bin/moleui", args: ["load", s.id, s.request], interval: 0, now: true },
 });
 const main = async (): Promise<Action | void> => {
-  const [cmd = "", id = "", ...args] = process.argv.slice(2),
+  let [cmd = "", id = "", ...args] = process.argv.slice(2),
     value = args[0] || "";
   if (cmd === "prepare-origin")
     return merge(vars(backVariables("moleui_out", process.env.moleui_query)), profileAction({ str, bool }));
@@ -104,20 +152,17 @@ const main = async (): Promise<Action | void> => {
   if (cmd === "launch") {
     const origin = launchInput(process.env.moleui_query),
       s = create(origin.query, origin.returnTo);
-    return merge(
-      vars({ moleui_session: s.id }),
-      update({ root: { components: components(s.query) } }, true),
-      pulse(s),
-    );
+    return merge(vars({ moleui_session: s.id }), mount(s, true));
   }
   const s = read(id);
+  if (cmd === "populate") return render(s);
   if (cmd === "back") {
     const prior = s.history.pop();
     if (!prior) return finish({ moleui_out: "back", swiss_return: s.returnTo });
     Object.assign(s, prior);
     s.request = randomUUID();
     save(s);
-    return merge(update({ query: { text: s.query } }, true), render(s));
+    return mount(s);
   }
   if (cmd === "load") {
     if (value !== s.request) return {};
@@ -128,22 +173,19 @@ const main = async (): Promise<Action | void> => {
       if (latest.request !== value) return {};
       latest.items =
         s.mode === "status"
-          ? parseStatus(output)
+          ? statusItems(output)
           : s.mode === "analyze"
             ? parseAnalysis(output)
-            : cleanOutput(output).map((line, i) => ({
-                id: String(i),
-                name: line,
-                description: "Preview only",
-                icon: "checkmark",
-                details: [["Preview", line]],
-              }));
+            : previewItems(output, s.mode);
+      latest.ready = true;
       latest.status = `${latest.items.length} rows · ${new Date().toLocaleTimeString()}${s.mode === "clean" || s.mode === "optimize" ? " · Dry run" : ""}`;
       save(latest);
       return render(latest);
     } catch (error) {
       const latest = read(id);
       if (latest.request !== value) return {};
+      latest.ready = false;
+      latest.items = [];
       latest.status = error instanceof Error ? error.message : String(error);
       save(latest);
       return render(latest);
@@ -155,28 +197,29 @@ const main = async (): Promise<Action | void> => {
     return render(s);
   }
   if (cmd === "select") {
+    if (value.startsWith("heading:")) return skipHeading(rowData(s), value, s.selected);
     if (s.selected === value) return {};
     s.selected = value;
     save(s);
-    return update(
-      { details: { data: { src: detailRows(data(s).find((e) => e.id === value)?.details || []) } } },
-      true,
-    );
+    return s.mode === "status" ? update({ details: { data: { src: detailData(s) } } }, true) : {};
   }
   if (cmd === "refresh") {
     s.request = randomUUID();
     s.status = "Refreshing…";
+    s.ready = false;
     save(s);
     return merge(render(s), pulse(s));
   }
   if (cmd === "open") {
-    if (s.mode === "status")
-      return copy(
-        data(s)
-          .find((e) => e.id === (value || s.selected))
-          ?.details.map(([k, v]) => `${k}: ${v}`)
-          .join("\n") || "",
-      );
+    if (s.mode === "status") {
+      s.request = randomUUID();
+      s.status = "Refreshing…";
+      s.ready = false;
+      save(s);
+      return merge(render(s), pulse(s));
+    }
+    if ((s.mode === "clean" || s.mode === "optimize") && !s.ready)
+      throw new Error("Wait for a successful dry-run preview before reviewing changes.");
     if (s.mode === "clean" || s.mode === "optimize")
       return sheet("review", {
         type: "view",
@@ -217,19 +260,21 @@ const main = async (): Promise<Action | void> => {
     }
     s.history.push(frame(s));
     s.query = "";
+    s.scroll = 0;
     s.selected = "";
     s.items = [];
     s.request = randomUUID();
     s.status = "Loading…";
+    s.ready = false;
     if (s.mode === "menu") {
       s.mode = chosen.id as Mode;
       s.path = s.mode === "analyze" ? folder(str("analyze_path", "~")) : "";
     } else s.path = chosen.path!;
     save(s);
-    return merge(update({ query: { text: "" } }, true), render(s), pulse(s));
+    return mount(s, true);
   }
   if (cmd === "execute") {
-    if (value !== s.mode || args[1] !== s.request || !s.items.length)
+    if (value !== s.mode || args[1] !== s.request || !s.items.length || !s.ready)
       throw new Error("Refresh and review the preview before running.");
     const command = execution(value);
     execFileSync(

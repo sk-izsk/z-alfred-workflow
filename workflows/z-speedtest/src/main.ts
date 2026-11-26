@@ -37,14 +37,16 @@ const render = (
       ids: {
         ...(full
           ? { body: { components: body(s, view, show, selected, meterPath) } }
-          : s.phase === "error" || view !== "list"
-            ? meterPath
-              ? {}
-              : { dashboard: { text: dashboardHTML(s) } }
-            : {
-                results: { data: { src: rows(s) } },
-                ...(show ? { detail: { text: detailHTML(s, selected) } } : {}),
-              }),
+          : s.phase === "error"
+            ? { errorMessage: { text: s.errorMessage || "Speedtest failed" } }
+            : view !== "list"
+              ? meterPath
+                ? {}
+                : { dashboard: { text: dashboardHTML(s) } }
+              : {
+                  results: { data: { src: rows(s) } },
+                  ...(show ? { detail: { text: detailHTML(s, selected) } } : {}),
+                }),
         primaryButton: {
           text:
             s.phase === "error"

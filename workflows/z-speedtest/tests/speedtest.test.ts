@@ -294,3 +294,12 @@ test("meter updates a private local frame without reloading the animated documen
     else process.env.alfred_workflow_cache = saved;
   }
 });
+
+test("connection failures render native controls instead of a web view", () => {
+  const s = emptyState();
+  s.phase = "error";
+  s.errorMessage = "Connection failed";
+  const tree = JSON.stringify(body(s, "meter", false, ""));
+  expect(tree).not.toContain("webkitview");
+  expect(tree).toContain("Connection failed");
+});

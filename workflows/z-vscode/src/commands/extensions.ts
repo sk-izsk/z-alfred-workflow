@@ -93,7 +93,7 @@ export const previewSheet = (
     components: [
       {
         // The size goes on the web view itself: a sheet sizes to its content.
-        constraints: { region: "centre", size: { width: 860, height: 540 } },
+        constraints: { region: "centre", size: { width: 704, height: 540 } },
         type: "webkitview",
         text: html,
         openlinksexternally: true,

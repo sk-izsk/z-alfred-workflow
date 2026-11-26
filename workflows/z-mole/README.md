@@ -2,14 +2,14 @@
 
 Native Alfred 6 views for the installed [Mole CLI](https://mole.fit): system health, disk analysis, cleanup previews and optimization previews. Open `moleui` or choose Mole in Swiss. Each command is a navigation level; Back restores the preceding menu/folder, filter and selection.
 
-- **System Status** reads `mole status --json`. Select a section for scrollable native details; Return copies that section.
+- **System Status** reads `mole status --json`. Sectioned sidebar with live value badges and scrollable details. Return refreshes the reading.
 - **Disk Usage** reads `mole analyze --json <folder>`. Enter descends into a directory or opens a file. Actions includes Reveal in Finder. Configure the starting folder, including `/Volumes/My SSD`.
-- **Clean System** runs `mole clean --dry-run` and displays the actual preview text.
-- **Optimize System** runs `mole optimize --dry-run` and displays its actual preview text.
+- **Clean System** runs `mole clean --dry-run` and displays grouped native rows with the actual total size, item count and per-item size badges.
+- **Optimize System** runs `mole optimize --dry-run` and displays grouped native rows with the actual available-optimization count.
 
 Cleanup and optimization require an explicit review action after a successful preview. Continuing launches the corresponding command in Terminal so Mole can present its own confirmations and privilege prompts. The workflow does not silently elevate privileges, suppress Mole's prompts, or claim a cleanup succeeded when Terminal was only opened. No cleanup is performed just by opening a preview. Refresh the preview after making changes.
 
-![Native Mole status](assets/screenshots/status.png)
+All Mole screens use native Alfred controls. No web view, HTML renderer or separate browser is used. Loading/error states stay inside the native list. Cleanup/optimization actions are disabled until a successful dry-run preview is ready. Section headings, metric badges and full-width disk rows follow the supplied reference screenshots; Alfred’s fixed row heights and theme remain native.
 
 Install Mole separately; the workflow detects Homebrew paths or accepts an absolute executable path in Configuration. It never installs or updates Mole itself. An incompatible CLI response shows an error. Read-only scans have a 90-second timeout and an 8 MB output limit; disk listings show the first 500 entries, previews the last 600 non-empty lines. JSON status is fetched when opened/refreshed rather than retained as a supposedly live reading.
 

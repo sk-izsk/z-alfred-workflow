@@ -69,5 +69,37 @@ Camera is deferred. Last Changed Files is canceled. Menubar features are exclude
 
 ## Screenshot fidelity correction
 
-- [ ] Mole: match supplied status split dashboard, grouped cleanup/optimization summaries and full-width disk browser with size badges. Native comparison required.
+- [ ] Mole: implemented with native Alfred controls: status split dashboard, grouped cleanup/optimization summaries and full-width disk browser with size badges. Final native screenshot comparison remains.
 - [ ] Review supplied screenshots when verifying each affected workflow; do not substitute a generic layout. Rule recorded in UI_CONVENTIONS.md.
+
+## Cross-workflow screenshot audit (user requested)
+
+Compare supplied layouts and action menus rather than substituting generic dashboards. Camera, Last Changed Files and standalone Password Generator are excluded by user request.
+
+| Workflow | Reference focus | Audit status |
+| --- | --- | --- |
+| Weather | Two halves, forecast only at left, right-side details/AQI/high-low rows | Pending final native comparison |
+| Currency | Flags, pinned rows, amount math/history and Cmd-K | Pending final comparison |
+| Translation | Two panes and adjacent language selectors, compact gaps, scrolling | Pending final comparison |
+| World Clock | List and analog grid, stars, names/time differences | Pending final comparison |
+| Workflow Manager | Installed/available/update filters and contextual actions | Pending final comparison |
+| Tag Manager | Existing Finder tags, tag pills and tag editing/actions | Pending final comparison |
+| System Monitor | Sectioned metric sidebar, value badges and details | Pending final comparison |
+| Mole | Status split, grouped cleanup/optimization summaries, full-width disk list | Native correction implemented, checked and packaged; final screenshot comparison pending |
+| Emoji / GIF | List/grid selector beside category/provider, compact tiles/actions | Emoji and GIF layout corrections verified; actions audit pending |
+| Lunar | Sliders, modern selectors, per-display selection | Pending final comparison |
+| Dev Servers | Project groups, framework filter, uptime/type and Cmd-K | Pending final comparison |
+| Bluetooth / Wi-Fi | Connection state, device/network details and contextual actions | Pending native comparison; connection mutations intentionally untested |
+| Dev Cache Cleaner | Category/risk list with selected-cache details and reviewed cleanup | Pending native comparison |
+| Dev Utils | Installed Text Transformer interaction and optional DevUtils handoff | Native editor verified; no supplied UI screenshot for DevUtils |
+
+## Web view audit
+
+All 29 workflow projects searched. Mole uses native lists/details and has no web view. Speed Test connection errors moved to native controls. Retained only Lunar sliders, Speed Test charts, VS Code rich HTML extension preview and animated GIF details, with reasons in UI_CONVENTIONS.md. VS Code dynamic preview width reduced to the shared 704-point content width.
+
+## Remaining after native/web-view audit
+
+- Finish screenshot comparisons and resulting layout/action corrections. Known gaps to address: Tag Manager tag pills, System Monitor section headings/value badges, Dev Servers project sections/uptime, Bluetooth right-side battery accessories, and Dev Cache Cleaner category headings.
+- Complete native visual checks for Mole’s five modes, including section navigation/Back and loading/error states; update screenshots/docs with the corrected native view.
+- Recheck the other supplied Weather, Currency, Translation, World Clock, Workflow Manager, Emoji/GIF and Lunar references against native UI and Cmd-K actions; retain existing verified behavior.
+- Finish final native interaction checks and documentation. Live device/network mutations and actual cache/system cleanup have deliberately not been run for testing.

@@ -9,6 +9,8 @@ export type Frame = {
   path: string;
   items: Item[];
   status: string;
+  scroll?: number;
+  ready?: boolean;
 };
 export type State = Frame & { id: string; returnTo: string; at: number; request: string; history: Frame[] };
 const file = (id: string) => {
@@ -28,6 +30,8 @@ export const frame = (s: State): Frame => ({
   path: s.path,
   items: s.items,
   status: s.status,
+  scroll: s.scroll || 0,
+  ready: s.ready,
 });
 export const create = (query: string, returnTo: string): State => {
   const s: State = {

@@ -53,33 +53,9 @@ export type Item = {
   path?: string;
   directory?: boolean;
   details: [string, string][];
-};
-const scalar = (v: unknown): string =>
-  v === null || v === undefined ? "Unavailable" : typeof v === "object" ? JSON.stringify(v) : String(v);
-export const flatten = (value: unknown, prefix = ""): [string, string][] => {
-  if (!value || typeof value !== "object") return [[prefix, scalar(value)]];
-  return Object.entries(value)
-    .flatMap(([key, v]) =>
-      v && typeof v === "object" && !Array.isArray(v)
-        ? flatten(v, prefix ? `${prefix} · ${key}` : key)
-        : [[prefix ? `${prefix} · ${key}` : key, scalar(v)] as [string, string]],
-    )
-    .slice(0, 150);
-};
-export const parseStatus = (text: string): Item[] => {
-  const data = JSON.parse(text);
-  if (!data || typeof data.hardware !== "object" || typeof data.health_score !== "number")
-    throw new Error("Unsupported Mole status response.");
-  return ["health_score", "hardware", "cpu", "memory", "disks", "batteries", "network", "thermal"].map(
-    (key) => ({
-      id: key,
-      name: key.replace(/_/g, " "),
-      description:
-        key === "health_score" ? `${data.health_score}/100 · ${data.health_score_msg || ""}` : "Mole status",
-      icon: key === "health_score" ? "heart" : "gauge",
-      details: flatten(data[key], key),
-    }),
-  );
+  group?: string;
+  badge?: string;
+  tone?: string;
 };
 export const parseAnalysis = (text: string): Item[] => {
   const data = JSON.parse(text);
