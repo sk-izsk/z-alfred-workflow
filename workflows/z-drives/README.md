@@ -13,8 +13,8 @@ that is more than 90% full gets an orange icon. Type to filter (`dmg`, `external
 
 ## Actions
 
-- **↩** ejects the drive; on the startup disk and other internal drives it opens them in Finder.
-- **⌘O** opens the drive in Finder, **⌘E** ejects, **⌘C** copies its path.
+- **↩** (or **⌘O**) opens the drive in Finder; **⌘C** copies its path.
+- Ejecting is only in **⌘K**, so it never happens by accident.
 - **⌘K**: Eject, Force Eject, Open in Finder, Show Disk Image File, Copy Path, Eject All, Open Disk
   Utility, Refresh and Configuration. Force Eject and Eject All ask first.
 - **Back** (Hyper+B) returns to Swiss when opened there, otherwise to Alfred's search.

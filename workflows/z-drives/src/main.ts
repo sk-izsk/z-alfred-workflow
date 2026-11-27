@@ -43,7 +43,6 @@ const render = (s: State): Action => {
   const rows = visible(s);
   if (!rows.some((d) => d.path === s.selected)) s.selected = rows[0]?.path || "";
   save(s);
-  const selected = rows.find((d) => d.path === s.selected);
   return update(
     {
       items: {
@@ -65,7 +64,6 @@ const render = (s: State): Action => {
         select: s.selected,
         placeholder: s.drives.length ? "No matching drives" : s.status,
       },
-      primary: { text: selected && !canEject(selected) ? "Open  ↩" : "Eject  ↩" },
       statusLabel: { text: s.status },
     },
     true,
@@ -140,8 +138,7 @@ const main = async (): Promise<Action | void> => {
     if (s.drives.some((d) => d.path === value)) {
       s.selected = value;
       save(s);
-      // The primary button says Eject or Open for the selected drive.
-      return update({ primary: { text: canEject(target(s, value)) ? "Eject  ↩" : "Open  ↩" } });
+      return {};
     }
     return {};
   }
@@ -150,15 +147,10 @@ const main = async (): Promise<Action | void> => {
     s.status = "Refreshing…";
     return merge(render(s), pulse(s));
   }
-  // ↩ ejects; on the startup disk and other internal volumes it opens the drive instead.
+  // ↩ only opens the drive: ejecting is in Actions (⌘K), so it never happens by accident.
   if (cmd === "open") {
-    const d = target(s, value);
-    if (!canEject(d)) {
-      open([d.path]);
-      return finish({ drives_out: "done" });
-    }
-    await eject(d);
-    return reload(s, `Ejected ${d.name}`);
+    open([target(s, value).path]);
+    return finish({ drives_out: "done" });
   }
   if (cmd === "eject" || cmd === "force-eject") {
     const d = target(s, value);
@@ -213,7 +205,7 @@ const main = async (): Promise<Action | void> => {
         ? [
             ...(canEject(d)
               ? [
-                  item("Eject", action(id, ["eject", d.path], true), "↩"),
+                  item("Eject", action(id, ["eject", d.path], true)),
                   item("Force Eject", action(id, ["force-eject", d.path], true), "", {
                     message: `Force eject ${d.name}?`,
                     informativetext:
@@ -222,7 +214,7 @@ const main = async (): Promise<Action | void> => {
                   }),
                 ]
               : []),
-            item("Open in Finder", action(id, ["reveal", d.path]), "⌘O"),
+            item("Open in Finder", action(id, ["reveal", d.path]), "↩"),
             ...(d.image ? [item("Show Disk Image File", action(id, ["image", d.path]))] : []),
             item("Copy Path", action(id, ["copy", d.path]), "⌘C"),
             separator,

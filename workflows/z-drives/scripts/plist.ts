@@ -86,5 +86,5 @@ export const infoPlist = {
   ],
   variablesdontexport: [],
   readme:
-    "See mounted drives and opened disk images with their free space, and eject them in a native Alfred window. ↩ ejects (opens internal drives), ⌘O opens in Finder, ⌘E ejects, ⌘C copies the path; Eject All and Force Eject ask first. When a drive is in use, the app holding it is named. Command-K for actions; Back (Hyper+B) returns to Swiss or Alfred's search. Built with help from AI tools.",
+    "See mounted drives and opened disk images with their free space, and eject them in a native Alfred window. ↩ opens a drive in Finder and ⌘C copies its path; Eject, Force Eject and Eject All are in Actions (⌘K), and Force Eject and Eject All ask first. When a drive is in use, the app holding it is named. Command-K for actions; Back (Hyper+B) returns to Swiss or Alfred's search. Built with help from AI tools.",
 };

@@ -132,19 +132,6 @@
           }
         },
         {
-          "shortcut": "⌘E",
-          "action": {
-            "type": "script",
-            "src": "../bin/drives",
-            "args": [
-              "eject",
-              "{var:drives_session}",
-              "{value:items.selected.uid}"
-            ],
-            "async": true
-          }
-        },
-        {
           "shortcut": "⌘C",
           "action": {
             "type": "script",

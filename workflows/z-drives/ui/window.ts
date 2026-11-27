@@ -4,12 +4,11 @@ const ui = dashboard({
   cli: "drives",
   title: "Drives",
   placeholder: "Search drives…",
-  primary: "Eject  ↩",
+  primary: "Open  ↩",
 });
 const SELECTED = "{value:items.selected.uid}";
 ui.window.window.root.shortcuts.push(
   { shortcut: "⌘O", action: ui.run("reveal", [SELECTED], false) },
-  { shortcut: "⌘E", action: ui.run("eject", [SELECTED]) },
   { shortcut: "⌘C", action: ui.run("copy", [SELECTED], false) },
 );
 export const toolWindow = ui.window;
