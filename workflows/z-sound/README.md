@@ -28,6 +28,9 @@ devices, or switch with the picker, **⌘1** (output) and **⌘2** (input).
   ships with the workflow: no helper app, no permission prompt, about 0.2 s per list.
 - Switching the output also moves alert sounds to it, as the Sound settings do. Turn this off with
   **Alert sounds** to keep alerts on their own device.
+- Sound lists the devices macOS has right now. A device made by an app, such as BoomAudio from
+  Boom 3D, appears while that app is running. AirPlay speakers and TVs become devices only once
+  chosen, so pick them in Control Center; after that they show here while in use.
 - Hide devices you never use (for example a virtual meeting device) with **Hidden devices**. A hidden
   device still shows while it is in use.
 
