@@ -16,6 +16,7 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-splitwise` | `z-splitwise/vX.Y.Z` | `Splitwise.alfredworkflow` |
 | `workflows/z-calculate-anything` | `z-calculate-anything/vX.Y.Z` | `Calculate Anything.alfredworkflow` |
 | `workflows/z-workflow-manager` | `z-workflow-manager/vX.Y.Z` | `Workflow Manager.alfredworkflow` |
+| `workflows/z-notion` | `z-notion/vX.Y.Z` | `Notion.alfredworkflow` |
 | `workflows/z-translate` | `z-translate/vX.Y.Z` | `Translate.alfredworkflow` |
 | `workflows/z-folder-navigator` | `z-folder-navigator/vX.Y.Z` | `Folder Navigator.alfredworkflow` |
 | `workflows/z-tag-manager` | `z-tag-manager/vX.Y.Z` | `Tag Manager.alfredworkflow` |

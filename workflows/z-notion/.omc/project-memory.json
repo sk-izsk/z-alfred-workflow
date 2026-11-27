@@ -1,0 +1,155 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1795742932381,
+  "projectRoot": "/Volumes/Mac Mini 1tb Ext/Projects/Alfred workflow/z-alfred-workflow/workflows/z-notion",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": "npm test",
+    "lintCommand": "npm run lint",
+    "devCommand": null,
+    "scripts": {
+      "build": "bun build src/main.ts --target=node --format=esm --minify-syntax --outfile workflow/bin/nt.mjs && bun scripts/build-workflow.ts",
+      "test": "bun test tests",
+      "typecheck": "tsc --noEmit",
+      "lint": "oxlint src tests ui scripts",
+      "fmt": "oxfmt src tests ui scripts",
+      "fmt:check": "oxfmt --check src tests ui scripts",
+      "check": "bun run typecheck && bun run lint && bun run fmt:check && bun run test",
+      "link": "scripts/link.sh",
+      "package": "bun run build && scripts/package.sh"
+    }
+  },
+  "conventions": {
+    "namingStyle": "camelCase/PascalCase",
+    "importStyle": "ES modules",
+    "testPattern": "*.test.ts",
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "assets",
+      "scripts",
+      "src",
+      "tests"
+    ],
+    "gitBranches": {
+      "defaultBranch": "dev",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "assets": {
+      "path": "assets",
+      "purpose": "Static assets",
+      "fileCount": 1,
+      "lastAccessed": 1795742932358,
+      "keyFiles": [
+        "icon.png"
+      ]
+    },
+    "dist": {
+      "path": "dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 1,
+      "lastAccessed": 1795742932359,
+      "keyFiles": [
+        "Notion.alfredworkflow"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 4,
+      "lastAccessed": 1795742932367,
+      "keyFiles": [
+        "build-workflow.ts",
+        "link.sh",
+        "package.sh",
+        "plist.ts"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 7,
+      "lastAccessed": 1795742932368,
+      "keyFiles": [
+        "env.ts",
+        "format.ts",
+        "main.ts",
+        "notion.ts",
+        "proc.ts"
+      ]
+    },
+    "tests": {
+      "path": "tests",
+      "purpose": "Test files",
+      "fileCount": 2,
+      "lastAccessed": 1795742932369,
+      "keyFiles": [
+        "fixtures.ts",
+        "notion.test.ts"
+      ]
+    },
+    "ui": {
+      "path": "ui",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1795742932369,
+      "keyFiles": [
+        "window.ts"
+      ]
+    },
+    "workflow": {
+      "path": "workflow",
+      "purpose": null,
+      "fileCount": 8,
+      "lastAccessed": 1795742932369,
+      "keyFiles": [
+        "CAPTURE.png",
+        "CREATE.png",
+        "NOTE.png",
+        "SEARCH.png",
+        "TEXT.png"
+      ]
+    },
+    "workflow/bin": {
+      "path": "workflow/bin",
+      "purpose": "Executable scripts",
+      "fileCount": 2,
+      "lastAccessed": 1795742932370,
+      "keyFiles": [
+        "nt",
+        "nt.mjs"
+      ]
+    }
+  },
+  "hotPaths": [],
+  "userDirectives": []
+}
