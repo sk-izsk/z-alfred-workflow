@@ -8,7 +8,7 @@ import { isAllDay, parseWhen } from "./format.ts";
 import * as nt from "./notion.ts";
 import type { DbProp, FormValue, Page, User } from "./notion.ts";
 import * as screens from "./screens.ts";
-import { type Json, type Row, run } from "./screens.ts";
+import { go, type Json, type Row, run } from "./screens.ts";
 import { type Action, merge, popup, separator, sheet, update } from "./ui.ts";
 
 await profileCommand(() => import("./env.ts"));
@@ -353,17 +353,17 @@ const pageMenu = (s: State, page: Page): Json[] => {
   const view = screen?.kind === "database" ? viewOf(screen.id, props) : undefined;
   return [
     page.object === "page"
-      ? item("Preview Page", run("preview", [uid]), primaryIsPreview() ? "↩" : "")
-      : item("Navigate to Database", run("primary", [uid]), "↩"),
+      ? item("Preview Page", go("preview", [uid]), primaryIsPreview() ? "↩" : "")
+      : item("Navigate to Database", go("primary", [uid]), "↩"),
     item("Open in Notion", run("open-app", [uid]), primaryIsPreview() ? "⌘O" : "↩"),
     item("Open in Browser", run("open-browser", [uid])),
     separator,
     ...(editMenu.length ? [{ text: "Edit Property", submenu: editMenu }] : []),
     page.object === "page"
-      ? item("Append Content to Page", run("append", [uid]), "⇧⌘N")
-      : item("Create New Page", run("new-page", [uid]), "⌘N"),
+      ? item("Append Content to Page", go("append", [uid]), "⇧⌘N")
+      : item("Create New Page", go("new-page", [uid]), "⌘N"),
     ...(screen?.kind === "database"
-      ? [item("Create New Page in This Database", run("new-page", [`d-${screen.id}`]), "⌘N")]
+      ? [item("Create New Page in This Database", go("new-page", [`d-${screen.id}`]), "⌘N")]
       : []),
     item(isPinned ? "Unpin Page" : "Pin Page", run("pin", [uid]), "⇧⌘P"),
     ...(view

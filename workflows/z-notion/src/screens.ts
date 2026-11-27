@@ -12,6 +12,11 @@ export const run = (command: string, args: string[] = [], async = false): Json =
   args: [command, ...args],
   ...(async && { async: true }),
 });
+/** Opens another screen, then loads its content in the background (pages, databases, forms). */
+export const go = (command: string, args: string[] = []): Json[] => [
+  run(command, args),
+  run("load", [], true),
+];
 const on = (triggers: string, action: Json | Json[]): Json => ({ triggers, action });
 const MUTED = "secondaryLabelColor";
 
@@ -139,7 +144,7 @@ const header = (content: Json, right?: Json): Json => ({
     ...(right ? [{ ...right, constraints: { region: "right", position: "centre" } }] : []),
   ],
 });
-const searchField = (placeholder: string, text: string, typing: Json, enter: Json): Json => ({
+const searchField = (placeholder: string, text: string, typing: Json, enter: Json | Json[]): Json => ({
   id: "query",
   type: "textfield",
   text,
@@ -238,7 +243,7 @@ export const sectionRow = (text: string): Row => ({
   "t2Box.background": null,
 });
 
-const pageList = (rows: Row[], placeholder: string, enter: Json): Json => ({
+const pageList = (rows: Row[], placeholder: string, enter: Json | Json[]): Json => ({
   id: "list",
   type: "dataview",
   padding: 8,
@@ -300,22 +305,22 @@ export const searchScreen = (rows: Row[], query: string, status: string, primary
         "Search pages…",
         query,
         run("search", ["{value:query.text}"], true),
-        run("primary", [SELECTED]),
+        go("primary", [SELECTED]),
       ),
     ),
     pageList(
       rows,
       "No pages found. Share pages with your integration in Notion, then press ⌘R.",
-      run("primary", [SELECTED]),
+      go("primary", [SELECTED]),
     ),
-    footer({ text: `${primary}  ↩`, action: run("primary", [SELECTED]) }, status),
+    footer({ text: `${primary}  ↩`, action: go("primary", [SELECTED]) }, status),
   ],
   shortcuts: [
     ...listKeys,
     { shortcut: "{var:actions_shortcut}", action: run("menu", [SELECTED]) },
     { shortcut: "⌘R", action: run("refresh", [], true) },
     { shortcut: "⌘O", action: run("open-app", [SELECTED]) },
-    { shortcut: "⌘N", action: run("new-page", [SELECTED]) },
+    { shortcut: "⌘N", action: go("new-page", [SELECTED]) },
   ],
 });
 
@@ -333,7 +338,7 @@ export const databaseScreen = (
         `Filter ${name}…`,
         query,
         run("db-search", ["{value:query.text}"], true),
-        run("primary", [SELECTED]),
+        go("primary", [SELECTED]),
       ),
       {
         id: "sort",
@@ -347,15 +352,15 @@ export const databaseScreen = (
         events: [on("changed", run("db-sort", ["{value:sort.selected.value}"], true))],
       },
     ),
-    pageList(rows, "No pages found. ⌘N creates one.", run("primary", [SELECTED])),
-    footer({ text: `${primary}  ↩`, action: run("primary", [SELECTED]) }, status),
+    pageList(rows, "No pages found. ⌘N creates one.", go("primary", [SELECTED])),
+    footer({ text: `${primary}  ↩`, action: go("primary", [SELECTED]) }, status),
   ],
   shortcuts: [
     ...listKeys,
     { shortcut: "{var:actions_shortcut}", action: run("menu", [SELECTED]) },
     { shortcut: "⌘R", action: run("refresh", [], true) },
     { shortcut: "⌘O", action: run("open-app", [SELECTED]) },
-    { shortcut: "⌘N", action: run("new-page", [SELECTED]) },
+    { shortcut: "⌘N", action: go("new-page", [SELECTED]) },
   ],
 });
 
