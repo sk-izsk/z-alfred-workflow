@@ -1,0 +1,90 @@
+import { hyperConfiguration } from "../../../shared/ui-profile.ts";
+import pkg from "../package.json" with { type: "json" };
+const text = (variable: string, label: string, value: string, description: string) => ({
+  type: "textfield",
+  variable,
+  label,
+  description,
+  config: { default: value, placeholder: value, required: false },
+});
+const object = (uid: string, type: string, config: object, version = 1) => ({ uid, type, version, config });
+const link = (b: string) => ({ destinationuid: b, modifiers: 0, modifiersubtext: "", vitoclose: false });
+export const infoPlist = {
+  bundleid: "com.izsk.drives",
+  name: "Drives",
+  createdby: "izsk",
+  category: "Tools",
+  disabled: false,
+  version: pkg.version,
+  description: pkg.description,
+  webaddress: "https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-drives",
+  objects: [
+    object("KEYWORD", "alfred.workflow.input.keyword", {
+      keyword: "{var:kw_main}",
+      text: "Drives",
+      subtext: "Mounted drives and disk images: free space and eject",
+      argumenttype: 1,
+      withspace: true,
+    }),
+    object("TRIGGER", "alfred.workflow.trigger.external", { triggerid: "open", availableviaurlscheme: true }),
+    object("MODE", "alfred.workflow.utility.json", {
+      json: JSON.stringify({
+        alfredworkflow: { arg: "{query}", config: { launchmode: "{var:launch_external}" } },
+      }),
+    }),
+    object("UI", "alfred.workflow.userinterface.alfredui", {
+      path: "drives.alfredui",
+      stackview: true,
+      launchmode: 0,
+    }),
+    object(
+      "POST",
+      "alfred.workflow.action.script",
+      {
+        script: "./bin/drives post",
+        type: 11,
+        scriptargtype: 1,
+        escaping: 0,
+        scriptfile: "",
+        concurrently: false,
+      },
+      2,
+    ),
+  ],
+  connections: {
+    KEYWORD: [link("MODE")],
+    TRIGGER: [link("MODE")],
+    MODE: [link("UI")],
+    UI: [link("POST")],
+  },
+  uidata: Object.fromEntries(
+    [
+      ["KEYWORD", 0, 0],
+      ["TRIGGER", 0, 140],
+      ["MODE", 200, 70],
+      ["UI", 380, 70],
+      ["POST", 560, 70],
+    ].map(([id, x, y]) => [id, { xpos: x, ypos: y }]),
+  ),
+  userconfigurationconfig: [
+    text("kw_main", "Keyword", "drives", "Open Drives."),
+    ...hyperConfiguration(),
+    text("actions_shortcut", "Actions shortcut", "⌘K", "Open actions."),
+    text("node_path", "Node.js executable", "", "Optional absolute executable path."),
+    {
+      type: "popupbutton",
+      variable: "launch_external",
+      label: "Open window",
+      config: {
+        default: "0",
+        pairs: [
+          ["Inside Alfred", "0"],
+          ["Separate window", "1"],
+        ],
+      },
+    },
+  ],
+  variablesdontexport: [],
+  readme:
+    "See mounted drives and opened disk images with their free space, and eject them in a native Alfred window. ↩ ejects (opens internal drives), ⌘O opens in Finder, ⌘E ejects, ⌘C copies the path; Eject All and Force Eject ask first. When a drive is in use, the app holding it is named. Command-K for actions; Back (Hyper+B) returns to Swiss or Alfred's search. Built with help from AI tools.",
+};
