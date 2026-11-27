@@ -28,9 +28,11 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-wifi` | `z-wifi/vX.Y.Z` | `Wi-Fi.alfredworkflow` |
 | `workflows/z-dev-cache-cleaner` | `z-dev-cache-cleaner/vX.Y.Z` | `Dev Cache Cleaner.alfredworkflow` |
 | `workflows/z-dev-utils` | `z-dev-utils/vX.Y.Z` | `Dev Utils.alfredworkflow` |
+| `workflows/z-leetcode` | `z-leetcode/vX.Y.Z` | `LeetCode.alfredworkflow` |
 | `workflows/z-gif-search` | `z-gif-search/vX.Y.Z` | `GIF Search.alfredworkflow` |
 | `workflows/z-emoji` | `z-emoji/vX.Y.Z` | `Emoji Picker.alfredworkflow` |
 | `workflows/z-lunar` | `z-lunar/vX.Y.Z` | `Lunar Controls.alfredworkflow` |
+| `workflows/z-shortcuts` | `z-shortcuts/vX.Y.Z` | `Shortcuts.alfredworkflow` |
 | `workflows/z-window-navigator` | `z-window-navigator/vX.Y.Z` | `Window Navigator.alfredworkflow` |
 | `workflows/z-world-clock` | `z-world-clock/vX.Y.Z` | `World Clock.alfredworkflow` |
 | `workflows/z-swiss` | `z-swiss/vX.Y.Z` | `Swiss.alfredworkflow` |

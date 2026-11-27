@@ -1,0 +1,166 @@
+{
+  "bundleid": "com.izsk.leetcode",
+  "variablesconfig": {
+    "leetcode_session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "leetcode_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    },
+    "dev_return": {
+      "default": ""
+    }
+  },
+  "window": {
+    "title": "LeetCode",
+    "size": {
+      "width": 780,
+      "height": 540
+    },
+    "minsize": {
+      "width": 560,
+      "height": 380
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/leetcode",
+              "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/leetcode",
+              "args": [
+                "prepare-origin",
+                "{var:leetcode_session}"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/leetcode",
+              "args": [
+                "launch",
+                "{var:leetcode_session}"
+              ],
+              "async": true
+            }
+          ]
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/leetcode",
+            "args": [
+              "menu",
+              "{var:leetcode_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/leetcode",
+            "args": [
+              "refresh",
+              "{var:leetcode_session}"
+            ],
+            "async": true
+          }
+        }
+      ],
+      "components": [
+        {
+          "id": "statusLabel",
+          "type": "label",
+          "text": "Loading LeetCode…",
+          "constraints": {
+            "region": "centre",
+            "position": "centre"
+          }
+        },
+        {
+          "id": "initialBack",
+          "type": "button",
+          "text": "Back  {var:back_label}",
+          "shortcut": "{var:back_shortcut}",
+          "bordered": false,
+          "constraints": {
+            "region": "bottom",
+            "position": "right",
+            "insets": {
+              "right": 12,
+              "bottom": 12
+            }
+          },
+          "events": [
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "json",
+                "src": {
+                  "finish": {
+                    "variables": {
+                      "leetcode_out": "back",
+                      "dev_return": "{var:dev_return}"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

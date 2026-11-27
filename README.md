@@ -24,18 +24,20 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Tag Manager](workflows/z-tag-manager) | Find and manage Finder tags on files, folders and apps | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-tag-manager%2Fv0.1.1) |
 | [System Monitor](workflows/z-system-monitor) | Live CPU, memory, disks, power and network details | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-system-monitor%2Fv0.1.1) |
 | [Mole](workflows/z-mole) | Mole health, disk browsing and reviewed cleanup/optimization previews | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-mole%2Fv0.1.1) |
-| [Dev](workflows/z-dev) | Separate launcher for developer and connectivity tools | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev%2Fv0.1.1) |
+| [Dev](workflows/z-dev) | Separate launcher for developer and connectivity tools | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev%2Fv0.2.0) |
 | [Dev Servers](workflows/z-dev-servers) | Inspect local servers and stop or restart by project | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-servers%2Fv0.1.1) |
 | [Bluetooth](workflows/z-bluetooth) | Paired Bluetooth devices, connection controls and battery details | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-bluetooth%2Fv0.1.1) |
 | [Wi-Fi](workflows/z-wifi) | Wi-Fi networks, status and native connection controls | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-wifi%2Fv0.2.0) |
 | [Dev Cache Cleaner](workflows/z-dev-cache-cleaner) | Inspect developer caches and review individual or safe bulk cleanup | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-cache-cleaner%2Fv0.1.1) |
 | [Dev Utils](workflows/z-dev-utils) | Local developer and text transformations with clipboard input | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-utils%2Fv0.1.1) |
+| [LeetCode](workflows/z-leetcode) | Search and preview problems, daily challenge, random picks and profiles | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-leetcode%2Fv0.1.0) |
 | [GIF Search](workflows/z-gif-search) | GIF search, favorites and recents; list/grid layouts | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-gif-search%2Fv0.2.0) |
 | [Emoji Picker](workflows/z-emoji) | Offline emoji search, favorites, recents and skin-tone variants | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-emoji%2Fv0.1.1) |
 | [Lunar Controls](workflows/z-lunar) | Display brightness, contrast, volume, inputs and Lunar presets | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-lunar%2Fv0.1.1) |
+| [Shortcuts](workflows/z-shortcuts) | Search, run and edit macOS Shortcuts with text, URLs or files as input | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-shortcuts%2Fv0.1.0) |
 | [Window Navigator](workflows/z-window-navigator) | Search and focus windows on all desktops, the active app or the current desktop | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-window-navigator%2Fv0.1.1) |
 | [World Clock](workflows/z-world-clock) | Offline timezones, starred locations and native analog grid | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-world-clock%2Fv0.1.1) |
-| [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-swiss%2Fv0.1.1) |
+| [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-swiss%2Fv0.2.0) |
 | [Weather](workflows/z-weather) | Saved cities, colorful conditions and detailed weather forecasts | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-weather%2Fv0.1.1) |
 | [Maps](workflows/z-map) | Routes and places on a live map: car, transit, bike, walk, stops, suggestions; open data, Google or HERE | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-map%2Fv0.1.0) |
 

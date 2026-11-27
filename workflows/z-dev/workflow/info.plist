@@ -162,7 +162,7 @@
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>Type dev to search Dev Servers, Bluetooth, Wi-Fi, Dev Cache Cleaner, Dev Utils. Each tool stays a separate installed workflow and keeps its direct keyword. Dev does no polling, network requests or camera/process work in the launcher. Camera is deferred.
+	<string>Type dev to search Dev Servers, Bluetooth, Wi-Fi, Dev Cache Cleaner, Dev Utils, LeetCode. Each tool stays a separate installed workflow and keeps its direct keyword. Dev does no polling, network requests or camera/process work in the launcher. Camera is deferred.
 
 Return opens a tool. Back from that tool returns to the same Dev query and selection, after its own child screens. Direct tool launches keep their original Back behavior. Dev Back (configurable Hyper+B) returns to Alfred search; Back is visible outside Actions.
 
@@ -411,7 +411,7 @@ Requires Alfred 6 Powerpack, Node.js 22+ or Bun. Original Dev icon uses SF Symbo
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.1.1</string>
+	<string>0.2.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-dev</string>
 </dict>

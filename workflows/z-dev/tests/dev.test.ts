@@ -1,12 +1,13 @@
 import { expect, test } from "bun:test";
 import { tools, envelope, available } from "../src/tools.ts";
-test("Dev contains only the five requested tools and uses a separate parent protocol", () => {
+test("Dev contains only its six tools and uses a separate parent protocol", () => {
   expect(tools.map((x) => x.id)).toEqual([
     "dev-servers",
     "bluetooth",
     "wifi",
     "dev-cache-cleaner",
     "dev-utils",
+    "leetcode",
   ]);
   const id = "12345678-1234-1234-1234-123456789abc";
   const value = envelope(id, "test");
