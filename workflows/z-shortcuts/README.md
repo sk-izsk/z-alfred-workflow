@@ -1,41 +1,42 @@
-# Window Navigator for Alfred 6
+# Shortcuts for Alfred 6
 
-Search window titles and app names on **all desktops**, in the **active app** or on the **current
-desktop**, and bring the window forward.
+Search, run and edit your macOS Shortcuts in a native Alfred window, with text, URLs or files as
+input.
 
-![Native window search](assets/screenshots/search.png)
-
-Requires macOS, Alfred 6 with Powerpack, Node.js 22+ or Bun, and Accessibility permission for Alfred.
+Requires macOS 12+, Alfred 6 with Powerpack and Node.js 22+ or Bun.
 
 ## Open
 
-Type `wnav`, or choose Window Navigator in Swiss. `wins` opens it straight in Current Desktop mode
-(both keywords are configurable). Pick the scope above the list: **All Desktops**, **Active App** or
-**Current Desktop**. Minimised windows are included (except on Current Desktop) and are restored when
-chosen.
+Type `shortcuts`, or choose Shortcuts in Swiss. Your shortcuts are listed by name with their folder;
+type to filter by name or folder, or pick a folder above the list (**All Shortcuts**, each folder,
+**No Folder**). Shortcuts that accept input are marked.
 
 ## Actions
 
-- **↩** brings the selected window forward.
-- **⌘K**: Close Window, Quit Owning App, Copy Window Title, Refresh, Accessibility Settings and
+- **↩** runs the shortcut.
+- **⌘↩** runs it with text you type (only for shortcuts that accept input).
+- **⌥↩** or **⌘E** opens it for editing in Shortcuts.
+- **⌘K**: Run, Run with Text…, Edit in Shortcuts, Copy Shortcut Name, Open Shortcuts, Refresh and
   Configuration.
-- **Back** (Hyper+B) returns to Swiss when opened there.
+- **Back** (Hyper+B) returns to Swiss when opened there, otherwise to Alfred's search.
 
-## Safety
+## Run on text, URLs and files
 
-Before acting, the workflow checks again that the process, app, window and title still match (and
-the size and position before closing). If the window changed or is gone, it reopens the same search
-with an error instead of acting on another window. Quit is a normal quit request, so the app can
-still ask about unsaved documents. No force-quit, private macOS APIs or helper binaries.
+Select text or a URL and use Alfred's **Universal Action** “Run Shortcut”, or select files and use the
+**File Action** “Run Shortcut”. The window then lists only shortcuts that accept input and shows what
+will be passed; ↩ runs the chosen shortcut with it.
 
-## Notes
+## How it works
 
-- Needs Accessibility permission and permission to control System Events; Screen Recording only if
-  macOS hides current-desktop window details.
-- Windows an app doesn't expose through Accessibility can't be listed. Switching desktops uses the
-  app's Window menu where possible, then AXRaise.
-- Stage Manager thumbnails are matched by title. Lists refresh on opening and on Refresh, not while
-  you type. Window details stay in the local session cache; no network access.
+- The list comes from Apple's `shortcuts` command, which needs no permission, and loads fresh on each
+  open (about 150 ms; the last list shows instantly meanwhile).
+- Which shortcuts accept input comes from Shortcuts Events: macOS asks once whether Alfred may control
+  it. If you decline, every shortcut is offered input. Turn this off with **Input detection**.
+- Running and editing use Alfred's own **Run Shortcut** object and Shortcuts automation task, so a
+  shortcut runs exactly as it would from Alfred's built-in actions. Typed input never appears in
+  command arguments.
+- Hide folders you don't want listed with **Hidden folders** (one per line; `No Folder` hides
+  shortcuts outside folders).
 
 ## Configuration
 
@@ -44,8 +45,9 @@ Open the workflow in Alfred Preferences → **Configure Workflow**.
 
 | Setting | Default | What it does |
 | --- | --- | --- |
-| Keyword | `wnav` | Open Window Navigator. |
-| Current desktop keyword | `wins` | Open the same navigator directly in Current Desktop mode. |
+| Keyword | `shortcuts` | Open Shortcuts. |
+| Hidden folders | — | Shortcuts folders to leave out, one per line. Use “No Folder” for shortcuts outside folders. |
+| Input detection | On | Ask Shortcuts which shortcuts accept input (macOS asks once to let Alfred control Shortcuts Events). Off: every shortcut is offered input. |
 | Back shortcut | Hyper+B (`⌃⌥⇧⌘B`) | Hyper modifier checkboxes plus a Back key; turn Hyper off to use a custom shortcut instead. |
 | Actions shortcut | `⌘K` | Open actions. |
 | Node.js executable | — | Optional absolute executable path. |
@@ -61,13 +63,10 @@ bun run package
 bun run link
 ```
 
-Tests cover search, selection, typing, action handoffs and menus. Raise and close were verified on a
-disposable TextEdit document; quitting real apps was not tested. Width, Back and footer follow
-[UI_CONVENTIONS.md](../../UI_CONVENTIONS.md).
+Width, Back and footer follow [UI_CONVENTIONS.md](../../UI_CONVENTIONS.md).
 
 ## Credits and AI disclosure
 
-References: [Window Navigator](https://github.com/zeitlings/alfred-workflows) and
-[Window Switcher](https://github.com/alfredapp/window-switcher-workflow/). No reference source,
-artwork or binaries copied. MIT; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Built with
-help from AI tools.
+Behaviour follows the Alfred [Shortcuts workflow](https://github.com/alfredapp/shortcuts-workflow/) by
+Vítor Galvão. Original code and icon; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Shortcuts
+is a trademark of Apple Inc. Built with help from AI tools.

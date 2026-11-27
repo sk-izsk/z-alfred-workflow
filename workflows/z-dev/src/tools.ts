@@ -57,6 +57,15 @@ export const tools: Tool[] = [
     minimum: "0.1.0",
     keyword: "devutils",
   },
+  {
+    id: "leetcode",
+    name: "LeetCode",
+    description: "Search and preview problems, daily challenge, random picks and profiles",
+    bundle: "com.izsk.leetcode",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "leetcode",
+  },
 ];
 export type Installed = { bundle: string; version: string };
 export const installed = (): Installed[] => {
