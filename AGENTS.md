@@ -41,6 +41,27 @@ proposing it.
   keep working and the plain-text copy is deleted.
 - Bitwarden has its own split-key Keychain design. Do not change it to this helper.
 
+### Web views (native first)
+
+- Use a `webkitview` only for what native Alfred UI components cannot do, and record the reason in
+  UI_CONVENTIONS.md's exception list. Current needs: interactive maps (Maps), swipe/scroll paging and
+  drag and drop (Launchpad: Alfred UI has no scroll, swipe or drag events, only clicks and mouse
+  down/up), drag sliders (Lunar) and drawn charts (Speed Test). Anything else is native.
+- Verified in Alfred 6 (2026-11), so don't reach for a web view for these:
+  - `imageview` plays animated GIFs and shows PNG, JPEG, WebP, SVG and PDF files.
+  - `markdownarea` renders headings, lists, tables, code blocks, links and **local** images (PNG,
+    JPEG, GIF, SVG) given as plain absolute paths. It does **not** load web images, `file://` URLs
+    or paths containing spaces. So download remote images first, into a folder whose path has no
+    spaces (Alfred's own cache, "…/Workflow Data/…", has one: use `os.tmpdir()`), and pass the
+    plain path. It can't size an image or draw an image inside a link: put icons in a native
+    `imageview` beside it, unwrap linked badges, and drop images that can't be fetched.
+  - `markdownarea` paints its own background: set `background: null` and pad its container, or
+    text touches the edge.
+- Images never load from URLs in native components: download to the cache, with a timeout, a size
+  limit and a remembered failure list so a dead image doesn't slow every view.
+- Before choosing a web view for anything new, test the native component in Alfred (a throwaway
+  workflow with an External Trigger, captured with `screencapture -l`) and write the result here.
+
 ### Speed
 
 - Script actions without `async: true` block the window. Use them only for instant work (under

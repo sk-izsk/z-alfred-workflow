@@ -36,15 +36,48 @@ test("removes a setting cleanly (restoring 'no theme set')", () => {
   expect(removeSetting(setSetting(text, "workbench.colorTheme", "Y"), "workbench.colorTheme")).toBe(removed);
 });
 
-test("README markdown renders headings, images, links, lists and code", async () => {
-  const { markdownToHtml } = await import("../src/markdown.ts");
-  const html = markdownToHtml(
-    '# Title\n\nSome **bold** `x<y` [link](https://a.b)\n\n![shot](https://i.png)\n\n- one\n- two\n\n```js\nif (a < b) {}\n```\n<p align="center">\n  <em>a</em> - b\n</p>',
+test("README for the native view: HTML images become Markdown, images are made local or dropped", async () => {
+  const preview = await import("../src/preview.ts");
+  const { mkdtempSync, writeFileSync } = await import("node:fs");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const { pathToFileURL } = await import("node:url");
+  const dir = mkdtempSync(join(tmpdir(), "ext with space-"));
+  writeFileSync(join(dir, "shot.png"), "png");
+  preview.setFetcher(async (url) =>
+    url.includes("badge")
+      ? new Response("<svg/>", { headers: { "content-type": "image/svg+xml" } })
+      : url.includes("page")
+        ? new Response("<html>", { headers: { "content-type": "text/html" } })
+        : new Response("", { status: 404 }),
   );
-  expect(html).toContain("<h1>Title</h1>");
-  expect(html).toContain('<strong>bold</strong> <code>x&lt;y</code> <a href="https://a.b">link</a>');
-  expect(html).toContain('<img alt="shot" src="https://i.png">');
-  expect(html).toContain("<ul>\n<li>one</li>\n<li>two</li>\n</ul>");
-  expect(html).toContain("<pre><code>if (a &lt; b) {}</code></pre>");
-  expect(html).toContain('<p align="center">\n  <em>a</em> - b\n</p>');
+  const md = await preview.nativeReadme(
+    '# T\n\n<p align="center"><img src="shot.png" alt="Shot"></p>\n\n![b](https://x.dev/badge.svg) ![g](https://x.dev/gone.png) ![h](https://x.dev/page)\n\nText<br>more',
+    pathToFileURL(`${dir}/`).href,
+  );
+  const paths = [...md.matchAll(/!\[[^\]]*\]\(([^)]+)\)/g)].map((m) => m[1]!);
+  expect(paths).toHaveLength(2); // the local screenshot and the badge; the 404 and the HTML page are dropped
+  for (const p of paths) {
+    expect(p.startsWith(preview.imageDir())).toBe(true);
+    expect(p).not.toContain(" "); // Alfred's markdown view can't load paths with spaces
+  }
+  expect(md).toContain("![Shot]");
+  expect(md).not.toContain("<p");
+  expect(md).toContain("Text\nmore");
+  // A badge wrapped in a link keeps only the image; a link around a dropped image disappears.
+  const badges = await preview.nativeReadme(
+    "[![b](https://x.dev/badge.svg)](https://x.dev) [![g](https://x.dev/gone.png)](https://x.dev) end",
+  );
+  expect(badges).toMatch(/^!\[b\]\(\/\S+\.svg\) {2}end$/);
+  const full = await preview.previewMarkdown({
+    name: "Ext",
+    publisher: "pub",
+    version: "1.0.0",
+    installs: "2K",
+    description: "Does things",
+    readme: "",
+  });
+  expect(full.markdown).toContain("# Ext\n\npub · v1.0.0 · 2K installs\n\nDoes things");
+  expect(full.markdown).toContain("_No README._");
+  expect(full.icon).toBeUndefined();
 });

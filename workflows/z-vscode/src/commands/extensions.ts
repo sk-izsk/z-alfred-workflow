@@ -1,10 +1,9 @@
-import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { editor, shortName } from "../editors.ts";
 import { type LocalExtension, extensionUri, localExtensions, uninstallExtension } from "../extensions.ts";
 import { openUrl, revealInFinder } from "../launch.ts";
 import { itemUrl } from "../marketplace.ts";
-import { localReadme, previewHtml } from "../preview.ts";
+import { localReadme, type Preview, previewMarkdown } from "../preview.ts";
 import { type Profile, configuredProfile } from "../profiles.ts";
 import {
   type Action,
@@ -65,16 +64,7 @@ export const extPickers = async (): Promise<Action> =>
 export const extFilter = async ([kind = "all"]: string[]): Promise<Action> =>
   merge(vars({ ext_kind: validKind(kind) }), load(await configuredProfile(), validKind(kind)));
 
-/** An image file as a data: URI, so the preview page needs no file access. */
-export const dataUri = (path: string): string => {
-  try {
-    return `data:image/png;base64,${readFileSync(path).toString("base64")}`;
-  } catch {
-    return "";
-  }
-};
-
-/** README + screenshots in a large sheet over the list (rendered by us: no cookie banner, fast). */
+/** README + screenshots in a large sheet over the list, as native Markdown (see preview.ts). */
 const closeSheet = { type: "json", src: { sheet: { close: "previewSheet" } } };
 
 /**
@@ -82,7 +72,7 @@ const closeSheet = { type: "json", src: { sheet: { close: "previewSheet" } } };
  * after the sheet closes, so its result (status, rows) lands in the window underneath.
  */
 export const previewSheet = (
-  html: string,
+  preview: Preview,
   title: string,
   url: string,
   primary: { text: string; args: string[] },
@@ -94,17 +84,42 @@ export const previewSheet = (
       layout: "border",
       components: [
         {
-          type: "webkitview",
-          text: html,
-          openlinksexternally: true,
-          constraints: { region: "centre", size: { width: 704, height: 500 } },
+          // Padding keeps the README off the sheet's edges; the icon sits beside it at 56 pt.
+          type: "view",
+          layout: "border",
+          padding: 22,
+          spacing: 16,
+          constraints: { region: "centre" },
+          components: [
+            ...(preview.icon
+              ? [
+                  {
+                    id: "previewIcon",
+                    type: "imageview",
+                    image: { type: "file", src: preview.icon },
+                    cornerradius: 10,
+                    constraints: { region: "left", position: "top", size: { width: 56, height: 56 } },
+                  },
+                ]
+              : []),
+            {
+              id: "previewText",
+              type: "markdownarea",
+              text: preview.markdown,
+              paragraphspacing: 6,
+              // Transparent, so the 22 pt padding around it shows as space around the text.
+              background: null,
+              constraints: { region: "centre", size: { width: preview.icon ? 620 : 692, height: 480 } },
+            },
+          ],
         },
         {
           type: "label",
           text: title,
           colour: "secondaryLabelColor",
           linebreak: "truncatetail",
-          constraints: { region: "bottom" },
+          // Inset like the README above, so the caption doesn't sit on the sheet's edge.
+          constraints: { region: "bottom", insets: { left: 22, right: 22, bottom: 4 } },
         },
       ],
     },
@@ -152,12 +167,12 @@ export const ext = async ([action = "", id = ""]: string[]): Promise<Action> => 
       return finish();
     case "preview":
       return previewSheet(
-        previewHtml({
+        await previewMarkdown({
           name: e.name,
           publisher: e.publisher,
           description: (e.pkg as { description?: string }).description ?? "",
           version: e.version,
-          icon: e.icon ? dataUri(e.icon) : "",
+          icon: e.icon ?? "",
           readme: localReadme(e.path),
           base: pathToFileURL(`${e.path}/`).href,
         }),
