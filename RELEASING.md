@@ -29,6 +29,7 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-dev-cache-cleaner` | `z-dev-cache-cleaner/vX.Y.Z` | `Dev Cache Cleaner.alfredworkflow` |
 | `workflows/z-dev-utils` | `z-dev-utils/vX.Y.Z` | `Dev Utils.alfredworkflow` |
 | `workflows/z-leetcode` | `z-leetcode/vX.Y.Z` | `LeetCode.alfredworkflow` |
+| `workflows/z-launchpad` | `z-launchpad/vX.Y.Z` | `Launchpad.alfredworkflow` |
 | `workflows/z-gif-search` | `z-gif-search/vX.Y.Z` | `GIF Search.alfredworkflow` |
 | `workflows/z-emoji` | `z-emoji/vX.Y.Z` | `Emoji Picker.alfredworkflow` |
 | `workflows/z-lunar` | `z-lunar/vX.Y.Z` | `Lunar Controls.alfredworkflow` |
