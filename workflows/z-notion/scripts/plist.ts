@@ -161,7 +161,7 @@ export const infoPlist = {
     popup(
       "primary_action",
       "Primary action (Search)",
-      "notion",
+      "preview",
       [
         ["Open in Notion", "notion"],
         ["Preview in Alfred", "preview"],

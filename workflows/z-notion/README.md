@@ -34,7 +34,7 @@ specific to Raycast; the internal integration is the equivalent here.
 **Pinned**, **Recent** and **Search** sections, newest first, with icon, title, the last editor's
 initials and how long ago. Typing searches Notion page and database titles.
 
-- ↩ opens the page in Notion (or previews it, see Configuration); on a database it lists its pages.
+- ↩ previews the page in Alfred (or opens it in Notion, see Configuration); on a database it lists its pages. Open in Notion is ⌘O and in Actions (⌘K).
 - In a database: filter by title, sort by **Last Edited At** or **Last Created At**, show property
   tags, and switch between **List** and **Kanban** (grouped by status) in Actions.
 
@@ -77,7 +77,7 @@ Text after a keyword fills the form: `nnote buy milk`, `nadd Meeting went well`.
 
 ## Configuration
 
-Keywords, Primary action (Open in Notion or Preview), Open pages in (Notion app or browser),
+Keywords, Primary action (Preview, the default, or Open in Notion), Open pages in (Notion app or browser),
 Create Database Page options (close after create, clipboard), Notes page name, daily page title
 format (`yyyy`, `MM`, `MMM`, `dd`), note style, Actions and Back shortcuts, and the Node.js path.
 External Triggers `search`, `create`, `capture`, `note`, `text` and `connect` open each screen.

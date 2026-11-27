@@ -70,7 +70,7 @@ const dbProps = (id: string) => nt.cached<DbProp[]>(`props-${id}`) ?? [];
 
 // ---- Settings ----
 
-const primaryIsPreview = () => str("primary_action", "notion") === "preview";
+const primaryIsPreview = () => str("primary_action", "preview") === "preview";
 const notesRoot = () => str("notes_page_name", "NOTES");
 /** The daily page title; supports the common date-fns tokens (yyyy, MMM, MM, dd). */
 export const noteDate = (format = str("note_date_format", "yyyy-MM-dd"), date = new Date()) => {

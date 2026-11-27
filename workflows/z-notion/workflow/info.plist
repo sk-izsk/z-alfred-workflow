@@ -844,7 +844,7 @@ Requires Alfred 6 Powerpack, macOS, Node.js 22+ or Bun, and an internet connecti
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>notion</string>
+				<string>preview</string>
 				<key>pairs</key>
 				<array>
 					<array>
