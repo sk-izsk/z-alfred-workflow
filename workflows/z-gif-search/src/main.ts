@@ -273,7 +273,8 @@ const main = async (): Promise<Action | void> => {
   }
   if (action === "website") return open(e.page);
   if (action === "details") {
-    const escape = (v: string) => v.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+    // Alfred's native image view plays GIF animation, so no web view is needed here.
+    const file = e.previewPath && existsSync(e.previewPath) ? e.previewPath : await download(e);
     return sheet("gifDetails", {
       type: "view",
       layout: "border",
@@ -288,9 +289,11 @@ const main = async (): Promise<Action | void> => {
           constraints: { region: "top" },
         },
         {
-          type: "webkitview",
+          id: "gifDetailsImage",
+          type: "imageview",
+          image: { type: "file", src: file },
+          resize: "fit",
           constraints: { region: "centre", size: { height: 290 } },
-          text: `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https:; style-src 'unsafe-inline'"><style>body{margin:0;background:transparent;display:grid;place-items:center;height:100vh}img{max-width:100%;max-height:100vh}</style><img src="${escape(e.url)}">`,
         },
         {
           type: "label",

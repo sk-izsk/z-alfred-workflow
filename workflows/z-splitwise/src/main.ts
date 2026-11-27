@@ -381,11 +381,11 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
     }
   },
 
-  receipt: () => {
+  receipt: async () => {
     const expense = expenseById(idOf(args[0] ?? "", "e"));
     const url = expense?.receipt.original;
     if (!expense || !url) return {};
-    const safe = url.replace(/"/g, "%22");
+    const file = await api.receiptFile(url);
     return sheet("receiptSheet", {
       type: "view",
       layout: "border",
@@ -397,12 +397,21 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
           font: { size: 14, weight: "semibold" },
           constraints: { region: "top" },
         },
-        {
-          type: "webkitview",
-          openlinksexternally: "^https?:",
-          text: `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https:; style-src 'unsafe-inline'"><style>body{margin:0;display:grid;place-items:center;height:100vh;background:transparent}img{max-width:100%;max-height:100vh}</style><img src="${safe}">`,
-          constraints: { region: "centre", size: { width: 420, height: 440 } },
-        },
+        // A native image view (images and PDFs); without a downloadable file, only the button shows.
+        file
+          ? {
+              id: "receiptImage",
+              type: "imageview",
+              image: { type: "file", src: file },
+              resize: "fit",
+              constraints: { region: "centre", size: { width: 420, height: 440 } },
+            }
+          : {
+              type: "label",
+              text: "This receipt can't be shown here. Open it in your browser.",
+              colour: "secondaryLabelColor",
+              constraints: { region: "centre" },
+            },
         {
           type: "button",
           text: "Open in Browser",

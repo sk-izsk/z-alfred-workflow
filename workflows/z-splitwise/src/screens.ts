@@ -177,10 +177,10 @@ const sectionRow = (text: string): Row => ({
 
 type Entity = { kind: "f"; item: Friend } | { kind: "g"; item: Group };
 
+const newest = (a: { updated_at: string }, b: { updated_at: string }) =>
+  Date.parse(b.updated_at) - Date.parse(a.updated_at);
 /** Recent (three latest), then the other friends, then the other groups; newest first. */
 export const peopleRows = (friends: Friend[], groups: Group[]): Row[] => {
-  const newest = (a: { updated_at: string }, b: { updated_at: string }) =>
-    Date.parse(b.updated_at) - Date.parse(a.updated_at);
   const all: Entity[] = [
     ...friends.map((item) => ({ kind: "f" as const, item })),
     ...groups.map((item) => ({ kind: "g" as const, item })),

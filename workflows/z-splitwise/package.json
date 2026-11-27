@@ -1,6 +1,6 @@
 {
   "name": "alfred-splitwise",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Add, search, change and delete Splitwise expenses with friends and groups in Alfred 6",
   "author": "izsk",

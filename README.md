@@ -15,7 +15,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Kill Process](workflows/z-kill-process) | Monitor CPU/RAM, terminate processes and restart apps | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-kill-process%2Fv0.2.0) |
 | [Adhan Time](workflows/z-adhan-time) | City-local prayer calendar and next-prayer countdown | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-adhan-time%2Fv0.1.1) |
 | [Currency Exchange](workflows/z-currency) | Arithmetic, cross-rates, pinned targets and provider-based history | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-currency%2Fv0.2.0) |
-| [Splitwise](workflows/z-splitwise) | Add, search, change and delete expenses with friends and groups | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-splitwise%2Fv0.1.0) |
+| [Splitwise](workflows/z-splitwise) | Add, search, change and delete expenses with friends and groups | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-splitwise%2Fv0.1.1) |
 | [Calculate Anything](workflows/z-calculate-anything) | Native results using your installed unit/conversion engine | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-calculate-anything%2Fv0.1.1) |
 | [Workflow Manager](workflows/z-workflow-manager) | Installed workflows, Gallery, updates and configuration | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-workflow-manager%2Fv0.1.1) |
 | [Notion](workflows/z-notion) | Search, preview and create pages and databases; quick capture, notes and text | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-notion%2Fv0.1.0) |
@@ -32,7 +32,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Dev Cache Cleaner](workflows/z-dev-cache-cleaner) | Inspect developer caches and review individual or safe bulk cleanup | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-cache-cleaner%2Fv0.1.1) |
 | [Dev Utils](workflows/z-dev-utils) | Local developer and text transformations with clipboard input | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-utils%2Fv0.1.1) |
 | [LeetCode](workflows/z-leetcode) | Search and preview problems, daily challenge, random picks and profiles | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-leetcode%2Fv0.1.1) |
-| [GIF Search](workflows/z-gif-search) | GIF search, favorites and recents; list/grid layouts | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-gif-search%2Fv0.2.0) |
+| [GIF Search](workflows/z-gif-search) | GIF search, favorites and recents; list/grid layouts | [0.2.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-gif-search%2Fv0.2.1) |
 | [Emoji Picker](workflows/z-emoji) | Offline emoji search, favorites, recents and skin-tone variants | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-emoji%2Fv0.1.1) |
 | [Lunar Controls](workflows/z-lunar) | Display brightness, contrast, volume, inputs and Lunar presets | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-lunar%2Fv0.1.1) |
 | [Shortcuts](workflows/z-shortcuts) | Search, run and edit macOS Shortcuts with text, URLs or files as input | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-shortcuts%2Fv0.1.0) |
