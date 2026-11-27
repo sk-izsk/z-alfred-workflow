@@ -36,11 +36,16 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Emoji Picker](workflows/z-emoji) | Offline emoji search, favorites, recents and skin-tone variants | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-emoji%2Fv0.1.1) |
 | [Lunar Controls](workflows/z-lunar) | Display brightness, contrast, volume, inputs and Lunar presets | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-lunar%2Fv0.1.1) |
 | [Shortcuts](workflows/z-shortcuts) | Search, run and edit macOS Shortcuts with text, URLs or files as input | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-shortcuts%2Fv0.1.0) |
+| [Sound](workflows/z-sound) | Choose the sound output or input device, with volume and alert sounds | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-sound%2Fv0.1.0) |
+| [Displays](workflows/z-displays) | Change display resolution and refresh rate, the main display, mirroring and Dark Mode | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-displays%2Fv0.1.0) |
+| [Drives](workflows/z-drives) | See mounted drives and opened disk images with free space, and eject them | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-drives%2Fv0.1.0) |
+| [Background Items](workflows/z-background) | See and control login items, launch agents and daemons, and find leftovers | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-background%2Fv0.1.0) |
+| [Menu Bar](workflows/z-menubar) | Search and click the menu bar items of the app you are using | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-menubar%2Fv0.1.0) |
 | [Window Navigator](workflows/z-window-navigator) | Search and focus windows on all desktops, the active app or the current desktop | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-window-navigator%2Fv0.1.1) |
 | [World Clock](workflows/z-world-clock) | Offline timezones, starred locations and native analog grid | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-world-clock%2Fv0.1.1) |
-| [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-swiss%2Fv0.2.0) |
+| [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | [0.3.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-swiss%2Fv0.3.0) |
 | [Weather](workflows/z-weather) | Saved cities, colorful conditions and detailed weather forecasts | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-weather%2Fv0.1.1) |
-| [Maps](workflows/z-map) | Routes and places on a live map: car, transit, bike, walk, stops, suggestions; open data, Google or HERE | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-map%2Fv0.1.0) |
+| [Maps](workflows/z-map) | Routes and places on a live map: car, transit, bike, walk, stops, suggestions; open data, Google or HERE | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-map%2Fv0.1.1) |
 
 Download a `.alfredworkflow` asset and double-click it to install. These workflows require macOS,
 Alfred 6 with the Powerpack and Node.js; see each workflow's README for its other requirements.

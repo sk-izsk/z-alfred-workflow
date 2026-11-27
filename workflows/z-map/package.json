@@ -1,6 +1,6 @@
 {
   "name": "alfred-map",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Routes and place search on a live map in Alfred 6: car, transit, bike and walk, open data or HERE",
   "author": "izsk",

@@ -2,7 +2,7 @@ name: Release workflow
 
 on:
   push:
-    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*", "z-brew/v*", "z-speedtest/v*", "z-github/v*", "z-kill-process/v*", "z-weather/v*", "z-map/v*", "z-adhan-time/v*", "z-currency/v*", "z-splitwise/v*", "z-calculate-anything/v*", "z-swiss/v*", "z-world-clock/v*", "z-window-navigator/v*", "z-lunar/v*", "z-emoji/v*", "z-gif-search/v*", "z-dev-utils/v*", "z-leetcode/v*", "z-launchpad/v*", "z-shortcuts/v*", "z-dev-cache-cleaner/v*", "z-wifi/v*", "z-bluetooth/v*", "z-dev-servers/v*", "z-dev/v*", "z-mole/v*", "z-system-monitor/v*", "z-tag-manager/v*", "z-folder-navigator/v*", "z-translate/v*", "z-workflow-manager/v*", "z-notion/v*"]
+    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*", "z-brew/v*", "z-speedtest/v*", "z-github/v*", "z-kill-process/v*", "z-weather/v*", "z-map/v*", "z-adhan-time/v*", "z-currency/v*", "z-splitwise/v*", "z-calculate-anything/v*", "z-swiss/v*", "z-world-clock/v*", "z-window-navigator/v*", "z-lunar/v*", "z-emoji/v*", "z-gif-search/v*", "z-dev-utils/v*", "z-leetcode/v*", "z-launchpad/v*", "z-shortcuts/v*", "z-sound/v*", "z-displays/v*", "z-drives/v*", "z-background/v*", "z-menubar/v*", "z-dev-cache-cleaner/v*", "z-wifi/v*", "z-bluetooth/v*", "z-dev-servers/v*", "z-dev/v*", "z-mole/v*", "z-system-monitor/v*", "z-tag-manager/v*", "z-folder-navigator/v*", "z-translate/v*", "z-workflow-manager/v*", "z-notion/v*"]
 
 permissions:
   contents: read
@@ -48,6 +48,11 @@ jobs:
             z-leetcode/v*) workflow=z-leetcode; artifact='LeetCode.alfredworkflow' ;;
             z-launchpad/v*) workflow=z-launchpad; artifact='Launchpad.alfredworkflow' ;;
             z-shortcuts/v*) workflow=z-shortcuts; artifact='Shortcuts.alfredworkflow' ;;
+            z-sound/v*) workflow=z-sound; artifact='Sound.alfredworkflow' ;;
+            z-displays/v*) workflow=z-displays; artifact='Displays.alfredworkflow' ;;
+            z-drives/v*) workflow=z-drives; artifact='Drives.alfredworkflow' ;;
+            z-background/v*) workflow=z-background; artifact='Background Items.alfredworkflow' ;;
+            z-menubar/v*) workflow=z-menubar; artifact='Menu Bar.alfredworkflow' ;;
             z-gif-search/v*) workflow=z-gif-search; artifact='GIF Search.alfredworkflow' ;;
             z-emoji/v*) workflow=z-emoji; artifact='Emoji Picker.alfredworkflow' ;;
             z-lunar/v*) workflow=z-lunar; artifact='Lunar Controls.alfredworkflow' ;;

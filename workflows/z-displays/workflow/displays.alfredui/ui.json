@@ -1,0 +1,203 @@
+{
+  "bundleid": "com.izsk.displays",
+  "variablesconfig": {
+    "swiss_return": {
+      "default": ""
+    },
+    "displays_session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "displays_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    }
+  },
+  "window": {
+    "title": "Displays",
+    "size": {
+      "width": 780,
+      "height": 540
+    },
+    "minsize": {
+      "width": 560,
+      "height": 380
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/displays",
+              "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/displays",
+              "args": [
+                "prepare-origin",
+                "{var:displays_session}"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/displays",
+              "args": [
+                "launch",
+                "{var:displays_session}"
+              ],
+              "async": true
+            }
+          ]
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/displays",
+            "args": [
+              "menu",
+              "{var:displays_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/displays",
+            "args": [
+              "refresh",
+              "{var:displays_session}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘Z",
+          "action": {
+            "type": "script",
+            "src": "../bin/displays",
+            "args": [
+              "undo",
+              "{var:displays_session}"
+            ],
+            "async": false
+          }
+        },
+        {
+          "shortcut": "⌘M",
+          "action": {
+            "type": "script",
+            "src": "../bin/displays",
+            "args": [
+              "main",
+              "{var:displays_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": false
+          }
+        },
+        {
+          "shortcut": "⌘D",
+          "action": {
+            "type": "script",
+            "src": "../bin/displays",
+            "args": [
+              "dark",
+              "{var:displays_session}"
+            ],
+            "async": false
+          }
+        }
+      ],
+      "components": [
+        {
+          "id": "statusLabel",
+          "type": "label",
+          "text": "Loading Displays…",
+          "constraints": {
+            "region": "centre",
+            "position": "centre"
+          }
+        },
+        {
+          "id": "initialBack",
+          "type": "button",
+          "text": "Back  {var:back_label}",
+          "shortcut": "{var:back_shortcut}",
+          "bordered": false,
+          "constraints": {
+            "region": "bottom",
+            "position": "right",
+            "insets": {
+              "right": 12,
+              "bottom": 12
+            }
+          },
+          "events": [
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "json",
+                "src": {
+                  "finish": {
+                    "variables": {
+                      "displays_out": "back",
+                      "swiss_return": "{var:swiss_return}"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
