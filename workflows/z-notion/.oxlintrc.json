@@ -1,0 +1,4 @@
+{
+  "categories": { "correctness": "error", "suspicious": "warn" },
+  "rules": { "func-style": ["warn", "expression"], "prefer-arrow-callback": "warn" }
+}

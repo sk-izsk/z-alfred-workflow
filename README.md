@@ -17,6 +17,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Currency Exchange](workflows/z-currency) | Arithmetic, cross-rates, pinned targets and provider-based history | Initial release pending |
 | [Calculate Anything](workflows/z-calculate-anything) | Native results using your installed unit/conversion engine | Initial release pending |
 | [Workflow Manager](workflows/z-workflow-manager) | Installed workflows, Gallery, updates and configuration | Initial release pending |
+| [Notion](workflows/z-notion) | Search, preview and create pages and databases; quick capture, notes and text | Initial release pending |
 | [Translate](workflows/z-translate) | Clipboard and text translation with native split panes | Initial release pending |
 | [Folder Navigator](workflows/z-folder-navigator) | Find folders and browse files with complete Back history | Initial release pending |
 | [Tag Manager](workflows/z-tag-manager) | Find and manage Finder tags on files, folders and apps | Initial release pending |

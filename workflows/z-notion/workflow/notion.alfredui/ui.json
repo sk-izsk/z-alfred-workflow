@@ -1,0 +1,135 @@
+{
+  "bundleid": "com.izsk.notion",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "nt_mode": {
+      "src": "variable",
+      "default": "search",
+      "scriptenv": true
+    },
+    "nt_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "nt_key": {
+      "default": "",
+      "scriptenv": true
+    },
+    "nt_demo": {
+      "src": "variable",
+      "default": "",
+      "scriptenv": true
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
+    }
+  },
+  "window": {
+    "title": "Notion",
+    "size": {
+      "height": 560,
+      "width": 780
+    },
+    "minsize": {
+      "width": 560,
+      "height": 420
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/nt",
+              "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/nt",
+              "args": [
+                "launch",
+                "{var:nt_query}"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/nt",
+              "args": [
+                "load"
+              ],
+              "async": true
+            }
+          ]
+        }
+      ],
+      "components": [
+        {
+          "id": "initialTitle",
+          "type": "label",
+          "text": "Notion",
+          "font": {
+            "size": 22,
+            "weight": "semibold"
+          },
+          "constraints": {
+            "region": "centre",
+            "position": "centre"
+          }
+        },
+        {
+          "id": "initialBack",
+          "type": "button",
+          "text": "Back  {var:back_label}",
+          "bordered": false,
+          "shortcut": "{var:back_shortcut}",
+          "constraints": {
+            "region": "bottom",
+            "position": "right",
+            "insets": {
+              "right": 16,
+              "bottom": 14
+            }
+          },
+          "events": [
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "json",
+                "src": {
+                  "finish": {
+                    "variables": {
+                      "nt_out": "back"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
