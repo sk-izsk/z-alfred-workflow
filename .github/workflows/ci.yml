@@ -8,78 +8,51 @@ on:
 permissions:
   contents: read
 
+# A new push to a PR cancels that PR's older run; pushes to dev and main always finish.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
+  # Lists the workflows to check: only those a PR or push changed. Changes to shared code, this
+  # file or the release workflow check every workflow. Docs-only changes check none.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      workflows: ${{ steps.pick.outputs.workflows }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: pick
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          all=$(for d in workflows/*/; do [ -f "$d/package.json" ] && basename "$d"; done)
+          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            picked=$all # new branch or force-push: no usable base
+          else
+            changed=$(git diff --name-only "$BASE" HEAD)
+            if echo "$changed" | grep -qE '^(shared/|\.github/workflows/)'; then
+              picked=$all
+            else
+              picked=$(echo "$changed" | sed -nE 's#^workflows/([^/]+)/.*#\1#p' | sort -u |
+                while read -r w; do [ -f "workflows/$w/package.json" ] && echo "$w"; done)
+            fi
+          fi
+          json=$(printf '%s\n' $picked | jq -Rnc '[inputs | select(length > 0)]')
+          echo "Checking: $json"
+          echo "workflows=$json" >> "$GITHUB_OUTPUT"
+
   check:
     name: Check ${{ matrix.workflow }}
+    needs: changes
+    if: needs.changes.outputs.workflows != '[]'
     runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - workflow: z-bitwarden
-            artifact: Bitwarden.alfredworkflow
-          - workflow: z-vscode
-            artifact: VS Code.alfredworkflow
-          - workflow: z-github
-            artifact: GitHub.alfredworkflow
-          - workflow: z-speedtest
-            artifact: Speed Test.alfredworkflow
-          - workflow: z-adhan-time
-            artifact: Adhan Time.alfredworkflow
-          - workflow: z-currency
-            artifact: Currency Exchange.alfredworkflow
-          - workflow: z-splitwise
-            artifact: Splitwise.alfredworkflow
-          - workflow: z-calculate-anything
-            artifact: Calculate Anything.alfredworkflow
-          - workflow: z-swiss
-            artifact: Swiss.alfredworkflow
-          - workflow: z-workflow-manager
-            artifact: Workflow Manager.alfredworkflow
-          - workflow: z-notion
-            artifact: Notion.alfredworkflow
-          - workflow: z-translate
-            artifact: Translate.alfredworkflow
-          - workflow: z-folder-navigator
-            artifact: Folder Navigator.alfredworkflow
-          - workflow: z-tag-manager
-            artifact: Tag Manager.alfredworkflow
-          - workflow: z-system-monitor
-            artifact: System Monitor.alfredworkflow
-          - workflow: z-mole
-            artifact: Mole.alfredworkflow
-          - workflow: z-dev
-            artifact: Dev.alfredworkflow
-          - workflow: z-dev-servers
-            artifact: Dev Servers.alfredworkflow
-          - workflow: z-bluetooth
-            artifact: Bluetooth.alfredworkflow
-          - workflow: z-wifi
-            artifact: Wi-Fi.alfredworkflow
-          - workflow: z-dev-cache-cleaner
-            artifact: Dev Cache Cleaner.alfredworkflow
-          - workflow: z-dev-utils
-            artifact: Dev Utils.alfredworkflow
-          - workflow: z-gif-search
-            artifact: GIF Search.alfredworkflow
-          - workflow: z-emoji
-            artifact: Emoji Picker.alfredworkflow
-          - workflow: z-lunar
-            artifact: Lunar Controls.alfredworkflow
-          - workflow: z-window-navigator
-            artifact: Window Navigator.alfredworkflow
-          - workflow: z-world-clock
-            artifact: World Clock.alfredworkflow
-          - workflow: z-weather
-            artifact: Weather.alfredworkflow
-          - workflow: z-map
-            artifact: Maps.alfredworkflow
-          - workflow: z-kill-process
-            artifact: Kill Process.alfredworkflow
-          - workflow: z-brew
-            artifact: Brew.alfredworkflow
-          - workflow: z-cald
-            artifact: Calendar.alfredworkflow
+        workflow: ${{ fromJSON(needs.changes.outputs.workflows) }}
     defaults:
       run:
         working-directory: workflows/${{ matrix.workflow }}
@@ -97,5 +70,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.workflow }}
-          path: workflows/${{ matrix.workflow }}/dist/${{ matrix.artifact }}
+          path: workflows/${{ matrix.workflow }}/dist/*.alfredworkflow
           if-no-files-found: error
