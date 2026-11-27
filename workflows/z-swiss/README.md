@@ -22,6 +22,7 @@ Requires macOS, Alfred 6 Powerpack and Node.js 22+ or Bun.
 | Displays | `displays` | Displays 0.1.0+ |
 | Drives | `drives` | Drives 0.1.0+ |
 | Background Items | `bgitems` | Background Items 0.1.0+ |
+| Menu Bar | `m` | Menu Bar 0.1.0+ |
 | Window Navigator | `wnav` | Window Navigator 0.1.0+ |
 | World Clock | `wclock` | World Clock 0.1.0+ |
 | Speed Test | `speedtest` | Speed Test 0.1.3+ |

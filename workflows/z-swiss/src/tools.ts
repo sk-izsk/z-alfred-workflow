@@ -67,6 +67,15 @@ export const tools: Tool[] = [
     keyword: "bgitems",
   },
   {
+    id: "menubar",
+    name: "Menu Bar",
+    description: "Search and click the menu items of the app you are using",
+    bundle: "com.izsk.menubar",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "m",
+  },
+  {
     id: "window-navigator",
     name: "Window Navigator",
     description: "Find windows across desktops, active app or current desktop · wins shortcut",
