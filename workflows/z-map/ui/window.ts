@@ -198,8 +198,8 @@ export const emptySuggestions: Json = {
   type: "view",
   constraints: { position: "top", size: { width: 0, height: 0 } },
 };
-// Two lines (13 + 10.5 pt) need ~40 pt with padding, or the title and address touch.
-export const SUGGEST_ROW = 40;
+// Two lines (13 + 10.5 pt, ~29 pt tall) plus 6 pt padding each side and a visible gap between them.
+export const SUGGEST_ROW = 46;
 /** Four rows fit inside the modes area, so the floating card never needs more room. */
 export const SUGGEST_MAX = 4;
 /** Opaque, unlike the cards: text underneath must not show through. */
