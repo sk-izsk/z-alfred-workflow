@@ -22,3 +22,63 @@
 
 - Use `shared/sheet.ts` for native sheets so Back, primary actions and Escape stay consistent.
 - Any terminal handoff must use `shared/terminal.ts` and expose the shared terminal selector in Workflow Configuration; preserve existing user choices.
+
+## Rules learned from the workflow review (2026-11)
+
+These are mandatory for every workflow except where noted. Check a change against them before
+proposing it.
+
+### Secrets and API keys
+
+- Keep every API key, token or secret in the macOS Keychain through `shared/keychain.ts`
+  (service = the workflow's bundle ID, account = the key's name). Never in a Workflow Configuration
+  field, `prefs.plist`, argv, logs, cache or state files, or `ui.json` defaults.
+- A key is typed into a `passwordfield` in a sheet built with `shared/sheet.ts`, and reaches the script
+  through the action's `variables` (`{value:field.text}`) declared with `scriptenv: true`. Writes use
+  `security -i` on stdin (the helper does this), so the key never appears in `ps`.
+- Offer **Set … API Key…** and **Remove … API Key** in Actions (⌘K), and point missing-key errors
+  there. When moving an existing setting to the Keychain, call `keychain().migrate` so current users
+  keep working and the plain-text copy is deleted.
+- Bitwarden has its own split-key Keychain design. Do not change it to this helper.
+
+### Speed
+
+- Script actions without `async: true` block the window. Use them only for instant work (under
+  ~50 ms) that must finish before the next event. Per-keystroke and per-selection actions are async.
+  Async handlers that draw state must ignore replies that arrive out of order (`freshSelection` in
+  `shared/dashboard.ts`, or a request ticket).
+- Never run a slow command (about a second or more: `system_profiler`, `top -l 2`, network scans) on
+  a timer. Timers do cheap checks; slow work runs on open, on ⌘R, or at most every minute.
+- Show what is available first and add slow details after (Kill Process shows `ps` before `top`).
+- Cache results that rarely change between launches (the shared display-width probe is cached).
+
+### Shared code
+
+- Use `shared/env.ts`, `shared/launcher.ts`, `shared/proc.ts`, `shared/keychain.ts`,
+  `shared/dashboard.ts`, `shared/sheet.ts`, `shared/terminal.ts` and `shared/ui-profile.ts` instead of
+  copying them. When a second workflow needs a helper, move it into `shared/`; Bun bundles it into
+  each workflow, so installed workflows stay independent.
+
+### Errors and tests
+
+- No empty `catch {}`: state in a comment why ignoring the error is safe, or show the error.
+- Anything that deletes, kills, stops, overwrites, connects or pays needs tests for its guards (wrong
+  or changed target, outside the allowed scope, one bad item stopping a batch) with the real action
+  replaced by a stub.
+- Tests never touch real user data, real Keychain items, live services or system state.
+
+### Documentation
+
+- Each workflow README has: a title and one-line summary, a screenshot, requirements, how to open it,
+  actions, safety/privacy notes where relevant, Configuration, Development, and Credits and AI
+  disclosure.
+- The Configuration table is generated: after changing `scripts/plist.ts`, run `bun run build` in the
+  workflow, then `bun scripts/readme-config.ts` from the repository root. CI runs it with `--check`.
+- Screenshots use made-up data only: no real names, device or network names, email addresses,
+  accounts, or paths containing a username. Never commit an absolute path that contains a username.
+
+### Versions and releases
+
+- Raise `version` in `package.json` for every workflow a PR changes (patch for fixes, minor for new
+  behaviour). After the merge, tag `z-<name>/vX.Y.Z` on the merged commit (see RELEASING.md) and
+  update that workflow's link in the root README.

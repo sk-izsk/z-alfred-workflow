@@ -76,9 +76,9 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
   const check = args.includes("--check");
   const only = args.filter((a) => !a.startsWith("--"));
-  const names = only.length
-    ? only
-    : readdirSync("workflows").filter((w) => existsSync(join("workflows", w, "package.json")) && !MANUAL.has(w));
+  const names = (only.length ? only : readdirSync("workflows")).filter(
+    (w) => existsSync(join("workflows", w, "package.json")) && !MANUAL.has(w),
+  );
   let stale = 0;
   for (const name of names) {
     const plist = join("workflows", name, "workflow/info.plist");

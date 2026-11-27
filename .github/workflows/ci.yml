@@ -67,6 +67,9 @@ jobs:
           alfred_workflow_cache: ${{ runner.temp }}/alfred-cache
           alfred_workflow_data: ${{ runner.temp }}/alfred-data
       - run: bun run package
+      - name: README configuration matches info.plist
+        working-directory: .
+        run: bun scripts/readme-config.ts --check ${{ matrix.workflow }}
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.workflow }}
