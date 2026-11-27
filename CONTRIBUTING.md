@@ -21,7 +21,8 @@ local preferences, credentials, vault data, build bundles or dependency folders.
    and third-party notices where needed.
 3. Keep its dependencies, lockfile, tests, scripts and version within that folder. Provide
    `bun run check` and `bun run package`, producing `dist/*.alfredworkflow` without preferences.
-4. Add it to the root README, CI matrix and release workflow's tag mapping and tag triggers.
+4. Add it to the root README and the release workflow's tag mapping and tag triggers. CI finds
+   every `workflows/<name>` with a `package.json` and checks the ones a change touches.
 5. Document its artifact name and namespaced tag in `RELEASING.md`.
 
 Read [SECURITY.md](SECURITY.md) before reporting security issues and
