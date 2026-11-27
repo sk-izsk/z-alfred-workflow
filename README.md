@@ -15,6 +15,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Kill Process](workflows/z-kill-process) | Monitor CPU/RAM, terminate processes and restart apps | Initial release pending |
 | [Adhan Time](workflows/z-adhan-time) | City-local prayer calendar and next-prayer countdown | Initial release pending |
 | [Currency Exchange](workflows/z-currency) | Arithmetic, cross-rates, pinned targets and provider-based history | Initial release pending |
+| [Splitwise](workflows/z-splitwise) | Add, search, change and delete expenses with friends and groups | Initial release pending |
 | [Calculate Anything](workflows/z-calculate-anything) | Native results using your installed unit/conversion engine | Initial release pending |
 | [Workflow Manager](workflows/z-workflow-manager) | Installed workflows, Gallery, updates and configuration | Initial release pending |
 | [Notion](workflows/z-notion) | Search, preview and create pages and databases; quick capture, notes and text | Initial release pending |

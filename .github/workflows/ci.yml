@@ -28,6 +28,8 @@ jobs:
             artifact: Adhan Time.alfredworkflow
           - workflow: z-currency
             artifact: Currency Exchange.alfredworkflow
+          - workflow: z-splitwise
+            artifact: Splitwise.alfredworkflow
           - workflow: z-calculate-anything
             artifact: Calculate Anything.alfredworkflow
           - workflow: z-swiss
