@@ -79,6 +79,12 @@ proposing it.
   (`ObjC.import("CoreAudio")`). Instead `ObjC.bindFunction` them with `void *` arguments, pass memory
   from a bound `malloc` filled and read through `NSData` (`getBytesLength`, `dataWithBytesLength`),
   and read object results (CFString) with an `id *` out argument and `Ref()`.
+- CoreFoundation results (CFArray from `CGWindowListCopyWindowInfo`) need
+  `ObjC.deepUnwrap(ObjC.castRefToObject(…))`; `deepUnwrap` alone doesn't give a JS array. NSArray
+  `count` reaches JS as a string: use `Number(array.count)`.
+- Alfred has no camera or microphone usage description, so nothing Alfred runs (web view
+  getUserMedia, AVFoundation from osascript) can use them. Drive an Apple app that can (Camera uses
+  QuickTime Player) instead of a helper that needs its own permission and signing.
 - A JXA crash or uncaught error prints nothing: wrap `run()` in try/catch and return JSON
   `{error}`, and test each step in its own `osascript` process.
 - Never send keystrokes (System Events) to test a window while the user is working: a stray Return

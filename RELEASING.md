@@ -39,6 +39,7 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-drives` | `z-drives/vX.Y.Z` | `Drives.alfredworkflow` |
 | `workflows/z-background` | `z-background/vX.Y.Z` | `Background Items.alfredworkflow` |
 | `workflows/z-menubar` | `z-menubar/vX.Y.Z` | `Menu Bar.alfredworkflow` |
+| `workflows/z-camera` | `z-camera/vX.Y.Z` | `Camera.alfredworkflow` |
 | `workflows/z-window-navigator` | `z-window-navigator/vX.Y.Z` | `Window Navigator.alfredworkflow` |
 | `workflows/z-world-clock` | `z-world-clock/vX.Y.Z` | `World Clock.alfredworkflow` |
 | `workflows/z-swiss` | `z-swiss/vX.Y.Z` | `Swiss.alfredworkflow` |

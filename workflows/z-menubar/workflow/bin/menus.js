@@ -44,7 +44,7 @@ const targetApp = (pid) => {
   if (pid) return $.NSRunningApplication.runningApplicationWithProcessIdentifier(pid);
   const owner = ws.menuBarOwningApplication;
   if (owner && text(owner.bundleIdentifier) !== ALFRED) return owner;
-  const windows = ObjC.deepUnwrap($.CGWindowListCopyWindowInfo(1 | 16, 0));
+  const windows = ObjC.deepUnwrap(ObjC.castRefToObject($.CGWindowListCopyWindowInfo(1 | 16, 0)));
   for (const w of windows || []) {
     if (w.kCGWindowLayer !== 0 || /Alfred/.test(w.kCGWindowOwnerName || "")) continue;
     const app = $.NSRunningApplication.runningApplicationWithProcessIdentifier(w.kCGWindowOwnerPID);

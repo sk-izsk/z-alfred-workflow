@@ -40,10 +40,11 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Displays](workflows/z-displays) | Change display resolution and refresh rate, the main display, mirroring and Dark Mode | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-displays%2Fv0.1.0) |
 | [Drives](workflows/z-drives) | See mounted drives and opened disk images with free space, and eject them | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-drives%2Fv0.1.0) |
 | [Background Items](workflows/z-background) | See and control login items, launch agents and daemons, and find leftovers | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-background%2Fv0.1.0) |
-| [Menu Bar](workflows/z-menubar) | Search and click the menu bar items of the app you are using | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-menubar%2Fv0.1.0) |
+| [Menu Bar](workflows/z-menubar) | Search and click the menu bar items of the app you are using | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-menubar%2Fv0.1.1) |
+| [Camera](workflows/z-camera) | A quick look at your camera before a meeting, shown and hidden from Alfred | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-camera%2Fv0.1.0) |
 | [Window Navigator](workflows/z-window-navigator) | Search and focus windows on all desktops, the active app or the current desktop | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-window-navigator%2Fv0.1.1) |
 | [World Clock](workflows/z-world-clock) | Offline timezones, starred locations and native analog grid | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-world-clock%2Fv0.1.1) |
-| [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | [0.3.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-swiss%2Fv0.3.0) |
+| [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | [0.4.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-swiss%2Fv0.4.0) |
 | [Weather](workflows/z-weather) | Saved cities, colorful conditions and detailed weather forecasts | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-weather%2Fv0.1.1) |
 | [Maps](workflows/z-map) | Routes and places on a live map: car, transit, bike, walk, stops, suggestions; open data, Google or HERE | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-map%2Fv0.1.1) |
 
