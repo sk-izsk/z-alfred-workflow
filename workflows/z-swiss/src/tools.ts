@@ -22,6 +22,15 @@ export const tools: Tool[] = [
     keyword: "gifsearch",
   },
   {
+    id: "shortcuts",
+    name: "Shortcuts",
+    description: "Search, run and edit your macOS Shortcuts, with text or files as input",
+    bundle: "com.izsk.shortcuts",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "shortcuts",
+  },
+  {
     id: "window-navigator",
     name: "Window Navigator",
     description: "Find windows across desktops, active app or current desktop · wins shortcut",

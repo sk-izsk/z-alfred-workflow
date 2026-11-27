@@ -1,0 +1,219 @@
+{
+  "bundleid": "com.izsk.shortcuts",
+  "variablesconfig": {
+    "swiss_return": {
+      "default": ""
+    },
+    "shortcuts_session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "shortcuts_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    },
+    "shortcuts_input": {
+      "src": "variable",
+      "default": "",
+      "scriptenv": true
+    },
+    "shortcuts_paths": {
+      "src": "variable",
+      "default": "",
+      "scriptenv": true
+    },
+    "shortcuts_text": {
+      "default": "",
+      "scriptenv": true
+    }
+  },
+  "window": {
+    "title": "Shortcuts",
+    "size": {
+      "width": 780,
+      "height": 540
+    },
+    "minsize": {
+      "width": 560,
+      "height": 380
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/shortcuts",
+              "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/shortcuts",
+              "args": [
+                "prepare-origin",
+                "{var:shortcuts_session}"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/shortcuts",
+              "args": [
+                "launch",
+                "{var:shortcuts_session}"
+              ],
+              "async": true
+            }
+          ]
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/shortcuts",
+            "args": [
+              "menu",
+              "{var:shortcuts_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/shortcuts",
+            "args": [
+              "refresh",
+              "{var:shortcuts_session}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘↩",
+          "action": {
+            "type": "script",
+            "src": "../bin/shortcuts",
+            "args": [
+              "ask-input",
+              "{var:shortcuts_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": false
+          }
+        },
+        {
+          "shortcut": "⌥↩",
+          "action": {
+            "type": "script",
+            "src": "../bin/shortcuts",
+            "args": [
+              "edit",
+              "{var:shortcuts_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": false
+          }
+        },
+        {
+          "shortcut": "⌘E",
+          "action": {
+            "type": "script",
+            "src": "../bin/shortcuts",
+            "args": [
+              "edit",
+              "{var:shortcuts_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": false
+          }
+        }
+      ],
+      "components": [
+        {
+          "id": "statusLabel",
+          "type": "label",
+          "text": "Loading Shortcuts…",
+          "constraints": {
+            "region": "centre",
+            "position": "centre"
+          }
+        },
+        {
+          "id": "initialBack",
+          "type": "button",
+          "text": "Back  {var:back_label}",
+          "shortcut": "{var:back_shortcut}",
+          "bordered": false,
+          "constraints": {
+            "region": "bottom",
+            "position": "right",
+            "insets": {
+              "right": 12,
+              "bottom": 12
+            }
+          },
+          "events": [
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "json",
+                "src": {
+                  "finish": {
+                    "variables": {
+                      "shortcuts_out": "back",
+                      "swiss_return": "{var:swiss_return}"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
