@@ -10,21 +10,26 @@ else to install.
 ## Use
 
 Type `m` and a space. Every menu item of the app in front shows with its menu and shortcut, for
-example **New Tab** with `File · ⌘T`, and the app's own icon. Keep typing to filter: words match the
-start of the item or its menu names, and initials work too (`m nt` finds **New Tab**, `m cw`
-**Close Window**). Choosing Menu Bar in Swiss types `m ` for you.
+example **New Tab** with `File · ⌘T`, and the app's own icon. Keep typing to filter. Best matches
+come first: the start of the title, the start of a word, initials (`m nt` finds **New Tab**, `m cw`
+**Close Window**), menu names (`m file`), and last, fuzzy matches with the letters in order (`m nwndw`
+finds **New Window**). Choosing Menu Bar in Swiss types `m ` for you, and so does the **Hotkey**: set
+it in Alfred Preferences by double-clicking the workflow's Hotkey object.
 
 - **↩** closes Alfred and clicks the item in its app.
 - **⌘C** copies the item's menu path (`File › Open Recent › Notes.txt`); **⌘L** shows it in Large Type.
 
-Greyed-out items and the Apple menu are hidden unless turned on in Configuration.
+Greyed-out items and the Apple menu are hidden unless turned on in Configuration. **Submenu depth**
+and **Items per menu** keep apps with huge menus (bookmarks, history) fast; fuzzy matching can be
+turned off.
 
 ## How it works
 
 - Menus are read with the macOS Accessibility API through a small JavaScript for Automation script
   that ships with the workflow, with no compiled helper.
 - The app's menus from last time show at once (about 0.15 s); a moment later they are read live
-  (0.2–0.6 s) and replace them, so new or greyed-out items are always current.
+  (0.2–1 s, depending on the app) and replace them, so new or greyed-out items are current.
+- Each keystroke filters that list in about 60 ms; typing never waits for the menus.
 - An item is clicked by its position in the menus, and only if its titles still match, so a menu that
   changed in between is never clicked by mistake.
 - If you also have another menu search workflow on `m`, change one keyword or disable the other.
@@ -37,6 +42,9 @@ Open the workflow in Alfred Preferences → **Configure Workflow**.
 | Setting | Default | What it does |
 | --- | --- | --- |
 | Keyword | `m` | Type it and a space to list the menus of the app in front. |
+| Submenu depth | `10` | How many levels of submenus to search (1 = the menus' own items only). |
+| Items per menu | `40` | Only the first items of each menu, to keep apps with huge menus fast (0 = all). |
+| Fuzzy matching | On | Also match letters in order, after word, initial and menu matches (nwndw finds New Window). |
 | Unavailable items | Off | Also list menu items that are greyed out right now (they can't be clicked). |
 | Apple menu | Off | Also list the Apple menu, which is the same in every app. |
 | Node.js executable | — | Optional absolute executable path. |

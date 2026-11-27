@@ -36,10 +36,10 @@ export const infoPlist = {
         withspace: true,
         argumenttype: 1,
         argumenttreatemptyqueryasnil: false,
-        // The list is read once per opening; Alfred filters it as you type (word starts).
-        alfredfiltersresults: true,
-        alfredfiltersresultsmatchmode: 0,
-        queuemode: 1,
+        // Runs per keystroke against the saved list (~60 ms) for our own ranking and fuzzy
+        // matching (Alfred's own filtering has no fuzzy mode); a new keystroke cancels the last run.
+        alfredfiltersresults: false,
+        queuemode: 2,
         queuedelaymode: 0,
         queuedelayimmediatelyinitially: true,
         skipuniversalaction: true,
@@ -49,10 +49,28 @@ export const infoPlist = {
     object("PRESS", "alfred.workflow.action.script", script('./bin/menubar press "$1"'), 2),
     object("TRIGGER", "alfred.workflow.trigger.external", { triggerid: "open", availableviaurlscheme: true }),
     object("OPEN", "alfred.workflow.action.script", script("./bin/menubar open"), 2),
+    // Set the hotkey in Alfred Preferences (double-click the Hotkey object); it opens `m ` in Alfred.
+    object(
+      "HOTKEY",
+      "alfred.workflow.trigger.hotkey",
+      {
+        hotkey: 0,
+        hotmod: 0,
+        action: 0,
+        argument: 0,
+        relatedAppsMode: 0,
+        focusedappvariable: false,
+        focusedappvariablename: "",
+        leftcursor: false,
+        modsmode: 0,
+      },
+      2,
+    ),
   ],
   connections: {
     KEYWORD: [link("PRESS")],
     TRIGGER: [link("OPEN")],
+    HOTKEY: [link("OPEN")],
   },
   uidata: Object.fromEntries(
     [
@@ -60,6 +78,7 @@ export const infoPlist = {
       ["PRESS", 220, 0],
       ["TRIGGER", 0, 160],
       ["OPEN", 220, 160],
+      ["HOTKEY", 0, 300],
     ].map(([id, x, y]) => [id, { xpos: x, ypos: y }]),
   ),
   userconfigurationconfig: [
@@ -69,6 +88,28 @@ export const infoPlist = {
       label: "Keyword",
       description: "Type it and a space to list the menus of the app in front.",
       config: { default: "m", placeholder: "m", required: true },
+    },
+    {
+      type: "textfield",
+      variable: "max_depth",
+      label: "Submenu depth",
+      description: "How many levels of submenus to search (1 = the menus' own items only).",
+      config: { default: "10", placeholder: "10", required: false, trim: true },
+    },
+    {
+      type: "textfield",
+      variable: "max_per_menu",
+      label: "Items per menu",
+      description: "Only the first items of each menu, to keep apps with huge menus fast (0 = all).",
+      config: { default: "40", placeholder: "40", required: false, trim: true },
+    },
+    {
+      type: "checkbox",
+      variable: "fuzzy",
+      label: "Fuzzy matching",
+      description:
+        "Also match letters in order, after word, initial and menu matches (nwndw finds New Window).",
+      config: { default: true, required: false, text: "Match fuzzily" },
     },
     {
       type: "checkbox",

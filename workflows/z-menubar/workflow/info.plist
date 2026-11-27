@@ -8,6 +8,19 @@
 	<string>Productivity</string>
 	<key>connections</key>
 	<dict>
+		<key>HOTKEY</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>OPEN</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>KEYWORD</key>
 		<array>
 			<dict>
@@ -49,9 +62,7 @@
 			<key>config</key>
 			<dict>
 				<key>alfredfiltersresults</key>
-				<true/>
-				<key>alfredfiltersresultsmatchmode</key>
-				<integer>0</integer>
+				<false/>
 				<key>argumenttreatemptyqueryasnil</key>
 				<false/>
 				<key>argumenttype</key>
@@ -65,7 +76,7 @@
 				<key>queuedelaymode</key>
 				<integer>0</integer>
 				<key>queuemode</key>
-				<integer>1</integer>
+				<integer>2</integer>
 				<key>runningsubtext</key>
 				<string>Reading menus…</string>
 				<key>script</key>
@@ -153,11 +164,47 @@
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>HOTKEY</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>Search and click the menu bar items of the app you are using, right in Alfred's results. Type m and a space: every menu item shows with its menu and shortcut; type to filter by words, initials (nt finds New Tab) or menu names. ↩ clicks it, ⌘C copies its menu path. Needs Alfred's Accessibility access. Built with help from AI tools.</string>
 	<key>uidata</key>
 	<dict>
+		<key>HOTKEY</key>
+		<dict>
+			<key>xpos</key>
+			<integer>0</integer>
+			<key>ypos</key>
+			<integer>300</integer>
+		</dict>
 		<key>KEYWORD</key>
 		<dict>
 			<key>xpos</key>
@@ -207,6 +254,67 @@
 			<string>textfield</string>
 			<key>variable</key>
 			<string>kw_main</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>10</string>
+				<key>placeholder</key>
+				<string>10</string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>How many levels of submenus to search (1 = the menus' own items only).</string>
+			<key>label</key>
+			<string>Submenu depth</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>max_depth</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>40</string>
+				<key>placeholder</key>
+				<string>40</string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Only the first items of each menu, to keep apps with huge menus fast (0 = all).</string>
+			<key>label</key>
+			<string>Items per menu</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>max_per_menu</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Match fuzzily</string>
+			</dict>
+			<key>description</key>
+			<string>Also match letters in order, after word, initial and menu matches (nwndw finds New Window).</string>
+			<key>label</key>
+			<string>Fuzzy matching</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>fuzzy</string>
 		</dict>
 		<dict>
 			<key>config</key>

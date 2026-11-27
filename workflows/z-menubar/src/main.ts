@@ -3,10 +3,16 @@
 //   menubar press <json>    → clicks the chosen item (after Alfred closes)
 //   menubar open            → opens Alfred with the keyword (External Trigger, used by Swiss)
 import { execFileSync } from "node:child_process";
+import { existsSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { bool, cacheDir, readJson, str, writeJson } from "./env.ts";
-import { alfredItem, pressItem, readMenus, readOwner, type App, type MenuItem } from "./menus.ts";
+import { alfredItem, pressItem, readMenus, readOwner, search, type App, type MenuItem } from "./menus.ts";
 
+/** A whole number from Configuration, or the default when empty or invalid. */
+const whole = (key: string, fallback: number) => {
+  const n = Number.parseInt(str(key, String(fallback)), 10);
+  return Number.isFinite(n) && n >= 0 ? n : fallback;
+};
 const lastFile = (bundle: string) => join(cacheDir(), `last-${bundle.replace(/[^\w.-]/g, "_")}.json`);
 const print = (value: unknown) =>
   new Promise<void>((resolve) => process.stdout.write(JSON.stringify(value), () => resolve()));
@@ -25,31 +31,47 @@ const failure = (error: unknown) => ({
   ],
 });
 
+const MAX_RESULTS = 300;
+/** Fresh enough to skip another live read (the user is typing, or reopened just now). */
+const FRESH_MS = 5000;
+const results = (app: App, items: MenuItem[], query: string, extra: Record<string, unknown> = {}) =>
+  output(
+    app,
+    search(items, query, bool("show_disabled", false), bool("fuzzy", true)).slice(0, MAX_RESULTS),
+    extra,
+  );
+
 /**
- * First run: the app's menus from last time, at once, then a rerun reads them live (~0.3 s) and
- * replaces them. Without a saved list, the live read is the first answer.
+ * Runs on every keystroke (Alfred passes the query). Filtering uses the saved list, so typing never
+ * waits for the menus; the menus are read live once per opening, by a rerun, unless they were read in
+ * the last few seconds.
  */
-const filter = async () => {
-  const apple = bool("show_apple_menu", false);
-  if (process.env.menubar_live !== "1") {
-    const app = await readOwner();
-    const last = app.bundle ? readJson<MenuItem[]>(lastFile(app.bundle), []) : [];
-    if (last.length)
-      return output(app, last, {
-        rerun: 0.1,
-        variables: { menubar_live: "1", menubar_pid: String(app.pid) },
-      });
-  }
-  const menus = await readMenus(Number(process.env.menubar_pid) || 0, apple);
-  if (menus.app.bundle) writeJson(lastFile(menus.app.bundle), menus.items);
-  return output(menus.app, menus.items, {
-    variables: { menubar_live: "1", menubar_pid: String(menus.app.pid) },
+const filter = async (query: string) => {
+  const live = process.env.menubar_live === "1";
+  const app: App = live && process.env.menubar_app ? JSON.parse(process.env.menubar_app) : await readOwner();
+  const file = app.bundle ? lastFile(app.bundle) : "";
+  const last = file ? readJson<MenuItem[]>(file, []) : [];
+  const age = file && existsSync(file) ? Date.now() - statSync(file).mtimeMs : Infinity;
+  const variables = { menubar_live: "1", menubar_app: JSON.stringify(app) };
+  if (last.length && (live || age < FRESH_MS)) return results(app, last, query, { variables });
+  // Saved list now; the rerun (flagged) reads the menus live and replaces it.
+  if (last.length && process.env.menubar_refresh !== "1")
+    return results(app, last, query, {
+      rerun: 0.1,
+      variables: { menubar_refresh: "1", menubar_app: JSON.stringify(app) },
+    });
+  const menus = await readMenus(app.pid, {
+    apple: bool("show_apple_menu", false),
+    depth: Math.max(1, whole("max_depth", 10)),
+    perMenu: whole("max_per_menu", 40),
   });
+  if (file) writeJson(file, menus.items);
+  return results(menus.app, menus.items, query, { variables });
 };
 
 const main = async () => {
   const [cmd = "", value = ""] = process.argv.slice(2);
-  if (cmd === "filter") return print(await filter().catch(failure));
+  if (cmd === "filter") return print(await filter(value).catch(failure));
   if (cmd === "press") {
     const { pid, indexes, titles } = JSON.parse(value) as {
       pid: number;

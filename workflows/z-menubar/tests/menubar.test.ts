@@ -3,6 +3,8 @@ import { readFileSync } from "node:fs";
 import {
   alfredItem,
   dedupe,
+  fuzzy,
+  wellFormed,
   matchText,
   menuPath,
   score,
@@ -85,4 +87,20 @@ test("Alfred results: initials and menus are matchable; ↩ carries what to pres
   });
   expect(result.icon).toEqual({ type: "fileicon", path: "/Applications/Demo.app" });
   expect(alfredItem(app, item(["Edit", "Undo"], { enabled: false })).valid).toBe(false);
+});
+
+test("styled letters and broken emoji never produce invalid JSON", () => {
+  expect(matchText(item(["Bookmarks", "𝐆ood 𝐃ocs"]))).toBe("𝐆ood 𝐃ocs 𝐆𝐃 Bookmarks");
+  expect(wellFormed("Docs \uD835")).toBe("Docs \uFFFD");
+  expect(wellFormed("ok 😀")).toBe("ok 😀");
+});
+
+test("fuzzy matching comes last and can be turned off", () => {
+  const window = item(["File", "New Window"]),
+    tab = item(["File", "New Tab"]);
+  expect(fuzzy("nwndw", "new window")).toBe(true);
+  expect(fuzzy("nwndw", "new tab")).toBe(false);
+  expect(search([tab, window], "nwndw", false).map(title)).toEqual(["New Window"]);
+  expect(search([tab, window], "nwndw", false, false)).toEqual([]);
+  expect(score(window, "new")).toBeGreaterThan(score(window, "nwndw"));
 });

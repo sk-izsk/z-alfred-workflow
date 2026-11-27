@@ -29,13 +29,29 @@ const helper = async (args: string[]): Promise<any> => {
   return value;
 };
 /** Every menu item of the app in front (or of `pid`), ~0.2–0.5 s. */
-export const readMenus = async (pid = 0, withApple = false): Promise<Menus> => {
-  const menus = (await helper(["list", String(pid || ""), withApple ? "apple" : ""])) as Menus;
-  return { app: menus.app, items: dedupe(menus.items) };
+export const readMenus = async (
+  pid = 0,
+  options: { apple?: boolean; depth?: number; perMenu?: number } = {},
+): Promise<Menus> => {
+  const { apple = false, depth = 10, perMenu = 40 } = options;
+  const menus = (await helper([
+    "list",
+    String(pid || ""),
+    apple ? "apple" : "",
+    String(depth),
+    String(perMenu),
+  ])) as Menus;
+  const items = menus.items.map((x) => ({ ...x, titles: x.titles.map(wellFormed) }));
+  return { app: menus.app, items: dedupe(items) };
 };
 export const pressItem = (pid: number, item: Pick<MenuItem, "indexes" | "titles">): Promise<unknown> =>
   helper(["press", String(pid), JSON.stringify(item.indexes), JSON.stringify(item.titles)]);
 
+/** Half an emoji (a lone surrogate) makes Alfred's JSON invalid: replace it. */
+export const wellFormed = (s: string): string =>
+  s.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, "\uFFFD");
+/** First letter of each word, by character (not UTF-16 unit, which splits 𝐀-style letters). */
+const initialsOf = (list: string[]): string => list.map((w) => [...w][0]).join("");
 /** Hidden alternates (shown while holding ⌥) repeat a path; keep the first, as the menu shows it. */
 export const dedupe = (items: MenuItem[]): MenuItem[] => {
   const seen = new Set<string>();
@@ -107,15 +123,25 @@ const words = (s: string) =>
     .filter(Boolean);
 /**
  * How well an item matches (0 = not at all). Every query word must match the title or menu path,
- * by start of word, anywhere, or by initials (`nt` → New Tab). Title matches beat path matches.
+ * by start of word, anywhere, by initials (`nt` → New Tab) or, last, fuzzily (letters in order).
+ * Title matches beat path matches.
  */
-export const score = (x: MenuItem, query: string): number => {
+/** The letters of `w` appear in `text` in order (`nwndw` → "new window"). */
+export const fuzzy = (w: string, text: string): boolean => {
+  let at = 0;
+  for (const ch of w) {
+    at = text.indexOf(ch, at) + 1;
+    if (!at) return false;
+  }
+  return true;
+};
+export const score = (x: MenuItem, query: string, useFuzzy = true): number => {
   const q = words(query);
   if (!q.length) return 1;
   const t = title(x).toLowerCase(),
     titleWords = words(title(x)),
     path = menuPath(x).toLowerCase();
-  const initials = titleWords.map((w) => w[0]).join("");
+  const initials = initialsOf(titleWords);
   let total = 0;
   for (const w of q) {
     if (t.startsWith(w)) total += 8;
@@ -123,14 +149,20 @@ export const score = (x: MenuItem, query: string): number => {
     else if (t.includes(w)) total += 4;
     else if (w.length > 1 && initials.startsWith(w)) total += 5;
     else if (path.includes(w)) total += 2;
+    else if (useFuzzy && w.length > 1 && fuzzy(w, t)) total += 1;
     else return 0;
   }
   return total;
 };
 /** Best matches first; ties keep menu order. Unavailable items only when asked for. */
-export const search = (items: MenuItem[], query: string, showDisabled: boolean): MenuItem[] =>
+export const search = (
+  items: MenuItem[],
+  query: string,
+  showDisabled: boolean,
+  useFuzzy = true,
+): MenuItem[] =>
   items
-    .map((x, i) => ({ x, i, s: showDisabled || x.enabled ? score(x, query) : 0 }))
+    .map((x, i) => ({ x, i, s: showDisabled || x.enabled ? score(x, query, useFuzzy) : 0 }))
     .filter((r) => r.s > 0)
     .toSorted((a, b) => b.s - a.s || a.i - b.i)
     .map((r) => r.x);
@@ -145,11 +177,7 @@ export const readOwner = (): Promise<App> => helper(["owner"]);
  */
 export const matchText = (x: MenuItem): string => {
   const titleWords = words(title(x));
-  return [
-    title(x),
-    titleWords.length > 1 ? titleWords.map((w) => w[0]).join("") : "",
-    ...x.titles.slice(0, -1),
-  ]
+  return [title(x), titleWords.length > 1 ? initialsOf(titleWords) : "", ...x.titles.slice(0, -1)]
     .filter(Boolean)
     .join(" ");
 };

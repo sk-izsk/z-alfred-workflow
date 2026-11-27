@@ -1,6 +1,6 @@
 // Menu bar items of the app you are using, through the Accessibility API from JXA (no compiled helper).
 //   osascript -l JavaScript menus.js owner                → JSON: the app whose menus would be listed
-//   osascript -l JavaScript menus.js list [pid] [apple]   → JSON: the app and every menu item (leafs)
+//   osascript -l JavaScript menus.js list [pid] [apple] [depth] [per-menu]   → JSON: the app and its menu items
 //   osascript -l JavaScript menus.js press <pid> <indexes> <titles>   → click one item
 // Items are found again by index path and checked against their titles, so a menu that changed in
 // between is never clicked by mistake. Alfred needs Accessibility permission (System Settings →
@@ -12,7 +12,6 @@ ObjC.bindFunction("AXUIElementCreateApplication", ["id", ["int"]]);
 ObjC.bindFunction("AXUIElementCopyAttributeValue", ["int", ["id", "id", "id *"]]);
 ObjC.bindFunction("AXUIElementPerformAction", ["int", ["id", "id"]]);
 
-const MAX_DEPTH = 5;
 const MAX_ITEMS = 4000;
 const ALFRED = "com.runningwithcrayons.Alfred";
 const get = (el, attr) => {
@@ -54,7 +53,8 @@ const targetApp = (pid) => {
   return owner;
 };
 
-const list = (pid, withApple) => {
+/** depth: submenu levels to read (1 = menus only); perMenu: items per menu, 0 for all. */
+const list = (pid, withApple, maxDepth, perMenu) => {
   if (!$.AXIsProcessTrusted())
     throw new Error("Alfred needs Accessibility access: System Settings → Privacy & Security → Accessibility.");
   const app = targetApp(pid);
@@ -64,13 +64,16 @@ const list = (pid, withApple) => {
   const items = [];
   const walk = (element, titles, indexes, depth) => {
     const children = get(element, "AXChildren");
-    for (let i = 0; i < count(children) && items.length < MAX_ITEMS; i++) {
+    const limit = perMenu > 0 ? Math.min(perMenu, count(children)) : count(children);
+    for (let i = 0; i < limit && items.length < MAX_ITEMS; i++) {
       const child = children.objectAtIndex(i);
       const title = text(get(child, "AXTitle"));
       const sub = get(child, "AXChildren");
       // Menu bar items and submenu items hold an AXMenu; the AXMenu holds the items.
       if (count(sub)) {
-        if (depth < MAX_DEPTH) walk(child, title ? [...titles, title] : titles, [...indexes, i], depth + 1);
+        // An AXMenu (no title) is only a holder; only titled submenus count as a level.
+        if (!title) walk(child, titles, [...indexes, i], depth);
+        else if (depth < maxDepth) walk(child, [...titles, title], [...indexes, i], depth + 1);
         continue;
       }
       if (!title) continue; // separators
@@ -119,7 +122,7 @@ function run(argv) {
         ? describeApp(targetApp(0))
         : command === "press"
         ? press(Number(a), JSON.parse(b), JSON.parse(c))
-        : list(a ? Number(a) : 0, b === "apple");
+        : list(a ? Number(a) : 0, b === "apple", Number(c) || 10, Number(argv[4] ?? 40));
     return JSON.stringify(result);
   } catch (error) {
     return JSON.stringify({ error: String(error && error.message ? error.message : error) });
