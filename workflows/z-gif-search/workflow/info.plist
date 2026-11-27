@@ -373,25 +373,6 @@
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string></string>
-				<key>placeholder</key>
-				<string></string>
-				<key>required</key>
-				<false/>
-			</dict>
-			<key>description</key>
-			<string>Only required for GIPHY direct. Kept in local workflow preferences; excluded from export.</string>
-			<key>label</key>
-			<string>GIPHY API key</string>
-			<key>type</key>
-			<string>textfield</string>
-			<key>variable</key>
-			<string>giphy_key</string>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>default</key>
 				<string>5</string>
 				<key>placeholder</key>
 				<string>5</string>
@@ -497,10 +478,6 @@
 			<key>variable</key>
 			<string>launch_external</string>
 		</dict>
-	</array>
-	<key>variablesdontexport</key>
-	<array>
-		<string>giphy_key</string>
 	</array>
 	<key>version</key>
 	<string>0.1.0</string>

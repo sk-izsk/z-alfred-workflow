@@ -298,25 +298,6 @@ Requires Alfred 6 Powerpack, macOS, Node.js 22+ or Bun. Icon/catalog/reference: 
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string></string>
-				<key>placeholder</key>
-				<string></string>
-				<key>required</key>
-				<false/>
-			</dict>
-			<key>description</key>
-			<string>Key for the selected provider. Not required for Open Access or AllRatesToday. Stored in Alfred preferences; excluded from exports.</string>
-			<key>label</key>
-			<string>API key</string>
-			<key>type</key>
-			<string>textfield</string>
-			<key>variable</key>
-			<string>api_key</string>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>default</key>
 				<string>USD</string>
 				<key>placeholder</key>
 				<string>USD</string>
@@ -549,10 +530,6 @@ Requires Alfred 6 Powerpack, macOS, Node.js 22+ or Bun. Icon/catalog/reference: 
 			<key>variable</key>
 			<string>node_path</string>
 		</dict>
-	</array>
-	<key>variablesdontexport</key>
-	<array>
-		<string>api_key</string>
 	</array>
 	<key>version</key>
 	<string>0.1.0</string>

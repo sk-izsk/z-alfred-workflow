@@ -86,7 +86,7 @@ export const infoPlist = {
       "refresh_seconds",
       "Refresh interval (seconds)",
       "10",
-      "Poll only while this window is open; range 2–60 seconds.",
+      "While the window is open: a quick power and connection check at this interval (2–60 seconds); the full network scan runs at most once a minute.",
     ),
     text("actions_shortcut", "Actions shortcut", "⌘K", "Open actions."),
     text("node_path", "Node.js executable", "", "Optional absolute executable path."),
