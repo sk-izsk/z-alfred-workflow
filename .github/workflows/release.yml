@@ -2,7 +2,7 @@ name: Release workflow
 
 on:
   push:
-    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*", "z-brew/v*", "z-speedtest/v*", "z-github/v*", "z-kill-process/v*", "z-weather/v*", "z-adhan-time/v*", "z-currency/v*", "z-calculate-anything/v*", "z-swiss/v*", "z-world-clock/v*", "z-window-navigator/v*", "z-lunar/v*", "z-emoji/v*", "z-gif-search/v*", "z-dev-utils/v*", "z-dev-cache-cleaner/v*", "z-wifi/v*", "z-bluetooth/v*", "z-dev-servers/v*", "z-dev/v*", "z-mole/v*", "z-system-monitor/v*", "z-tag-manager/v*", "z-folder-navigator/v*", "z-translate/v*", "z-workflow-manager/v*"]
+    tags: ["z-bitwarden/v*", "z-vscode/v*", "z-cald/v*", "z-brew/v*", "z-speedtest/v*", "z-github/v*", "z-kill-process/v*", "z-weather/v*", "z-adhan-time/v*", "z-currency/v*", "z-splitwise/v*", "z-calculate-anything/v*", "z-swiss/v*", "z-world-clock/v*", "z-window-navigator/v*", "z-lunar/v*", "z-emoji/v*", "z-gif-search/v*", "z-dev-utils/v*", "z-dev-cache-cleaner/v*", "z-wifi/v*", "z-bluetooth/v*", "z-dev-servers/v*", "z-dev/v*", "z-mole/v*", "z-system-monitor/v*", "z-tag-manager/v*", "z-folder-navigator/v*", "z-translate/v*", "z-workflow-manager/v*"]
 
 permissions:
   contents: read
@@ -29,6 +29,7 @@ jobs:
             z-speedtest/v*) workflow=z-speedtest; artifact='Speed Test.alfredworkflow' ;;
             z-adhan-time/v*) workflow=z-adhan-time; artifact='Adhan Time.alfredworkflow' ;;
             z-currency/v*) workflow=z-currency; artifact='Currency Exchange.alfredworkflow' ;;
+            z-splitwise/v*) workflow=z-splitwise; artifact='Splitwise.alfredworkflow' ;;
             z-calculate-anything/v*) workflow=z-calculate-anything; artifact='Calculate Anything.alfredworkflow' ;;
             z-swiss/v*) workflow=z-swiss; artifact=Swiss.alfredworkflow ;;
             z-workflow-manager/v*) workflow=z-workflow-manager; artifact='Workflow Manager.alfredworkflow' ;;

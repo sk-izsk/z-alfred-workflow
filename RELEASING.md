@@ -13,6 +13,7 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-kill-process` | `z-kill-process/vX.Y.Z` | `Kill Process.alfredworkflow` |
 | `workflows/z-adhan-time` | `z-adhan-time/vX.Y.Z` | `Adhan Time.alfredworkflow` |
 | `workflows/z-currency` | `z-currency/vX.Y.Z` | `Currency Exchange.alfredworkflow` |
+| `workflows/z-splitwise` | `z-splitwise/vX.Y.Z` | `Splitwise.alfredworkflow` |
 | `workflows/z-calculate-anything` | `z-calculate-anything/vX.Y.Z` | `Calculate Anything.alfredworkflow` |
 | `workflows/z-workflow-manager` | `z-workflow-manager/vX.Y.Z` | `Workflow Manager.alfredworkflow` |
 | `workflows/z-translate` | `z-translate/vX.Y.Z` | `Translate.alfredworkflow` |
