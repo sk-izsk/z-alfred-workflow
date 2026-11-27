@@ -9,8 +9,8 @@ Requires macOS 13+ and Alfred 6 with Powerpack. Nothing else to install.
 
 Type `cam` (or choose Camera in Swiss) for:
 
-- **Show / Hide Preview**: a small, muted live preview in the top-right corner (size and corner are in
-  Configuration). It never records.
+- **Show / Hide Preview**: a small, muted live preview in the centre of the screen (size and position
+  are in Configuration). It never records.
 - **Take Photo**: saves what the preview shows to `~/Pictures/Camera` (opens the preview first if it
   is closed).
 - **Switch Camera**: moves to the next camera, shown when more than one is connected (including an
@@ -38,7 +38,7 @@ Open the workflow in Alfred Preferences → **Configure Workflow**.
 | --- | --- | --- |
 | Keyword | `cam` | Lists Show/Hide Preview, Take Photo and Switch Camera. |
 | Size | Medium | How big the preview is (photos are this size too). |
-| Position | Top right | Where the preview appears on the main display. |
+| Position | Centre | Where the preview appears on the main display. |
 | Photos folder | `~/Pictures/Camera` | Where Take Photo saves pictures. |
 <!-- config:end -->
 

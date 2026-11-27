@@ -60,10 +60,13 @@ const cameraCount = () => {
   }
 };
 
-/** Window bounds in a corner of the main screen's usable area (below the menu bar, beside the Dock). */
-const placement = (size, corner) => {
+/**
+ * Window bounds in the centre or a corner of the main screen's usable area. `ratio` is the camera's
+ * height/width: QuickTime's title bar floats over the video, so the window is exactly the image.
+ */
+const placement = (size, corner, ratio) => {
   const width = WIDTHS[size] || WIDTHS.medium;
-  const height = Math.round((width * 9) / 16) + TITLE_BAR;
+  const height = Math.round(width * ratio);
   const screen = $.NSScreen.mainScreen;
   const full = screen.frame,
     visible = screen.visibleFrame;
@@ -98,8 +101,16 @@ const open = () => {
       doc.currentCamera = app.videoRecordingDevices[index];
     } catch {}
   }
-  // QuickTime resizes the window to the camera's size once the feed starts: place it after that.
-  const bounds = placement(env("camera_size", "medium"), env("camera_corner", "top-right"));
+  // QuickTime sizes the window to the camera once the feed starts: read that shape, then place it.
+  let natural = { width: 0, height: 0 };
+  for (let i = 0; i < 15 && natural.width < 640; i++) {
+    delay(0.1);
+    natural = app.windows[0].bounds();
+  }
+  const ratio = natural.width && natural.height / natural.width > 0.3 && natural.height / natural.width < 1.2
+    ? natural.height / natural.width
+    : 9 / 16;
+  const bounds = placement(env("camera_size", "medium"), env("camera_corner", "centre"), ratio);
   for (let i = 0; i < 10; i++) {
     delay(0.15);
     app.windows[0].bounds = bounds;

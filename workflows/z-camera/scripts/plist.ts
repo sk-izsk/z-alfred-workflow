@@ -128,12 +128,12 @@ export const infoPlist = {
       ["Medium", "medium"],
       ["Large", "large"],
     ]),
-    popup("camera_corner", "Position", "Where the preview appears on the main display.", "top-right", [
+    popup("camera_corner", "Position", "Where the preview appears on the main display.", "centre", [
+      ["Centre", "centre"],
       ["Top right", "top-right"],
       ["Top left", "top-left"],
       ["Bottom right", "bottom-right"],
       ["Bottom left", "bottom-left"],
-      ["Centre", "centre"],
     ]),
     {
       type: "textfield",
