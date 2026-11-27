@@ -348,7 +348,7 @@
 				<false/>
 			</dict>
 			<key>description</key>
-			<string>Poll only while this window is open; range 2–60 seconds.</string>
+			<string>While the window is open: a quick power and connection check at this interval (2–60 seconds); the full network scan runs at most once a minute.</string>
 			<key>label</key>
 			<string>Refresh interval (seconds)</string>
 			<key>type</key>
@@ -422,7 +422,7 @@
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.1.0</string>
+	<string>0.2.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-wifi</string>
 </dict>

@@ -45,8 +45,8 @@ export const parse = (raw: any): Device[] => {
             .join(" · ");
           const batteries = Object.entries(d)
             .filter(([key]) => /battery/i.test(key))
-            .flatMap(([key, value]) => {
-              const percent = Number.parseInt(String(value));
+            .flatMap(([key, level]) => {
+              const percent = Number.parseInt(String(level));
               return Number.isFinite(percent) && percent >= 0 && percent <= 100
                 ? [
                     {
@@ -62,7 +62,7 @@ export const parse = (raw: any): Device[] => {
                   ]
                 : [];
             })
-            .sort(
+            .toSorted(
               (a, b) =>
                 ["case", "left", "right", "device"].indexOf(a.part) -
                 ["case", "left", "right", "device"].indexOf(b.part),

@@ -1,9 +1,10 @@
+import { freshSelection } from "../../../shared/dashboard.ts";
 import { profileCommand, profileAction } from "../../../shared/ui-profile.ts";
 await profileCommand(() => import("./env.ts"));
 import { execFileSync } from "node:child_process";
 import { str, bool } from "./env.ts";
 import { create, read, save, type State } from "./state.ts";
-import { scan, connect, disconnect, setPower, showPassword } from "./wifi.ts";
+import { scan, quickScan, FULL_SCAN_MS, connect, disconnect, setPower, showPassword } from "./wifi.ts";
 import { components } from "../ui/window.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { merge, vars, update, finish, popup, menuItem, copy, open, errorStatus, type Action } from "./ui.ts";
@@ -44,10 +45,11 @@ const render = (s: State): Action => {
     true,
   );
 };
-const load = async (s: State): Promise<Action> => {
-  const snapshot = await scan(),
+const load = async (s: State, full = true): Promise<Action> => {
+  const quick = full || Date.now() - (s.scannedAt ?? 0) > FULL_SCAN_MS ? undefined : await quickScan(s);
+  const snapshot = quick ?? (await scan()),
     current = read(s.id);
-  Object.assign(current, snapshot);
+  Object.assign(current, snapshot, quick ? {} : { scannedAt: Date.now() });
   return render(current);
 };
 const main = async (): Promise<Action | void> => {
@@ -71,7 +73,7 @@ const main = async (): Promise<Action | void> => {
     });
   }
   const s = read(id);
-  if (cmd === "tick") return s.paused ? {} : load(s);
+  if (cmd === "tick") return s.paused ? {} : load(s, false);
   if (cmd === "refresh") return load(s);
   if (cmd === "query") {
     s.query = value;
@@ -82,6 +84,7 @@ const main = async (): Promise<Action | void> => {
     return render(s);
   }
   if (cmd === "select") {
+    if (!freshSelection(s)) return {};
     s.selected = value;
     save(s);
     return update(

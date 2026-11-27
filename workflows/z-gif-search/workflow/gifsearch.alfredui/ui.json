@@ -26,6 +26,10 @@
     "actions_shortcut": {
       "src": "variable",
       "default": "⌘K"
+    },
+    "gifsearch_key": {
+      "default": "",
+      "scriptenv": true
     }
   },
   "window": {

@@ -8,35 +8,35 @@ source, documentation, assets and package configuration under `workflows/`.
 | --- | --- | --- |
 | [Bitwarden](workflows/z-bitwarden) | Search your vault, generate passwords, use authenticator codes and manage Sends. Two-step login, background locking and sync, and Firefox support | [1.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-bitwarden%2Fv1.1.1) |
 | [VS Code](workflows/z-vscode) | Open projects, manage extensions and themes, and clone repositories across supported editors | [0.1.3](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-vscode%2Fv0.1.3) |
-| [Calendar](workflows/z-cald) | Browse months, join upcoming meetings and create events in macOS Calendar | [0.1.3](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-cald%2Fv0.1.3) |
-| [Brew](workflows/z-brew) | Search packages, review upgrades, adopt apps and manage services and taps | [0.1.3](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-brew%2Fv0.1.3) |
-| [Speed Test](workflows/z-speedtest) | Live Ookla speed meters, connection details and image export | [0.1.3](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-speedtest%2Fv0.1.3) |
-| [GitHub & Git](workflows/z-github) | GitHub activity, full-history My PRs and local repositories | [0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-github%2Fv0.1.2) |
-| [Kill Process](workflows/z-kill-process) | Monitor CPU/RAM, terminate processes and restart apps | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-kill-process%2Fv0.1.0) |
-| [Adhan Time](workflows/z-adhan-time) | City-local prayer calendar and next-prayer countdown | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-adhan-time%2Fv0.1.0) |
-| [Currency Exchange](workflows/z-currency) | Arithmetic, cross-rates, pinned targets and provider-based history | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-currency%2Fv0.1.0) |
+| [Calendar](workflows/z-cald) | Browse months, join upcoming meetings and create events in macOS Calendar | [0.1.4](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-cald%2Fv0.1.4) |
+| [Brew](workflows/z-brew) | Search packages, review upgrades, adopt apps and manage services and taps | [0.1.4](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-brew%2Fv0.1.4) |
+| [Speed Test](workflows/z-speedtest) | Live Ookla speed meters, connection details and image export | [0.1.4](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-speedtest%2Fv0.1.4) |
+| [GitHub & Git](workflows/z-github) | GitHub activity, full-history My PRs and local repositories | [0.1.3](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-github%2Fv0.1.3) |
+| [Kill Process](workflows/z-kill-process) | Monitor CPU/RAM, terminate processes and restart apps | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-kill-process%2Fv0.2.0) |
+| [Adhan Time](workflows/z-adhan-time) | City-local prayer calendar and next-prayer countdown | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-adhan-time%2Fv0.1.1) |
+| [Currency Exchange](workflows/z-currency) | Arithmetic, cross-rates, pinned targets and provider-based history | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-currency%2Fv0.2.0) |
 | [Splitwise](workflows/z-splitwise) | Add, search, change and delete expenses with friends and groups | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-splitwise%2Fv0.1.0) |
-| [Calculate Anything](workflows/z-calculate-anything) | Native results using your installed unit/conversion engine | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-calculate-anything%2Fv0.1.0) |
-| [Workflow Manager](workflows/z-workflow-manager) | Installed workflows, Gallery, updates and configuration | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-workflow-manager%2Fv0.1.0) |
+| [Calculate Anything](workflows/z-calculate-anything) | Native results using your installed unit/conversion engine | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-calculate-anything%2Fv0.1.1) |
+| [Workflow Manager](workflows/z-workflow-manager) | Installed workflows, Gallery, updates and configuration | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-workflow-manager%2Fv0.1.1) |
 | [Notion](workflows/z-notion) | Search, preview and create pages and databases; quick capture, notes and text | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-notion%2Fv0.1.0) |
-| [Translate](workflows/z-translate) | Clipboard and text translation with native split panes | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-translate%2Fv0.1.0) |
-| [Folder Navigator](workflows/z-folder-navigator) | Find folders and browse files with complete Back history | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-folder-navigator%2Fv0.1.0) |
-| [Tag Manager](workflows/z-tag-manager) | Find and manage Finder tags on files, folders and apps | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-tag-manager%2Fv0.1.0) |
-| [System Monitor](workflows/z-system-monitor) | Live CPU, memory, disks, power and network details | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-system-monitor%2Fv0.1.0) |
-| [Mole](workflows/z-mole) | Mole health, disk browsing and reviewed cleanup/optimization previews | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-mole%2Fv0.1.0) |
-| [Dev](workflows/z-dev) | Separate launcher for developer and connectivity tools | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev%2Fv0.1.0) |
-| [Dev Servers](workflows/z-dev-servers) | Inspect local servers and stop or restart by project | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-servers%2Fv0.1.0) |
-| [Bluetooth](workflows/z-bluetooth) | Paired Bluetooth devices, connection controls and battery details | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-bluetooth%2Fv0.1.0) |
-| [Wi-Fi](workflows/z-wifi) | Wi-Fi networks, status and native connection controls | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-wifi%2Fv0.1.0) |
-| [Dev Cache Cleaner](workflows/z-dev-cache-cleaner) | Inspect developer caches and review individual or safe bulk cleanup | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-cache-cleaner%2Fv0.1.0) |
-| [Dev Utils](workflows/z-dev-utils) | Local developer and text transformations with clipboard input | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-utils%2Fv0.1.0) |
-| [GIF Search](workflows/z-gif-search) | GIF search, favorites and recents; list/grid layouts | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-gif-search%2Fv0.1.0) |
-| [Emoji Picker](workflows/z-emoji) | Offline emoji search, favorites, recents and skin-tone variants | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-emoji%2Fv0.1.0) |
-| [Lunar Controls](workflows/z-lunar) | Display brightness, contrast, volume, inputs and Lunar presets | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-lunar%2Fv0.1.0) |
-| [Window Navigator](workflows/z-window-navigator) | Search and focus windows on all desktops, the active app or the current desktop | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-window-navigator%2Fv0.1.0) |
-| [World Clock](workflows/z-world-clock) | Offline timezones, starred locations and native analog grid | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-world-clock%2Fv0.1.0) |
-| [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-swiss%2Fv0.1.0) |
-| [Weather](workflows/z-weather) | Saved cities, colorful conditions and detailed weather forecasts | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-weather%2Fv0.1.0) |
+| [Translate](workflows/z-translate) | Clipboard and text translation with native split panes | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-translate%2Fv0.1.1) |
+| [Folder Navigator](workflows/z-folder-navigator) | Find folders and browse files with complete Back history | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-folder-navigator%2Fv0.1.1) |
+| [Tag Manager](workflows/z-tag-manager) | Find and manage Finder tags on files, folders and apps | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-tag-manager%2Fv0.1.1) |
+| [System Monitor](workflows/z-system-monitor) | Live CPU, memory, disks, power and network details | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-system-monitor%2Fv0.1.1) |
+| [Mole](workflows/z-mole) | Mole health, disk browsing and reviewed cleanup/optimization previews | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-mole%2Fv0.1.1) |
+| [Dev](workflows/z-dev) | Separate launcher for developer and connectivity tools | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev%2Fv0.1.1) |
+| [Dev Servers](workflows/z-dev-servers) | Inspect local servers and stop or restart by project | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-servers%2Fv0.1.1) |
+| [Bluetooth](workflows/z-bluetooth) | Paired Bluetooth devices, connection controls and battery details | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-bluetooth%2Fv0.1.1) |
+| [Wi-Fi](workflows/z-wifi) | Wi-Fi networks, status and native connection controls | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-wifi%2Fv0.2.0) |
+| [Dev Cache Cleaner](workflows/z-dev-cache-cleaner) | Inspect developer caches and review individual or safe bulk cleanup | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-cache-cleaner%2Fv0.1.1) |
+| [Dev Utils](workflows/z-dev-utils) | Local developer and text transformations with clipboard input | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-utils%2Fv0.1.1) |
+| [GIF Search](workflows/z-gif-search) | GIF search, favorites and recents; list/grid layouts | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-gif-search%2Fv0.2.0) |
+| [Emoji Picker](workflows/z-emoji) | Offline emoji search, favorites, recents and skin-tone variants | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-emoji%2Fv0.1.1) |
+| [Lunar Controls](workflows/z-lunar) | Display brightness, contrast, volume, inputs and Lunar presets | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-lunar%2Fv0.1.1) |
+| [Window Navigator](workflows/z-window-navigator) | Search and focus windows on all desktops, the active app or the current desktop | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-window-navigator%2Fv0.1.1) |
+| [World Clock](workflows/z-world-clock) | Offline timezones, starred locations and native analog grid | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-world-clock%2Fv0.1.1) |
+| [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-swiss%2Fv0.1.1) |
+| [Weather](workflows/z-weather) | Saved cities, colorful conditions and detailed weather forecasts | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-weather%2Fv0.1.1) |
 | [Maps](workflows/z-map) | Routes and places on a live map: car, transit, bike, walk, stops, suggestions; open data, Google or HERE | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-map%2Fv0.1.0) |
 
 Download a `.alfredworkflow` asset and double-click it to install. These workflows require macOS,

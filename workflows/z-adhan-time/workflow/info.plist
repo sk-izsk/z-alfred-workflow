@@ -615,7 +615,7 @@ Icon/reference: Raycast Adhan Time by mzaien and contributors, MIT. See THIRD_PA
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.1.0</string>
+	<string>0.1.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-adhan-time</string>
 </dict>

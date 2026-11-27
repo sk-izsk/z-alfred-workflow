@@ -1,5 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { dirname, join } from "node:path";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { homedir } from "node:os";
 
 export const STANDARD_WIDTH = 780;
 export const DEFAULT_BACK = "⌃⌥⇧⌘B";
@@ -117,8 +119,17 @@ if(current){
 }
 chosen ? String(chosen.visibleFrame.size.width) : '820';
 `;
-/** Visible width of the display Alfred is on; NaN when unknown. */
-export const displayWidth = (): number => {
+/**
+ * One probe result shared by every workflow for 10 minutes: the probe (JXA) costs about 150 ms
+ * and blocks the window from opening, but only changes the width on displays under 820 points.
+ */
+const DISPLAY_CACHE = join(
+  homedir(),
+  "Library/Caches/com.runningwithcrayons.Alfred/Workflow Data/com.izsk.shared/display-width.json",
+);
+const DISPLAY_TTL = 10 * 60_000;
+
+const probeDisplay = (): number => {
   try {
     return Number(
       execFileSync("/usr/bin/osascript", ["-l", "JavaScript", "-e", screenProbe], {
@@ -130,6 +141,25 @@ export const displayWidth = (): number => {
   } catch {
     return NaN;
   }
+};
+
+/** Visible width of the display Alfred is on; NaN when unknown. */
+export const displayWidth = (): number => {
+  try {
+    const cached = JSON.parse(readFileSync(DISPLAY_CACHE, "utf8")) as { at: number; width: number };
+    if (Date.now() - cached.at < DISPLAY_TTL && cached.width > 0) return cached.width;
+  } catch {
+    // no cache yet
+  }
+  const width = probeDisplay();
+  if (width > 0)
+    try {
+      mkdirSync(dirname(DISPLAY_CACHE), { recursive: true });
+      writeFileSync(DISPLAY_CACHE, JSON.stringify({ at: Date.now(), width }));
+    } catch {
+      // a read-only cache only costs the next probe
+    }
+  return width;
 };
 export const windowWidth = (): number => fittedWidth(displayWidth());
 export const profileAction = (settings: Settings, backIDs: string[] = ["initialBack"]) => {

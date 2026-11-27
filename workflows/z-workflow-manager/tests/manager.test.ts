@@ -69,17 +69,17 @@ test("scan reads metadata only and removal validates the installed entry without
   expect(() => removalTarget({ ...entry, path: source }, prefs)).toThrow();
   expect(() => removalTarget({ ...entry, bundle: "changed" }, prefs)).toThrow();
 });
+const release = (version: string) => ({
+  tag_name: `z-weather/v${version}`,
+  html_url: "https://github.com/sk-izsk/z-alfred-workflow/releases/tag/test",
+  assets: [
+    {
+      name: "Weather.alfredworkflow",
+      browser_download_url: `https://github.com/sk-izsk/z-alfred-workflow/releases/download/z-weather%2Fv${version}/Weather.alfredworkflow`,
+    },
+  ],
+});
 test("repository releases choose newest namespaced stable asset and reject other hosts", () => {
-  const release = (version: string) => ({
-    tag_name: `z-weather/v${version}`,
-    html_url: "https://github.com/sk-izsk/z-alfred-workflow/releases/tag/test",
-    assets: [
-      {
-        name: "Weather.alfredworkflow",
-        browser_download_url: `https://github.com/sk-izsk/z-alfred-workflow/releases/download/z-weather%2Fv${version}/Weather.alfredworkflow`,
-      },
-    ],
-  });
   const entries = repositoryEntries([
     release("0.9.0"),
     release("0.10.0"),

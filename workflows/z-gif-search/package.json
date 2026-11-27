@@ -1,6 +1,6 @@
 {
   "name": "alfred-gif-search",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "GIF search, favorites and recents in list or grid views",
   "author": "izsk",

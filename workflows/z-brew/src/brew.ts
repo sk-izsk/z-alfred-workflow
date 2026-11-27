@@ -28,7 +28,12 @@ export const readBrew = (args: string[], timeoutMs = 120000): Promise<RunResult>
       HOMEBREW_NO_ENV_HINTS: "1",
     },
   });
-export const jsonBrew = async (args: string[], findings = false): Promise<any> => {
+/** Shapes of the `brew … --json` output this workflow reads. Unknown fields stay untyped. */
+type Outdated = { name: string; current_version?: string };
+type InfoResult = { formulae?: unknown[]; casks?: unknown[] };
+
+/** Parsed `brew … --json`. The caller states the expected shape and still checks it at runtime. */
+export const jsonBrew = async <T = unknown>(args: string[], findings = false): Promise<T> => {
   const result = await readBrew(args);
   if (result.code !== 0 && !(findings && result.code === 1 && result.stdout.trim()))
     throw new Error(result.stderr.trim() || `brew ${args[0]} failed.`);
@@ -47,7 +52,7 @@ export const cached = <T>(name: string, lifetime: number): T | undefined => {
 };
 export const store = (name: string, data: unknown): void =>
   writeJson(cachePath(name), { at: Date.now(), data });
-export const fetchJSON = async (url: string): Promise<any> => {
+export const fetchJSON = async (url: string): Promise<unknown> => {
   const response = await fetch(url, { signal: AbortSignal.timeout(25000) });
   if (!response.ok) throw new Error(`Homebrew API returned ${response.status}. Try refreshing.`);
   const reader = response.body?.getReader();
@@ -84,19 +89,22 @@ export const loadPackages = async (search: boolean, refresh = false): Promise<Pa
   return search ? mergeInstalled(await catalog(refresh), local) : local;
 };
 export const details = async (p: Package): Promise<Package> => {
-  const result = await jsonBrew(["info", "--json=v2", `--${p.kind}`, packageName(p.token)]);
+  const result = await jsonBrew<InfoResult>(["info", "--json=v2", `--${p.kind}`, packageName(p.token)]);
   const raw = p.kind === "formula" ? result.formulae?.[0] : result.casks?.[0];
   return raw ? normalize(raw, p.kind) : p;
 };
 export const outdatedPackages = async (): Promise<Package[]> => {
   const args = ["outdated", "--json=v2", ...(bool("greedy_upgrades") ? ["--greedy"] : [])];
-  const [local, result] = await Promise.all([localPackages(), jsonBrew(args, true)]);
+  const [local, result] = await Promise.all([
+    localPackages(),
+    jsonBrew<{ formulae?: Outdated[]; casks?: Outdated[] }>(args, true),
+  ]);
   if (!Array.isArray(result.formulae) || !Array.isArray(result.casks))
     throw new Error("Unexpected Homebrew upgrade response.");
   const upgrades = new Map([
-    ...result.formulae.map((r: any) => [`formula:${r.name}`, r]),
-    ...result.casks.map((r: any) => [`cask:${r.name}`, r]),
-  ] as [string, any][]);
+    ...result.formulae.map((r): [string, Outdated] => [`formula:${r.name}`, r]),
+    ...result.casks.map((r): [string, Outdated] => [`cask:${r.name}`, r]),
+  ]);
   return local
     .map((p) => {
       const raw = upgrades.get(p.id) || upgrades.get(`${p.kind}:${p.token.split("/").at(-1)}`);

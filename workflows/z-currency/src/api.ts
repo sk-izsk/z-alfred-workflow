@@ -1,6 +1,16 @@
 import { createHash } from "node:crypto";
 import { join } from "node:path";
-import { cacheDir, readJson, writeJson, str, cacheMinutes } from "./env.ts";
+import { keychain } from "../../../shared/keychain.ts";
+import { BUNDLE_ID, cacheDir, readJson, writeJson, str, cacheMinutes, workflowDir } from "./env.ts";
+
+const secrets = keychain(BUNDLE_ID);
+/** The provider key, from the Keychain. Versions before 0.2.0 kept it in Workflow Configuration. */
+export const apiKey = (): string => {
+  secrets.migrate("api_key", str("api_key"), workflowDir(), "api_key");
+  return secrets.read("api_key");
+};
+export const saveApiKey = (value: string): void => secrets.save("api_key", value);
+export const removeApiKey = (): void => secrets.remove("api_key");
 export type Provider = "open-er" | "allratestoday" | "exchangerate-api" | "unirate";
 export type Rates = {
   provider: Provider;
@@ -85,13 +95,13 @@ export const parseRates = (raw: any, p: Provider, requested = ""): Rates => {
 };
 export const loadRates = async (date = "", fresh = false): Promise<Rates> => {
   const p = provider(),
-    key = str("api_key");
+    key = apiKey();
   if ((p === "allratestoday" || p === "open-er") && date)
     throw new Error(
       "This no-key provider has no history. Choose a keyed provider with historical access, or clear the date.",
     );
   if (p !== "allratestoday" && p !== "open-er" && !key)
-    throw new Error("Add this provider’s API key in Workflow Configuration.");
+    throw new Error("Add this provider’s API key: Actions (⌘K) → Set API Key…");
   const identity = createHash("sha256").update(`${p}:${key}:${date}`).digest("hex").slice(0, 24),
     path = join(cacheDir(), `rates-${identity}.json`),
     old = readJson<Rates | null>(path, null);

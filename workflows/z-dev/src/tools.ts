@@ -69,7 +69,9 @@ export const installed = (): Installed[] => {
     )
       .trim()
       .replace(/^~(?=\/)/, homedir());
-  } catch {}
+  } catch {
+    // no custom Alfred preferences folder: use the default
+  }
   const roots = [
       sync ? join(sync, "Alfred.alfredpreferences/workflows") : "",
       join(homedir(), "Library/Application Support/Alfred/Alfred.alfredpreferences/workflows"),
@@ -87,7 +89,9 @@ export const installed = (): Installed[] => {
         );
         if (tools.some((t) => t.bundle === info.bundleid))
           found.push({ bundle: info.bundleid, version: String(info.version || "0") });
-      } catch {}
+      } catch {
+        // unreadable workflow folder: skip it
+      }
     }
   }
   return found;

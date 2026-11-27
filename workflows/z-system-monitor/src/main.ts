@@ -1,3 +1,4 @@
+import { freshSelection } from "../../../shared/dashboard.ts";
 import { profileCommand } from "../../../shared/ui-profile.ts";
 await profileCommand(() => import("./env.ts"));
 import { execFileSync } from "node:child_process";
@@ -123,6 +124,7 @@ const main = async (): Promise<Action | void> => {
     return render(s);
   }
   if (cmd === "select") {
+    if (!freshSelection(s)) return {};
     if (args[0]?.startsWith("heading:")) return skipHeading(sidebar(s), args[0], s.selected);
     if (!categories.some((c) => c.id === args[0]) || s.selected === args[0]) return {};
     s.selected = args[0]!;

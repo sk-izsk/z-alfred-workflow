@@ -40,3 +40,12 @@ test("paired devices remain visible when macOS omits their address", () => {
   expect(rows[0]!.hidden).toBe(true);
   expect(validAddress(rows[0]!.id)).toBe(false);
 });
+
+test("only real Bluetooth addresses reach blueutil", async () => {
+  const { connect } = await import("../src/bluetooth.ts");
+  expect(validAddress("a4:83:e7:12:34:56")).toBe(true);
+  expect(validAddress("A4-83-E7-12-34-56")).toBe(true);
+  for (const bad of ["", "a4:83:e7:12:34", "a4:83:e7:12:34:56:78", "--connect", "a4:83:e7:12:34:5g"])
+    expect(validAddress(bad)).toBe(false);
+  await expect(connect("--disconnect", true)).rejects.toThrow("Invalid Bluetooth address");
+});

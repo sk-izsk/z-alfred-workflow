@@ -4,7 +4,7 @@ import { bool, cacheMinutes } from "./env.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { randomUUID } from "node:crypto";
 import { create, read, save, pin, pinned, type State } from "./state.ts";
-import { loadRates } from "./api.ts";
+import { apiKey, loadRates, removeApiKey, saveApiKey } from "./api.ts";
 import { parseQuery, validDate } from "./expression.ts";
 import {
   components,
@@ -419,6 +419,61 @@ const main = async (): Promise<Action | void> => {
             ? "https://unirateapi.com"
             : "https://www.exchangerate-api.com/docs/overview",
     );
+  if (command === "key") {
+    // The key travels as a script environment variable (fx_key), never in argv.
+    const saveKey = { ...run("key-save", [], false), variables: { fx_key: "{value:keyField.text}" } };
+    return sheet("keySheet", {
+      type: "view",
+      layout: "border",
+      padding: 20,
+      spacing: 14,
+      components: [
+        label("keyHeading", "Provider API key", {
+          font: { size: 21, weight: "semibold" },
+          constraints: { region: "top" },
+        }),
+        {
+          type: "view",
+          layout: "inline",
+          direction: "vertical",
+          spacing: 10,
+          constraints: { region: "centre", size: { width: 560 } },
+          components: [
+            {
+              id: "keyField",
+              type: "passwordfield",
+              placeholder: "API key for ExchangeRate-API or UniRateAPI",
+              focus: true,
+              events: [{ triggers: "actioned", action: saveKey }],
+            },
+            label("keyNote", "Kept in your macOS Keychain, not in Alfred’s preferences.", {
+              font: { size: 12 },
+              colour: "secondaryLabelColor",
+            }),
+          ],
+        },
+        button("saveKey", "Save Key", saveKey, {
+          bordered: true,
+          shortcut: "↩",
+          constraints: { region: "bottom", position: "right" },
+        }),
+      ],
+    });
+  }
+  if (command === "key-save") {
+    try {
+      saveApiKey(process.env.fx_key ?? "");
+    } catch (error) {
+      return update({
+        keyNote: { text: error instanceof Error ? error.message : String(error), colour: "systemRedColor" },
+      });
+    }
+    return merge({ sheet: { close: "keySheet" } }, await load(s));
+  }
+  if (command === "key-remove") {
+    removeApiKey();
+    return load(s);
+  }
   if (command === "menu")
     return popup("actionsButton", [
       menuItem("Copy to Clipboard", ["copy", id, code], "↩"),
@@ -434,6 +489,8 @@ const main = async (): Promise<Action | void> => {
       menuItem("Use Latest Rates", ["latest", id]),
       menuItem("Refresh Rates", ["refresh", id], "⌘R"),
       menuItem("Rate Provider / API Documentation", ["provider", id]),
+      menuItem("Set API Key…", ["key", id]),
+      ...(apiKey() ? [menuItem("Remove API Key", ["key-remove", id])] : []),
     ]);
   throw new Error("Unknown Currency command.");
 };

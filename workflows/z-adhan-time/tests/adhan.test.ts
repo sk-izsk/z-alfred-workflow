@@ -175,25 +175,27 @@ test("Ramadan keeps actual Hijri month length, dates and Imsak separate from Faj
   expect(ramadanText(config, 1448, { days, fetched: 1, stale: false })).toContain("Fajr (fast begins)");
 });
 
+/** A synthetic Ramadan month starting `start` days into 2030. */
+const month = (h: number, start: number) =>
+  Array.from({ length: 29 }, (_, i) => {
+    const d = new Date(Date.UTC(2030, 0, start + i));
+    return {
+      ...raw.data[0],
+      date: {
+        gregorian: {
+          year: String(d.getUTCFullYear()),
+          month: { number: d.getUTCMonth() + 1 },
+          day: String(d.getUTCDate()),
+        },
+        hijri: { year: String(h), month: { number: 9, en: "Ramadan" }, day: String(i + 1) },
+      },
+    };
+  });
+
 test("Gregorian Ramadan selection uses API mapping, supports two starts and marks failed refresh", async () => {
   const { ramadanForGregorian, ramadanContent } = await import("../src/ramadan.ts");
   const prior = globalThis.fetch;
   let calls = 0;
-  const month = (h: number, start: number) =>
-    Array.from({ length: 29 }, (_, i) => {
-      const d = new Date(Date.UTC(2030, 0, start + i));
-      return {
-        ...raw.data[0],
-        date: {
-          gregorian: {
-            year: String(d.getUTCFullYear()),
-            month: { number: d.getUTCMonth() + 1 },
-            day: String(d.getUTCDate()),
-          },
-          hijri: { year: String(h), month: { number: 9, en: "Ramadan" }, day: String(i + 1) },
-        },
-      };
-    });
   const first = month(1451, 5),
     second = month(1452, 360);
   try {

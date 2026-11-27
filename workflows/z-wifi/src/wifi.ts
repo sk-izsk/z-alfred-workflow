@@ -36,7 +36,7 @@ export const parse = (
   const rows: Network[] = [];
   let redacted = false;
   for (const iface of raw?.SPAirPortDataType?.[0]?.spairport_airport_interfaces || []) {
-    if (iface._name !== device) continue;
+    if (iface["_name"] !== device) continue;
     const current = iface.spairport_current_network_information;
     if (!current && power && iface.spairport_status_information === "spairport_status_connected" && !link)
       link = { connected: true, name: "", security: "Unknown" };
@@ -45,7 +45,7 @@ export const parse = (
       ...(iface.spairport_airport_other_local_wireless_networks || []),
     ];
     for (const n of all) {
-      if (!visible(n._name)) {
+      if (!visible(n["_name"])) {
         redacted = true;
         if (n.current && (n.spairport_security_mode || n.spairport_network_channel))
           rows.push({
@@ -60,7 +60,7 @@ export const parse = (
           });
         continue;
       }
-      const id = String(n._name);
+      const id = String(n["_name"]);
       if (rows.some((x) => x.id === id)) continue;
       rows.push({
         id,
@@ -156,6 +156,33 @@ export const scan = async (): Promise<Snapshot> => {
     summary ? association(summary) : undefined,
   );
 };
+/**
+ * Cheap refresh for the timer (~50 ms): Wi-Fi power and the current connection only, applied to
+ * the last full scan. `system_profiler` takes several seconds, so it runs on launch, ⌘R and at
+ * most once a minute (FULL_SCAN_MS), not on every tick.
+ */
+export const FULL_SCAN_MS = 60_000;
+export const quickScan = async (last: Snapshot): Promise<Snapshot | undefined> => {
+  if (!last.device) return undefined;
+  const [power, summary] = await Promise.all([
+    run("/usr/sbin/networksetup", ["-getairportpower", last.device]),
+    run("/usr/sbin/ipconfig", ["getsummary", last.device]).catch(() => ""),
+  ]);
+  const link = summary ? association(summary) : undefined;
+  const on = /: On\s*$/i.test(power);
+  if (link?.connected && on) {
+    // macOS hides the SSID without Location permission: keep the last scan's connected row.
+    if (!link.name) return last.rows.some((row) => row.connected) ? { ...last, power: on } : undefined;
+    // A network the last scan doesn't know needs the full scan.
+    if (!last.rows.some((row) => row.name === link.name)) return undefined;
+  }
+  return { ...last, power: on, rows: applyLink(last.rows, on ? link : undefined) };
+};
+export const applyLink = (rows: Network[], link: Association | undefined): Network[] =>
+  rows
+    .filter((row) => row.id !== "__current__")
+    .map((row) => ({ ...row, connected: Boolean(link?.connected && row.name === link.name) }))
+    .toSorted((a, b) => Number(b.connected) - Number(a.connected) || a.name.localeCompare(b.name));
 export const setPower = async (device: string, on: boolean): Promise<void> => {
   if (!/^en\d+$/.test(device)) throw new Error("Invalid Wi-Fi device.");
   const output = await run("/usr/sbin/networksetup", ["-setairportpower", device, on ? "on" : "off"]);

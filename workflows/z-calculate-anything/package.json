@@ -1,6 +1,6 @@
 {
   "name": "alfred-calculate-anything-bridge",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "A native Alfred window for the installed Calculate Anything engine",
   "author": "izsk",

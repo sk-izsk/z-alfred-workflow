@@ -42,7 +42,9 @@ export const enginePath = (): string => {
     )
       .trim()
       .replace(/^~(?=\/)/, homedir());
-  } catch {}
+  } catch {
+    // no custom Alfred preferences folder: use the default
+  }
   const roots = [
     sync ? join(sync, "Alfred.alfredpreferences/workflows") : "",
     join(homedir(), "Library/Application Support/Alfred/Alfred.alfredpreferences/workflows"),

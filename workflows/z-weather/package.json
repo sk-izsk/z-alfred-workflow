@@ -1,6 +1,6 @@
 {
   "name": "alfred-weather",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Saved cities and detailed current weather and forecasts in Alfred 6",
   "author": "izsk",

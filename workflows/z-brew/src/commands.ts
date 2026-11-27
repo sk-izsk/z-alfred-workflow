@@ -62,6 +62,16 @@ const view = (
       : state;
   return render(current, type, filter, query);
 };
+/** `brew services list --json` and `brew tap-info --json` rows, as far as they are read here. */
+type BrewService = { name: string; status?: string; user?: string; exit_code?: number };
+type BrewTap = {
+  name: string;
+  remote?: string;
+  formula_names?: string[];
+  cask_tokens?: string[];
+  trusted?: boolean;
+  path?: string;
+};
 export const load = async ([rawMode = "installed", refresh = ""]: string[]): Promise<Action> => {
   const modes: Mode[] = [
     "installed",
@@ -90,9 +100,9 @@ export const load = async ([rawMode = "installed", refresh = ""]: string[]): Pro
     items = await adoptableApps(packages);
   }
   if (mode === "services") {
-    const raw = await jsonBrew(["services", "list", "--json"]);
+    const raw = await jsonBrew<BrewService[]>(["services", "list", "--json"]);
     if (!Array.isArray(raw)) throw new Error("Unsupported Homebrew service response.");
-    items = raw.map((s: any) => ({
+    items = raw.map((s) => ({
       id: `service:${s.name}`,
       title: String(s.name),
       description: `${s.status || "unknown"}${s.user ? " · " + s.user : ""}`,
@@ -107,9 +117,9 @@ export const load = async ([rawMode = "installed", refresh = ""]: string[]): Pro
     }));
   }
   if (mode === "taps") {
-    const raw = await jsonBrew(["tap-info", "--json", "--installed"]);
+    const raw = await jsonBrew<BrewTap[]>(["tap-info", "--json", "--installed"]);
     if (!Array.isArray(raw)) throw new Error("Unsupported Homebrew tap response.");
-    items = raw.map((t: any) => ({
+    items = raw.map((t) => ({
       id: `tap:${t.name}`,
       title: String(t.name),
       description: t.remote || "Homebrew tap",

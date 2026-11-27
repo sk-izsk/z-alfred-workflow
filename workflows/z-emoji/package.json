@@ -1,6 +1,6 @@
 {
   "name": "alfred-emoji",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Offline emoji search, favorites, recents and variants",
   "author": "izsk",

@@ -26,11 +26,11 @@ export type Gallery = {
     }
   >;
 };
+const parseVersion = (s: string) =>
+  /^v?\d+(?:\.\d+)*$/.test(s) ? s.replace(/^v/, "").split(".").map(Number) : null;
 export const newer = (a: string, b: string): boolean => {
-  const parse = (s: string) =>
-    /^v?\d+(?:\.\d+)*$/.test(s) ? s.replace(/^v/, "").split(".").map(Number) : null;
-  const x = parse(a),
-    y = parse(b);
+  const x = parseVersion(a),
+    y = parseVersion(b);
   if (!x || !y) return false;
   for (let i = 0; i < Math.max(x.length, y.length); i++) {
     if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0);
@@ -49,7 +49,9 @@ export const preferencesRoot = (): string => {
       .trim()
       .replace(/^~(?=\/)/, homedir());
     if (sync) return join(sync, "Alfred.alfredpreferences/workflows");
-  } catch {}
+  } catch {
+    // no custom Alfred preferences folder: use the default
+  }
   return join(homedir(), "Library/Application Support/Alfred/Alfred.alfredpreferences/workflows");
 };
 export const scan = (root = preferencesRoot()): Entry[] => {

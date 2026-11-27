@@ -8,6 +8,10 @@
       "default": "",
       "scriptenv": true
     },
+    "fx_key": {
+      "default": "",
+      "scriptenv": true
+    },
     "fx_query": {
       "src": "args[0]",
       "default": "",

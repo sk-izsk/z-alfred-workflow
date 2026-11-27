@@ -238,6 +238,8 @@ export const currencyWindow = {
   variablesconfig: {
     swiss_return: { default: "" },
     fx_session: { default: "", scriptenv: true },
+    // A key typed into the key sheet reaches the script as env, never argv.
+    fx_key: { default: "", scriptenv: true },
     fx_query: { src: "args[0]", default: "", scriptenv: true },
     back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
     back_label: { default: "Hyper+B" },

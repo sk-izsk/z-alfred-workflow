@@ -58,6 +58,8 @@ export const runCleanup = async (id: string, jobID: string, deps = { clean, scan
   } finally {
     try {
       unlinkSync(lock(id));
-    } catch {}
+    } catch {
+      // the lock is already gone
+    }
   }
 };

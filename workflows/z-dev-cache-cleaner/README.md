@@ -1,17 +1,83 @@
 # Dev Cache Cleaner for Alfred 6
 
-Type `devcache` or choose Dev Cache Cleaner in `dev`. Native split view shows caches with sizes/categories/risks and selected path/behavior details. Filter All, Safe, Review, Large > 1 GB or category. Command-K offers selected cleanup review, Open Folder, Copy Path, Copy Cleanup Description, safe-cache review, Scan Again and Configuration.
+Find developer caches and old build folders, see their size and risk, and clean them after a review.
 
-Scans configured npm, Yarn, pnpm, Homebrew, pip, CocoaPods and Composer caches; SwiftPM, Gradle, Maven, Cargo, Go, Ruby and uv caches; Xcode DerivedData, Archives, iOS/watchOS/tvOS device support, CoreSimulator caches, unavailable simulator devices and Android cache/snapshots. Installed package managers supply their configured cache location. Empty installed-tool caches stay visible. Non-Apple user app caches above the configurable size threshold and user logs are also listed. Docker reports reclaimable images, stopped containers, volumes and build cache when its daemon is available; all require Review.
+Requires macOS, Alfred 6 with Powerpack and Node.js 22+ or Bun.
 
-Unavailable Apple simulators are measured separately from available devices and runtimes. Cleanup rechecks availability and deletes only the exact reviewed device UUIDs through simctl. Android snapshot cleanup retains the AVD and application data. Xcode Archives, Maven repositories, Ruby gems, app caches and container storage can contain important data and are excluded from Safe bulk cleanup. Package managers use their own cleanup commands, including pnpm store prune and gem cleanup, rather than deleting their storage directories indiscriminately.
+## Open
 
-Configure semicolon-separated project roots, including external SSD folders. Known build/dependency folder names older than 30 days are offered as Review only. Age is configurable 1–365 days. A folder’s age does not prove it is unused: inspect the project and stop its builds first. Scan depth is limited to six, 2,000 visited folders and 200 candidates. Configured folder aliases resolve to canonical paths; nested project symlinks are skipped. Permission/size failures remain visible and cannot be cleaned. Project source directories are excluded.
+Type `devcache`, or choose Dev Cache Cleaner in `dev`. A split view lists caches with size,
+category and risk; the right side shows the selected path and what cleaning it does. Filter
+**All**, **Safe**, **Review**, **Large > 1 GB** or a category.
 
-Return opens a **cleanup review** listing targets, estimated size and risk notes. Only the explicit Clean footer action (or Return while reviewing) runs cleanup. Back cancels the pending plan and restores the results; Escape closes the review without running cleanup. Safe bulk cleanup includes only known Safe caches with a measured nonzero size. Paths, inode/device identities, configured scope and canonical path/alias resolution are revalidated before any removal. Sizes are estimates, not a promise of reclaimed disk space. Cleanup is permanent, not Trash.
+## What it scans
 
-Scanning runs on opening, Scan Again and after cleanup; there is no background polling or automatic cleanup. No real cache was removed for verification. Hyper+B, compact footer and standard screen-aware 780 width follow UI_CONVENTIONS.md. Node.js or Bun required. Development: `bun run check`, `bun run package`, `bun run link`.
+- **Package managers:** npm, Yarn, pnpm, Homebrew, pip, CocoaPods, Composer, SwiftPM, Gradle, Maven,
+  Cargo, Go, Ruby and uv. Installed tools report their own configured cache location; empty caches
+  of installed tools stay visible.
+- **Apple and Android:** Xcode DerivedData, Archives, device support files, CoreSimulator caches,
+  unavailable simulator devices, Android caches and emulator snapshots.
+- **System:** non-Apple app caches above a size threshold, and your user logs.
+- **Docker:** reclaimable images, stopped containers, volumes and build cache, when the daemon runs.
+- **Project folders:** known build/dependency folders (`node_modules`, `.next`, `.turbo`, `.venv`,
+  `.gradle`, `coverage`, …) older than 30 days under your project roots (1–365 days). Scan depth is
+  limited to six levels, 2,000 folders and 200 candidates. Symlinked project folders are skipped and
+  project source folders are never listed.
 
-Built with help from AI tools. Reference: [Raycast Dev Cache Cleaner](https://github.com/raycast/extensions/tree/e38232e713cc42a58cac81b8d3af9261fd1624e5/extensions/dev-cache-cleaner/). Independent implementation; no external binary or runtime dependency installation.
+## Cleaning safely
 
-Confirmed cleanup runs in a background worker. The results footer shows Cleaning… with completed-cache progress, then Refreshing cache sizes…. Duplicate cleanup/scan actions are blocked until the new measurements arrive. Both success and partial cleanup failures trigger a rescan; a failed rescan explicitly marks displayed sizes as potentially outdated. The query, selection and filter are retained when valid. Closing the window does not stop cleanup already confirmed.
+- **↩** opens a **cleanup review** with the targets, estimated size and risk notes. Only **Clean**
+  (or ↩ in the review) runs it. Back cancels the plan; Escape closes the review without cleaning.
+- **Safe bulk cleanup** (review Safe caches in ⌘K) includes only known Safe caches with a measured size. Xcode Archives, Maven
+  repositories, Ruby gems, app caches and container storage always need individual review.
+- Before anything is removed, each path's identity (device and inode), real path and configured
+  scope are checked again. One failed check stops the whole batch.
+- Package managers clean through their own commands (`pnpm store prune`, `gem cleanup`, …). Unavailable
+  simulators are deleted by their exact reviewed IDs through `simctl`; Android snapshot cleanup keeps
+  the emulator and its data.
+- A folder's age doesn't prove it's unused: check the project and stop its builds first.
+- Cleaning is **permanent** (not the Trash). Sizes are estimates, not a promise of freed space.
+- Cleanup runs in the background with progress in the footer, then sizes are measured again. Closing
+  the window doesn't stop a confirmed cleanup.
+
+Scans run on opening, on **Scan Again** and after cleanup; nothing runs in the background otherwise.
+
+## Actions (⌘K)
+
+Review cleanup of the selection, Open Folder, Copy Path, Copy Cleanup Description, review Safe caches,
+Scan Again and Configuration. Back (Hyper+B) returns to the Dev launcher.
+
+## Configuration
+
+<!-- config:start (generated by scripts/readme-config.ts from info.plist; do not edit) -->
+Open the workflow in Alfred Preferences → **Configure Workflow**.
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| Keyword | `devcache` | Open Dev Cache Cleaner. |
+| Back shortcut | Hyper+B (`⌃⌥⇧⌘B`) | Hyper modifier checkboxes plus a Back key; turn Hyper off to use a custom shortcut instead. |
+| Project folders | `~/Projects` | Semicolon-separated project roots, including external SSD paths. Only known old build folders are offered for review. |
+| Artifact age (days) | `30` | Project build folders younger than this are excluded. Range 1–365. |
+| Minimum app cache size (MB) | `10` | Lists non-Apple top-level user app caches above this size. Set 0 to include empty caches. |
+| Actions shortcut | `⌘K` | Open actions. |
+| Node.js executable | — | Optional absolute executable path. |
+| Open window | Inside Alfred |  |
+<!-- config:end -->
+
+## Development
+
+```sh
+bun install --frozen-lockfile
+bun run check
+bun run package
+bun run link
+```
+
+No real cache was removed during verification. Width, Back and footer follow
+[UI_CONVENTIONS.md](../../UI_CONVENTIONS.md).
+
+## Credits and AI disclosure
+
+Reference: [Raycast Dev Cache Cleaner](https://github.com/raycast/extensions/tree/e38232e713cc42a58cac81b8d3af9261fd1624e5/extensions/dev-cache-cleaner/).
+Independent implementation; no external binary or dependency is installed. See
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Built with help from AI tools.

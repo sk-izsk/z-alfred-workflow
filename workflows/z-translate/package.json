@@ -1,6 +1,6 @@
 {
   "name": "alfred-translate",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Translate clipboard or typed text in two native panes with language detection and pronunciation",
   "author": "izsk",

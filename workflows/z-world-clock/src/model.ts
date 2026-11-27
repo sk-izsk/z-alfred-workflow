@@ -40,7 +40,9 @@ export const zones = (): Zone[] => {
         country: old?.country || regions.of(info.country) || info.country,
         aliases: [...(old?.aliases || []), zone, info.notes],
       });
-    } catch {}
+    } catch {
+      // a zone this Node build doesn't know: skip it
+    }
   }
   catalog = [...new Set(["UTC", ...Intl.supportedValuesOf("timeZone")])].map((zone) => ({
     zone,
