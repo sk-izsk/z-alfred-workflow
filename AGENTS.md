@@ -57,6 +57,9 @@ proposing it.
     `imageview` beside it, unwrap linked badges, and drop images that can't be fetched.
   - `markdownarea` paints its own background: set `background: null` and pad its container, or
     text touches the edge.
+  - Its scroll bar can't be hidden (tried `scroller`, `showsverticalscroller`, `hasverticalscroller`,
+    `scrollbars`: all ignored) and it has no scroll function, so a "scroll down" button can't work.
+    The bar follows macOS: System Settings → Appearance → Show scroll bars.
 - Images never load from URLs in native components: download to the cache, with a timeout, a size
   limit and a remembered failure list so a dead image doesn't slow every view.
 - Before choosing a web view for anything new, test the native component in Alfred (a throwaway
