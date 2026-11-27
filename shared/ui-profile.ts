@@ -117,21 +117,21 @@ if(current){
 }
 chosen ? String(chosen.visibleFrame.size.width) : '820';
 `;
-export const windowWidth = (): number => {
+/** Visible width of the display Alfred is on; NaN when unknown. */
+export const displayWidth = (): number => {
   try {
-    return fittedWidth(
-      Number(
-        execFileSync("/usr/bin/osascript", ["-l", "JavaScript", "-e", screenProbe], {
-          encoding: "utf8",
-          timeout: 1500,
-          stdio: ["ignore", "pipe", "ignore"],
-        }).trim(),
-      ),
+    return Number(
+      execFileSync("/usr/bin/osascript", ["-l", "JavaScript", "-e", screenProbe], {
+        encoding: "utf8",
+        timeout: 1500,
+        stdio: ["ignore", "pipe", "ignore"],
+      }).trim(),
     );
   } catch {
-    return STANDARD_WIDTH;
+    return NaN;
   }
 };
+export const windowWidth = (): number => fittedWidth(displayWidth());
 export const profileAction = (settings: Settings, backIDs: string[] = ["initialBack"]) => {
   const back = backBinding(settings);
   return {

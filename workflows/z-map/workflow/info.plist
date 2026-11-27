@@ -1,0 +1,820 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.izsk.map</string>
+	<key>category</key>
+	<string>Internet</string>
+	<key>connections</key>
+	<dict>
+		<key>KEYWORD</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>UI</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>TRIGGER</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>UI</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>UI</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>POST</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>izsk</string>
+	<key>description</key>
+	<string>Routes and place search on a live map in Alfred 6: car, transit, bike and walk, open data or HERE</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Maps</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>keyword</key>
+				<string>{var:kw_main}</string>
+				<key>subtext</key>
+				<string>Place, A &gt; B route, or a copied address</string>
+				<key>text</key>
+				<string>Maps</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>KEYWORD</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>availableviaurlhandler</key>
+				<false/>
+				<key>triggerid</key>
+				<string>route</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>TRIGGER</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>launchmode</key>
+				<integer>0</integer>
+				<key>path</key>
+				<string>maps.alfredui</string>
+				<key>stackview</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.userinterface.alfredui</string>
+			<key>uid</key>
+			<string>UI</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>./bin/zmap post</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>POST</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>Type maps and a place (maps Eiffel Tower) or a route: A &gt; B, A &gt; B &gt; C, from A via B to C, or von A über B nach C. With nothing typed, a copied address becomes the destination. home and work use the addresses from Workflow Configuration; saved places work by their label.
+
+While you type, suggestions appear under the modes (saved places first): Down/Up and Return, or a click, pick one. The Home, Work and saved-place buttons fill From while it is empty, otherwise To. Any field also takes coordinates like 45.4995, -73.5665.
+
+Keys: Return routes; Return again or Command-O opens the route in Google Maps (or the app chosen in Configuration). Command-1 to Command-4 switch car, transit, bike and walk. Command-T swaps From and To. Command-U adds a stop (up to three); Shift-Command-U removes the last one. Command-K opens Actions: other map apps, copy link, save the destination as a place, clear. Back (Hyper+B by default) returns to Alfred’s search.
+
+The map shows the route, stops and alternatives in light blue with their travel times; click one to choose it. Transit shows lines, platforms, transfers and delays.
+
+Data: open data by default, no key: Transitous (transit, places), FOSSGIS OSRM (car, bike and walk alternatives, one request per second), Photon (place fallback) and OpenFreeMap with MapLibre GL. Optional Google (Places, Routes with live traffic, Google map) or HERE with your own API key. Places and routes are sent to these services. Results are cached (routes 10 minutes, places 7 days).
+
+Requires Alfred 6 Powerpack, macOS, Node.js 22+ or Bun, and an internet connection. This workflow was built with the help of AI tools. Review it before use and report issues on the project page.</string>
+	<key>uidata</key>
+	<dict>
+		<key>KEYWORD</key>
+		<dict>
+			<key>xpos</key>
+			<integer>30</integer>
+			<key>ypos</key>
+			<integer>40</integer>
+		</dict>
+		<key>POST</key>
+		<dict>
+			<key>xpos</key>
+			<integer>430</integer>
+			<key>ypos</key>
+			<integer>100</integer>
+		</dict>
+		<key>TRIGGER</key>
+		<dict>
+			<key>xpos</key>
+			<integer>30</integer>
+			<key>ypos</key>
+			<integer>180</integer>
+		</dict>
+		<key>UI</key>
+		<dict>
+			<key>xpos</key>
+			<integer>230</integer>
+			<key>ypos</key>
+			<integer>100</integer>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>maps</string>
+				<key>placeholder</key>
+				<string>maps</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Opens the map. Add a place, A &gt; B, from A via B to C or von A über B nach C.</string>
+			<key>label</key>
+			<string>Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>kw_main</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>open</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Open data (Transitous, OSRM), no key</string>
+						<string>open</string>
+					</array>
+					<array>
+						<string>Google (needs the Google key below)</string>
+						<string>google</string>
+					</array>
+					<array>
+						<string>HERE (needs the HERE key below)</string>
+						<string>here</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>Google and HERE give car times with live traffic. Without the key, open data is used.</string>
+			<key>label</key>
+			<string>Routes and places</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>provider</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>auto</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Automatic (matches Routes and places)</string>
+						<string>auto</string>
+					</array>
+					<array>
+						<string>OpenFreeMap, no key</string>
+						<string>openfreemap</string>
+					</array>
+					<array>
+						<string>Google Maps (needs the Google key)</string>
+						<string>google</string>
+					</array>
+					<array>
+						<string>HERE (needs the HERE key)</string>
+						<string>here</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>The map behind the routes. Each redraw of a Google map counts as one Google map load.</string>
+			<key>label</key>
+			<string>Map</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>map_view</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>google</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Google Maps</string>
+						<string>google</string>
+					</array>
+					<array>
+						<string>Apple Maps</string>
+						<string>apple</string>
+					</array>
+					<array>
+						<string>OpenStreetMap</string>
+						<string>osm</string>
+					</array>
+					<array>
+						<string>HERE WeGo</string>
+						<string>here</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>Opens the route with the addresses filled in. ⌘K offers the others.</string>
+			<key>label</key>
+			<string>Open in (⌘O)</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>open_in</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>transit</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Transit</string>
+						<string>transit</string>
+					</array>
+					<array>
+						<string>Car</string>
+						<string>car</string>
+					</array>
+					<array>
+						<string>Bike</string>
+						<string>bike</string>
+					</array>
+					<array>
+						<string>Walk</string>
+						<string>walk</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Default mode</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>default_mode</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string>optional</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Used for “home” (also zuhause, daheim) and the Home button.</string>
+			<key>label</key>
+			<string>Home address</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>home_address</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string>optional</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Used for “work” (also office, arbeit, büro) and the Work button.</string>
+			<key>label</key>
+			<string>Work address</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>work_address</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+				<key>verticalsize</key>
+				<integer>4</integer>
+			</dict>
+			<key>description</key>
+			<string>One per line: Label = address. Type the label instead of the address. ⌘K → Save Destination adds more.</string>
+			<key>label</key>
+			<string>Saved places</string>
+			<key>type</key>
+			<string>textarea</string>
+			<key>variable</key>
+			<string>saved_places</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Show Home, Work and saved places above the modes</string>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Quick buttons</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>show_quick</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Use a copied address as the destination</string>
+			</dict>
+			<key>description</key>
+			<string>When the keyword has no text and the clipboard holds one short address line, route from Home (if set) to it.</string>
+			<key>label</key>
+			<string>Clipboard</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>clipboard_destination</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>auto</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Automatic (macOS)</string>
+						<string>auto</string>
+					</array>
+					<array>
+						<string>English</string>
+						<string>en</string>
+					</array>
+					<array>
+						<string>Deutsch</string>
+						<string>de</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Language</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>language</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string>e.g. Berlin</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>City or region that place search prefers. Empty: the city of your time zone.</string>
+			<key>label</key>
+			<string>Search near</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>start_region</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>auto</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Automatic (light/dark)</string>
+						<string>auto</string>
+					</array>
+					<array>
+						<string>Dark</string>
+						<string>dark</string>
+					</array>
+					<array>
+						<string>Light</string>
+						<string>light</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Map colours</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>map_style</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>1</string>
+				<key>placeholder</key>
+				<string>1</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>0.85–1.3</string>
+			<key>label</key>
+			<string>Route line scale</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>map_scale</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Show transfer stop names on the map</string>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Stop names</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>map_stop_names</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>15</string>
+				<key>placeholder</key>
+				<string>15</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Points</string>
+			<key>label</key>
+			<string>Font: fields</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>font_fields</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>32</string>
+				<key>placeholder</key>
+				<string>32</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Points</string>
+			<key>label</key>
+			<string>Font: travel time</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>font_duration</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>14</string>
+				<key>placeholder</key>
+				<string>14</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Points</string>
+			<key>label</key>
+			<string>Font: info line</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>font_info</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>1180</string>
+				<key>placeholder</key>
+				<string>1180</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>700–2400 points; limited to the screen.</string>
+			<key>label</key>
+			<string>Window width</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>window_width</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>620</string>
+				<key>placeholder</key>
+				<string>620</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>300–1400 points.</string>
+			<key>label</key>
+			<string>Map height</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>map_height</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string>optional</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Sent in the User-Agent so Transitous can reach you about heavy use, as they ask. Optional.</string>
+			<key>label</key>
+			<string>Contact e-mail</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>contact</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>⌘K</string>
+				<key>placeholder</key>
+				<string>⌘K</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Opens the Actions menu.</string>
+			<key>label</key>
+			<string>Actions shortcut</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>actions_shortcut</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Enable Hyper key configuration</string>
+			</dict>
+			<key>description</key>
+			<string>Use the modifier checkboxes and Back key below. Disable to use the custom Back shortcut.</string>
+			<key>label</key>
+			<string>Hyper shortcuts</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_enabled</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Control</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Control</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_control</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Option</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Option</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_option</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Shift</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Shift</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_shift</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>Include Command</string>
+			</dict>
+			<key>label</key>
+			<string>Hyper: Command</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>hyper_command</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>B</string>
+				<key>placeholder</key>
+				<string>B</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>One letter, number or punctuation key, combined with the enabled Hyper modifiers.</string>
+			<key>label</key>
+			<string>Back key</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>back_key</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>⌃⌥⇧⌘B</string>
+				<key>placeholder</key>
+				<string>⌃⌥⇧⌘B</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Used when Hyper shortcuts are disabled. For example ⌘[.</string>
+			<key>label</key>
+			<string>Custom Back shortcut</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>back_shortcut</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Optional absolute path if automatic discovery fails.</string>
+			<key>label</key>
+			<string>Node.js executable</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>node_path</string>
+		</dict>
+	</array>
+	<key>variablesdontexport</key>
+	<array>
+		<string>home_address</string>
+		<string>work_address</string>
+		<string>saved_places</string>
+		<string>contact</string>
+	</array>
+	<key>version</key>
+	<string>0.1.0</string>
+	<key>webaddress</key>
+	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-map</string>
+</dict>
+</plist>
