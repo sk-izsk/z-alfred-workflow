@@ -18,7 +18,7 @@ GIPHY and Klipy use the public service endpoints used by the pinned Raycast refe
 
 Choose **GIPHY direct** to use the official GIPHY API with your own key: **Actions (⌘K) → Set GIPHY API Key…**. The key is kept in your macOS Keychain (service `com.izsk.gif-search`), never in Alfred's preferences, search caches or command arguments; **Remove GIPHY API Key** deletes it. A key saved by an earlier version is moved to the Keychain automatically. GIPHY search is limited to 50 characters. Results are cached for five minutes by default; configure 0–60 minutes, or Command-R to fetch now. A failed refresh reports an error and keeps existing results instead of presenting them as newly fetched. Favorites/recent GIF metadata stays local. Network searches go to the selected provider; previews load from its media host.
 
-Native list/grid previews use Alfred image cells; use Details for an animated preview. GIF files are downloaded on explicit Copy/Download, limited to 30 MB and checked for GIF content. No cleanup or dependency installation runs automatically.
+List, grid and Details all use Alfred's native image view, which plays the GIF animation (no web view). GIF files are downloaded on explicit Copy/Download, limited to 30 MB and checked for GIF content. No cleanup or dependency installation runs automatically.
 
 ## Configuration
 

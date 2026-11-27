@@ -29,9 +29,9 @@ import {
   vars,
 } from "../ui.ts";
 import { entry, icon, zedNotice } from "./common.ts";
-import { confirmUninstall, dataUri, previewSheet } from "./extensions.ts";
+import { confirmUninstall, previewSheet } from "./extensions.ts";
 import { autoTry, endTrial, keepTrial, tryTheme } from "./trytheme.ts";
-import { previewHtml } from "../preview.ts";
+import { previewMarkdown } from "../preview.ts";
 
 /** Most installed (per category), cached for an hour: the window opens with a full list at no cost. */
 const popular = async (cat: string): Promise<GalleryExtension[]> => {
@@ -140,13 +140,13 @@ export const gallery = async ([action = "", id = "", profileName = ""]: string[]
             .catch(() => "")
         : "";
       return previewSheet(
-        previewHtml({
+        await previewMarkdown({
           name: e.name,
           publisher: e.publisher,
           description: e.description,
           version: e.version,
           installs: e.installs === undefined ? "" : compact(e.installs),
-          icon: existsSync(cachedIcon(e.id)) ? dataUri(cachedIcon(e.id)) : e.iconUrl,
+          icon: existsSync(cachedIcon(e.id)) ? cachedIcon(e.id) : e.iconUrl,
           readme,
         }),
         e.name,

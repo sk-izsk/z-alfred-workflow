@@ -241,5 +241,38 @@ export const downloadPictures = async (urls: (string | undefined)[]): Promise<vo
   );
 };
 
+/**
+ * The receipt as a local file for a native image view (images and PDFs), cached by URL. Limited to
+ * 15 MB; anything else is opened in the browser instead.
+ */
+export const receiptFile = async (url: string): Promise<string | undefined> => {
+  const dir = join(cacheDir(), "receipts");
+  mkdirSync(dir, { recursive: true });
+  const base = join(dir, createHash("sha256").update(url).digest("hex").slice(0, 32));
+  for (const ext of ["png", "jpg", "gif", "pdf", "heic", "webp"])
+    if (existsSync(`${base}.${ext}`)) return `${base}.${ext}`;
+  try {
+    const response = await fetcher(url, { signal: AbortSignal.timeout(15_000) });
+    if (!response.ok || Number(response.headers.get("content-length")) > 15e6) return undefined;
+    const type = (response.headers.get("content-type") ?? "").split(";")[0]!.trim();
+    const ext = {
+      "image/png": "png",
+      "image/jpeg": "jpg",
+      "image/gif": "gif",
+      "application/pdf": "pdf",
+      "image/heic": "heic",
+      "image/webp": "webp",
+    }[type];
+    if (!ext) return undefined;
+    const bytes = Buffer.from(await response.arrayBuffer());
+    if (bytes.length > 15e6) return undefined;
+    writeFileSync(`${base}.${ext}`, bytes);
+    return `${base}.${ext}`;
+  } catch {
+    // offline or the link expired: the sheet offers Open in Browser
+    return undefined;
+  }
+};
+
 export const fullName = (person: { first_name: string; last_name?: string | null }) =>
   [person.first_name, person.last_name].filter(Boolean).join(" ");

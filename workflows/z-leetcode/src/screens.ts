@@ -39,13 +39,28 @@ const cell: Json = {
     cornerradius: 8,
     components: [
       {
+        // border, not inline: inline centres a child narrower than its line.
         type: "view",
-        layout: "inline",
+        layout: "border",
         spacing: 10,
         constraints: { region: "centre" },
         components: [
-          { id: "rowTitle", type: "label", text: "", font: { size: 15 }, linebreak: "truncatetail" },
-          { id: "rowNote", type: "label", text: "", font: { size: 14 }, colour: "secondaryLabelColor" },
+          {
+            id: "rowTitle",
+            type: "label",
+            text: "",
+            font: { size: 15 },
+            linebreak: "truncatetail",
+            constraints: { region: "left", position: "centre" },
+          },
+          {
+            id: "rowNote",
+            type: "label",
+            text: "",
+            font: { size: 14 },
+            colour: "secondaryLabelColor",
+            constraints: { region: "centre", position: "left", stretch: "horizontal" },
+          },
         ],
       },
       {
@@ -207,14 +222,25 @@ export const searchScreen = (
   footer("Preview Problem", status),
 ];
 
-export const previewScreen = (markdown: string, status: string): Json[] => [
-  {
-    id: "preview",
-    type: "markdownarea",
-    text: markdown,
-    padding: 18,
-    constraints: { region: "centre" },
-  },
+/** The problem in a padded box; while it loads, a centred "Loading…" instead. */
+export const previewScreen = (markdown: string | undefined, status: string): Json[] => [
+  markdown === undefined
+    ? {
+        id: "preview",
+        type: "label",
+        text: "Loading…",
+        font: { size: 15 },
+        colour: "secondaryLabelColor",
+        constraints: { region: "centre", position: "centre" },
+      }
+    : {
+        type: "view",
+        layout: "stack",
+        padding: 28,
+        background: null,
+        constraints: { region: "centre" },
+        components: [{ id: "preview", type: "markdownarea", text: markdown, paragraphspacing: 6 }],
+      },
   footer("Open in Browser", status),
 ];
 

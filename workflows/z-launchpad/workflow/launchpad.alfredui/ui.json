@@ -1,0 +1,183 @@
+{
+  "bundleid": "com.izsk.launchpad",
+  "log": {
+    "level": "error",
+    "internal": true
+  },
+  "variablesconfig": {
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    }
+  },
+  "window": {
+    "title": "Launchpad",
+    "size": {
+      "width": 780,
+      "height": 850
+    },
+    "minsize": {
+      "width": 560,
+      "height": 400
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/launchpad",
+              "args": [
+                "ui-profile",
+                "back"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/launchpad",
+              "args": [
+                "prepare-origin"
+              ]
+            },
+            {
+              "type": "script",
+              "src": "../bin/launchpad",
+              "args": [
+                "launch"
+              ],
+              "async": true
+            }
+          ]
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/launchpad",
+            "args": [
+              "menu"
+            ]
+          }
+        }
+      ],
+      "components": [
+        {
+          "id": "grid",
+          "type": "webkitview",
+          "text": "<html><body style=\"margin:0;height:100vh;display:flex;align-items:center;justify-content:center;background:transparent;font:15px -apple-system;color:rgba(128,128,128,.8)\">Loading…</body></html>",
+          "focus": true,
+          "openlinksexternally": "^https?:",
+          "constraints": {
+            "region": "centre"
+          },
+          "events": [
+            {
+              "triggers": "changed",
+              "action": {
+                "type": "script",
+                "src": "../bin/launchpad",
+                "args": [
+                  "nav",
+                  "{value:grid.src}"
+                ],
+                "async": true
+              }
+            }
+          ]
+        },
+        {
+          "type": "view",
+          "layout": "border",
+          "padding": 10,
+          "spacing": 8,
+          "constraints": {
+            "region": "bottom"
+          },
+          "components": [
+            {
+              "id": "statusLabel",
+              "type": "label",
+              "text": "",
+              "font": {
+                "size": 10
+              },
+              "colour": "secondaryLabelColor",
+              "linebreak": "truncatetail",
+              "constraints": {
+                "region": "centre",
+                "stretch": "horizontal"
+              }
+            },
+            {
+              "type": "view",
+              "layout": "inline",
+              "spacing": 10,
+              "constraints": {
+                "region": "right"
+              },
+              "components": [
+                {
+                  "id": "back",
+                  "type": "button",
+                  "text": "Back  {var:back_label}",
+                  "shortcut": "{var:back_shortcut}",
+                  "bordered": false,
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "json",
+                        "src": {
+                          "finish": {
+                            "variables": {
+                              "launchpad_out": "back"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "actionsButton",
+                  "type": "button",
+                  "text": "Actions  {var:actions_label}",
+                  "bordered": false,
+                  "events": [
+                    {
+                      "triggers": "actioned",
+                      "action": {
+                        "type": "script",
+                        "src": "../bin/launchpad",
+                        "args": [
+                          "menu"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

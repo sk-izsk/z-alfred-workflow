@@ -109,3 +109,20 @@ describe("screens", () => {
     expect(view).toContain("Open 'Funkytown'");
   });
 });
+
+test("receipts download once for a native preview; other file types and huge files are refused", async () => {
+  let calls = 0;
+  api.setFetcher(async (url) => {
+    calls++;
+    if (url.includes("big"))
+      return new Response("x", { headers: { "content-type": "image/png", "content-length": "20000000" } });
+    if (url.includes("page")) return new Response("<html>", { headers: { "content-type": "text/html" } });
+    return new Response(new Uint8Array([37, 80, 68, 70]), { headers: { "content-type": "application/pdf" } });
+  });
+  const file = await api.receiptFile("https://example.com/receipt-1");
+  expect(file?.endsWith(".pdf")).toBe(true);
+  expect(await api.receiptFile("https://example.com/receipt-1")).toBe(file);
+  expect(calls).toBe(1); // cached
+  expect(await api.receiptFile("https://example.com/big")).toBeUndefined();
+  expect(await api.receiptFile("https://example.com/page")).toBeUndefined();
+});
