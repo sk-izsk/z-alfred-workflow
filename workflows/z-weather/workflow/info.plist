@@ -509,7 +509,7 @@ The icon and inspiration come from Raycast Weather by tonka3000 and contributors
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.1.0</string>
+	<string>0.1.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-weather</string>
 </dict>

@@ -492,7 +492,7 @@ The icon and action inspiration are from Raycast Kill Process by rolandleth and 
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.1.0</string>
+	<string>0.2.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-kill-process</string>
 </dict>

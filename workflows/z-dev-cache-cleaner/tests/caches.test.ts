@@ -169,6 +169,7 @@ const artifact = (path: string): Cache => {
     note: "test",
     error: "",
   };
+};
 
 test("cleanup refuses young artifacts, artifacts outside project roots, protected roots and foreign commands", async () => {
   const root = realpathSync(mkdtempSync(join(tmpdir(), "dev-cache-guard-"))),
@@ -176,7 +177,6 @@ test("cleanup refuses young artifacts, artifacts outside project roots, protecte
     prior = process.env.project_roots;
   process.env.project_roots = root;
   process.env.artifact_days = "30";
-  };
   let removed = 0;
   const remove = async () => {
     removed++;

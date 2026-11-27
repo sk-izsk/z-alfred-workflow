@@ -1,6 +1,6 @@
 {
   "name": "alfred-github",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "description": "GitHub activity and local Git repositories in Alfred 6",
   "author": "izsk",

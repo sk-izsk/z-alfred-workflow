@@ -1,6 +1,6 @@
 {
   "name": "alfred-world-clock",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Offline searchable world clocks with starred locations, list and analog grid",
   "author": "izsk",

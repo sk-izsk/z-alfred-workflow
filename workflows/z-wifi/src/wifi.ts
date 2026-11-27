@@ -170,8 +170,12 @@ export const quickScan = async (last: Snapshot): Promise<Snapshot | undefined> =
   ]);
   const link = summary ? association(summary) : undefined;
   const on = /: On\s*$/i.test(power);
-  // A connection the last scan doesn't know (or a hidden name) needs the full scan.
-  if (link?.connected && (!link.name || !last.rows.some((row) => row.name === link.name))) return undefined;
+  if (link?.connected && on) {
+    // macOS hides the SSID without Location permission: keep the last scan's connected row.
+    if (!link.name) return last.rows.some((row) => row.connected) ? { ...last, power: on } : undefined;
+    // A network the last scan doesn't know needs the full scan.
+    if (!last.rows.some((row) => row.name === link.name)) return undefined;
+  }
   return { ...last, power: on, rows: applyLink(last.rows, on ? link : undefined) };
 };
 export const applyLink = (rows: Network[], link: Association | undefined): Network[] =>

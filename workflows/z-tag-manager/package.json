@@ -1,6 +1,6 @@
 {
   "name": "alfred-tag-manager",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Search and manage Finder tags on files, folders and apps",
   "author": "izsk",
