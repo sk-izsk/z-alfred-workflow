@@ -23,13 +23,13 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Folder Navigator](workflows/z-folder-navigator) | Find folders and browse files with complete Back history | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-folder-navigator%2Fv0.1.1) |
 | [Launchpad](workflows/z-launchpad) | App grid with swipe and scroll paging, drag-to-create folders, rename and delete | [0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-launchpad%2Fv0.1.0) |
 | [Tag Manager](workflows/z-tag-manager) | Find and manage Finder tags on files, folders and apps | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-tag-manager%2Fv0.1.1) |
-| [System Monitor](workflows/z-system-monitor) | Live CPU, memory, disks, power and network details | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-system-monitor%2Fv0.1.1) |
-| [Mole](workflows/z-mole) | Mole health, disk browsing and reviewed cleanup/optimization previews | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-mole%2Fv0.1.1) |
+| [System Monitor](workflows/z-system-monitor) | Live CPU, memory, disks, power and network details | [0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-system-monitor%2Fv0.1.2) |
+| [Mole](workflows/z-mole) | Mole health, disk browsing and reviewed cleanup/optimization previews | [0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-mole%2Fv0.1.2) |
 | [Dev](workflows/z-dev) | Separate launcher for developer and connectivity tools | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev%2Fv0.2.0) |
-| [Dev Servers](workflows/z-dev-servers) | Inspect local servers and stop or restart by project | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-servers%2Fv0.1.1) |
+| [Dev Servers](workflows/z-dev-servers) | Inspect local servers and stop or restart by project | [0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-servers%2Fv0.1.2) |
 | [Bluetooth](workflows/z-bluetooth) | Paired Bluetooth devices, connection controls and battery details | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-bluetooth%2Fv0.1.1) |
 | [Wi-Fi](workflows/z-wifi) | Wi-Fi networks, status and native connection controls | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-wifi%2Fv0.2.0) |
-| [Dev Cache Cleaner](workflows/z-dev-cache-cleaner) | Inspect developer caches and review individual or safe bulk cleanup | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-cache-cleaner%2Fv0.1.1) |
+| [Dev Cache Cleaner](workflows/z-dev-cache-cleaner) | Inspect developer caches and review individual or safe bulk cleanup | [0.1.2](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-cache-cleaner%2Fv0.1.2) |
 | [Dev Utils](workflows/z-dev-utils) | Local developer and text transformations with clipboard input | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-dev-utils%2Fv0.1.1) |
 | [LeetCode](workflows/z-leetcode) | Search and preview problems, daily challenge, random picks and profiles | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-leetcode%2Fv0.1.1) |
 | [GIF Search](workflows/z-gif-search) | GIF search, favorites and recents; list/grid layouts | [0.2.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-gif-search%2Fv0.2.1) |

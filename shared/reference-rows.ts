@@ -112,6 +112,8 @@ export const referenceCell = (prefix: string, height = 42): Json => ({
                 font: { size: 11 },
                 colour: "secondaryLabelColor",
                 linebreak: "truncatetail",
+                // Without this the note sits at the top of the taller badge.
+                constraints: { position: "centre" },
               },
             ],
           },
