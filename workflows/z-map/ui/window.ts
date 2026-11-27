@@ -198,7 +198,8 @@ export const emptySuggestions: Json = {
   type: "view",
   constraints: { position: "top", size: { width: 0, height: 0 } },
 };
-export const SUGGEST_ROW = 32;
+// Two lines (13 + 10.5 pt) need ~40 pt with padding, or the title and address touch.
+export const SUGGEST_ROW = 40;
 /** Four rows fit inside the modes area, so the floating card never needs more room. */
 export const SUGGEST_MAX = 4;
 /** Opaque, unlike the cards: text underneath must not show through. */
@@ -234,8 +235,8 @@ export const suggestions = (rows: Json[]): Json => ({
           id: "sgRow",
           type: "view",
           layout: "border",
-          padding: 3,
-          spacing: 6,
+          padding: 6,
+          spacing: 8,
           cornerradius: 6,
           components: [
             {
@@ -249,6 +250,7 @@ export const suggestions = (rows: Json[]): Json => ({
               id: "sgText",
               type: "view",
               layout: "border",
+              spacing: 2,
               constraints: { region: "centre" },
               components: [
                 {
