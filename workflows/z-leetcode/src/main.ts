@@ -42,9 +42,13 @@ const listRows = async (s: State) => {
   return rows;
 };
 
-const previewText = async (s: State, screen: Extract<Screen, { kind: "preview" }>): Promise<string> => {
+/** The preview's Markdown, or undefined while it loads (the screen then centres "Loading…"). */
+const previewText = async (
+  s: State,
+  screen: Extract<Screen, { kind: "preview" }>,
+): Promise<string | undefined> => {
   if (!s.problem || s.problem.slug !== screen.slug)
-    return s.status.startsWith("Couldn") ? `# ${s.status}` : "Loading…";
+    return s.status.startsWith("Couldn") ? `# ${s.status}` : undefined;
   const r = await cachedRatings();
   return problemMarkdown(s.problem, {
     date: screen.date,
