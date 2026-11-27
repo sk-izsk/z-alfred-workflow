@@ -1,0 +1,20 @@
+#!/bin/zsh --no-rcs
+# Runs the bundled workflow code with Node. Alfred doesn't load your shell setup,
+# so look in the usual install places (or the "Node.js" path set in the Workflow's Configuration).
+here=${0:A:h}
+# Window scripts get no workflow configuration in their environment, so read the Node path from prefs.
+[[ -z $node_path ]] && node_path=$(/usr/bin/plutil -extract node_path raw -o - "$here/../prefs.plist" 2>/dev/null)
+candidates=(
+  "$node_path"
+  /opt/homebrew/bin/node
+  /usr/local/bin/node
+  $HOME/.volta/bin/node
+  $HOME/.local/bin/node
+  $HOME/.nvm/versions/node/*/bin/node(Nn[-1])
+  $HOME/.local/share/fnm/node-versions/*/installation/bin/node(Nn[-1])
+)
+for candidate in $candidates; do
+  [[ -n $candidate && -x $candidate ]] && exec "$candidate" "$here/displays.mjs" "$@"
+done
+[[ -x $HOME/.bun/bin/bun ]] && exec $HOME/.bun/bin/bun "$here/displays.mjs" "$@"
+print -r -- '{"update":{"ids":{"statusLabel":{"text":"Node.js not found. Set “Node.js” in the Workflow’s Configuration.","colour":"systemRedColor"}}}}'
