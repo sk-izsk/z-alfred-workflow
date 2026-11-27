@@ -15,10 +15,10 @@ source, documentation, assets and package configuration under `workflows/`.
 | [Kill Process](workflows/z-kill-process) | Monitor CPU/RAM, terminate processes and restart apps | Initial release pending |
 | [Adhan Time](workflows/z-adhan-time) | City-local prayer calendar and next-prayer countdown | Initial release pending |
 | [Currency Exchange](workflows/z-currency) | Arithmetic, cross-rates, pinned targets and provider-based history | Initial release pending |
-| [Splitwise](workflows/z-splitwise) | Add, search, change and delete expenses with friends and groups | Initial release pending |
+| [Splitwise](workflows/z-splitwise) | Add, search, change and delete expenses with friends and groups | [Splitwise 0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-splitwise%2Fv0.1.0) |
 | [Calculate Anything](workflows/z-calculate-anything) | Native results using your installed unit/conversion engine | Initial release pending |
 | [Workflow Manager](workflows/z-workflow-manager) | Installed workflows, Gallery, updates and configuration | Initial release pending |
-| [Notion](workflows/z-notion) | Search, preview and create pages and databases; quick capture, notes and text | Initial release pending |
+| [Notion](workflows/z-notion) | Search, preview and create pages and databases; quick capture, notes and text | [Notion 0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-notion%2Fv0.1.0) |
 | [Translate](workflows/z-translate) | Clipboard and text translation with native split panes | Initial release pending |
 | [Folder Navigator](workflows/z-folder-navigator) | Find folders and browse files with complete Back history | Initial release pending |
 | [Tag Manager](workflows/z-tag-manager) | Find and manage Finder tags on files, folders and apps | Initial release pending |
@@ -37,7 +37,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [World Clock](workflows/z-world-clock) | Offline timezones, starred locations and native analog grid | Initial release pending |
 | [Swiss](workflows/z-swiss) | Search and open independent tools with return navigation | Initial release pending |
 | [Weather](workflows/z-weather) | Saved cities, colorful conditions and detailed weather forecasts | Initial release pending |
-| [Maps](workflows/z-map) | Routes and places on a live map: car, transit, bike, walk, stops, suggestions; open data, Google or HERE | Initial release pending |
+| [Maps](workflows/z-map) | Routes and places on a live map: car, transit, bike, walk, stops, suggestions; open data, Google or HERE | [Maps 0.1.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-map%2Fv0.1.0) |
 
 Download a `.alfredworkflow` asset and double-click it to install. These workflows require macOS,
 Alfred 6 with the Powerpack and Node.js; see each workflow's README for its other requirements.
