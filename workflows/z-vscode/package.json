@@ -1,6 +1,6 @@
 {
   "name": "alfred-vscode",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "description": "VS Code (and friends) for Alfred 6, built on Alfred UI",
   "author": "izsk",

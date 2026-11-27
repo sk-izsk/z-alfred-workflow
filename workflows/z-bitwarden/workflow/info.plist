@@ -2599,7 +2599,7 @@ This workflow was built with the help of AI tools and has not been independently
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>1.1.0</string>
+	<string>1.1.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/sk-izsk/z-alfred-workflow/tree/dev/workflows/z-bitwarden</string>
 </dict>
