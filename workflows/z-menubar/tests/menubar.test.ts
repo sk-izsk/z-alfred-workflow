@@ -1,6 +1,16 @@
 import { expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
-import { dedupe, menuPath, score, search, shortcut, title, type MenuItem } from "../src/menus.ts";
+import {
+  alfredItem,
+  dedupe,
+  matchText,
+  menuPath,
+  score,
+  search,
+  shortcut,
+  title,
+  type MenuItem,
+} from "../src/menus.ts";
 
 const item = (titles: string[], extra: Partial<MenuItem> = {}): MenuItem => ({
   titles,
@@ -59,4 +69,20 @@ test("the Accessibility helper never redeclares JXA globals and converts NSArray
   ])
     expect(source).not.toMatch(new RegExp(`(?:const|let|var|function)\\s+${name}\\b`));
   expect(source).toContain("Number(array.count)");
+});
+
+test("Alfred results: initials and menus are matchable; ↩ carries what to press; unavailable can't be actioned", () => {
+  const app = { pid: 42, name: "Demo", bundle: "com.example.demo", path: "/Applications/Demo.app" };
+  const x = item(["File", "Open Recent", "Clear Menu"], { key: "N", mods: 1 });
+  expect(matchText(x)).toBe("Clear Menu cm File Open Recent");
+  expect(matchText(item(["View", "Zoom"]))).toBe("Zoom View");
+  const result = alfredItem(app, x);
+  expect(result.subtitle).toBe("File › Open Recent   ·   ⇧⌘N");
+  expect(JSON.parse(result.arg)).toEqual({
+    pid: 42,
+    indexes: [0, 1, 2],
+    titles: ["File", "Open Recent", "Clear Menu"],
+  });
+  expect(result.icon).toEqual({ type: "fileicon", path: "/Applications/Demo.app" });
+  expect(alfredItem(app, item(["Edit", "Undo"], { enabled: false })).valid).toBe(false);
 });

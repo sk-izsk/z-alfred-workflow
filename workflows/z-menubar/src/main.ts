@@ -1,169 +1,85 @@
-import { freshSelection } from "../../../shared/dashboard.ts";
-import { profileCommand } from "../../../shared/ui-profile.ts";
-await profileCommand(() => import("./env.ts"));
+// Menu Bar: a Script Filter on `m` that lists the front app's menu items right in Alfred's results.
+//   menubar filter          → Script Filter JSON (Alfred filters as you type)
+//   menubar press <json>    → clicks the chosen item (after Alfred closes)
+//   menubar open            → opens Alfred with the keyword (External Trigger, used by Swiss)
 import { execFileSync } from "node:child_process";
-import { randomUUID } from "node:crypto";
-import { profileAction } from "../../../shared/ui-profile.ts";
-import { components } from "../ui/window.ts";
-import { bool, str } from "./env.ts";
-import { menuPath, pressItem, readMenus, search, shortcut, title, uid, type MenuItem } from "./menus.ts";
-import { backVariables, launchInput, performBack } from "./navigation.ts";
-import { create, read, save, storeMenus, type State } from "./state.ts";
-import {
-  copy,
-  errorStatus,
-  finish,
-  merge,
-  popup,
-  script,
-  separator,
-  update,
-  vars,
-  type Action,
-} from "./ui.ts";
+import { join } from "node:path";
+import { bool, cacheDir, readJson, str, writeJson } from "./env.ts";
+import { alfredItem, pressItem, readMenus, readOwner, type App, type MenuItem } from "./menus.ts";
 
-const MAX_ROWS = 200;
-const visible = (s: State): MenuItem[] =>
-  search(s.items, s.query, bool("show_disabled", false)).slice(0, MAX_ROWS);
-
-const render = (s: State): Action => {
-  const rows = visible(s);
-  if (!rows.some((x) => uid(x) === s.selected)) s.selected = rows[0] ? uid(rows[0]) : "";
-  save(s);
-  const icon = s.app?.path
-    ? { "rowIcon.image.type": "fileicon", "rowIcon.image.src": s.app.path }
-    : { "rowIcon.image.type": "symbol", "rowIcon.image.src": "filemenu.and.selection" };
-  return update(
-    {
-      items: {
-        data: {
-          src: rows.map((x) => ({
-            uid: uid(x),
-            "rowTitle.text": title(x),
-            "rowDescription.text": [menuPath(x), shortcut(x), !x.enabled && "Unavailable"]
-              .filter(Boolean)
-              .join("   ·   "),
-            ...icon,
-          })),
-        },
-        select: s.selected,
-        placeholder: s.items.length ? "No matching menu items" : s.status,
-      },
-      statusLabel: { text: s.status },
-    },
-    true,
-  );
-};
-const pulse = (s: State): Action => ({
-  pulse: { src: "../bin/menubar", args: ["load", s.id, s.request], interval: 0, now: true },
+const lastFile = (bundle: string) => join(cacheDir(), `last-${bundle.replace(/[^\w.-]/g, "_")}.json`);
+const print = (value: unknown) =>
+  new Promise<void>((resolve) => process.stdout.write(JSON.stringify(value), () => resolve()));
+const output = (app: App, items: MenuItem[], extra: Record<string, unknown> = {}) => ({
+  ...extra,
+  items: items.filter((x) => x.enabled || bool("show_disabled", false)).map((x) => alfredItem(app, x)),
 });
-const target = (s: State, id: string): MenuItem => {
-  const x = s.items.find((item) => uid(item) === (id || s.selected));
-  if (!x) throw new Error("Select a menu item.");
-  return x;
-};
-const count = (s: State) => `${s.app?.name ?? "App"} · ${s.items.length} menu items`;
+const failure = (error: unknown) => ({
+  items: [
+    {
+      title: error instanceof Error ? error.message : String(error),
+      subtitle: "Menu Bar couldn't read the menus",
+      valid: false,
+      icon: { path: "icon.png" },
+    },
+  ],
+});
 
-const main = async (): Promise<Action | void> => {
-  const [cmd = "", id = "", ...args] = process.argv.slice(2),
-    value = args[0] || "";
-  if (cmd === "prepare-origin")
-    return merge(vars(backVariables("menubar_out", process.env.menubar_query)), profileAction({ str, bool }));
-  // After the window closes: click the chosen item (its app is in front again), or go Back.
-  if (cmd === "post") {
-    if (process.env.menubar_out === "back") performBack(process.env.swiss_return);
-    if (process.env.menubar_out === "press")
-      await pressItem(Number(process.env.menubar_pid), {
-        indexes: JSON.parse(process.env.menubar_indexes || "[]"),
-        titles: JSON.parse(process.env.menubar_titles || "[]"),
+/**
+ * First run: the app's menus from last time, at once, then a rerun reads them live (~0.3 s) and
+ * replaces them. Without a saved list, the live read is the first answer.
+ */
+const filter = async () => {
+  const apple = bool("show_apple_menu", false);
+  if (process.env.menubar_live !== "1") {
+    const app = await readOwner();
+    const last = app.bundle ? readJson<MenuItem[]>(lastFile(app.bundle), []) : [];
+    if (last.length)
+      return output(app, last, {
+        rerun: 0.1,
+        variables: { menubar_live: "1", menubar_pid: String(app.pid) },
       });
+  }
+  const menus = await readMenus(Number(process.env.menubar_pid) || 0, apple);
+  if (menus.app.bundle) writeJson(lastFile(menus.app.bundle), menus.items);
+  return output(menus.app, menus.items, {
+    variables: { menubar_live: "1", menubar_pid: String(menus.app.pid) },
+  });
+};
+
+const main = async () => {
+  const [cmd = "", value = ""] = process.argv.slice(2);
+  if (cmd === "filter") return print(await filter().catch(failure));
+  if (cmd === "press") {
+    const { pid, indexes, titles } = JSON.parse(value) as {
+      pid: number;
+      indexes: number[];
+      titles: string[];
+    };
+    await pressItem(pid, { indexes, titles });
     return;
   }
-  if (cmd === "launch") {
-    const origin = launchInput(process.env.menubar_query || "");
-    const s = create(origin.query, origin.returnTo);
-    return merge(
-      vars({ menubar_session: s.id }),
-      update({ root: { components: components(s.query) } }, true),
-      render(s),
-      pulse(s),
-    );
-  }
-  const s = read(id);
-  if (cmd === "back") return finish({ menubar_out: "back", swiss_return: s.returnTo });
-  if (cmd === "load") {
-    if (value !== s.request) return {};
-    try {
-      const menus = await readMenus(s.app?.pid ?? 0, bool("show_apple_menu", false));
-      storeMenus(menus);
-      const latest = read(id);
-      if (latest.request !== value) return {};
-      latest.app = menus.app;
-      latest.items = menus.items;
-      latest.status = count(latest);
-      return render(latest);
-    } catch (error) {
-      const latest = read(id);
-      latest.status = error instanceof Error ? error.message : String(error);
-      return render(latest);
-    }
-  }
-  if (cmd === "query") {
-    s.query = value;
-    return render(s);
-  }
-  if (cmd === "select") {
-    if (!freshSelection(s)) return {};
-    s.selected = value;
-    save(s);
-    return {};
-  }
-  if (cmd === "refresh") {
-    s.request = randomUUID();
-    s.status = "Reading menus…";
-    return merge(render(s), pulse(s));
-  }
   if (cmd === "open") {
-    const x = target(s, value);
-    if (!x.enabled) throw new Error(`“${title(x)}” is unavailable right now.`);
-    if (!s.app) throw new Error("Wait for the menus to load.");
-    return finish({
-      menubar_out: "press",
-      menubar_pid: String(s.app.pid),
-      menubar_indexes: JSON.stringify(x.indexes),
-      menubar_titles: JSON.stringify(x.titles),
-      swiss_return: s.returnTo,
-    });
-  }
-  if (cmd === "copy") return copy(target(s, value).titles.join(" › "));
-  if (cmd === "configure") {
+    // Swiss opens tools by External Trigger; a Script Filter opens by typing its keyword.
     execFileSync(
       "/usr/bin/osascript",
       [
         "-e",
-        'tell application id "com.runningwithcrayons.Alfred" to reveal workflow "com.izsk.menubar" configuration true',
+        "on run argv",
+        "-e",
+        'tell application id "com.runningwithcrayons.Alfred" to search (item 1 of argv)',
+        "-e",
+        "end run",
+        `${str("kw_main", "m")} `,
       ],
       { timeout: 5000 },
     );
-    return {};
   }
-  if (cmd === "menu") {
-    const x = s.items.find((item) => uid(item) === (value || s.selected));
-    const act = (a: string[], async = false) => script([a[0]!, id, ...a.slice(1)], async);
-    return popup("actionsButton", [
-      ...(x
-        ? [
-            { text: "Click   ↩", action: act(["open", uid(x)]) },
-            { text: "Copy Menu Path   ⌘C", action: act(["copy", uid(x)]) },
-            separator,
-          ]
-        : []),
-      { text: "Refresh   ⌘R", action: act(["refresh"], true) },
-      { text: "Workflow Configuration…", action: act(["configure"]) },
-    ]);
-  }
-  return {};
 };
-main()
-  .then((result) => process.stdout.write(JSON.stringify(result || {}), () => process.exit(0)))
-  .catch((error) => process.stdout.write(JSON.stringify(errorStatus(error)), () => process.exit(0)));
+main().then(
+  () => process.exit(0),
+  (error) => {
+    process.stderr.write(`${error instanceof Error ? error.message : error}\n`);
+    process.exit(1);
+  },
+);

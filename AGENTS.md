@@ -13,6 +13,10 @@
   one UI level, restoring the previous screen and its state. Sheets close to their parent view.
   Only Back at the first screen uses finish → post to reopen Alfred's main search.
 
+- Exception: a workflow whose results live in Alfred's own list (a Script Filter, like Menu Bar on
+  `m`) has no window, so it has no Back footer; Escape and Alfred's own navigation apply. Prefer this
+  when the user wants results as they type the keyword, with no window to open.
+
 - Workflow command menus count as navigation levels: a list opened from a workflow menu returns
   to that menu, never directly to empty Alfred search.
 

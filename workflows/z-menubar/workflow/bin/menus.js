@@ -1,4 +1,5 @@
 // Menu bar items of the app you are using, through the Accessibility API from JXA (no compiled helper).
+//   osascript -l JavaScript menus.js owner                → JSON: the app whose menus would be listed
 //   osascript -l JavaScript menus.js list [pid] [apple]   → JSON: the app and every menu item (leafs)
 //   osascript -l JavaScript menus.js press <pid> <indexes> <titles>   → click one item
 // Items are found again by index path and checked against their titles, so a menu that changed in
@@ -114,7 +115,9 @@ function run(argv) {
   try {
     const [command, a, b, c] = argv;
     const result =
-      command === "press"
+      command === "owner"
+        ? describeApp(targetApp(0))
+        : command === "press"
         ? press(Number(a), JSON.parse(b), JSON.parse(c))
         : list(a ? Number(a) : 0, b === "apple");
     return JSON.stringify(result);

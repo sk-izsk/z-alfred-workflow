@@ -1,31 +1,30 @@
 # Menu Bar for Alfred 6
 
-Search and click the menu bar items of the app you are using, in a native Alfred window.
+Search and click the menu bar items of the app you are using, right in Alfred's results: type `m`
+and a space, and every menu item is there. No window to open, no ↩ to start.
 
 Requires macOS 13+, Alfred 6 with Powerpack and Node.js 22+ or Bun, and Alfred's Accessibility access
 (System Settings → Privacy & Security → Accessibility), which Alfred normally has already. Nothing
 else to install.
 
-## Open
+## Use
 
-Type `m` (and a search if you like), or choose Menu Bar in Swiss. Every menu item of the app in front
-is listed with its menu and shortcut, for example **New Tab** in `File · ⌘T`. Type to filter: words
-match anywhere, and initials work too (`nt` finds **New Tab**, `cw` **Close Window**). Items in the
-title rank above items whose menu matches.
-
-## Actions
+Type `m` and a space. Every menu item of the app in front shows with its menu and shortcut, for
+example **New Tab** with `File · ⌘T`, and the app's own icon. Keep typing to filter: words match the
+start of the item or its menu names, and initials work too (`m nt` finds **New Tab**, `m cw`
+**Close Window**). Choosing Menu Bar in Swiss types `m ` for you.
 
 - **↩** closes Alfred and clicks the item in its app.
-- **⌘C** copies the item's menu path (`File › Open Recent › Notes.txt`).
-- **⌘K**: Click, Copy Menu Path, Refresh and Configuration.
-- **Back** (Hyper+B) returns to Swiss when opened there, otherwise to Alfred's search.
+- **⌘C** copies the item's menu path (`File › Open Recent › Notes.txt`); **⌘L** shows it in Large Type.
 
 Greyed-out items and the Apple menu are hidden unless turned on in Configuration.
 
 ## How it works
 
 - Menus are read with the macOS Accessibility API through a small JavaScript for Automation script
-  that ships with the workflow: no compiled helper, about 0.2–0.6 s per app.
+  that ships with the workflow, with no compiled helper.
+- The app's menus from last time show at once (about 0.15 s); a moment later they are read live
+  (0.2–0.6 s) and replace them, so new or greyed-out items are always current.
 - An item is clicked by its position in the menus, and only if its titles still match, so a menu that
   changed in between is never clicked by mistake.
 - If you also have another menu search workflow on `m`, change one keyword or disable the other.
@@ -37,13 +36,10 @@ Open the workflow in Alfred Preferences → **Configure Workflow**.
 
 | Setting | Default | What it does |
 | --- | --- | --- |
-| Keyword | `m` | Open Menu Bar for the app in front. Type a search after it. |
+| Keyword | `m` | Type it and a space to list the menus of the app in front. |
 | Unavailable items | Off | Also list menu items that are greyed out right now (they can't be clicked). |
 | Apple menu | Off | Also list the Apple menu, which is the same in every app. |
-| Back shortcut | Hyper+B (`⌃⌥⇧⌘B`) | Hyper modifier checkboxes plus a Back key; turn Hyper off to use a custom shortcut instead. |
-| Actions shortcut | `⌘K` | Open actions. |
 | Node.js executable | — | Optional absolute executable path. |
-| Open window | Inside Alfred |  |
 <!-- config:end -->
 
 ## Development

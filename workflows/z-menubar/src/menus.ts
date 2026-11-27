@@ -135,3 +135,31 @@ export const search = (items: MenuItem[], query: string, showDisabled: boolean):
     .toSorted((a, b) => b.s - a.s || a.i - b.i)
     .map((r) => r.x);
 export const uid = (x: MenuItem): string => x.indexes.join(".");
+
+/** The app whose menus `m` lists (~70 ms), to show its last list at once. */
+export const readOwner = (): Promise<App> => helper(["owner"]);
+
+/**
+ * What Alfred matches typed words against (word starts): the title, its initials (`nt` → New Tab)
+ * and the menu names.
+ */
+export const matchText = (x: MenuItem): string => {
+  const titleWords = words(title(x));
+  return [
+    title(x),
+    titleWords.length > 1 ? titleWords.map((w) => w[0]).join("") : "",
+    ...x.titles.slice(0, -1),
+  ]
+    .filter(Boolean)
+    .join(" ");
+};
+/** One Alfred result: ↩ passes the item to press, ⌘C copies its menu path. */
+export const alfredItem = (app: App, x: MenuItem) => ({
+  title: title(x),
+  subtitle: [menuPath(x), shortcut(x), !x.enabled && "Unavailable"].filter(Boolean).join("   ·   "),
+  arg: JSON.stringify({ pid: app.pid, indexes: x.indexes, titles: x.titles }),
+  match: matchText(x),
+  valid: x.enabled,
+  icon: { type: "fileicon", path: app.path },
+  text: { copy: x.titles.join(" › "), largetype: x.titles.join(" › ") },
+});
