@@ -40,13 +40,17 @@ const interval = (): number => {
   return Number.isFinite(n) ? (n === 0 ? 0 : Math.min(60, Math.max(1, n))) : 3;
 };
 const uid = () => process.getuid?.() ?? -1;
-const poll = async (id: string): Promise<Action> => {
+/** `withMetrics: false` skips `top`, whose CPU sample takes over a second, so the list shows first. */
+const poll = async (id: string, withMetrics = true): Promise<Action> => {
   if (!id) return {};
   const initial = read(id),
     ticket = randomUUID();
   initial.request = ticket;
   save(initial);
-  const [rows, usage] = await Promise.all([processes(), metrics()]);
+  const [rows, usage] = await Promise.all([
+    processes(),
+    withMetrics ? metrics() : Promise.resolve(initial.metrics),
+  ]);
   const current = read(id);
   if (current.request !== ticket) return {};
   current.rows = rows;
@@ -246,10 +250,12 @@ const main = async (): Promise<Action | void> => {
       launchInput(process.env.kp_query).query,
       str("default_sort", "cpu") === "memory" ? "memory" : "cpu",
     );
+    // With auto-refresh on, the list shows from `ps` at once and the pulse adds CPU right after.
+    const every = interval();
     return merge(
       vars({ kp_session: s.id }),
-      await poll(s.id),
-      { pulse: { interval: interval() } },
+      await poll(s.id, every === 0),
+      { pulse: every ? { interval: every, now: true } : { interval: 0 } },
       { update: { ids: { sortPicker: { selected: s.sort } } } },
     );
   }

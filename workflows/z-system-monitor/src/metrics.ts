@@ -58,6 +58,7 @@ export const vmFields = (text: string): Record<string, number> => {
   }
   return values;
 };
+const pct = (n: number | null) => (n === null ? "Measuring…" : `${n.toFixed(1)} %`);
 export const snapshot = async (previous?: Snapshot): Promise<Snapshot> => {
   const [vm, pressure, swap, battery, processes, net, version, model, processNet, diskInfo, powerInfo] =
     await Promise.all([
@@ -80,8 +81,7 @@ export const snapshot = async (previous?: Snapshot): Promise<Snapshot> => {
     }));
   const aggregate = (values: typeof cpu) =>
     values.reduce((a, b) => ({ idle: a.idle + b.idle, total: a.total + b.total }), { idle: 0, total: 0 });
-  const usage = cpuUsage(aggregate(cpu), previous ? aggregate(previous.cpu) : undefined),
-    pct = (n: number | null) => (n === null ? "Measuring…" : `${n.toFixed(1)} %`);
+  const usage = cpuUsage(aggregate(cpu), previous ? aggregate(previous.cpu) : undefined);
   const procs = processes.split("\n").flatMap((line) => {
     const m = line.trim().match(/^(\d+)\s+([\d.]+)\s+(\d+)\s+(.+)$/);
     return m ? [{ pid: m[1]!, cpu: Number(m[2]), rss: Number(m[3]) * 1024, name: m[4]! }] : [];
@@ -145,7 +145,9 @@ export const snapshot = async (previous?: Snapshot): Promise<Snapshot> => {
         .filter((d) => d.isDirectory() && !d.name.startsWith("."))
         .map((d) => `/Volumes/${d.name}`),
     );
-  } catch {}
+  } catch {
+    // /Volumes unreadable: list the startup disk only
+  }
   await Promise.all(
     mounts.map(async (path) => {
       try {

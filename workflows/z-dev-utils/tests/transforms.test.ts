@@ -13,8 +13,8 @@ test("JSON, Base64, hashing, cases and time transforms are local and Unicode awa
   expect(transform("snake", "myHTTPServer")).toBe("my_http_server");
   expect(transform("unix", "0")).toBe("1970-01-01T00:00:00.000Z");
 });
+const b = (v: unknown) => Buffer.from(JSON.stringify(v)).toString("base64url");
 test("JWT decode is explicitly unverified and query parsing preserves duplicate/prototype keys", () => {
-  const b = (v: unknown) => Buffer.from(JSON.stringify(v)).toString("base64url");
   expect(transform("jwt", `${b({ alg: "none" })}.${b({ sub: "test" })}.sig`)).toContain("NOT verified");
   expect(JSON.parse(transform("query", "a=1&a=2&__proto__=safe"))).toEqual({
     a: ["1", "2"],

@@ -1,3 +1,4 @@
+import { freshSelection } from "../../../shared/dashboard.ts";
 import { profileCommand, profileAction } from "../../../shared/ui-profile.ts";
 await profileCommand(() => import("./env.ts"));
 import { execFileSync } from "node:child_process";
@@ -94,6 +95,7 @@ const main = async (): Promise<Action | void> => {
     return render(s);
   }
   if (cmd === "select") {
+    if (!freshSelection(s)) return {};
     if (!tools.some(([key]) => key === value)) return {};
     s.selected = value;
     save(s);
@@ -125,7 +127,9 @@ const main = async (): Promise<Action | void> => {
           .split("\n")
           .filter(Boolean)
           .some(existsSync);
-      } catch {}
+      } catch {
+        // Spotlight unavailable: treat as not found
+      }
     if (!installed) throw new Error("DevUtils app is not installed. Local transformations remain available.");
     return merge(copy(text), open("devutils://auto?clipboard"));
   }

@@ -52,6 +52,8 @@ const words = (text: string): string[] =>
     .filter(Boolean)
     .map((w) => w.toLowerCase());
 const cap = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
+const jwtPart = (part: string) =>
+  JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(Buffer.from(part, "base64url")));
 export const transform = (id: string, input: string): string => {
   if (input.length > 50000 || Buffer.byteLength(input) > 120000)
     throw new Error("Input limit is 50,000 characters / 120 KB.");
@@ -95,13 +97,11 @@ export const transform = (id: string, input: string): string => {
     case "jwt": {
       const parts = input.trim().split(".");
       if (parts.length !== 3) throw new Error("Expected a three-part JWT. Signatures are not verified.");
-      const parse = (part: string) =>
-        JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(Buffer.from(part, "base64url")));
       result = JSON.stringify(
         {
           warning: "Decoded only. Signature and claims are NOT verified.",
-          header: parse(parts[0]!),
-          payload: parse(parts[1]!),
+          header: jwtPart(parts[0]!),
+          payload: jwtPart(parts[1]!),
         },
         null,
         2,

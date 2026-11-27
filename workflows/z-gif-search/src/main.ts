@@ -1,3 +1,4 @@
+import { freshSelection } from "../../../shared/dashboard.ts";
 import { profileCommand, profileAction } from "../../../shared/ui-profile.ts";
 await profileCommand(() => import("./env.ts"));
 import { execFileSync } from "node:child_process";
@@ -156,6 +157,7 @@ const main = async (): Promise<Action | void> => {
     return mount(s);
   }
   if (cmd === "select") {
+    if (!freshSelection(s)) return {};
     s.selected = value;
     save(s);
     return {};
@@ -255,7 +257,7 @@ const main = async (): Promise<Action | void> => {
   }
   if (["link", "markdown", "page", "paste"].includes(action)) {
     remember(e);
-    const markdown = `![${e.title.replace(/[\[\]\\\n]/g, " ")}](${e.url})`;
+    const markdown = `![${e.title.replace(/[[\]\\\n]/g, " ")}](${e.url})`;
     return merge(
       copy(action === "link" ? e.url : action === "page" ? e.page : markdown),
       action === "paste"

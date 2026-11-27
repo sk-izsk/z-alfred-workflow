@@ -77,7 +77,8 @@ export const dashboard = (d: Dashboard) => {
     constraints: d.details ? { region: "left", size: { width: 225 } } : { region: "centre" },
     cell: row,
     events: [
-      { triggers: "changed", action: run("select", ["{value:self.selected.uid}"], false) },
+      // async: a synchronous run per arrow key blocks the list while Node starts (~45 ms).
+      { triggers: "changed", action: run("select", ["{value:self.selected.uid}"]) },
       { triggers: "actioned", action: run("open", ["{value:self.selected.uid}"]) },
     ],
   };
@@ -288,3 +289,15 @@ export const detailRows = (rows: [string, string][]): Json[] =>
     "detailValue.text": value,
     "detailValue.tooltip": value,
   }));
+
+/**
+ * `select` runs async, so a run for an earlier arrow press can finish after a later one. Each
+ * run claims the selection with its process start time; an older run returns nothing instead of
+ * drawing a stale details pane or label.
+ */
+export const freshSelection = (s: object): boolean => {
+  const state = s as { selectedAt?: number };
+  if ((state.selectedAt ?? 0) > performance.timeOrigin) return false;
+  state.selectedAt = performance.timeOrigin;
+  return true;
+};

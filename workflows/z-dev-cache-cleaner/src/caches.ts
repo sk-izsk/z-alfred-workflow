@@ -47,7 +47,9 @@ export const tool = (name: string): string => {
     versions = readdirSync(join(homedir(), ".nvm/versions/node"))
       .toSorted((a, b) => b.localeCompare(a, undefined, { numeric: true }))
       .map((v) => join(homedir(), ".nvm/versions/node", v, "bin"));
-  } catch {}
+  } catch {
+    // no nvm installs
+  }
   const dirs = [
     "/opt/homebrew/bin",
     "/usr/local/bin",
@@ -306,7 +308,9 @@ const specifications = (): Promise<Spec[]> =>
           note: "Application cache; close the corresponding app before cleaning.",
         });
       }
-    } catch {}
+    } catch {
+      // app caches folder unreadable: skip it
+    }
     const avd = join(homedir(), ".android/avd");
     try {
       for (const item of readdirSync(avd, { withFileTypes: true })) {
@@ -319,7 +323,9 @@ const specifications = (): Promise<Spec[]> =>
             note: "Deletes saved emulator snapshots/Quick Boot state, retaining the AVD and its application data.",
           });
       }
-    } catch {}
+    } catch {
+      // no Android emulators
+    }
     return specs;
   })());
 const artifacts = new Set([
@@ -570,7 +576,9 @@ export const scan = async (): Promise<{ rows: Cache[]; limited: boolean }> => {
         }
         if (!d.name.startsWith(".")) walk(path, depth + 1);
       }
-    } catch {}
+    } catch {
+      // unreadable folder: skip it, its siblings still count
+    }
   };
   for (const logical of roots())
     try {
@@ -578,7 +586,9 @@ export const scan = async (): Promise<{ rows: Cache[]; limited: boolean }> => {
         const root = realpathSync(logical);
         if (!protectedRoot(root)) walk(root, 0);
       }
-    } catch {}
+    } catch {
+      // a project root that can't be read is skipped
+    }
   for (let i = 0; i < rows.length; i += 4)
     await Promise.all(
       rows.slice(i, i + 4).map(async (e) => {

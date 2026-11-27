@@ -1,4 +1,5 @@
 import { openTerminal } from "../../../shared/terminal.ts";
+import { freshSelection } from "../../../shared/dashboard.ts";
 import { profileCommand } from "../../../shared/ui-profile.ts";
 await profileCommand(() => import("./env.ts"));
 import { execFileSync, spawn } from "node:child_process";
@@ -266,6 +267,7 @@ const main = async (): Promise<Action | void> => {
     return render(s);
   }
   if (cmd === "select") {
+    if (!freshSelection(s)) return {};
     if (value.startsWith("heading:")) return skipHeading(rowData(s), value, s.selected);
     if (s.selected === value) return {};
     s.selected = value;

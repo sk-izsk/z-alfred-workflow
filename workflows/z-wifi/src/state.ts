@@ -13,6 +13,8 @@ export type State = {
   note: string;
   returnTo: string;
   at: number;
+  /** When the last full (system_profiler) scan ran. */
+  scannedAt?: number;
   paused: boolean;
 };
 const file = (id: string): string => {

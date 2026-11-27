@@ -153,3 +153,70 @@ test("native cache results preserve counted groups, reference details and unavai
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+const artifact = (path: string): Cache => {
+  const s = lstatSync(path);
+  return {
+    id: path,
+    name: ".next",
+    path,
+    category: "Project Artifacts",
+    risk: "Review",
+    bytes: 1,
+    device: s.dev,
+    inode: s.ino,
+    kind: "artifact",
+    note: "test",
+    error: "",
+  };
+
+test("cleanup refuses young artifacts, artifacts outside project roots, protected roots and foreign commands", async () => {
+  const root = realpathSync(mkdtempSync(join(tmpdir(), "dev-cache-guard-"))),
+    outside = realpathSync(mkdtempSync(join(tmpdir(), "dev-cache-outside-"))),
+    prior = process.env.project_roots;
+  process.env.project_roots = root;
+  process.env.artifact_days = "30";
+  };
+  let removed = 0;
+  const remove = async () => {
+    removed++;
+  };
+  try {
+    // Modified just now: younger than the 30-day artifact age.
+    const young = join(root, ".next");
+    mkdirSync(young);
+    await expect(clean([artifact(young)], remove)).rejects.toThrow("scope");
+    // Old enough, but not under a configured project root.
+    const stray = join(outside, ".next");
+    mkdirSync(stray);
+    const old = new Date(Date.now() - 60 * 86400000);
+    utimesSync(stray, old, old);
+    await expect(clean([artifact(stray)], remove)).rejects.toThrow("scope");
+    // An artifact name that isn't a known build folder.
+    const src = join(root, "src");
+    mkdirSync(src);
+    utimesSync(src, old, old);
+    await expect(clean([{ ...artifact(src), name: "src" }], remove)).rejects.toThrow("scope");
+    // The home folder itself is never a cleanup target, whatever the row claims.
+    const home = realpathSync(process.env.HOME || "/");
+    await expect(clean([{ ...artifact(home), kind: "known", name: "Home" }], remove)).rejects.toThrow();
+    // Container cleanup must name the real docker binary and a docker action.
+    await expect(
+      clean([{ ...artifact(root), kind: "command", action: "docker-prune", path: "/bin/sh" }], remove),
+    ).rejects.toThrow("container");
+    // One bad row stops the whole batch before anything is removed.
+    const good = join(root, ".turbo");
+    mkdirSync(good);
+    utimesSync(good, old, old);
+    await expect(validate({ ...artifact(good), name: ".turbo" })).resolves.toBeUndefined();
+    await expect(clean([{ ...artifact(good), name: ".turbo" }, artifact(young)], remove)).rejects.toThrow();
+    expect(removed).toBe(0);
+    await expect(clean([], remove)).rejects.toThrow("No caches");
+  } finally {
+    if (prior === undefined) delete process.env.project_roots;
+    else process.env.project_roots = prior;
+    delete process.env.artifact_days;
+    rmSync(root, { recursive: true, force: true });
+    rmSync(outside, { recursive: true, force: true });
+  }
+});

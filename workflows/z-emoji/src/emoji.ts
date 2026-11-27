@@ -21,15 +21,13 @@ export const find = (id: string): Emoji => {
   return value;
 };
 export type Preferences = { favorites: string[]; recent: string[]; layout: "list" | "grid" };
+const knownEmoji = (values: unknown) =>
+  Array.isArray(values) ? values.filter((v) => typeof v === "string" && emojis.some((e) => e.id === v)) : [];
 export const preferences = (): Preferences => {
-  const raw = readJson<Partial<Preferences>>(join(dataDir(), "preferences.json"), {}),
-    valid = (values: unknown) =>
-      Array.isArray(values)
-        ? values.filter((v) => typeof v === "string" && emojis.some((e) => e.id === v))
-        : [];
+  const raw = readJson<Partial<Preferences>>(join(dataDir(), "preferences.json"), {});
   return {
-    favorites: valid(raw.favorites),
-    recent: valid(raw.recent).slice(0, 80),
+    favorites: knownEmoji(raw.favorites),
+    recent: knownEmoji(raw.recent).slice(0, 80),
     layout: raw.layout === "grid" ? "grid" : "list",
   };
 };

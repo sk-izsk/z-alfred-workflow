@@ -1,3 +1,4 @@
+import { freshSelection } from "../../../shared/dashboard.ts";
 import { profileCommand } from "../../../shared/ui-profile.ts";
 await profileCommand(() => import("./env.ts"));
 import { windowInput } from "./launch.ts";
@@ -109,6 +110,7 @@ const main = async (): Promise<Action | void> => {
     return render(s);
   }
   if (cmd === "select") {
+    if (!freshSelection(s)) return {};
     if (s.items.some((w) => w.id === value)) {
       s.selected = value;
       save(s);

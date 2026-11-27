@@ -38,7 +38,9 @@ export const create = (query: string, returnTo = ""): State => {
           ? 86400000
           : Math.max(0, Math.min(10080, Number(str("cache_minutes", "0")) || 0)) * 60000;
         if (Date.now() - statSync(path).mtimeMs > lifetime) unlinkSync(path);
-      } catch {}
+      } catch {
+        // already removed by another run
+      }
     }
   const pref = readJson<{ from?: string; to?: string }>(join(dataDir(), "languages.json"), {}),
     from = pref.from || str("source_language", "auto"),

@@ -115,9 +115,10 @@ export const parseImport = (text: string): Entry[] => {
     return { path, name: basename(path), tags: [...new Set<string>(entry.tags.map(validTag))] };
   });
 };
+/** Escapes a value for an mdfind predicate string. */
+const quote = (value: string) =>
+  value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\*/g, "\\*").replace(/\?/g, "\\?");
 export const tagPredicate = (query = ""): string => {
-  const quote = (value: string) =>
-    value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\*/g, "\\*").replace(/\?/g, "\\?");
   const words = query.trim().split(/\s+/).filter(Boolean).slice(0, 20);
   if (query.length > 1000) throw new Error("Keep searches below 1000 characters.");
   return [
@@ -162,7 +163,9 @@ const appFallback = async (refresh: boolean): Promise<Entry[]> => {
         if (child.name.toLowerCase().endsWith(".app")) paths.push(path);
         else if (current.depth < 5) queue.push({ path, depth: current.depth + 1 });
       }
-    } catch {}
+    } catch {
+      // unreadable folder: skip it
+    }
   }
   const entries: Entry[] = [];
   const deadline = Date.now() + 10000;

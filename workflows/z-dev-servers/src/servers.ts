@@ -15,7 +15,7 @@ export const exec = async (command: string, args: string[], empty = false): Prom
     ).stdout;
   } catch (error: any) {
     if (empty && error.code === 1 && !error.killed) return error.stdout || "";
-    throw new Error(`${basename(command)} inspection failed or timed out.`);
+    throw new Error(`${basename(command)} inspection failed or timed out.`, { cause: error });
   }
 };
 export type Server = {
