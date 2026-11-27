@@ -18,6 +18,7 @@ Requires macOS, Alfred 6 Powerpack and Node.js 22+ or Bun.
 | Emoji Picker | `emoji` | Emoji Picker 0.1.0+ |
 | Lunar Controls | `lunarui` | Lunar Controls 0.1.0+ |
 | Shortcuts | `shortcuts` | Shortcuts 0.1.0+ |
+| Sound | `sound` | Sound 0.1.0+ |
 | Window Navigator | `wnav` | Window Navigator 0.1.0+ |
 | World Clock | `wclock` | World Clock 0.1.0+ |
 | Speed Test | `speedtest` | Speed Test 0.1.3+ |

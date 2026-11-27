@@ -65,6 +65,21 @@ proposing it.
 - Before choosing a web view for anything new, test the native component in Alfred (a throwaway
   workflow with an External Trigger, captured with `screencapture -l`) and write the result here.
 
+### macOS APIs without a compiled helper
+
+- Reach system frameworks (CoreAudio, CoreGraphics, AppKit) from JXA through `/usr/bin/osascript`
+  before shipping a binary: a bundled binary must be signed and notarised, and `swift`/`python3` need
+  Xcode tools the user may not have. Sound (`workflows/z-sound/workflow/bin/audio.js`) is the
+  reference.
+- C functions taking struct pointers crash osascript (exit 139) when called through BridgeSupport
+  (`ObjC.import("CoreAudio")`). Instead `ObjC.bindFunction` them with `void *` arguments, pass memory
+  from a bound `malloc` filled and read through `NSData` (`getBytesLength`, `dataWithBytesLength`),
+  and read object results (CFString) with an `id *` out argument and `Ref()`.
+- A JXA crash or uncaught error prints nothing: wrap `run()` in try/catch and return JSON
+  `{error}`, and test each step in its own `osascript` process.
+- Never send keystrokes (System Events) to test a window while the user is working: a stray Return
+  lands in their app. Use the CLI in a bare environment, and ask the user to check on screen.
+
 ### Speed
 
 - Script actions without `async: true` block the window. Use them only for instant work (under

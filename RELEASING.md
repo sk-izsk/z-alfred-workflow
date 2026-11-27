@@ -34,6 +34,7 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-emoji` | `z-emoji/vX.Y.Z` | `Emoji Picker.alfredworkflow` |
 | `workflows/z-lunar` | `z-lunar/vX.Y.Z` | `Lunar Controls.alfredworkflow` |
 | `workflows/z-shortcuts` | `z-shortcuts/vX.Y.Z` | `Shortcuts.alfredworkflow` |
+| `workflows/z-sound` | `z-sound/vX.Y.Z` | `Sound.alfredworkflow` |
 | `workflows/z-window-navigator` | `z-window-navigator/vX.Y.Z` | `Window Navigator.alfredworkflow` |
 | `workflows/z-world-clock` | `z-world-clock/vX.Y.Z` | `World Clock.alfredworkflow` |
 | `workflows/z-swiss` | `z-swiss/vX.Y.Z` | `Swiss.alfredworkflow` |

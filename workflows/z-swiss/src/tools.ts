@@ -31,6 +31,15 @@ export const tools: Tool[] = [
     keyword: "shortcuts",
   },
   {
+    id: "sound",
+    name: "Sound",
+    description: "Choose the sound output or input device, with volume and alert sounds",
+    bundle: "com.izsk.sound",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "sound",
+  },
+  {
     id: "window-navigator",
     name: "Window Navigator",
     description: "Find windows across desktops, active app or current desktop · wins shortcut",

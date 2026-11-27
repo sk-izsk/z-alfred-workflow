@@ -1,0 +1,218 @@
+{
+  "bundleid": "com.izsk.sound",
+  "variablesconfig": {
+    "swiss_return": {
+      "default": ""
+    },
+    "sound_session": {
+      "default": "",
+      "scriptenv": true
+    },
+    "sound_query": {
+      "src": "args[0]",
+      "default": "",
+      "scriptenv": true
+    },
+    "back_shortcut": {
+      "src": "variable",
+      "default": "⌃⌥⇧⌘B"
+    },
+    "back_label": {
+      "default": "Hyper+B"
+    },
+    "actions_label": {
+      "default": "⌘K"
+    },
+    "actions_shortcut": {
+      "src": "variable",
+      "default": "⌘K"
+    }
+  },
+  "window": {
+    "title": "Sound",
+    "size": {
+      "width": 780,
+      "height": 540
+    },
+    "minsize": {
+      "width": 560,
+      "height": 380
+    },
+    "root": {
+      "id": "root",
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "launched",
+          "action": [
+            {
+              "type": "script",
+              "src": "../bin/sound",
+              "args": [
+                "ui-profile",
+                "initialBack"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/sound",
+              "args": [
+                "prepare-origin",
+                "{var:sound_session}"
+              ],
+              "async": false
+            },
+            {
+              "type": "script",
+              "src": "../bin/sound",
+              "args": [
+                "launch",
+                "{var:sound_session}"
+              ],
+              "async": true
+            }
+          ]
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "↑",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectprevious"
+          }
+        },
+        {
+          "shortcut": "↓",
+          "action": {
+            "type": "function",
+            "src": "items",
+            "args": "selectnext"
+          }
+        },
+        {
+          "shortcut": "{var:actions_shortcut}",
+          "action": {
+            "type": "script",
+            "src": "../bin/sound",
+            "args": [
+              "menu",
+              "{var:sound_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘R",
+          "action": {
+            "type": "script",
+            "src": "../bin/sound",
+            "args": [
+              "refresh",
+              "{var:sound_session}"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘↩",
+          "action": {
+            "type": "script",
+            "src": "../bin/sound",
+            "args": [
+              "switch",
+              "{var:sound_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": false
+          }
+        },
+        {
+          "shortcut": "⌘1",
+          "action": {
+            "type": "script",
+            "src": "../bin/sound",
+            "args": [
+              "kind",
+              "{var:sound_session}",
+              "output"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘2",
+          "action": {
+            "type": "script",
+            "src": "../bin/sound",
+            "args": [
+              "kind",
+              "{var:sound_session}",
+              "input"
+            ],
+            "async": true
+          }
+        },
+        {
+          "shortcut": "⌘L",
+          "action": {
+            "type": "script",
+            "src": "../bin/sound",
+            "args": [
+              "alert",
+              "{var:sound_session}",
+              "{value:items.selected.uid}"
+            ],
+            "async": false
+          }
+        }
+      ],
+      "components": [
+        {
+          "id": "statusLabel",
+          "type": "label",
+          "text": "Loading Sound…",
+          "constraints": {
+            "region": "centre",
+            "position": "centre"
+          }
+        },
+        {
+          "id": "initialBack",
+          "type": "button",
+          "text": "Back  {var:back_label}",
+          "shortcut": "{var:back_shortcut}",
+          "bordered": false,
+          "constraints": {
+            "region": "bottom",
+            "position": "right",
+            "insets": {
+              "right": 12,
+              "bottom": 12
+            }
+          },
+          "events": [
+            {
+              "triggers": "actioned",
+              "action": {
+                "type": "json",
+                "src": {
+                  "finish": {
+                    "variables": {
+                      "sound_out": "back",
+                      "swiss_return": "{var:swiss_return}"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
