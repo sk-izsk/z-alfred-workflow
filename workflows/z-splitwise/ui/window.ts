@@ -1,0 +1,59 @@
+// The window shell; `launch` fills it with the screen for the keyword that opened it.
+const CLI = "../bin/sw";
+
+export const splitwiseWindow = {
+  bundleid: "com.izsk.splitwise",
+  log: { level: "error", internal: true },
+  variablesconfig: {
+    sw_mode: { src: "variable", default: "add", scriptenv: true },
+    sw_query: { src: "args[0]", default: "", scriptenv: true },
+    sw_key: { default: "", scriptenv: true },
+    sw_demo: { src: "variable", default: "", scriptenv: true },
+    actions_shortcut: { src: "variable", default: "⌘K" },
+    back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
+    back_label: { default: "Hyper+B" },
+    actions_label: { default: "⌘K" },
+  },
+  window: {
+    title: "Splitwise",
+    size: { height: 520 },
+    minsize: { width: 560, height: 420 },
+    root: {
+      id: "root",
+      type: "view",
+      layout: "border",
+      events: [
+        {
+          triggers: "launched",
+          action: [
+            { type: "script", src: CLI, args: ["launch", "{var:sw_query}"] },
+            { type: "script", src: CLI, args: ["load"], async: true },
+          ],
+        },
+      ],
+      components: [
+        {
+          id: "initialTitle",
+          type: "label",
+          text: "Splitwise",
+          font: { size: 22, weight: "semibold" },
+          constraints: { region: "centre", position: "centre" },
+        },
+        {
+          id: "initialBack",
+          type: "button",
+          text: "Back  {var:back_label}",
+          bordered: false,
+          shortcut: "{var:back_shortcut}",
+          constraints: { region: "bottom", position: "right", insets: { right: 16, bottom: 14 } },
+          events: [
+            {
+              triggers: "actioned",
+              action: { type: "json", src: { finish: { variables: { sw_out: "back" } } } },
+            },
+          ],
+        },
+      ],
+    },
+  },
+};
