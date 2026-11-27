@@ -1,6 +1,6 @@
 {
   "name": "alfred-mole",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Preview cleanup and optimization, inspect status and browse disk usage",
   "author": "izsk",

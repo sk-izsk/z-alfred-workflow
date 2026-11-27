@@ -1,6 +1,6 @@
 {
   "name": "alfred-system-monitor",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Live system, CPU, memory, disk, power and network information",
   "author": "izsk",
