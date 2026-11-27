@@ -100,12 +100,6 @@ export const infoPlist = {
       },
     },
     text(
-      "giphy_key",
-      "GIPHY API key",
-      "",
-      "Only required for GIPHY direct. Kept in local workflow preferences; excluded from export.",
-    ),
-    text(
       "refresh_minutes",
       "Search cache (minutes)",
       "5",
@@ -139,7 +133,6 @@ export const infoPlist = {
       },
     },
   ],
-  variablesdontexport: ["giphy_key"],
   readme:
     "Search GIFs, favorites and recents with list/grid layouts. Use Command-K for actions. Back (Hyper+B) returns one level or to Swiss. Built with help from AI tools. See README for sources and limitations.",
 };

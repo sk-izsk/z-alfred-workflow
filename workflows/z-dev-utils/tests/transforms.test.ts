@@ -39,3 +39,12 @@ test("session metadata does not persist editor text and actions keep it out of a
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("bad input fails with a message instead of a wrong result", () => {
+  expect(() => transform("json", "{not json")).toThrow();
+  expect(() => transform("jwt", "only.two")).toThrow("three-part JWT");
+  expect(() => transform("json", "x".repeat(50001))).toThrow("Input limit");
+  expect(transform("url-decode", transform("url", "a b&c=ä"))).toBe("a b&c=ä");
+  expect(transform("html-decode", transform("html", `<a href="x">&</a>`))).toBe(`<a href="x">&</a>`);
+  expect(transform("snake", "Hello World Again")).toBe("hello_world_again");
+});

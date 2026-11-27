@@ -20,6 +20,8 @@ ui.window.window.root.shortcuts.push(
     },
   })),
 );
+// A key typed into the key sheet reaches the script as env, never argv.
+ui.window.variablesconfig.gifsearch_key = { default: "", scriptenv: true };
 export const toolWindow = ui.window;
 export const components = (s: State, layout: "list" | "grid"): Json[] => {
   const grid = layout === "grid",

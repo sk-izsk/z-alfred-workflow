@@ -71,3 +71,26 @@ test("password dialog escapes text as a literal and returns no credential", () =
   expect(script).toContain('return ""');
   expect(script).toContain("giving up after 60");
 });
+
+const row = (name: string, connected = false) => ({
+  id: name,
+  name,
+  connected,
+  channel: "",
+  security: "WPA2",
+  signal: "",
+  saved: true,
+  hidden: false,
+});
+test("quick refresh moves the connected mark to the current network and drops the hidden placeholder", async () => {
+  const { applyLink } = await import("../src/wifi.ts");
+  const rows = [row("Alpha", true), row("Beta"), { ...row("x", true), id: "__current__" }];
+  const moved = applyLink(rows, { connected: true, name: "Beta", security: "WPA2" });
+  expect(moved.map((r) => [r.name, r.connected])).toEqual([
+    ["Beta", true],
+    ["Alpha", false],
+  ]);
+  // Disconnected or Wi-Fi off: nothing is marked connected.
+  expect(applyLink(rows, undefined).some((r) => r.connected)).toBe(false);
+  expect(rows[0]!.connected).toBe(true); // input rows are not mutated
+});

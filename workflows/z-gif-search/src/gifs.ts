@@ -1,7 +1,17 @@
 import { createHash } from "node:crypto";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { cacheDir, dataDir, readJson, writeJson, str } from "./env.ts";
+import { keychain } from "../../../shared/keychain.ts";
+import { BUNDLE_ID, cacheDir, dataDir, readJson, writeJson, str, workflowDir } from "./env.ts";
+
+const secrets = keychain(BUNDLE_ID);
+/** The GIPHY key, from the Keychain. Versions before 0.2.0 kept it in Workflow Configuration. */
+export const giphyKey = (): string => {
+  secrets.migrate("giphy_key", str("giphy_key"), workflowDir(), "giphy_key");
+  return secrets.read("giphy_key");
+};
+export const saveGiphyKey = (value: string): void => secrets.save("giphy_key", value);
+export const removeGiphyKey = (): void => secrets.remove("giphy_key");
 export type Gif = {
   id: string;
   title: string;
@@ -117,10 +127,10 @@ export const search = async (
   url.searchParams.set("offset", String(page * limit));
   if (query) url.searchParams.set("q", query);
   if (provider === "direct") {
-    const key = str("giphy_key");
+    const key = giphyKey();
     if (!key)
       throw new Error(
-        "Add your GIPHY API key in Workflow Configuration, or choose GIPHY reference service.",
+        "Add your GIPHY API key: Actions (⌘K) → Set GIPHY API Key…, or choose GIPHY reference service.",
       );
     url.searchParams.set("api_key", key);
   }

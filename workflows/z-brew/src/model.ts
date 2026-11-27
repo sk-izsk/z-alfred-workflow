@@ -41,7 +41,7 @@ export const normalize = (raw: Record<string, any>, kind: Kind): Package => {
   const installed =
     kind === "formula"
       ? Array.isArray(raw.installed)
-        ? raw.installed.map((i: any) => text(i?.version)).filter(Boolean)
+        ? raw.installed.map((i: { version?: unknown } | null) => text(i?.version)).filter(Boolean)
         : []
       : typeof raw.installed === "string"
         ? [raw.installed]
@@ -65,7 +65,7 @@ export const normalize = (raw: Record<string, any>, kind: Kind): Package => {
     license: text(raw.license),
     caveats: text(raw.caveats),
     dependencies: strings(raw.dependencies || raw.depends_on?.formula),
-    apps: artifacts.flatMap((artifact: any) => strings(artifact?.app)),
+    apps: artifacts.flatMap((artifact: { app?: unknown } | null) => strings(artifact?.app)),
     autoUpdates: raw.auto_updates === true,
     installedTime: Number(raw.installed_time || raw.installed?.[0]?.time || 0),
   };

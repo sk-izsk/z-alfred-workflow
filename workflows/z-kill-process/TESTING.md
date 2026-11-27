@@ -1,7 +1,7 @@
 # Validation
 
 Run `bun run check`, `bun run package`, then
-`python3 /Users/izsk/.agents/skills/alfred-ui/scripts/check_ui.py workflow` and
+`python3 <alfred-ui skill>/scripts/check_ui.py workflow` and
 `plutil -lint workflow/info.plist` on macOS.
 
 Automated tests cover ps parsing (including paths with spaces), the latest CPU sample, physical RAM

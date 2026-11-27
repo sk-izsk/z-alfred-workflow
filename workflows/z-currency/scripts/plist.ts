@@ -117,12 +117,6 @@ export const infoPlist = {
       },
     },
     text(
-      "api_key",
-      "API key",
-      "",
-      "Key for the selected provider. Not required for Open Access or AllRatesToday. Stored in Alfred preferences; excluded from exports.",
-    ),
-    text(
       "base_currency",
       "Default base currency",
       "USD",
@@ -157,7 +151,6 @@ export const infoPlist = {
     },
     text("node_path", "Node.js executable", "", "Optional absolute path if automatic discovery fails."),
   ],
-  variablesdontexport: ["api_key"],
   readme: `Type currency, currency 100+24/12, or currency 100 in Canada. Choose a base with the compact searchable chooser or the three configured pinned buttons. The list shows only currencies supported by your provider; pinned targets appear first. Return copies the value, Command-K offers Copy, Pin/Unpin, Set Currency Date, Latest Rates, Refresh and Provider Documentation. Hyper+B is configurable Back and stays visible in all footers.
 
 Default provider: ExchangeRate-API Open Access, no key, 160+ currencies including BDT, daily updates and no history. Rates By Exchange Rate API: https://www.exchangerate-api.com. ECB reference rates remain optional. Select ExchangeRate-API or UniRateAPI and supply your API key in Workflow Configuration for broader coverage. History depends on provider/plan and is never silently replaced by current rates. Keys are excluded from exports but stored in local Alfred preferences.

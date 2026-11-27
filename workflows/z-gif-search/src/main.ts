@@ -18,6 +18,9 @@ import {
   bounded,
   type Gif,
   type Provider,
+  giphyKey,
+  removeGiphyKey,
+  saveGiphyKey,
 } from "./gifs.ts";
 import { create, read, save, type State } from "./state.ts";
 import { components } from "../ui/window.ts";
@@ -68,6 +71,12 @@ const mount = (s: State): Action =>
   merge(update({ root: { components: components(s, preferences().layout) } }, true), {
     pulse: { src: "../bin/gifsearch", args: ["populate", s.id], interval: 0, now: true },
   });
+const saveKey = (id: string): Action => ({
+  type: "script",
+  src: "../bin/gifsearch",
+  args: ["key-save", id],
+  variables: { gifsearch_key: "{value:keyField.text}" },
+});
 const load = async (s: State, fresh = false, more = false): Promise<Action> => {
   const request = randomUUID();
   s.request = request;
@@ -175,6 +184,58 @@ const main = async (): Promise<Action | void> => {
     );
     return {};
   }
+  if (cmd === "key")
+    // The key travels as a script environment variable (gifsearch_key), never in argv.
+    return sheet("giphyKey", {
+      type: "view",
+      layout: "inline",
+      direction: "vertical",
+      padding: 20,
+      spacing: 10,
+      components: [
+        { type: "label", text: "GIPHY API key", font: { size: 15, weight: "semibold" } },
+        {
+          id: "keyNote",
+          type: "label",
+          text: "For GIPHY direct. Kept in your macOS Keychain, not in Alfred’s preferences.",
+          colour: "secondaryLabelColor",
+          constraints: { size: { width: 360 } },
+        },
+        {
+          id: "keyField",
+          type: "passwordfield",
+          placeholder: "GIPHY API key",
+          focus: true,
+          constraints: { size: { width: 360 } },
+          events: [{ triggers: "actioned", action: saveKey(id) }],
+        },
+        {
+          id: "saveKey",
+          type: "button",
+          text: "Save  ↩",
+          shortcut: "↩",
+          constraints: { region: "bottom" },
+          events: [{ triggers: "actioned", action: saveKey(id) }],
+        },
+      ],
+    });
+  if (cmd === "key-save") {
+    try {
+      saveGiphyKey(process.env.gifsearch_key ?? "");
+    } catch (error) {
+      return update({
+        keyNote: {
+          text: error instanceof Error ? error.message : String(error),
+          colour: "systemRedColor",
+        },
+      });
+    }
+    return merge({ sheet: { close: "giphyKey" } }, await load(s, true));
+  }
+  if (cmd === "key-remove") {
+    removeGiphyKey();
+    return load(s, true);
+  }
   const e = s.rows.find((x) => x.id === (value || s.selected));
   if (cmd === "menu")
     return popup("actionsButton", [
@@ -198,6 +259,8 @@ const main = async (): Promise<Action | void> => {
         : []),
       ...(s.more ? [menuItem("Load More", ["more", id])] : []),
       menuItem("Refresh", ["refresh", id]),
+      menuItem("Set GIPHY API Key…", ["key", id]),
+      ...(giphyKey() ? [menuItem("Remove GIPHY API Key", ["key-remove", id])] : []),
       menuItem("Workflow Configuration…", ["configure", id]),
     ]);
   if (!e) throw new Error("Select a GIF first.");
