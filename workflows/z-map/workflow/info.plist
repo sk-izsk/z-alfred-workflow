@@ -267,44 +267,6 @@ Requires Alfred 6 Powerpack, macOS, Node.js 22+ or Bun, and an internet connecti
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string></string>
-				<key>placeholder</key>
-				<string>optional</string>
-				<key>required</key>
-				<false/>
-			</dict>
-			<key>description</key>
-			<string>From console.cloud.google.com with billing on. Enable Maps JavaScript API, Routes API and Places API (New); restrict the key to those APIs (not to websites: the map is a local page). Never exported.</string>
-			<key>label</key>
-			<string>Google API key</string>
-			<key>type</key>
-			<string>textfield</string>
-			<key>variable</key>
-			<string>google_api_key</string>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>default</key>
-				<string></string>
-				<key>placeholder</key>
-				<string>optional</string>
-				<key>required</key>
-				<false/>
-			</dict>
-			<key>description</key>
-			<string>A REST API key from platform.here.com. Stored in Alfred’s workflow preferences, never exported.</string>
-			<key>label</key>
-			<string>HERE API key</string>
-			<key>type</key>
-			<string>textfield</string>
-			<key>variable</key>
-			<string>here_api_key</string>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>default</key>
 				<string>google</string>
 				<key>pairs</key>
 				<array>
@@ -845,8 +807,6 @@ Requires Alfred 6 Powerpack, macOS, Node.js 22+ or Bun, and an internet connecti
 	</array>
 	<key>variablesdontexport</key>
 	<array>
-		<string>google_api_key</string>
-		<string>here_api_key</string>
 		<string>home_address</string>
 		<string>work_address</string>
 		<string>saved_places</string>

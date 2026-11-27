@@ -119,20 +119,6 @@ export const infoPlist = {
       ],
       "The map behind the routes. Each redraw of a Google map counts as one Google map load.",
     ),
-    text(
-      "google_api_key",
-      "Google API key",
-      "",
-      "From console.cloud.google.com with billing on. Enable Maps JavaScript API, Routes API and Places API (New); restrict the key to those APIs (not to websites: the map is a local page). Never exported.",
-      "optional",
-    ),
-    text(
-      "here_api_key",
-      "HERE API key",
-      "",
-      "A REST API key from platform.here.com. Stored in Alfred’s workflow preferences, never exported.",
-      "optional",
-    ),
     popup(
       "open_in",
       "Open in (⌘O)",
@@ -216,14 +202,7 @@ export const infoPlist = {
     text("back_shortcut", "Back shortcut", "⌃⌥⇧⌘B", "Closes the map and returns to Alfred’s search."),
     text("node_path", "Node.js executable", "", "Optional absolute path if automatic discovery fails."),
   ],
-  variablesdontexport: [
-    "google_api_key",
-    "here_api_key",
-    "home_address",
-    "work_address",
-    "saved_places",
-    "contact",
-  ],
+  variablesdontexport: ["home_address", "work_address", "saved_places", "contact"],
   readme: `Type maps and a place (maps Eiffel Tower) or a route: A > B, A > B > C, from A via B to C, or von A über B nach C. With nothing typed, a copied address becomes the destination. home and work use the addresses from Workflow Configuration; saved places work by their label.
 
 While you type, suggestions appear under the modes (saved places first): Down/Up and Return, or a click, pick one. The Home, Work and saved-place buttons fill From while it is empty, otherwise To. Any field also takes coordinates like 45.4995, -73.5665.

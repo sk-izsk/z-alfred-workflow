@@ -399,18 +399,15 @@ describe("Google", () => {
 
   test("keys decide the provider and the map", async () => {
     const { loadSettings, keyMissing } = await import("../src/settings.ts");
-    Object.assign(process.env, {
-      provider: "google",
-      map_view: "auto",
-      google_api_key: "",
-      here_api_key: "",
-    });
+    const { useKeys } = await import("../src/keys.ts");
+    useKeys({});
+    Object.assign(process.env, { provider: "google", map_view: "auto" });
     expect([loadSettings().provider, loadSettings().tiles, keyMissing()]).toEqual([
       "open",
       "openfreemap",
       "Google",
     ]);
-    process.env.google_api_key = "k";
+    useKeys({ google: "k" });
     expect([loadSettings().provider, loadSettings().tiles, keyMissing()]).toEqual([
       "google",
       "google",

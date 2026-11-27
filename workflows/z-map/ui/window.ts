@@ -376,6 +376,8 @@ export const mapWindow = {
   log: { level: "error", internal: true },
   variablesconfig: {
     map_query: { src: "args[0]", default: "" },
+    // An API key typed into the key sheet reaches the script as env, never argv.
+    map_key: { default: "", scriptenv: true },
     actions_shortcut: { src: "variable", default: "⌘K" },
     back_shortcut: { src: "variable", default: "⌃⌥⇧⌘B" },
     back_label: { default: "Hyper+B" },

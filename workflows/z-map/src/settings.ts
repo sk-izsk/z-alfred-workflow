@@ -6,6 +6,7 @@ import { type Lang, type Locale, pickLang } from "./i18n.ts";
 import { isMode, type Mode } from "./model.ts";
 import { parseFavourites, type SavedPlaces } from "./parse.ts";
 import type { Provider } from "./routes.ts";
+import { readKeys } from "./keys.ts";
 
 export type OpenIn = "google" | "apple" | "osm" | "here";
 export type Style = "auto" | "dark" | "light";
@@ -83,8 +84,7 @@ export const writeFavourites = (list: SavedPlaces["favourites"]): void => writeJ
 export const loadSettings = (): Settings => {
   const sys = systemLocale();
   const lang = pickLang(str("language", "auto"), sys.locale);
-  const hereKey = str("here_api_key");
-  const googleKey = str("google_api_key");
+  const { here: hereKey = "", google: googleKey = "" } = readKeys();
   const keys: Record<Provider, string> = { open: "-", here: hereKey, google: googleKey };
   const wanted = oneOf("provider", ["open", "here", "google"] as const, "open");
   const provider: Provider = keys[wanted] ? wanted : "open";
@@ -131,8 +131,7 @@ export const loadSettings = (): Settings => {
 /** HERE was chosen but no key was entered. */
 /** The provider or map that was chosen but has no key, so open data is used instead. */
 export const keyMissing = (): string | undefined => {
-  const need = (choice: string) =>
-    (choice === "here" && !str("here_api_key")) || (choice === "google" && !str("google_api_key"));
+  const need = (choice: string) => (choice === "here" || choice === "google") && !readKeys()[choice];
   const choice = [str("provider", "open"), str("map_view", "auto")].find(need);
   return choice === "here" ? "HERE" : choice === "google" ? "Google" : undefined;
 };

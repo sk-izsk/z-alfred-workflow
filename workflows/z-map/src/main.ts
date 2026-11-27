@@ -21,6 +21,7 @@ import { bool, cacheDir, str } from "./env.ts";
 import { t } from "./i18n.ts";
 import { directionsUrl, type Point, PROVIDER_NAMES } from "./links.ts";
 import { modeAt, type Place } from "./model.ts";
+import { type KeyName, readKeys, removeKey, saveKey } from "./keys.ts";
 import { pruneCache, readCache } from "./net.ts";
 import type { Ctx } from "./open.ts";
 import { clean, expandAlias, looksLikeAddress, MAX_STOPS, parseQuery } from "./parse.ts";
@@ -49,6 +50,9 @@ const readFields = (s: State) => {
   s.via = s.via.map((_, i) => clean(args[2 + i]));
 };
 const extra = () => clean(args[5]);
+const KEY_NAMES: KeyName[] = ["google", "here"];
+const KEY_LABEL: Record<KeyName, string> = { google: "Google", here: "HERE" };
+const keyName = (): KeyName => (extra() === "here" ? "here" : "google");
 const FIELD_IDS = ["von", "nach", "via0", "via1", "via2"];
 
 const stopFields = (s: State): Action =>
@@ -394,6 +398,13 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
         item(t(lang, "removePlace", { label: f.label }), act("remove-place", [f.label])),
       ),
       item(t(lang, "clear"), run("clear")),
+      separator,
+      ...KEY_NAMES.flatMap((k) => [
+        item(t(lang, "setKey", { provider: KEY_LABEL[k] }), run("key-set", [k])),
+        ...(readKeys()[k]
+          ? [item(t(lang, "removeKey", { provider: KEY_LABEL[k] }), act("key-remove", [k]))]
+          : []),
+      ]),
     ]);
   },
 
@@ -456,6 +467,64 @@ const commands: Record<string, (s: State) => Action | Promise<Action>> = {
     settings.saved.favourites = settings.saved.favourites.filter((f) => f.label !== label);
     bump(s);
     return restView();
+  },
+
+  "key-set": (s) => {
+    readFields(s);
+    const name = keyName();
+    const provider = KEY_LABEL[name];
+    // The key travels as a script environment variable, never in argv.
+    const save = { ...run("key-save", [name]), variables: { map_key: "{value:apiKeyField.text}" } };
+    const submit = [save, { type: "json", src: { sheet: { close: "apiKey" } } }, ROUTE];
+    return sheet("apiKey", {
+      type: "view",
+      layout: "inline",
+      direction: "vertical",
+      padding: 20,
+      spacing: 10,
+      components: [
+        { type: "label", text: t(lang, "keyTitle", { provider }), font: { size: 15, weight: "semibold" } },
+        {
+          type: "label",
+          text: `${t(lang, name === "google" ? "keyHelpGoogle" : "keyHelpHere")} ${t(lang, "keyStored")}`,
+          colour: MUTED,
+          constraints: { size: { width: 360 } },
+        },
+        {
+          id: "apiKeyField",
+          type: "passwordfield",
+          placeholder: t(lang, "keyTitle", { provider }),
+          focus: true,
+          constraints: { size: { width: 360 } },
+          events: [{ triggers: "actioned", action: submit }],
+        },
+        {
+          id: "apiKeyButton",
+          type: "button",
+          text: `${t(lang, "save")}  ↩`,
+          constraints: { region: "bottom" },
+          events: [{ triggers: "actioned", action: submit }],
+        },
+      ],
+    });
+  },
+
+  "key-save": (s) => {
+    readFields(s);
+    const name = keyName();
+    const value = (process.env.map_key ?? "").trim();
+    if (!value) return status(t(lang, "keyEmpty"), "systemRedColor");
+    saveKey(name, value);
+    bump(s);
+    return status(t(lang, "keySaved", { provider: KEY_LABEL[name] }));
+  },
+
+  "key-remove": (s) => {
+    readFields(s);
+    const name = keyName();
+    removeKey(name);
+    bump(s);
+    return status(t(lang, "keyRemoved", { provider: KEY_LABEL[name] }));
   },
 
   clear: (s) => {

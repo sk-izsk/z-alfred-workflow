@@ -89,6 +89,10 @@ data on a Google map, or route with Google on OpenFreeMap. **Map: Automatic** fo
 | Car, bike, walk | Transitous times; FOSSGIS OSRM alternatives | Routes API (car with live traffic) | HERE Routing (car with traffic) |
 | Map | OpenFreeMap with MapLibre GL, recoloured light/dark | Google Maps JavaScript API (Google's look; our dark palette in dark mode) | HERE map tiles (day/night) |
 
+- **Keys:** add or remove them from **Actions (⌘K) → Set Google API Key… / Set HERE API Key…**
+  and **Remove … API Key**. They are kept in your macOS Keychain (service `com.izsk.map`), not in
+  Alfred's preferences. The Google key is also written into the local map page in the workflow
+  cache, because Google's map needs it in the page.
 - **Google key:** in the Google Cloud console, turn on billing and enable *Maps JavaScript API*,
   *Routes API* and *Places API (New)*. Restrict the key to those APIs, not to websites: the map is
   a local page with no web address. Google gives a monthly free allowance per API; beyond it you
@@ -105,8 +109,8 @@ data on a Google map, or route with Google on OpenFreeMap. **Map: Automatic** fo
   User-Agent. Nothing else about you is sent.
 - Transit with stops is planned leg by leg, each departing after the previous arrival.
 - Cache: routes 10 minutes, failed requests 60 seconds, places 7 days, in Alfred's workflow cache.
-  Saved places live in Alfred's workflow data folder. Your HERE key, addresses and saved places
-  are marked as not exported with the workflow.
+  Saved places live in Alfred's workflow data folder. Addresses and saved places are marked as
+  not exported with the workflow; keys stay in the Keychain.
 - Places, stops and route coordinates you search for are sent to the providers above. MapLibre
   is bundled in the workflow, so the map doesn't wait on a CDN.
 - Transit with open data exists only where cities publish open timetables (Transitous). Where
@@ -119,7 +123,7 @@ commands Alfred ran, with field lengths only, never their text.
 
 ## Configuration
 
-Keyword (`maps`), Routes and places, Map, Google and HERE keys, Open in (⌘O), default mode, Home and Work addresses,
+Keyword (`maps`), Routes and places, Map, Open in (⌘O), default mode, Home and Work addresses,
 saved places (`Label = address`, one per line), quick buttons, clipboard destination, language
 (automatic, English, Deutsch), Search near, map colours (automatic, dark, light), route line
 scale, stop names, font sizes, window width, map height, contact e-mail, Actions and Back

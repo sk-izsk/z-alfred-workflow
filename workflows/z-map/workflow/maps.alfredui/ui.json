@@ -9,6 +9,10 @@
       "src": "args[0]",
       "default": ""
     },
+    "map_key": {
+      "default": "",
+      "scriptenv": true
+    },
     "actions_shortcut": {
       "src": "variable",
       "default": "⌘K"
