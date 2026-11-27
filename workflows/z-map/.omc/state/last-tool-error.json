@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd \\\"/Volumes/Mac Mini 1tb Ext/Projects/Alfred workflow/z-alfred-workflow/workflows/z-map\\\" && python3 - <<'EOF'\\np='src/open.ts'; s=open(p).read()\\ns=s.replace('''const label = (hit: GeoH...",
+  "error": "Exit code 1\n12:type GeoHit = {\n13-  name: string;\n14-  lat: number;\n15-  lon: number;\n$ oxfmt src tests ui scripts\nNo config found, using defaults. Please add a config file or try `oxfmt --init` if needed.\n$ tsc --noEmit\nsrc/open.ts(26,14): error TS2339: Property 'type' does not exist on type 'GeoHit'.\nerror: script \"typecheck\" exited with code 1",
+  "timestamp": "2026-11-26T23:13:45.393Z",
+  "retry_count": 1
+}

@@ -70,6 +70,8 @@ jobs:
             artifact: World Clock.alfredworkflow
           - workflow: z-weather
             artifact: Weather.alfredworkflow
+          - workflow: z-map
+            artifact: Maps.alfredworkflow
           - workflow: z-kill-process
             artifact: Kill Process.alfredworkflow
           - workflow: z-brew

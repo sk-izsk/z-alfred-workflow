@@ -34,6 +34,7 @@ Versions belong to individual workflows. Use these tag names in this repository:
 | `workflows/z-world-clock` | `z-world-clock/vX.Y.Z` | `World Clock.alfredworkflow` |
 | `workflows/z-swiss` | `z-swiss/vX.Y.Z` | `Swiss.alfredworkflow` |
 | `workflows/z-weather` | `z-weather/vX.Y.Z` | `Weather.alfredworkflow` |
+| `workflows/z-map` | `z-map/vX.Y.Z` | `Maps.alfredworkflow` |
 
 1. Bump `version` in the selected workflow's `package.json`.
 2. In that folder, run `bun install --frozen-lockfile`, `bun run check` and `bun run package`.
