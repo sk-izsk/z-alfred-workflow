@@ -182,7 +182,7 @@
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>A quick camera check before a meeting. Type cam (or use the hotkey) to show a mirrored live preview of your camera, with no controls; cam again, a click on it or any key hides it. The first time, macOS asks to let Camera Preview use the camera. Built with help from AI tools.</string>
+	<string>A quick camera check before a meeting. Type cam (or use the hotkey) to show a mirrored live preview of your camera, with no controls; drag it to move it; Escape (or cam again) hides it. The first time, macOS asks to let Camera Preview use the camera. Built with help from AI tools.</string>
 	<key>uidata</key>
 	<dict>
 		<key>HOTKEY</key>
@@ -234,7 +234,7 @@
 				<true/>
 			</dict>
 			<key>description</key>
-			<string>Shows the preview; run it again (or click the preview) to hide it.</string>
+			<string>Shows the preview; Escape (or running it again) hides it.</string>
 			<key>label</key>
 			<string>Keyword</string>
 			<key>type</key>

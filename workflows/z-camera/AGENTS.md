@@ -7,6 +7,6 @@
   bundle id and NSCameraUsageDescription, ad-hoc signed), so macOS asks that app for the camera.
   Nothing compiled is committed or downloaded.
 - Each build goes to `<data>/v-<hash of preview.js>/`, so updates never delete files. The toggle
-  closes a running preview with `pkill`; the preview also closes on a click or any key.
+  closes a running preview with `pkill`; in the preview, dragging moves it and only Escape closes it.
 - In JXA, AVFoundation classes come from `NSClassFromString` after loading the framework bundle
   (`ObjC.import("AVFoundation")` doesn't expose them); constants are passed as strings ("vide").

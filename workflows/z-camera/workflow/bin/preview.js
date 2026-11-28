@@ -1,12 +1,13 @@
 // Camera Preview: a small app that only shows the camera, mirrored, with no controls.
 // The workflow builds it with osacompile on this Mac (bin/camera), so it has its own camera
-// permission: Alfred can't use the camera itself. A click or any key closes it.
+// permission: Alfred can't use the camera itself. Drag to move it; Escape closes it.
 // Size and position come from preview.json in the workflow's data folder:
 // {"width": 880, "corner": "centre"}.
 ObjC.import("AppKit");
 $.NSBundle.bundleWithPath("/System/Library/Frameworks/AVFoundation.framework").load;
 const cls = (name) => $.NSClassFromString(name);
 const MARGIN = 20;
+const ESCAPE = 53;
 var session, previewWindow; // kept alive while the app runs
 
 ObjC.registerSubclass({
@@ -14,8 +15,18 @@ ObjC.registerSubclass({
   superclass: "NSWindow",
   methods: {
     canBecomeKeyWindow: { types: ["bool", []], implementation: () => true },
-    "keyDown:": { types: ["void", ["id"]], implementation: () => $.NSApp.terminate(null) },
-    "mouseDown:": { types: ["void", ["id"]], implementation: () => $.NSApp.terminate(null) },
+    // Escape closes; other keys do nothing.
+    "keyDown:": {
+      types: ["void", ["id"]],
+      implementation: (event) => {
+        if (Number(event.keyCode) === ESCAPE) $.NSApp.terminate(null);
+      },
+    },
+    // Clicking and dragging moves the preview; only Escape closes it.
+    "mouseDown:": {
+      types: ["void", ["id"]],
+      implementation: (event) => previewWindow.performWindowDragWithEvent(event),
+    },
   },
 });
 

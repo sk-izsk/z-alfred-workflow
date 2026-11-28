@@ -8,8 +8,8 @@ Requires macOS 13+ and Alfred 6 with Powerpack. Nothing else to install.
 ## Use
 
 Type `cam`, choose Camera in Swiss, or press the hotkey you set (double-click the workflow's Hotkey
-object in Alfred Preferences). The preview opens in the centre of the screen you're using. Type `cam`
-again, click the preview or press any key to hide it. Size and position are in Configuration.
+object in Alfred Preferences). The preview opens in the centre of the screen you're using. Drag it
+where you like; press Escape (or type `cam` again) to hide it. Size and position are in Configuration.
 
 ## How it works
 
@@ -26,7 +26,7 @@ Open the workflow in Alfred Preferences → **Configure Workflow**.
 
 | Setting | Default | What it does |
 | --- | --- | --- |
-| Keyword | `cam` | Shows the preview; run it again (or click the preview) to hide it. |
+| Keyword | `cam` | Shows the preview; Escape (or running it again) hides it. |
 | Size | Medium | How big the preview is. |
 | Position | Centre | Where the preview appears on the screen you're using. |
 <!-- config:end -->

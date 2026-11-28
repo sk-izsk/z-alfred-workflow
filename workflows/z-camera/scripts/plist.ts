@@ -78,7 +78,7 @@ export const infoPlist = {
       type: "textfield",
       variable: "kw_main",
       label: "Keyword",
-      description: "Shows the preview; run it again (or click the preview) to hide it.",
+      description: "Shows the preview; Escape (or running it again) hides it.",
       config: { default: "cam", placeholder: "cam", required: true },
     },
     popup("camera_size", "Size", "How big the preview is.", "medium", [
@@ -96,5 +96,5 @@ export const infoPlist = {
   ],
   variablesdontexport: [],
   readme:
-    "A quick camera check before a meeting. Type cam (or use the hotkey) to show a mirrored live preview of your camera, with no controls; cam again, a click on it or any key hides it. The first time, macOS asks to let Camera Preview use the camera. Built with help from AI tools.",
+    "A quick camera check before a meeting. Type cam (or use the hotkey) to show a mirrored live preview of your camera, with no controls; drag it to move it; Escape (or cam again) hides it. The first time, macOS asks to let Camera Preview use the camera. Built with help from AI tools.",
 };
