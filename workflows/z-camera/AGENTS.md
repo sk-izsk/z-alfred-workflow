@@ -1,7 +1,7 @@
 # Camera
 
 - Independent Bun + TypeScript project (build only; no Node at runtime). Preserve `com.izsk.camera`.
-- Keep it small: a live preview with a footer (Capture ↩, Actions ⌘K, Close esc), a photo, a camera
+- Keep it small: a live preview with a footer (Capture ↩, Actions ⌘K, Close ⎋), a photo, a camera
   switch and mirroring. No video recording or microphone.
 - Alfred has no camera usage description, so nothing Alfred runs can use the camera. `bin/camera`
   builds `Camera Preview.app` from `bin/preview.js` with `osacompile -s` on the user's Mac (its own

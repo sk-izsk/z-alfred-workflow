@@ -88,6 +88,9 @@ proposing it.
   `bin/camera`); then macOS asks that app. QuickTime works too, but its controls can't be hidden.
 - Never pass `NSColor.CGColor` to a CALayer from JXA (crashes in `CFRetain`): use AppKit views that
   take `NSColor`, such as `NSBox` with a custom fill, border and corner radius.
+- `null` passed to an Objective-C method argument from JXA isn't always nil: `NSMenu`'s
+  `popUpMenuPositioningItem:atLocation:inView:` rejects it ("menu item null is not present"). Pass a
+  real object (the menu's first item) where an API checks the argument.
 - A JXA crash or uncaught error prints nothing: wrap `run()` in try/catch and return JSON
   `{error}`, and test each step in its own `osascript` process.
 - Never send keystrokes (System Events) to test a window while the user is working: a stray Return

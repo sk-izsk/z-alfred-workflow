@@ -15,7 +15,7 @@ anywhere. Its footer works like the other workflows':
   saves it to `~/Pictures/Camera`.
 - **⌘K Actions**: Capture, Switch Camera (your cameras by name), Mirror Preview, Show Last Photo in
   Finder, Open Photos Folder and Close.
-- **esc Close** (typing `cam` again closes it too).
+- **⎋ Close** (typing `cam` again closes it too).
 
 Mirroring, mirrored photos, the shutter sound, the photos folder, size and position are in
 Configuration. Photos are saved un-mirrored by default, the way others see you, as FaceTime and Photo

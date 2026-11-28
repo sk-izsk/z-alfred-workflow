@@ -1,5 +1,5 @@
 // Camera Preview: a small app that shows the camera with a footer like the Alfred workflows':
-//   Capture ↩   Actions ⌘K   Close esc
+//   Capture ↩   Actions ⌘K   Close ⎋
 // The workflow builds it with osacompile on this Mac (bin/camera), so it has its own camera
 // permission: Alfred can't use the camera itself. Drag it to move it.
 // Settings come from preview.json in the workflow's data folder:
@@ -142,7 +142,12 @@ const showMenu = () => {
   menu.addItem(item("Open Photos Folder", "openFolder:"));
   menu.addItem($.NSMenuItem.separatorItem);
   menu.addItem(item("Close", "close:", "\u001b", 0));
-  menu.popUpMenuPositioningItemAtLocationInView(null, $.NSMakePoint(footerView.frame.size.width - 160, FOOTER), footerView);
+  // JXA can't pass "no item" here (null arrives as an object macOS rejects): anchor the first item.
+  menu.popUpMenuPositioningItemAtLocationInView(
+    menu.itemAtIndex(0),
+    $.NSMakePoint(footerView.frame.size.width - 190, FOOTER - 4),
+    footerView,
+  );
 };
 
 ObjC.registerSubclass({
@@ -317,7 +322,7 @@ function run() {
     footerView.addSubview(statusLabel);
     let x = w - 12;
     for (const [title, action] of [
-      ["Close  esc", "close:"],
+      ["Close  ⎋", "close:"],
       ["Actions  ⌘K", "menu:"],
       ["Capture  ↩", "capture:"],
     ]) {
