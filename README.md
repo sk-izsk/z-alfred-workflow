@@ -14,7 +14,7 @@ source, documentation, assets and package configuration under `workflows/`.
 | [GitHub & Git](workflows/z-github) | GitHub activity, full-history My PRs and local repositories | [0.1.3](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-github%2Fv0.1.3) |
 | [Kill Process](workflows/z-kill-process) | Monitor CPU/RAM, terminate processes and restart apps | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-kill-process%2Fv0.2.0) |
 | [Adhan Time](workflows/z-adhan-time) | City-local prayer calendar and next-prayer countdown | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-adhan-time%2Fv0.1.1) |
-| [Currency Exchange](workflows/z-currency) | Arithmetic, cross-rates, pinned targets and provider-based history | [0.2.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-currency%2Fv0.2.0) |
+| [Currency Exchange](workflows/z-currency) | Arithmetic, cross-rates, pinned targets and provider-based history | [0.3.0](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-currency%2Fv0.3.0) |
 | [Splitwise](workflows/z-splitwise) | Add, search, change and delete expenses with friends and groups | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-splitwise%2Fv0.1.1) |
 | [Calculate Anything](workflows/z-calculate-anything) | Native results using your installed unit/conversion engine | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-calculate-anything%2Fv0.1.1) |
 | [Workflow Manager](workflows/z-workflow-manager) | Installed workflows, Gallery, updates and configuration | [0.1.1](https://github.com/sk-izsk/z-alfred-workflow/releases/tag/z-workflow-manager%2Fv0.1.1) |

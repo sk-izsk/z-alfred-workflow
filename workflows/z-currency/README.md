@@ -14,6 +14,11 @@ Requires macOS, Alfred 6 Powerpack, Node.js 22+ or Bun. The default provider req
 - **`currency`** converts 1 unit of the configured base currency.
 - **`currency 100+24/12`** converts 102 units.
 - **`currency 100 in Bangladesh`** filters targets by currency name, code or country.
+- **Natural language** names the amount's currency, then what to show: `currency 100 euros in cad`,
+  `€100 to usd`, `$50 in inr`, `convert 2.5k yen to cad`, `20 quid to euros`, `cad to inr` (1 CAD).
+  `currency 100 eur` shows 100 euros in every currency. Codes, names (euros, rupees, swiss francs),
+  words (bucks, quid, loonie) and symbols (€ £ ¥ ₹ $ C$ A$ …) all work; `$` alone means US dollars.
+  `in canada` still filters by country, and `100 in inr` still converts from the base currency.
 - Choose the base currency from the top-right picker. Pinned targets appear first.
 - Return copies the selected result with four decimal places; Copy Full Conversion includes both codes
   and the provider's rate date. Display values use up to four decimal places.

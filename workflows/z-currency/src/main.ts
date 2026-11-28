@@ -3,7 +3,7 @@ await profileCommand(() => import("./env.ts"));
 import { bool, cacheMinutes } from "./env.ts";
 import { launchInput, backVariables, performBack } from "./navigation.ts";
 import { randomUUID } from "node:crypto";
-import { create, read, save, pin, pinned, type State } from "./state.ts";
+import { create, read, save, pin, pinned, fromOf, type State } from "./state.ts";
 import { apiKey, loadRates, removeApiKey, saveApiKey } from "./api.ts";
 import { parseQuery, validDate } from "./expression.ts";
 import {
@@ -74,6 +74,7 @@ const load = async (s: State, fresh = false, initial = true): Promise<Action> =>
   if (latest.request !== ticket) return {};
   latest.amount = parsed.amount;
   latest.filter = parsed.filter;
+  latest.from = parsed.from;
   latest.rates = rates;
   latest.date = requested;
   save(latest);
@@ -83,7 +84,7 @@ const load = async (s: State, fresh = false, initial = true): Promise<Action> =>
     update(
       {
         sectionTitle: {
-          text: `${latest.amount} ${latest.base} · ${rates.date || "Rate date unavailable"} · ${Object.keys(rates.rates).length} currencies · Pinned first`,
+          text: `${latest.amount} ${fromOf(latest)} · ${rates.date || "Rate date unavailable"} · ${Object.keys(rates.rates).length} currencies · Pinned first`,
         },
         statusLabel: {
           text: rates.stale
@@ -307,7 +308,7 @@ const main = async (): Promise<Action | void> => {
             ]),
           ),
           sectionTitle: {
-            text: `${s.amount} ${s.base} · ${s.rates.date || "Rate date unavailable"} · ${Object.keys(s.rates.rates).length} currencies · Pinned first`,
+            text: `${s.amount} ${fromOf(s)} · ${s.rates.date || "Rate date unavailable"} · ${Object.keys(s.rates.rates).length} currencies · Pinned first`,
           },
         },
         true,
@@ -349,7 +350,7 @@ const main = async (): Promise<Action | void> => {
     return copy(
       command === "copy"
         ? n.toFixed(4)
-        : `${amountText(s.amount)} ${s.base} = ${amountText(n)} ${code}\nRate date: ${s.rates?.asof} · ${s.rates?.provider}${s.rates?.stale ? " · cached/stale" : ""}`,
+        : `${amountText(s.amount)} ${fromOf(s)} = ${amountText(n)} ${code}\nRate date: ${s.rates?.asof} · ${s.rates?.provider}${s.rates?.stale ? " · cached/stale" : ""}`,
     );
   }
   if (command === "date")

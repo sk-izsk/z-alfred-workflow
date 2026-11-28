@@ -1,6 +1,6 @@
 import { quickBases } from "../src/base-currencies.ts";
 import type { State } from "../src/state.ts";
-import { pinned } from "../src/state.ts";
+import { fromOf, pinned } from "../src/state.ts";
 import { currencyCode2Name as names, currencyCode2CountryAndRegion as countries } from "../src/catalog.ts";
 export type Json = Record<string, any>;
 export const run = (cmd: string, args: string[] = [], async = true): Json => ({
@@ -39,16 +39,17 @@ export const quickBaseButtons = (s: State): Json[] =>
   );
 export const converted = (s: State, code: string): number => {
   const rates = s.rates?.rates;
-  if (!rates?.[s.base] || !rates[code])
+  const from = fromOf(s);
+  if (!rates?.[from] || !rates[code])
     throw new Error("This currency is not available from the selected provider.");
-  const result = (s.amount * rates[code]!) / rates[s.base]!;
+  const result = (s.amount * rates[code]!) / rates[from]!;
   if (!Number.isFinite(result)) throw new Error("Converted amount is too large.");
   return result;
 };
 export const amountText = (n: number): string =>
   new Intl.NumberFormat("en", { maximumFractionDigits: 4, minimumFractionDigits: 2 }).format(n);
 export const rows = (s: State): Json[] => {
-  if (!s.rates?.rates[s.base]) return [];
+  if (!s.rates?.rates[fromOf(s)]) return [];
   const favorites = pinned();
   return Object.keys(s.rates.rates)
     .filter((code) =>
@@ -75,7 +76,7 @@ export const components = (s: State): Json[] => [
         id: "query",
         type: "textfield",
         text: s.query,
-        placeholder: "100+24/12 in Canada",
+        placeholder: "100 euros in cad",
         background: null,
         bordered: false,
         focusring: false,
@@ -100,7 +101,7 @@ export const components = (s: State): Json[] => [
         components: [
           label(
             "sectionTitle",
-            `${s.amount} ${s.base} · ${s.rates?.date || "Rate date unavailable"} · ${Object.keys(s.rates?.rates || {}).length} currencies`,
+            `${s.amount} ${fromOf(s)} · ${s.rates?.date || "Rate date unavailable"} · ${Object.keys(s.rates?.rates || {}).length} currencies`,
             {
               font: { size: 11 },
               colour: "secondaryLabelColor",
@@ -128,8 +129,8 @@ export const components = (s: State): Json[] => [
     spacing: 4,
     data: { type: "basic", src: [] },
     placeholder:
-      s.rates && !s.rates.rates[s.base]
-        ? `${s.base} is unavailable from this provider. Choose a supported base.`
+      s.rates && !s.rates.rates[fromOf(s)]
+        ? `${fromOf(s)} is unavailable from this provider. Choose a supported base.`
         : "No matching currency",
     constraints: { region: "centre" },
     events: [

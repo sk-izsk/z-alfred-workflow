@@ -86,6 +86,8 @@ proposing it.
   getUserMedia, AVFoundation from osascript) can use them. Build a tiny JXA applet on the user's Mac
   with `osacompile -s`, give it its own bundle id and usage description and ad-hoc sign it (Camera's
   `bin/camera`); then macOS asks that app. QuickTime works too, but its controls can't be hidden.
+- Never pass `NSColor.CGColor` to a CALayer from JXA (crashes in `CFRetain`): use AppKit views that
+  take `NSColor`, such as `NSBox` with a custom fill, border and corner radius.
 - A JXA crash or uncaught error prints nothing: wrap `run()` in try/catch and return JSON
   `{error}`, and test each step in its own `osascript` process.
 - Never send keystrokes (System Events) to test a window while the user is working: a stray Return

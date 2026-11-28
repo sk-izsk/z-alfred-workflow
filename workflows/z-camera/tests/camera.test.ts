@@ -10,7 +10,7 @@ const bin = (name: string) => fileURLToPath(new URL(`../workflow/bin/${name}`, i
 const preview = readFileSync(bin("preview.js"), "utf8");
 const toggle = readFileSync(bin("camera"), "utf8");
 
-test("the preview app compiles, never redeclares JXA globals, and only previews", () => {
+test("the preview app compiles, never redeclares JXA globals, and never records", () => {
   execFileSync("/usr/bin/osacompile", [
     "-l",
     "JavaScript",
@@ -30,8 +30,12 @@ test("the preview app compiles, never redeclares JXA globals, and only previews"
     "Automation",
   ])
     expect(preview).not.toMatch(new RegExp(`(?:const|let|var|function)\\s+${name}\\b`));
-  expect(preview).toContain("connection.videoMirrored = true");
-  expect(preview).not.toMatch(/AVCaptureMovieFileOutput|AVCapturePhotoOutput|AVCaptureAudio/);
+  // Mirroring follows the settings; photos, not movies or sound.
+  expect(preview).toContain("connection.videoMirrored = on");
+  expect(preview).toContain("options.mirrorPhotos");
+  expect(preview).not.toMatch(/AVCaptureMovieFileOutput|AVCaptureAudio/);
+  // Setting a CALayer colour (CGColor) from JXA crashes the app: colours go through NSBox.
+  expect(preview).not.toMatch(/\.CGColor\b/);
 });
 
 test("the toggle script is valid zsh, builds on this Mac and never deletes anything", () => {

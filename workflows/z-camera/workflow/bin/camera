@@ -35,5 +35,9 @@ case ${camera_size:-medium} in
   large) width=1120 ;;
   *) width=880 ;;
 esac
-print -r -- "{\"width\": $width, \"corner\": \"${camera_corner:-centre}\"}" >"$data/preview.json"
+truthy() { [[ ${1:l} == (1|true|yes) ]] && print true || print false; }
+folder=${photo_folder:-~/Pictures/Camera}
+folder=${folder//\\/\\\\}
+folder=${folder//\"/\\\"}
+print -r -- "{\"width\": $width, \"corner\": \"${camera_corner:-centre}\", \"mirror\": $(truthy ${preview_mirror:-1}), \"mirrorPhotos\": $(truthy ${photo_mirror:-0}), \"sound\": $(truthy ${capture_sound:-1}), \"folder\": \"$folder\"}" >"$data/preview.json"
 /usr/bin/open "$app"

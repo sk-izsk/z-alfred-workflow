@@ -1,15 +1,25 @@
 # Camera for Alfred 6
 
-A quick camera check before a meeting: a live, mirrored preview of your camera, with nothing else on
-it. No buttons, no title bar, nothing recorded.
+A quick camera check before a meeting: a live, mirrored preview of your camera, with a photo when
+you want one. Nothing is recorded.
 
 Requires macOS 13+ and Alfred 6 with Powerpack. Nothing else to install.
 
 ## Use
 
 Type `cam`, choose Camera in Swiss, or press the hotkey you set (double-click the workflow's Hotkey
-object in Alfred Preferences). The preview opens in the centre of the screen you're using. Drag it
-where you like; press Escape (or type `cam` again) to hide it. Size and position are in Configuration.
+object in Alfred Preferences). The preview opens in the centre of the screen you're using; drag it
+anywhere. Its footer works like the other workflows':
+
+- **↩ Capture** takes a full-resolution photo (with a flash and, if you like, a shutter sound) and
+  saves it to `~/Pictures/Camera`.
+- **⌘K Actions**: Capture, Switch Camera (your cameras by name), Mirror Preview, Show Last Photo in
+  Finder, Open Photos Folder and Close.
+- **esc Close** (typing `cam` again closes it too).
+
+Mirroring, mirrored photos, the shutter sound, the photos folder, size and position are in
+Configuration. Photos are saved un-mirrored by default, the way others see you, as FaceTime and Photo
+Booth save them.
 
 ## How it works
 
@@ -17,7 +27,7 @@ where you like; press Escape (or type `cam` again) to hide it. Size and position
   your Mac the first time you use it (with Apple's own `osacompile`; nothing is downloaded). macOS
   asks once whether Camera Preview may use the camera.
 - After a workflow update, the preview app is built again, and macOS may ask once more.
-- The preview only shows the camera: it never records, takes photos or uses the microphone.
+- It never records video or uses the microphone.
 
 ## Configuration
 
@@ -28,6 +38,10 @@ Open the workflow in Alfred Preferences → **Configure Workflow**.
 | --- | --- | --- |
 | Keyword | `cam` | Shows the preview; Escape (or running it again) hides it. |
 | Size | Medium | How big the preview is. |
+| Mirror | On | Like a mirror, as FaceTime shows you. Actions (⌘K) can switch it while the preview is open. |
+| Photos | Off | Off: photos are saved the way others see you, as FaceTime and Photo Booth save them. |
+| Capture sound | On | The camera shutter sound when you take a photo. |
+| Photos folder | `~/Pictures/Camera` | Where Capture (↩) saves photos. |
 | Position | Centre | Where the preview appears on the screen you're using. |
 <!-- config:end -->
 

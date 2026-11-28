@@ -182,7 +182,7 @@
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>A quick camera check before a meeting. Type cam (or use the hotkey) to show a mirrored live preview of your camera, with no controls; drag it to move it; Escape (or cam again) hides it. The first time, macOS asks to let Camera Preview use the camera. Built with help from AI tools.</string>
+	<string>A quick camera check before a meeting. Type cam (or use the hotkey) to show a live preview of your camera with a footer: ↩ takes a photo, ⌘K has Switch Camera, Mirror Preview, Show Last Photo in Finder and Open Photos Folder, Escape closes. Drag it to move it. The first time, macOS asks to let Camera Preview use the camera. Built with help from AI tools.</string>
 	<key>uidata</key>
 	<dict>
 		<key>HOTKEY</key>
@@ -271,6 +271,84 @@
 			<string>popupbutton</string>
 			<key>variable</key>
 			<string>camera_size</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Mirror the preview</string>
+			</dict>
+			<key>description</key>
+			<string>Like a mirror, as FaceTime shows you. Actions (⌘K) can switch it while the preview is open.</string>
+			<key>label</key>
+			<string>Mirror</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>preview_mirror</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<false/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Mirror saved photos</string>
+			</dict>
+			<key>description</key>
+			<string>Off: photos are saved the way others see you, as FaceTime and Photo Booth save them.</string>
+			<key>label</key>
+			<string>Photos</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>photo_mirror</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Play a shutter sound</string>
+			</dict>
+			<key>description</key>
+			<string>The camera shutter sound when you take a photo.</string>
+			<key>label</key>
+			<string>Capture sound</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>capture_sound</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>~/Pictures/Camera</string>
+				<key>placeholder</key>
+				<string>~/Pictures/Camera</string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Where Capture (↩) saves photos.</string>
+			<key>label</key>
+			<string>Photos folder</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>photo_folder</string>
 		</dict>
 		<dict>
 			<key>config</key>

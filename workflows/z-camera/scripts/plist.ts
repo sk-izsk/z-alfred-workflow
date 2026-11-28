@@ -86,6 +86,35 @@ export const infoPlist = {
       ["Medium", "medium"],
       ["Large", "large"],
     ]),
+    {
+      type: "checkbox",
+      variable: "preview_mirror",
+      label: "Mirror",
+      description:
+        "Like a mirror, as FaceTime shows you. Actions (⌘K) can switch it while the preview is open.",
+      config: { default: true, required: false, text: "Mirror the preview" },
+    },
+    {
+      type: "checkbox",
+      variable: "photo_mirror",
+      label: "Photos",
+      description: "Off: photos are saved the way others see you, as FaceTime and Photo Booth save them.",
+      config: { default: false, required: false, text: "Mirror saved photos" },
+    },
+    {
+      type: "checkbox",
+      variable: "capture_sound",
+      label: "Capture sound",
+      description: "The camera shutter sound when you take a photo.",
+      config: { default: true, required: false, text: "Play a shutter sound" },
+    },
+    {
+      type: "textfield",
+      variable: "photo_folder",
+      label: "Photos folder",
+      description: "Where Capture (↩) saves photos.",
+      config: { default: "~/Pictures/Camera", placeholder: "~/Pictures/Camera", required: false, trim: true },
+    },
     popup("camera_corner", "Position", "Where the preview appears on the screen you're using.", "centre", [
       ["Centre", "centre"],
       ["Top right", "top-right"],
@@ -96,5 +125,5 @@ export const infoPlist = {
   ],
   variablesdontexport: [],
   readme:
-    "A quick camera check before a meeting. Type cam (or use the hotkey) to show a mirrored live preview of your camera, with no controls; drag it to move it; Escape (or cam again) hides it. The first time, macOS asks to let Camera Preview use the camera. Built with help from AI tools.",
+    "A quick camera check before a meeting. Type cam (or use the hotkey) to show a live preview of your camera with a footer: ↩ takes a photo, ⌘K has Switch Camera, Mirror Preview, Show Last Photo in Finder and Open Photos Folder, Escape closes. Drag it to move it. The first time, macOS asks to let Camera Preview use the camera. Built with help from AI tools.",
 };
