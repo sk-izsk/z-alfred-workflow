@@ -114,15 +114,16 @@ const openFolder = () => {
   $.NSFileManager.defaultManager.createDirectoryAtPathWithIntermediateDirectoriesAttributesError(photoFolder(), true, $(), null);
   $.NSWorkspace.sharedWorkspace.openURL($.NSURL.fileURLWithPath(photoFolder()));
 };
-const item = (title, action, key = "", mask = 0) => {
-  const m = $.NSMenuItem.alloc.initWithTitleActionKeyEquivalent(title, action, key);
-  m.keyEquivalentModifierMask = mask;
+const item = (title, action) => {
+  const m = $.NSMenuItem.alloc.initWithTitleActionKeyEquivalent(title, action, "");
   m.target = target;
   return m;
 };
 const showMenu = () => {
   const menu = $.NSMenu.alloc.initWithTitle("Actions");
-  menu.addItem(item("Capture", "capture:", "\r", 0));
+  // No key equivalents in this menu: while it is open they would beat the highlighted item
+  // (↩ would capture instead of choosing, ⎋ would close the preview instead of the menu).
+  menu.addItem(item("Capture", "capture:"));
   const sub = $.NSMenu.alloc.initWithTitle("Switch Camera");
   const current = ObjC.unwrap(input.device.uniqueID);
   for (const d of cameras()) {
@@ -141,7 +142,7 @@ const showMenu = () => {
   menu.addItem(item("Show Last Photo in Finder", "reveal:"));
   menu.addItem(item("Open Photos Folder", "openFolder:"));
   menu.addItem($.NSMenuItem.separatorItem);
-  menu.addItem(item("Close", "close:", "\u001b", 0));
+  menu.addItem(item("Close", "close:"));
   // JXA can't pass "no item" here (null arrives as an object macOS rejects): anchor the first item.
   menu.popUpMenuPositioningItemAtLocationInView(
     menu.itemAtIndex(0),

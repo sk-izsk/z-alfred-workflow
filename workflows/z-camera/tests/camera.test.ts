@@ -34,6 +34,8 @@ test("the preview app compiles, never redeclares JXA globals, and never records"
   expect(preview).toContain("connection.videoMirrored = on");
   expect(preview).toContain("options.mirrorPhotos");
   expect(preview).not.toMatch(/AVCaptureMovieFileOutput|AVCaptureAudio/);
+  // Menu items have no key equivalents: in an open menu they would beat the highlighted item.
+  expect(preview).toContain('initWithTitleActionKeyEquivalent(title, action, "")');
   // Setting a CALayer colour (CGColor) from JXA crashes the app: colours go through NSBox.
   expect(preview).not.toMatch(/\.CGColor\b/);
 });
