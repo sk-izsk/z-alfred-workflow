@@ -1,13 +1,12 @@
 # Camera
 
 - Independent Bun + TypeScript project (build only; no Node at runtime). Preserve `com.izsk.camera`.
-- Alfred has no camera permission (no NSCameraUsageDescription), so nothing Alfred runs can open the
-  camera: a web view's getUserMedia or AVFoundation from osascript is denied. QuickTime Player shows
-  the preview instead, driven by `workflow/bin/camera.js` (JXA). Keep it muted; never start a
-  recording or save.
-- `cam` is a Script Filter (Show/Hide, Take Photo, Switch Camera, Open Photos Folder). The preview
-  closes with saving no and quits QuickTime if the preview had started it. The script prints a
-  message (saved photo, error) that becomes a notification.
-- QuickTime's scripting can count cameras and set one by index, but can't read device names on
-  current macOS ("Can't get object"): Switch Camera cycles by index. A photo is a `screencapture -R`
-  of the preview below its title bar (`sips --cropOffset` doesn't crop here).
+- One job: show a mirrored live camera preview with no controls, and hide it. Keep it that simple.
+- Alfred has no camera usage description, so nothing Alfred runs can use the camera. `bin/camera`
+  builds `Camera Preview.app` from `bin/preview.js` with `osacompile -s` on the user's Mac (its own
+  bundle id and NSCameraUsageDescription, ad-hoc signed), so macOS asks that app for the camera.
+  Nothing compiled is committed or downloaded.
+- Each build goes to `<data>/v-<hash of preview.js>/`, so updates never delete files. The toggle
+  closes a running preview with `pkill`; the preview also closes on a click or any key.
+- In JXA, AVFoundation classes come from `NSClassFromString` after loading the framework bundle
+  (`ObjC.import("AVFoundation")` doesn't expose them); constants are passed as strings ("vide").

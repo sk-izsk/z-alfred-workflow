@@ -83,8 +83,9 @@ proposing it.
   `ObjC.deepUnwrap(ObjC.castRefToObject(…))`; `deepUnwrap` alone doesn't give a JS array. NSArray
   `count` reaches JS as a string: use `Number(array.count)`.
 - Alfred has no camera or microphone usage description, so nothing Alfred runs (web view
-  getUserMedia, AVFoundation from osascript) can use them. Drive an Apple app that can (Camera uses
-  QuickTime Player) instead of a helper that needs its own permission and signing.
+  getUserMedia, AVFoundation from osascript) can use them. Build a tiny JXA applet on the user's Mac
+  with `osacompile -s`, give it its own bundle id and usage description and ad-hoc sign it (Camera's
+  `bin/camera`); then macOS asks that app. QuickTime works too, but its controls can't be hidden.
 - A JXA crash or uncaught error prints nothing: wrap `run()` in try/catch and return JSON
   `{error}`, and test each step in its own `osascript` process.
 - Never send keystrokes (System Events) to test a window while the user is working: a stray Return

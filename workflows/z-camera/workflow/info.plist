@@ -8,50 +8,24 @@
 	<string>Tools</string>
 	<key>connections</key>
 	<dict>
+		<key>HOTKEY</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>RUN</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>KEYWORD</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>RUN</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
-		<key>PHOTO</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>RUN</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
-		<key>PHOTO_HOTKEY</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>PHOTO</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
-		<key>PREVIEW_HOTKEY</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>TOGGLE</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -73,24 +47,11 @@
 				<false/>
 			</dict>
 		</array>
-		<key>TOGGLE</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>RUN</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
 		<key>TRIGGER</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>TOGGLE</string>
+				<string>RUN</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -113,49 +74,23 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>alfredfiltersresults</key>
-				<true/>
-				<key>alfredfiltersresultsmatchmode</key>
-				<integer>2</integer>
-				<key>argumenttreatemptyqueryasnil</key>
-				<false/>
 				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>escaping</key>
-				<integer>0</integer>
+				<integer>2</integer>
 				<key>keyword</key>
 				<string>{var:kw_main}</string>
-				<key>queuedelayimmediatelyinitially</key>
-				<true/>
-				<key>queuedelaymode</key>
-				<integer>0</integer>
-				<key>queuemode</key>
-				<integer>1</integer>
-				<key>runningsubtext</key>
-				<string>…</string>
-				<key>script</key>
-				<string>/usr/bin/osascript -l JavaScript ./bin/camera.js filter</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>skipuniversalaction</key>
-				<true/>
 				<key>subtext</key>
-				<string>Preview, photo and camera switch</string>
-				<key>title</key>
+				<string>Show or hide a camera preview</string>
+				<key>text</key>
 				<string>Camera</string>
-				<key>type</key>
-				<integer>0</integer>
 				<key>withspace</key>
-				<true/>
+				<false/>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.input.scriptfilter</string>
+			<string>alfred.workflow.input.keyword</string>
 			<key>uid</key>
 			<string>KEYWORD</string>
 			<key>version</key>
-			<integer>3</integer>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -182,36 +117,7 @@
 			<key>type</key>
 			<string>alfred.workflow.trigger.hotkey</string>
 			<key>uid</key>
-			<string>PREVIEW_HOTKEY</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>action</key>
-				<integer>0</integer>
-				<key>argument</key>
-				<integer>0</integer>
-				<key>focusedappvariable</key>
-				<false/>
-				<key>focusedappvariablename</key>
-				<string></string>
-				<key>hotkey</key>
-				<integer>0</integer>
-				<key>hotmod</key>
-				<integer>0</integer>
-				<key>leftcursor</key>
-				<false/>
-				<key>modsmode</key>
-				<integer>0</integer>
-				<key>relatedAppsMode</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.hotkey</string>
-			<key>uid</key>
-			<string>PHOTO_HOTKEY</string>
+			<string>HOTKEY</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -233,46 +139,12 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argument</key>
-				<string>toggle</string>
-				<key>passthroughargument</key>
-				<false/>
-				<key>variables</key>
-				<dict/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.argument</string>
-			<key>uid</key>
-			<string>TOGGLE</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argument</key>
-				<string>photo</string>
-				<key>passthroughargument</key>
-				<false/>
-				<key>variables</key>
-				<dict/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.argument</string>
-			<key>uid</key>
-			<string>PHOTO</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
 				<integer>0</integer>
 				<key>script</key>
-				<string>/usr/bin/osascript -l JavaScript ./bin/camera.js "$1"</string>
+				<string>./bin/camera</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -310,9 +182,16 @@
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>A quick camera check before a meeting. Type cam for Show/Hide Preview, Take Photo and Switch Camera (with more than one camera). The preview is small, muted and never records; photos save what it shows. Set hotkeys for the preview and for a photo by double-clicking the Hotkey objects. QuickTime Player shows the camera, because Alfred itself can't use it. Built with help from AI tools.</string>
+	<string>A quick camera check before a meeting. Type cam (or use the hotkey) to show a mirrored live preview of your camera, with no controls; cam again, a click on it or any key hides it. The first time, macOS asks to let Camera Preview use the camera. Built with help from AI tools.</string>
 	<key>uidata</key>
 	<dict>
+		<key>HOTKEY</key>
+		<dict>
+			<key>xpos</key>
+			<integer>0</integer>
+			<key>ypos</key>
+			<integer>140</integer>
+		</dict>
 		<key>KEYWORD</key>
 		<dict>
 			<key>xpos</key>
@@ -323,44 +202,16 @@
 		<key>NOTIFY</key>
 		<dict>
 			<key>xpos</key>
-			<integer>560</integer>
-			<key>ypos</key>
-			<integer>140</integer>
-		</dict>
-		<key>PHOTO</key>
-		<dict>
-			<key>xpos</key>
-			<integer>200</integer>
-			<key>ypos</key>
-			<integer>440</integer>
-		</dict>
-		<key>PHOTO_HOTKEY</key>
-		<dict>
-			<key>xpos</key>
-			<integer>0</integer>
-			<key>ypos</key>
 			<integer>420</integer>
-		</dict>
-		<key>PREVIEW_HOTKEY</key>
-		<dict>
-			<key>xpos</key>
-			<integer>0</integer>
 			<key>ypos</key>
 			<integer>140</integer>
 		</dict>
 		<key>RUN</key>
 		<dict>
 			<key>xpos</key>
-			<integer>380</integer>
+			<integer>220</integer>
 			<key>ypos</key>
 			<integer>140</integer>
-		</dict>
-		<key>TOGGLE</key>
-		<dict>
-			<key>xpos</key>
-			<integer>200</integer>
-			<key>ypos</key>
-			<integer>200</integer>
 		</dict>
 		<key>TRIGGER</key>
 		<dict>
@@ -383,7 +234,7 @@
 				<true/>
 			</dict>
 			<key>description</key>
-			<string>Lists Show/Hide Preview, Take Photo and Switch Camera.</string>
+			<string>Shows the preview; run it again (or click the preview) to hide it.</string>
 			<key>label</key>
 			<string>Keyword</string>
 			<key>type</key>
@@ -413,7 +264,7 @@
 				</array>
 			</dict>
 			<key>description</key>
-			<string>How big the preview is (photos are this size too).</string>
+			<string>How big the preview is.</string>
 			<key>label</key>
 			<string>Size</string>
 			<key>type</key>
@@ -451,34 +302,13 @@
 				</array>
 			</dict>
 			<key>description</key>
-			<string>Where the preview appears on the main display.</string>
+			<string>Where the preview appears on the screen you're using.</string>
 			<key>label</key>
 			<string>Position</string>
 			<key>type</key>
 			<string>popupbutton</string>
 			<key>variable</key>
 			<string>camera_corner</string>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>default</key>
-				<string>~/Pictures/Camera</string>
-				<key>placeholder</key>
-				<string>~/Pictures/Camera</string>
-				<key>required</key>
-				<false/>
-				<key>trim</key>
-				<true/>
-			</dict>
-			<key>description</key>
-			<string>Where Take Photo saves pictures.</string>
-			<key>label</key>
-			<string>Photos folder</string>
-			<key>type</key>
-			<string>textfield</string>
-			<key>variable</key>
-			<string>photo_folder</string>
 		</dict>
 	</array>
 	<key>variablesdontexport</key>

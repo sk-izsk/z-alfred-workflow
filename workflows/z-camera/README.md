@@ -1,33 +1,23 @@
 # Camera for Alfred 6
 
-A quick camera check before a meeting: a small live preview of your camera in a corner of the screen,
-a photo of it if you want one, and a switch between cameras.
+A quick camera check before a meeting: a live, mirrored preview of your camera, with nothing else on
+it. No buttons, no title bar, nothing recorded.
 
 Requires macOS 13+ and Alfred 6 with Powerpack. Nothing else to install.
 
 ## Use
 
-Type `cam` (or choose Camera in Swiss) for:
-
-- **Show / Hide Preview**: a small, muted live preview in the centre of the screen (size and position
-  are in Configuration). It never records.
-- **Take Photo**: saves what the preview shows to `~/Pictures/Camera` (opens the preview first if it
-  is closed).
-- **Switch Camera**: moves to the next camera, shown when more than one is connected (including an
-  iPhone used as a webcam).
-- **Open Photos Folder**.
-
-Set hotkeys for the preview and for a photo in Alfred Preferences by double-clicking the workflow's
-Hotkey objects.
+Type `cam`, choose Camera in Swiss, or press the hotkey you set (double-click the workflow's Hotkey
+object in Alfred Preferences). The preview opens in the centre of the screen you're using. Type `cam`
+again, click the preview or press any key to hide it. Size and position are in Configuration.
 
 ## How it works
 
-- macOS only lets an app use the camera after you allow it, and Alfred isn't an app that asks for
-  camera access, so the preview is shown by QuickTime Player, which can. The first time, macOS may ask
-  you to allow QuickTime to use the camera and Alfred to control QuickTime.
-- A photo is the preview's image area captured from the screen, so it is the preview's size: choose
-  **Large** for bigger photos. Alfred needs Screen Recording access for this, which it usually has.
-- If QuickTime wasn't open before, hiding the preview quits it again.
+- Alfred isn't allowed to use the camera, so the workflow builds a tiny app, **Camera Preview**, on
+  your Mac the first time you use it (with Apple's own `osacompile`; nothing is downloaded). macOS
+  asks once whether Camera Preview may use the camera.
+- After a workflow update, the preview app is built again, and macOS may ask once more.
+- The preview only shows the camera: it never records, takes photos or uses the microphone.
 
 ## Configuration
 
@@ -36,10 +26,9 @@ Open the workflow in Alfred Preferences → **Configure Workflow**.
 
 | Setting | Default | What it does |
 | --- | --- | --- |
-| Keyword | `cam` | Lists Show/Hide Preview, Take Photo and Switch Camera. |
-| Size | Medium | How big the preview is (photos are this size too). |
-| Position | Centre | Where the preview appears on the main display. |
-| Photos folder | `~/Pictures/Camera` | Where Take Photo saves pictures. |
+| Keyword | `cam` | Shows the preview; run it again (or click the preview) to hide it. |
+| Size | Medium | How big the preview is. |
+| Position | Centre | Where the preview appears on the screen you're using. |
 <!-- config:end -->
 
 ## Development
@@ -53,6 +42,6 @@ bun run link
 
 ## Credits and AI disclosure
 
-Original code and icon; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). QuickTime is a
-trademark of Apple Inc. Built with help from AI tools, directed and tested by a human. Review the code
+Original code and icon; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Built with help from AI tools, directed and tested by a human. Review the code
 before use, as you would any workflow; please report anything that doesn't work.
