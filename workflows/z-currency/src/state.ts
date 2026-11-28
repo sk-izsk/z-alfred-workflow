@@ -6,6 +6,8 @@ export type State = {
   id: string;
   query: string;
   base: string;
+  /** The amount's currency when the query names one ("100 euros"); else the base. */
+  from?: string;
   selected: string;
   date: string;
   amount: number;
@@ -25,6 +27,8 @@ export const read = (id: string): State => {
   return s;
 };
 export const save = (s: State): void => writeJson(file(s.id), s);
+/** The currency the amount is in: the query's ("100 euros") or the chosen base. */
+export const fromOf = (s: Pick<State, "from" | "base">): string => s.from || s.base;
 export const create = (query: string): State => {
   const s = {
     id: randomUUID(),

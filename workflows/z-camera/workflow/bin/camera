@@ -1,0 +1,43 @@
+#!/bin/zsh --no-rcs
+# Shows the camera preview, or hides it when it is already showing.
+# Builds "Camera Preview.app" from preview.js on first use (and after updates) with Apple's
+# osacompile, so it is made on this Mac, has its own camera permission and needs no download.
+# Each build lives in its own folder (v-<hash>), so an update never has to delete anything.
+here=${0:A:h}
+data=${alfred_workflow_data:-$HOME/Library/Application Support/Alfred/Workflow Data/com.izsk.camera}
+mkdir -p "$data"
+
+if /usr/bin/pgrep -f "Camera Preview.app/Contents/MacOS/applet" >/dev/null; then
+  /usr/bin/pkill -f "Camera Preview.app/Contents/MacOS/applet"
+  exit 0
+fi
+
+sum=$(/usr/bin/shasum "$here/preview.js" | /usr/bin/cut -c1-12)
+app="$data/v-$sum/Camera Preview.app"
+if [[ ! -d $app ]]; then
+  mkdir -p "$data/v-$sum"
+  /usr/bin/osacompile -l JavaScript -s -o "$app" "$here/preview.js" || {
+    print -r -- "Couldn't build the camera preview."
+    exit 0
+  }
+  plist="$app/Contents/Info.plist"
+  description="Camera Preview shows your camera so you can check how you look before a meeting."
+  /usr/libexec/PlistBuddy -c 'Add :CFBundleIdentifier string com.izsk.camera.preview' "$plist" 2>/dev/null
+  /usr/libexec/PlistBuddy -c 'Set :CFBundleName "Camera Preview"' "$plist" 2>/dev/null
+  /usr/libexec/PlistBuddy -c 'Add :LSUIElement bool true' "$plist" 2>/dev/null
+  /usr/libexec/PlistBuddy -c "Set :NSCameraUsageDescription $description" "$plist" 2>/dev/null ||
+    /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string $description" "$plist"
+  /usr/bin/codesign --force --sign - "$app" 2>/dev/null
+fi
+
+case ${camera_size:-medium} in
+  small) width=640 ;;
+  large) width=1120 ;;
+  *) width=880 ;;
+esac
+truthy() { [[ ${1:l} == (1|true|yes) ]] && print true || print false; }
+folder=${photo_folder:-~/Pictures/Camera}
+folder=${folder//\\/\\\\}
+folder=${folder//\"/\\\"}
+print -r -- "{\"width\": $width, \"corner\": \"${camera_corner:-centre}\", \"mirror\": $(truthy ${preview_mirror:-1}), \"mirrorPhotos\": $(truthy ${photo_mirror:-0}), \"sound\": $(truthy ${capture_sound:-1}), \"folder\": \"$folder\"}" >"$data/preview.json"
+/usr/bin/open "$app"

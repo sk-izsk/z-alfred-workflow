@@ -79,6 +79,18 @@ proposing it.
   (`ObjC.import("CoreAudio")`). Instead `ObjC.bindFunction` them with `void *` arguments, pass memory
   from a bound `malloc` filled and read through `NSData` (`getBytesLength`, `dataWithBytesLength`),
   and read object results (CFString) with an `id *` out argument and `Ref()`.
+- CoreFoundation results (CFArray from `CGWindowListCopyWindowInfo`) need
+  `ObjC.deepUnwrap(ObjC.castRefToObject(…))`; `deepUnwrap` alone doesn't give a JS array. NSArray
+  `count` reaches JS as a string: use `Number(array.count)`.
+- Alfred has no camera or microphone usage description, so nothing Alfred runs (web view
+  getUserMedia, AVFoundation from osascript) can use them. Build a tiny JXA applet on the user's Mac
+  with `osacompile -s`, give it its own bundle id and usage description and ad-hoc sign it (Camera's
+  `bin/camera`); then macOS asks that app. QuickTime works too, but its controls can't be hidden.
+- Never pass `NSColor.CGColor` to a CALayer from JXA (crashes in `CFRetain`): use AppKit views that
+  take `NSColor`, such as `NSBox` with a custom fill, border and corner radius.
+- `null` passed to an Objective-C method argument from JXA isn't always nil: `NSMenu`'s
+  `popUpMenuPositioningItem:atLocation:inView:` rejects it ("menu item null is not present"). Pass a
+  real object (the menu's first item) where an API checks the argument.
 - A JXA crash or uncaught error prints nothing: wrap `run()` in try/catch and return JSON
   `{error}`, and test each step in its own `osascript` process.
 - Never send keystrokes (System Events) to test a window while the user is working: a stray Return

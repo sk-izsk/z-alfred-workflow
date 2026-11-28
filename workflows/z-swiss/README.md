@@ -23,6 +23,7 @@ Requires macOS, Alfred 6 Powerpack and Node.js 22+ or Bun.
 | Drives | `drives` | Drives 0.1.0+ |
 | Background Items | `bgitems` | Background Items 0.1.0+ |
 | Menu Bar | `m` | Menu Bar 0.1.0+ |
+| Camera | `cam` | Camera 0.1.0+ |
 | Window Navigator | `wnav` | Window Navigator 0.1.0+ |
 | World Clock | `wclock` | World Clock 0.1.0+ |
 | Speed Test | `speedtest` | Speed Test 0.1.3+ |
@@ -32,7 +33,7 @@ Requires macOS, Alfred 6 Powerpack and Node.js 22+ or Bun.
 | Currency Exchange | `currency` | Currency Exchange 0.1.0+ |
 | Calculate Anything | `calcany` | Calculate Anything bridge 0.1.0+ and its original conversion engine |
 
-Camera is deferred. Last Changed Files was canceled and is not included.
+Last Changed Files was canceled and is not included.
 
 ## Use
 

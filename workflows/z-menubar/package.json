@@ -1,6 +1,6 @@
 {
   "name": "alfred-menubar",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Search and click the menu bar items of the app you are using, in a native Alfred window",
   "author": "izsk",

@@ -76,6 +76,15 @@ export const tools: Tool[] = [
     keyword: "m",
   },
   {
+    id: "camera",
+    name: "Camera",
+    description: "A quick look at your camera before a meeting, in a corner of the screen",
+    bundle: "com.izsk.camera",
+    trigger: "open",
+    minimum: "0.1.0",
+    keyword: "cam",
+  },
+  {
     id: "window-navigator",
     name: "Window Navigator",
     description: "Find windows across desktops, active app or current desktop · wins shortcut",

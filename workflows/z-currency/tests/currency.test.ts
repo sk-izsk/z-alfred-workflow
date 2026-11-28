@@ -39,8 +39,10 @@ test("query separates arithmetic, country filter and historical date", () => {
     amount: 102,
     filter: "canada",
     date: "2021-09-25",
+    from: "",
   });
   expect(parseQuery("israel").filter).toBe("israel");
+  expect(parseQuery("100 in inr")).toMatchObject({ amount: 100, filter: "inr", from: "" });
   expect(() => validDate("2026-02-30")).toThrow();
 });
 test("rate parsing rejects missing dates and invalid rates", () => {
@@ -267,4 +269,38 @@ test("quick favorites persist and reject a fourth until one is removed", () => {
       else process.env[key] = value;
     }
   }
+});
+
+/** Amount, source currency and filter of a query. */
+const q = (text: string) => {
+  const { amount, filter, from } = parseQuery(text);
+  return [amount, from, filter];
+};
+test("natural language: the amount's currency, then what to show", () => {
+  expect(q("100 euros in cad")).toEqual([100, "EUR", "cad"]);
+  expect(q("€100 to usd")).toEqual([100, "EUR", "usd"]);
+  expect(q("100€")).toEqual([100, "EUR", ""]);
+  expect(q("C$ 20 in usd")).toEqual([20, "CAD", "usd"]);
+  expect(q("convert 2.5k yen to cad")).toEqual([2500, "JPY", "cad"]);
+  expect(q("1,250 pounds")).toEqual([1250, "GBP", ""]);
+  expect(q("cad to inr")).toEqual([1, "CAD", "inr"]);
+  expect(q("how much is 20 bucks in rupees?")).toEqual([20, "USD", "inr"]);
+  expect(q("50 swiss francs to eur")).toEqual([50, "CHF", "eur"]);
+  expect(q("100 euros in canadian dollars")).toEqual([100, "EUR", "cad"]);
+  // Countries and plain filters behave as before.
+  expect(q("100 canada")).toEqual([100, "", "canada"]);
+  expect(q("10 in japan")).toEqual([10, "", "japan"]);
+});
+test("a query's currency converts from it instead of the base", () => {
+  const rates = {
+    date: "2026-11-24",
+    asof: "2026-11-24",
+    provider: "test",
+    fetched: 0,
+    stale: false,
+    rates: { EUR: 1, USD: 2, CAD: 3 },
+  };
+  const s = { base: "CAD", from: "EUR", amount: 100, rates } as unknown as Parameters<typeof converted>[0];
+  expect(converted(s, "CAD")).toBe(300);
+  expect(converted({ ...s, from: "" }, "USD")).toBeCloseTo(66.6667, 3);
 });
